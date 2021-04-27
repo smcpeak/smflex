@@ -43,7 +43,7 @@
 #ifndef __FLEX_LEXER_H
 // Never included before - need to define base class.
 #define __FLEX_LEXER_H
-#include <iostream.h>
+#include <iostream>
 
 extern "C++" {
 
@@ -52,6 +52,9 @@ typedef int yy_state_type;
 
 class FlexLexer {
 public:
+	typedef std::istream istream;
+	typedef std::ostream ostream;
+
 	virtual ~FlexLexer()	{ }
 
 	const char* YYText()	{ return yytext; }

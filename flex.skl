@@ -25,7 +25,9 @@
 
 #include <stdlib.h>
 %+
-class istream;
+#include <iostream>
+using std::istream;
+using std::ostream;
 %*
 #include <unistd.h>
 
