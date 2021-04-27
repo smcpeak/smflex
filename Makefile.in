@@ -144,7 +144,7 @@ test: check
 check: $(FLEX)
 	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) $(srcdir)/scan.l \
 	| sed s,\"$(srcdir)/scan.l\",\"scan.l\", \
-	| diff scan.c -
+	| diff -b scan.c -
 	@echo "Check successful, using COMPRESSION=\"$(COMPRESSION)\""
 
 bigcheck:
