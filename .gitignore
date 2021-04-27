@@ -1,0 +1,13 @@
+*.a
+*.exe
+*.o
+.bootstrap
+Makefile
+config.cache
+config.h
+config.log
+config.status
+parse.c
+parse.h
+scan.c
+stamp-h
