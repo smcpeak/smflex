@@ -1459,6 +1459,14 @@ YY_MALLOC_DECL
 #define YY_DECL int yylex YY_PROTO(( void ))
 #endif
 
+/* smcpeak: Qualifier to use when invoking other scanner methods.  This
+ * is needed in C++ because the other methods are members of the base
+ * class, while the scanner method might be a member of a derived class.
+ */
+#ifndef YY_FLEX_LEXER_QUALIFIER
+#define YY_FLEX_LEXER_QUALIFIER /*nothing*/
+#endif
+
 /* Code executed at the beginning of each rule, after yytext and yyleng
  * have been set up.
  */
@@ -1494,7 +1502,7 @@ YY_DECL
 	Char nmdef[MAXLINE], myesc();
 
 
-#line 1498 "scan.c"
+#line 1506 "scan.c"
 
 	if ( yy_init )
 		{
@@ -2732,7 +2740,7 @@ YY_RULE_SETUP
 #line 650 "scan.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 2736 "scan.c"
+#line 2744 "scan.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(SECT2):
 case YY_STATE_EOF(CODEBLOCK):
@@ -2787,7 +2795,7 @@ case YY_STATE_EOF(LINEDIR):
 
 			yy_c_buf_p = yytext_ptr + yy_amount_of_matched_text;
 
-			yy_current_state = yy_get_previous_state();
+			yy_current_state = YY_FLEX_LEXER_QUALIFIER yy_get_previous_state();
 
 			/* Okay, we're now positioned to make the NUL
 			 * transition.  We couldn't have
@@ -2798,7 +2806,7 @@ case YY_STATE_EOF(LINEDIR):
 			 * will run more slowly).
 			 */
 
-			yy_next_state = yy_try_NUL_trans( yy_current_state );
+			yy_next_state = YY_FLEX_LEXER_QUALIFIER yy_try_NUL_trans( yy_current_state );
 
 			yy_bp = yytext_ptr + YY_MORE_ADJ;
 
@@ -2852,7 +2860,7 @@ case YY_STATE_EOF(LINEDIR):
 				yy_c_buf_p =
 					yytext_ptr + yy_amount_of_matched_text;
 
-				yy_current_state = yy_get_previous_state();
+				yy_current_state = YY_FLEX_LEXER_QUALIFIER yy_get_previous_state();
 
 				yy_cp = yy_c_buf_p;
 				yy_bp = yytext_ptr + YY_MORE_ADJ;
@@ -2862,7 +2870,7 @@ case YY_STATE_EOF(LINEDIR):
 				yy_c_buf_p =
 				&yy_current_buffer->yy_ch_buf[yy_n_chars];
 
-				yy_current_state = yy_get_previous_state();
+				yy_current_state = YY_FLEX_LEXER_QUALIFIER yy_get_previous_state();
 
 				yy_cp = yy_c_buf_p;
 				yy_bp = yytext_ptr + YY_MORE_ADJ;
