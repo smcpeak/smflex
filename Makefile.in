@@ -1,6 +1,8 @@
 # Makefile.in
 # @configure_input@
 
+# If the following line is not empty, it specifies the value of $(MAKE)
+# to use when invoking make recursively.
 @SET_MAKE@
 
 # In general, the intent is to use variables in a manner consistent
