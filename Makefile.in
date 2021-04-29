@@ -266,17 +266,45 @@ maintainer-clean: distclean
 dist: $(FLEX) $(DISTFILES) parse.c parse.h
 	$(MAKE) DIST_NAME=flex-`sed <version.h 's/[^"]*"//' | sed 's/"//'` dist2
 
+# Do the main work of making the tarball, given $(DIST_NAME).  Also
+# optionally run tests and remove it afterward.
 dist2:
 	rm -rf $(DIST_NAME)
 	rm -f $(DIST_NAME).tar $(DIST_NAME).tar.gz
 	mkdir $(DIST_NAME)
 	tar cf - $(DISTFILES) | (cd $(DIST_NAME) && tar xfB -)
+	rm -rf $(DIST_NAME)/test/out
 	mv $(DIST_NAME)/scan.c $(DIST_NAME)/initscan.c
 	chmod 444 $(DIST_NAME)/initscan.c
 	chmod +w $(DIST_NAME)/Makefile.in
 	tar chf $(DIST_NAME).tar $(DIST_NAME)
 	gzip <$(DIST_NAME).tar >$(DIST_NAME).tar.gz
 	rm $(DIST_NAME).tar
+ifeq ($(TEST_DIST),1)
+	find $(DIST_NAME) -type f > distro-files.txt
+	@# Build the distribution the way a user would.
+	cd $(DIST_NAME) && \
+	  ./configure --prefix=$$(pwd)/opt && \
+	  make && \
+	  make check && \
+	  make install
+	@echo "--------- BEGIN: Distribution files ---------"
+	@cat distro-files.txt
+	@echo "---------- END: Distribution files ----------"
+	@echo "--------- BEGIN: Installation files ---------"
+	@cd $(DIST_NAME)/opt && find . -type f
+	@echo "---------- END: Installation files ----------"
+	rm distro-files.txt
+endif
+ifeq ($(CLEAN_DIST),1)
+	@# Remove the distribution after test passes.
+	rm -rf $(DIST_NAME)
+	rm $(DIST_NAME).tar.gz
+endif
+
+# Build and test a distribution, then clean up afterward.
+dist-test-clean:
+	$(MAKE) TEST_DIST=1 CLEAN_DIST=1 dist
 
 # For an explanation of the following Makefile rules, see node
 # `Automatic Remaking' in GNU Autoconf documentation.
