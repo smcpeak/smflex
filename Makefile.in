@@ -22,26 +22,18 @@ LIBS = @LIBS@
 
 # Installation targeting.  Files will be installed under the tree
 # rooted at prefix.  flex will be installed in bindir, libfl.a in
-# libdir, FlexLexer.h will be installed in includedir, and the manual
-# pages will be installed in mandir with extension manext.
-# 
-# Raw, unformatted troff source will be installed if INSTALLMAN=man,
-# nroff preformatted versions will be installed if INSTALLMAN=cat.
+# libdir, and FlexLexer.h will be installed in includedir.
 
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 bindir = $(exec_prefix)/bin
 libdir = $(exec_prefix)/lib
 includedir = $(prefix)/include
-manext = 1
-mandir = $(prefix)/man/man$(manext)
 
 # You can define these to be "lex" and "libl.a" if you want to replace
 # lex at your site.
 FLEX = flex
 FLEXLIB = libfl.a
-
-INSTALLMAN = man
 
 SHELL = /bin/sh
 srcdir = @srcdir@
@@ -80,7 +72,7 @@ LINTSRCS = ccl.c dfa.c ecs.c gen.c main.c misc.c nfa.c parse.c \
 DISTFILES = README NEWS COPYING FlexLexer.h \
 	configure.in conf.in Makefile.in mkskel.sh flex.skl \
 	$(HEADERS) $(SOURCES) $(LIBSRCS) \
-	flex.1 scan.c install.sh mkinstalldirs configure
+	flex.md scan.c install.sh mkinstalldirs configure
 
 DIST_NAME = flex
 
@@ -162,10 +154,7 @@ $(FLEXLIB): $(LIBOBJS)
 	$(AR) cru $(FLEXLIB) $(LIBOBJS)
 	-$(RANLIB) $(FLEXLIB)
 
-$(FLEX).man: flex.1
-	cd $(srcdir) && nroff -man flex.1 >$(FLEX).man
-
-install: $(FLEX) $(FLEXLIB) installdirs install.$(INSTALLMAN)
+install: $(FLEX) $(FLEXLIB) installdirs
 	$(INSTALL_PROGRAM) $(FLEX) $(bindir)/$(FLEX)
 	@rm -f $(bindir)/$(FLEX)++
 	cd $(bindir) && $(LN_S) $(FLEX) $(FLEX)++
@@ -173,25 +162,14 @@ install: $(FLEX) $(FLEXLIB) installdirs install.$(INSTALLMAN)
 	-cd $(libdir) && $(RANLIB) $(FLEXLIB)
 	$(INSTALL_DATA) $(srcdir)/FlexLexer.h $(includedir)/FlexLexer.h
 
-# Note, the following rules delete any vestigial flexdoc installed
-# for a prior flex release.
-install.man: flex.1
-	rm -f $(mandir)/$(FLEX)doc.$(manext)
-	$(INSTALL_DATA) $(srcdir)/flex.1 $(mandir)/$(FLEX).$(manext)
-
-install.cat: $(FLEX).man
-	rm -f $(mandir)/$(FLEX)doc.$(manext)
-	$(INSTALL_DATA) $(srcdir)/$(FLEX).man $(mandir)/$(FLEX).$(manext)
-
 installdirs:
 	$(SHELL) $(srcdir)/mkinstalldirs \
-	  $(bindir) $(libdir) $(includedir) $(mandir)
+	  $(bindir) $(libdir) $(includedir)
 
 uninstall:
 	rm -f $(bindir)/$(FLEX) $(bindir)/$(FLEX)++
 	rm -f $(libdir)/$(FLEXLIB)
 	rm -f $(includedir)/FlexLexer.h
-	rm -f $(mandir)/$(FLEX).$(manext) $(mandir)/$(FLEX)doc.$(manext)
 
 tags: $(SOURCES)
 	ctags $(SOURCES)
@@ -219,23 +197,22 @@ distclean: clean
 maintainer-clean: distclean
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
-	rm -f $(FLEX).man skel.c flex*.tar.gz flex*.tar.Z
+	rm -f skel.c flex*.tar.gz flex*.tar.Z
 
-dist: $(FLEX) $(DISTFILES) parse.c parse.h $(srcdir)/$(FLEX).man
+dist: $(FLEX) $(DISTFILES) parse.c parse.h
 	$(MAKE) DIST_NAME=flex-`sed <version.h 's/[^"]*"//' | sed 's/"//'` dist2
 
 dist2:
-	@rm -rf $(DIST_NAME)
-	@rm -f $(DIST_NAME).tar $(DIST_NAME).tar.Z $(DIST_NAME).tar.gz
-	@mkdir $(DIST_NAME)
+	rm -rf $(DIST_NAME)
+	rm -f $(DIST_NAME).tar $(DIST_NAME).tar.gz
+	mkdir $(DIST_NAME)
 	tar cf - $(DISTFILES) | (cd $(DIST_NAME) && tar xfB -)
-	@mv $(DIST_NAME)/scan.c $(DIST_NAME)/initscan.c
-	@chmod 444 $(DIST_NAME)/initscan.c
-	@chmod +w $(DIST_NAME)/Makefile.in
-	@col -b <$(srcdir)/$(FLEX).man >$(DIST_NAME)/MISC/flex.man
+	mv $(DIST_NAME)/scan.c $(DIST_NAME)/initscan.c
+	chmod 444 $(DIST_NAME)/initscan.c
+	chmod +w $(DIST_NAME)/Makefile.in
 	tar chf $(DIST_NAME).tar $(DIST_NAME)
 	gzip <$(DIST_NAME).tar >$(DIST_NAME).tar.gz
-	@rm $(DIST_NAME).tar
+	rm $(DIST_NAME).tar
 
 # For an explanation of the following Makefile rules, see node
 # `Automatic Remaking' in GNU Autoconf documentation.
