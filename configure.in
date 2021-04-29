@@ -33,11 +33,6 @@ AC_PROG_INSTALL
 dnl# If $MAKE is set, propagate that via @SET_MAKE@.
 AC_PROG_MAKE_SET
 
-dnl# Arrange for config.h to #define const if needed.
-dnl#
-dnl# TODO: Remove this, as it should not be needed.
-AC_CONST
-
 dnl# Arrange for config.h to #define size_t if needed.
 dnl#
 dnl# TODO: Remove this.
