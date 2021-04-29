@@ -1,10 +1,25 @@
 # Makefile.in
+# @configure_input@
 
 @SET_MAKE@
 
+# In general, the intent is to use variables in a manner consistent
+# with how autoconf expects them to be used:
+# https://www.gnu.org/software/autoconf/manual/autoconf-2.67/html_node/Preset-Output-Variables.html
+
+# Debugging and optimization options for the C compiler.
 CFLAGS = @CFLAGS@
+
+# Preprocessing options for C and C++.
 CPPFLAGS = @CPPFLAGS@
+
+# I removed DEFS because it was unused at the time.  I am not sure if
+# I want to bring it back.  I do not like the config.h mechanism.
+
+# Options for the linker, particularly -L search options.
 LDFLAGS = @LDFLAGS@
+
+# Additional libraries to link with.
 LIBS = @LIBS@
 
 # Enable all GCC warnings.
@@ -13,7 +28,6 @@ CFLAGS += -Wall
 # Installation targeting.  Files will be installed under the tree
 # rooted at prefix.  flex will be installed in bindir, libfl.a in
 # libdir, and FlexLexer.h will be installed in includedir.
-
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 bindir = $(exec_prefix)/bin
@@ -43,11 +57,19 @@ srcdir = @srcdir@
 # 'make' will pull generated sources from both places, making a mess.
 VPATH = @srcdir@
 
+# Make a symbolic link.
 LN_S = @LN_S@
+
+# Bison, operating in yacc compatibility mode.
 YACC = @YACC@
+
+# C compiler.
 CC = @CC@
+
+# Library archiver (creator).
 AR = ar
 RANLIB = @RANLIB@
+
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
