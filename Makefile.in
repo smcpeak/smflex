@@ -101,13 +101,15 @@ LIBSRCS = libmain.c libyywrap.c
 # Object files to compile and archive into $(FLEXLIB).
 LIBOBJS = libmain.o libyywrap.o
 
-# Complete set of files to be included in the distribution tarball,
-# except that 'scan.c' gets renamed to 'initscan.c' during the packaging
-# process.
+# Complete set of files and directories to be included in the
+# distribution tarball, except that 'scan.c' gets renamed to
+# 'initscan.c' during the packaging process, and 'test/out' gets
+# removed.
 DISTFILES = README.md NEWS COPYING FlexLexer.h \
 	configure.in Makefile.in mkskel.sh flex.skl \
 	$(HEADERS) $(SOURCES) $(LIBSRCS) \
-	flex.md scan.c install.sh mkinstalldirs configure
+	flex.md scan.c install.sh mkinstalldirs configure \
+	test
 
 # Name of the distribution, meaning what goes before ".tar.gz" in the
 # distribution tarball file name, and also the name of the directory
@@ -186,6 +188,7 @@ tblcmp.o: tblcmp.c flexdef.h
 # output as it did before.
 test: check
 check: $(FLEX)
+	$(MAKE) -C test CC=$(CC)
 	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) $(srcdir)/scan.l \
 	  | sed s,\"$(srcdir)/scan.l\",\"scan.l\", > scan.actual.c
 	diff -b scan.c scan.actual.c
@@ -248,6 +251,7 @@ mostlyclean:
 clean: mostlyclean
 	rm -f flex parse.c parse.h *.o lex.yy.c lex.yy.cc \
 		$(FLEXLIB) config.log config.cache
+	$(MAKE) -C test clean
 
 distclean: clean
 	rm -f .bootstrap $(FLEX) scan.c tags TAGS Makefile config.status \
