@@ -33,7 +33,7 @@ SHELL = /bin/sh
 #
 # e.g.: "mkdir obj; cd obj; ../configure"
 #
-# See https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.70/html_node/Build-Directories.html
+# See https://www.gnu.org/software/autoconf/manual/autoconf-2.67/html_node/Build-Directories.html
 #
 srcdir = @srcdir@
 
