@@ -41,15 +41,6 @@
 #endif	/* __STDC__ */
 #endif	/* ! __cplusplus */
 
-#ifdef __TURBOC__
- #pragma warn -rch
- #pragma warn -use
-#include <io.h>
-#include <stdlib.h>
-#define YY_USE_CONST
-#define YY_USE_PROTOS
-#endif
-
 #ifdef YY_USE_CONST
 #define yyconst const
 #else
@@ -1329,7 +1320,7 @@ char *yytext;
 #define OPTION 17
 #define LINEDIR 18
 
-#line 1333 "scan.c"
+#line 1324 "scan.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -1502,7 +1493,7 @@ YY_DECL
 	Char nmdef[MAXLINE], myesc();
 
 
-#line 1506 "scan.c"
+#line 1497 "scan.c"
 
 	if ( yy_init )
 		{
@@ -2740,7 +2731,7 @@ YY_RULE_SETUP
 #line 650 "scan.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 2744 "scan.c"
+#line 2735 "scan.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(SECT2):
 case YY_STATE_EOF(CODEBLOCK):

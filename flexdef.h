@@ -31,21 +31,6 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stddef.h>                    /* size_t */
-
-#ifdef __TURBOC__
-#define HAVE_STRING_H 1
-#define MS_DOS 1
-#ifndef __STDC__
-#define __STDC__ 1
-#endif
- #pragma warn -pro
- #pragma warn -rch
- #pragma warn -use
- #pragma warn -aus
- #pragma warn -par
- #pragma warn -pia
-#endif
-
 #include <string.h>                    /* strcpy, etc. */
 #include <stdlib.h>                    /* malloc, etc. */
 
