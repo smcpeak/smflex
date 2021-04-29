@@ -4,118 +4,83 @@ flex - fast lexical analyzer generator
 
 # SYNOPSIS
 
-**flex** **\[-bcdfhilnpstvwBFILTV78+? -C\[aefFmr\] -ooutput -Pprefix
--Sskeleton\]** **\[--help --version\]** *\[filename ...\]*
+```
+flex [-bcdfhilnpstvwBFILTV78+? -C[aefFmr] -ooutput -Pprefix -Sskeleton]
+     [--help --version] [filename ...]
+```
 
 # OVERVIEW
 
-This manual describes *flex,* a tool for generating programs that
+This manual describes `flex`, a tool for generating programs that
 perform pattern-matching on text. The manual includes both tutorial and
 reference sections:
 
-
-        Description
-            a brief overview of the tool
-
-        Some Simple Examples
-
-        Format Of The Input File
-
-        Patterns
-            the extended regular expressions used by flex
-
-        How The Input Is Matched
-            the rules for determining what has been matched
-
-        Actions
-            how to specify what to do when a pattern is matched
-
-        The Generated Scanner
-            details regarding the scanner that flex produces;
-            how to control the input source
-
-        Start Conditions
-            introducing context into your scanners, and
-            managing "mini-scanners"
-
-        Multiple Input Buffers
-            how to manipulate multiple input sources; how to
-            scan from strings instead of files
-
-        End-of-file Rules
-            special rules for matching the end of the input
-
-        Miscellaneous Macros
-            a summary of macros available to the actions
-
-        Values Available To The User
-            a summary of values available to the actions
-
-        Interfacing With Yacc
-            connecting flex scanners together with yacc parsers
-
-        Options
-            flex command-line options, and the "%option"
-            directive
-
-        Performance Considerations
-            how to make your scanner go as fast as possible
-
-        Generating C++ Scanners
-            the (experimental) facility for generating C++
-            scanner classes
-
-        Incompatibilities With Lex And POSIX
-            how flex differs from AT&T lex and the POSIX lex
-            standard
-
-        Diagnostics
-            those error messages produced by flex (or scanners
-            it generates) whose meanings might not be apparent
-
-        Files
-            files used by flex
-
-        Deficiencies / Bugs
-            known problems with flex
-
-        See Also
-            other documentation, related tools
-
-        Author
-            includes contact information
+* [Description](#description): a brief overview of the tool
+* [Some Simple Examples](#some-simple-examples)
+* [Format Of The Input File](#format-of-the-input-file)
+* [Patterns](#patterns): the extended regular expressions used by flex
+* [How The Input Is Matched](#how-the-input-is-matched): the rules for
+  determining what has been matched
+* [Actions](#actions): how to specify what to do when a pattern is
+  matched
+* [The Generated Scanner](#the-generated-scanner): details regarding
+  the scanner that flex produces; how to control the input source
+* [Start Conditions](#start-conditions): introducing context into your
+  scanners, and managing "mini-scanners"
+* [Multiple Input Buffers](#multiple-input-buffers): how to manipulate
+  multiple input sources; how to scan from strings instead of files
+* [End-of-file Rules](#end-of-file-rules): special rules for matching
+  the end of the input
+* [Miscellaneous Macros](#miscellaneous-macros): a summary of macros
+  available to the actions
+* [Values Available To The User](#values-available-to-the-user): a
+  summary of values available to the actions
+* [Interfacing With Yacc](#interfacing-with-yacc): connecting flex
+  scanners together with yacc parsers
+* [Options](#options): flex command-line options, and the "%option"
+  directive
+* [Performance Considerations](#performance-considerations): how to
+  make your scanner go as fast as possible
+* [Generating C++ Scanners](#generating-c++-scanners): the
+  (experimental) facility for generating C++ scanner classes
+* [Incompatibilities With Lex And POSIX](#incompatibilities-with-lex-and-posix):
+  how flex differs from AT&T lex and the POSIX lex standard
+* [Diagnostics](#diagnostics): those error messages produced by flex
+  (or scanners it generates) whose meanings might not be apparent
+* [Files](#files): files used by flex
+* [Deficiencies / Bugs](#deficiencies-/-bugs): known problems with flex
+* [See Also](#see-also): other documentation, related tools
+* [Author](#author): includes contact information
 
 # DESCRIPTION
 
-*flex* is a tool for generating *scanners:* programs which recognized
-lexical patterns in text. *flex* reads the given input files, or its
+`flex` is a tool for generating *scanners*: programs which recognized
+lexical patterns in text. `flex` reads the given input files, or its
 standard input if no file names are given, for a description of a
 scanner to generate. The description is in the form of pairs of regular
-expressions and C code, called *rules. flex* generates as output a C
-source file, **lex.yy.c,** which defines a routine **yylex().** This
-file is compiled and linked with the **-lfl** library to produce an
+expressions and C code, called *rules*. `flex` generates as output a C
+source file, `lex.yy.c`, which defines a routine `yylex()`. This
+file is compiled and linked with the `-lfl` library to produce an
 executable. When the executable is run, it analyzes its input for
 occurrences of the regular expressions. Whenever it finds one, it
 executes the corresponding C code.
 
 # SOME SIMPLE EXAMPLES
 
-First some simple examples to get the flavor of how one uses *flex.* The
-following *flex* input specifies a scanner which whenever it encounters
+First some simple examples to get the flavor of how one uses `flex`. The
+following `flex` input specifies a scanner which whenever it encounters
 the string "username" will replace it with the user's login name:
-
 
         %%
         username    printf( "%s", getlogin() );
 
-By default, any text not matched by a *flex* scanner is copied to the
+By default, any text not matched by a `flex` scanner is copied to the
 output, so the net effect of this scanner is to copy its input file to
 its output with each occurrence of "username" expanded. In this input,
 there is just one rule. "username" is the *pattern* and the "printf" is
 the *action.* The "%%" marks the beginning of the rules.
 
 Here's another simple example:
-
 
                 int num_lines = 0, num_chars = 0;
 
@@ -134,8 +99,8 @@ Here's another simple example:
 This scanner counts the number of characters and the number of lines in
 its input (it produces no output other than the final report on the
 counts). The first line declares two globals, "num\_lines" and
-"num\_chars", which are accessible both inside **yylex()** and in the
-**main()** routine declared after the second "%%". There are two rules,
+"num\_chars", which are accessible both inside `yylex()` and in the
+`main()` routine declared after the second "%%". There are two rules,
 one which matches a newline ("\\n") and increments both the line count
 and the character count, and one which matches any character other than
 a newline (indicated by the "." regular expression).
@@ -202,8 +167,8 @@ The details of this example will be explained in the following sections.
 
 # FORMAT OF THE INPUT FILE
 
-The *flex* input file consists of three sections, separated by a line
-with just **%%** in it:
+The `flex` input file consists of three sections, separated by a line
+with just `%%` in it:
 
 
         definitions
@@ -247,7 +212,7 @@ is identical to
 and matches one-or-more digits followed by a '.' followed by
 zero-or-more digits.
 
-The *rules* section of the *flex* input contains a series of rules of
+The *rules* section of the `flex` input contains a series of rules of
 the form:
 
 
@@ -258,19 +223,19 @@ same line.
 
 See below for a further description of patterns and actions.
 
-Finally, the user code section is simply copied to **lex.yy.c**
+Finally, the user code section is simply copied to `lex.yy.c`
 verbatim. It is used for companion routines which call or are called by
 the scanner. The presence of this section is optional; if it is missing,
-the second **%%** in the input file may be skipped, too.
+the second `%%` in the input file may be skipped, too.
 
 In the definitions and rules sections, any *indented* text or text
-enclosed in **%{** and **%}** is copied verbatim to the output (with the
-%{}'s removed). The %{}'s must appear unindented on lines by themselves.
+enclosed in `%{` and `%}` is copied verbatim to the output (with the
+`%{}`s removed). The `%{}`s must appear unindented on lines by themselves.
 
-In the rules section, any indented or %{} text appearing before the
+In the rules section, any indented or `%{}` text appearing before the
 first rule may be used to declare variables which are local to the
 scanning routine and (after the declarations) code which is to be
-executed whenever the scanning routine is entered. Other indented or %{}
+executed whenever the scanning routine is entered. Other indented or `%{}`
 text in the rule section is still copied to the output, but its meaning
 is not well-defined and it may well cause compile-time errors (this
 feature is present for *POSIX* compliance; see below for other such
@@ -284,7 +249,6 @@ the output up to the next "\*/".
 
 The patterns in the input are written using an extended set of regular
 expressions. These are:
-
 
         x          match the character 'x'
         .          any character (byte) except newline
@@ -393,8 +357,8 @@ and to match zero-or-more "foo"'s-or-"bar"'s:
 
 In addition to characters and ranges of characters, character classes
 can also contain character class *expressions.* These are expressions
-enclosed inside **\[:** and **:\]** delimiters (which themselves must
-appear between the '\[' and '\]' of the character class; other elements
+enclosed inside `[:` and `:]` delimiters (which themselves must
+appear between the `[` and `]` of the character class; other elements
 may occur inside the character class, too). The valid expressions are:
 
 
@@ -404,10 +368,10 @@ may occur inside the character class, too). The valid expressions are:
         [:space:] [:upper:] [:xdigit:]
 
 These expressions all designate a set of characters equivalent to the
-corresponding standard C **isXXX** function. For example,
-**\[:alnum:\]** designates those characters for which **isalnum()**
+corresponding standard C `isXXX` function. For example,
+`[:alnum:]` designates those characters for which `isalnum()`
 returns true - i.e., any alphabetic or numeric. Some systems don't
-provide **isblank(),** so flex defines **\[:blank:\]** as a blank or a
+provide `isblank()`, so flex defines `[:blank:]` as a blank or a
 tab.
 
 For example, the following character classes are all equivalent:
@@ -418,8 +382,8 @@ For example, the following character classes are all equivalent:
         [[:alpha:]0-9]
         [a-zA-Z0-9]
 
-If your scanner is case-insensitive (the **-i** flag), then
-**\[:upper:\]** and **\[:lower:\]** are equivalent to **\[:alpha:\].**
+If your scanner is case-insensitive (the `-i` flag), then
+`[:upper:]` and `[:lower:]` are equivalent to `[:alpha:]`.
 
 Some notes on patterns:
 
@@ -450,8 +414,8 @@ Some notes on patterns:
 
 Note that the first of these, can be written "foo/bar\\n".
 
-> The following will result in '$' or '^' being treated as a normal
-> character:
+The following will result in '$' or '^' being treated as a normal
+character:
 
 
         foo|(bar$)
@@ -474,19 +438,19 @@ strings which match any of its patterns. If it finds more than one
 match, it takes the one matching the most text (for trailing context
 rules, this includes the length of the trailing part, even though it
 will then be returned to the input). If it finds two or more matches of
-the same length, the rule listed first in the *flex* input file is
+the same length, the rule listed first in the `flex` input file is
 chosen.
 
 Once the match is determined, the text corresponding to the match
 (called the *token)* is made available in the global character pointer
-**yytext,** and its length in the global integer **yyleng.** The
+`yytext`, and its length in the global integer `yyleng`. The
 *action* corresponding to the matched pattern is then executed (a more
 detailed description of actions follows), and then the remaining input
 is scanned for another match.
 
 If no match is found, then the *default rule* is executed: the next
 character in the input is considered matched and copied to the standard
-output. Thus, the simplest legal *flex* input is:
+output. Thus, the simplest legal `flex` input is:
 
 
         %%
@@ -494,44 +458,44 @@ output. Thus, the simplest legal *flex* input is:
 which generates a scanner that simply copies its input (one character at
 a time) to its output.
 
-Note that **yytext** can be defined in two different ways: either as a
+Note that `yytext` can be defined in two different ways: either as a
 character *pointer* or as a character *array.* You can control which
-definition *flex* uses by including one of the special directives
-**%pointer** or **%array** in the first (definitions) section of your
-flex input. The default is **%pointer,** unless you use the **-l** lex
-compatibility option, in which case **yytext** will be an array. The
-advantage of using **%pointer** is substantially faster scanning and no
+definition `flex` uses by including one of the special directives
+`%pointer` or `%array` in the first (definitions) section of your
+flex input. The default is `%pointer`, unless you use the `-l` lex
+compatibility option, in which case `yytext` will be an array. The
+advantage of using `%pointer` is substantially faster scanning and no
 buffer overflow when matching very large tokens (unless you run out of
 dynamic memory). The disadvantage is that you are restricted in how your
-actions can modify **yytext** (see the next section), and calls to the
-**unput()** function destroys the present contents of **yytext,** which
+actions can modify `yytext` (see the next section), and calls to the
+`unput()` function destroys the present contents of `yytext`, which
 can be a considerable porting headache when moving between different
 *lex* versions.
 
-The advantage of **%array** is that you can then modify **yytext** to
-your heart's content, and calls to **unput()** do not destroy **yytext**
+The advantage of `%array` is that you can then modify `yytext` to
+your heart's content, and calls to `unput()` do not destroy `yytext`
 (see below). Furthermore, existing *lex* programs sometimes access
-**yytext** externally using declarations of the form:
+`yytext` externally using declarations of the form:
 
         extern char yytext[];
 
-This definition is erroneous when used with **%pointer,** but correct
-for **%array.**
+This definition is erroneous when used with `%pointer`, but correct
+for `%array`.
 
-**%array** defines **yytext** to be an array of **YYLMAX** characters,
+`%array` defines `yytext` to be an array of `YYLMAX` characters,
 which defaults to a fairly large value. You can change the size by
-simply \#define'ing **YYLMAX** to a different value in the first section
-of your *flex* input. As mentioned above, with **%pointer** yytext grows
+simply \#define'ing `YYLMAX` to a different value in the first section
+of your `flex` input. As mentioned above, with `%pointer` yytext grows
 dynamically to accommodate large tokens. While this means your
-**%pointer** scanner can accommodate very large tokens (such as matching
+`%pointer` scanner can accommodate very large tokens (such as matching
 entire blocks of comments), bear in mind that each time the scanner must
-resize **yytext** it also must rescan the entire token from the
-beginning, so matching such tokens can prove slow. **yytext** presently
-does *not* dynamically grow if a call to **unput()** results in too much
+resize `yytext` it also must rescan the entire token from the
+beginning, so matching such tokens can prove slow. `yytext` presently
+does *not* dynamically grow if a call to `unput()` results in too much
 text being pushed back; instead, a run-time error results.
 
-Also note that you cannot use **%array** with C++ scanner classes (the
-**c++** option; see below).
+Also note that you cannot use `%array` with C++ scanner classes (the
+`c++` option; see below).
 
 # ACTIONS
 
@@ -558,43 +522,43 @@ single blank, and throws away whitespace found at the end of a line:
         [ \t]+$       /* ignore this token */
 
 If the action contains a '{', then the action spans till the balancing
-'}' is found, and the action may cross multiple lines. *flex* knows
+'}' is found, and the action may cross multiple lines. `flex` knows
 about C strings and comments and won't be fooled by braces found within
-them, but also allows actions to begin with **%{** and will consider the
-action to be all the text up to the next **%}** (regardless of ordinary
+them, but also allows actions to begin with `%{` and will consider the
+action to be all the text up to the next `%}` (regardless of ordinary
 braces inside the action).
 
 An action consisting solely of a vertical bar ('\|') means "same as the
 action for the next rule." See below for an illustration.
 
-Actions can include arbitrary C code, including **return** statements to
-return a value to whatever routine called **yylex().** Each time
-**yylex()** is called it continues processing tokens from where it last
+Actions can include arbitrary C code, including `return` statements to
+return a value to whatever routine called `yylex()`. Each time
+`yylex()` is called it continues processing tokens from where it last
 left off until it either reaches the end of the file or executes a
 return.
 
-Actions are free to modify **yytext** except for lengthening it (adding
+Actions are free to modify `yytext` except for lengthening it (adding
 characters to its end--these will overwrite later characters in the
-input stream). This however does not apply when using **%array** (see
-above); in that case, **yytext** may be freely modified in any way.
+input stream). This however does not apply when using `%array` (see
+above); in that case, `yytext` may be freely modified in any way.
 
-Actions are free to modify **yyleng** except they should not do so if
-the action also includes use of **yymore()** (see below).
+Actions are free to modify `yyleng` except they should not do so if
+the action also includes use of `yymore()` (see below).
 
 There are a number of special directives which can be included within an
 action:
 
--   **ECHO** copies yytext to the scanner's output.
+-   `ECHO` copies yytext to the scanner's output.
 
--   **BEGIN** followed by the name of a start condition places the
+-   `BEGIN` followed by the name of a start condition places the
     scanner in the corresponding start condition (see below).
 
--   **REJECT** directs the scanner to proceed on to the "second best"
+-   `REJECT` directs the scanner to proceed on to the "second best"
     rule which matched the input (or a prefix of the input). The rule is
     chosen as described above in "How the Input is Matched", and
-    **yytext** and **yyleng** set up appropriately. It may either be one
+    `yytext` and `yyleng` set up appropriately. It may either be one
     which matched as much text as the originally chosen rule but came
-    later in the *flex* input file, or one which matched less text. For
+    later in the `flex` input file, or one which matched less text. For
     example, the following will both count the words in the input and
     call the routine special() whenever "frob" is seen:
 
@@ -607,9 +571,9 @@ action:
         frob        special(); REJECT;
         [^ \t\n]+   ++word_count;
 
-Without the **REJECT,** any "frob"'s in the input would not be counted
+Without the `REJECT`, any "frob"'s in the input would not be counted
 as words, since the scanner normally executes only one action per token.
-Multiple **REJECT's** are allowed, each one finding the next best choice
+Multiple `REJECT`'s are allowed, each one finding the next best choice
 to the currently active rule. For example, when the following scanner
 scans the token "abcd", it will write "abcdabcaba" to the output:
 
@@ -622,18 +586,18 @@ scans the token "abcd", it will write "abcdabcaba" to the output:
         .|\n     /* eat up any unmatched character */
 
 (The first three rules share the fourth's action since they use the
-special '\|' action.) **REJECT** is a particularly expensive feature in
+special '\|' action.) `REJECT` is a particularly expensive feature in
 terms of scanner performance; if it is used in *any* of the scanner's
 actions it will slow down *all* of the scanner's matching. Furthermore,
-**REJECT** cannot be used with the *-Cf* or *-CF* options (see below).
+`REJECT` cannot be used with the *-Cf* or *-CF* options (see below).
 
-> Note also that unlike the other special actions, **REJECT** is a
-> *branch;* code immediately following it in the action will *not* be
-> executed.
+Note also that unlike the other special actions, `REJECT` is a
+*branch;* code immediately following it in the action will *not* be
+executed.
 
--   **yymore()** tells the scanner that the next time it matches a rule,
+-   `yymore()` tells the scanner that the next time it matches a rule,
     the corresponding token should be *appended* onto the current value
-    of **yytext** rather than replacing it. For example, given the input
+    of `yytext` rather than replacing it. For example, given the input
     "mega-kludge" the following will write "mega-mega-kludge" to the
     output:
 
@@ -646,19 +610,19 @@ actions it will slow down *all* of the scanner's matching. Furthermore,
 
 First "mega-" is matched and echoed to the output. Then "kludge" is
 matched, but the previous "mega-" is still hanging around at the
-beginning of **yytext** so the **ECHO** for the "kludge" rule will
+beginning of `yytext` so the `ECHO` for the "kludge" rule will
 actually write "mega-kludge".
 
-Two notes regarding use of **yymore().** First, **yymore()** depends on
+Two notes regarding use of `yymore()`. First, `yymore()` depends on
 the value of *yyleng* correctly reflecting the size of the current
-token, so you must not modify *yyleng* if you are using **yymore().**
-Second, the presence of **yymore()** in the scanner's action entails a
+token, so you must not modify *yyleng* if you are using `yymore()`.
+Second, the presence of `yymore()` in the scanner's action entails a
 minor performance penalty in the scanner's matching speed.
 
--   **yyless(n)** returns all but the first *n* characters of the
+-   `yyless(n)` returns all but the first *n* characters of the
     current token back to the input stream, where they will be rescanned
-    when the scanner looks for the next match. **yytext** and **yyleng**
-    are adjusted appropriately (e.g., **yyleng** will now be equal to
+    when the scanner looks for the next match. `yytext` and `yyleng`
+    are adjusted appropriately (e.g., `yyleng` will now be equal to
     *n* ). For example, on the input "foobar" the following will write
     out "foobarbar":
 
@@ -669,15 +633,15 @@ minor performance penalty in the scanner's matching speed.
         foobar    ECHO; yyless(3);
         [a-z]+    ECHO;
 
-An argument of 0 to **yyless** will cause the entire current input
+An argument of 0 to `yyless` will cause the entire current input
 string to be scanned again. Unless you've changed how the scanner will
-subsequently process its input (using **BEGIN,** for example), this will
+subsequently process its input (using `BEGIN`, for example), this will
 result in an endless loop.
 
-Note that **yyless** is a macro and can only be used in the flex input
+Note that `yyless` is a macro and can only be used in the flex input
 file, not from other source files.
 
--   **unput(c)** puts the character *c* back onto the input stream. It
+-   `unput(c)` puts the character *c* back onto the input stream. It
     will be the next character scanned. The following action will take
     the current token and cause it to be rescanned enclosed in
     parentheses.
@@ -696,22 +660,22 @@ file, not from other source files.
         free( yycopy );
         }
 
-Note that since each **unput()** puts the given character back at the
+Note that since each `unput()` puts the given character back at the
 *beginning* of the input stream, pushing back strings must be done
 back-to-front.
 
-An important potential problem when using **unput()** is that if you are
-using **%pointer** (the default), a call to **unput()** *destroys* the
+An important potential problem when using `unput()` is that if you are
+using `%pointer` (the default), a call to `unput()` *destroys* the
 contents of *yytext,* starting with its rightmost character and
 devouring one character to the left with each call. If you need the
-value of yytext preserved after a call to **unput()** (as in the above
+value of yytext preserved after a call to `unput()` (as in the above
 example), you must either first copy it elsewhere, or build your scanner
-using **%array** instead (see How The Input Is Matched).
+using `%array` instead (see How The Input Is Matched).
 
-Finally, note that you cannot put back **EOF** to attempt to mark the
+Finally, note that you cannot put back `EOF` to attempt to mark the
 input stream with an end-of-file.
 
--   **input()** reads the next character from the input stream. For
+-   `input()` reads the next character from the input stream. For
     example, the following is one way to eat up C comments:
 
 <!-- -->
@@ -743,29 +707,29 @@ input stream with an end-of-file.
                         }
                     }
 
-(Note that if the scanner is compiled using **C++,** then **input()** is
-instead referred to as **yyinput(),** in order to avoid a name clash
-with the **C++** stream by the name of *input.)*
+(Note that if the scanner is compiled using C++, then `input()` is
+instead referred to as `yyinput()`, in order to avoid a name clash
+with the C++ stream by the name of *input.)*
 
--   **YY\_FLUSH\_BUFFER** flushes the scanner's internal buffer so that
+-   `YY_FLUSH_BUFFER` flushes the scanner's internal buffer so that
     the next time the scanner attempts to match a token, it will first
-    refill the buffer using **YY\_INPUT** (see The Generated Scanner,
+    refill the buffer using `YY_INPUT` (see The Generated Scanner,
     below). This action is a special case of the more general
-    **yy\_flush\_buffer()** function, described below in the section
+    `yy_flush_buffer()` function, described below in the section
     Multiple Input Buffers.
 
--   **yyterminate()** can be used in lieu of a return statement in an
+-   `yyterminate()` can be used in lieu of a return statement in an
     action. It terminates the scanner and returns a 0 to the scanner's
-    caller, indicating "all done". By default, **yyterminate()** is also
+    caller, indicating "all done". By default, `yyterminate()` is also
     called when an end-of-file is encountered. It is a macro and may be
     redefined.
 
 # THE GENERATED SCANNER
 
-The output of *flex* is the file **lex.yy.c,** which contains the
-scanning routine **yylex(),** a number of tables used by it for matching
+The output of `flex` is the file `lex.yy.c`, which contains the
+scanning routine `yylex()`, a number of tables used by it for matching
 tokens, and a number of auxiliary routines and macros. By default,
-**yylex()** is declared as follows:
+`yylex()` is declared as follows:
 
 
         int yylex()
@@ -785,34 +749,34 @@ taking two floats as arguments. Note that if you give arguments to the
 scanning routine using a K&R-style/non-prototyped function declaration,
 you must terminate the definition with a semi-colon (;).
 
-Whenever **yylex()** is called, it scans tokens from the global input
+Whenever `yylex()` is called, it scans tokens from the global input
 file *yyin* (which defaults to stdin). It continues until it either
 reaches an end-of-file (at which point it returns the value 0) or one of
 its actions executes a *return* statement.
 
 If the scanner reaches an end-of-file, subsequent calls are undefined
 unless either *yyin* is pointed at a new input file (in which case
-scanning continues from that file), or **yyrestart()** is called.
-**yyrestart()** takes one argument, a **FILE \*** pointer (which can be
-nil, if you've set up **YY\_INPUT** to scan from a source other than
+scanning continues from that file), or `yyrestart()` is called.
+`yyrestart()` takes one argument, a `FILE *` pointer (which can be
+nil, if you've set up `YY_INPUT` to scan from a source other than
 *yyin),* and initializes *yyin* for scanning from that file. Essentially
 there is no difference between just assigning *yyin* to a new input file
-or using **yyrestart()** to do so; the latter is available for
-compatibility with previous versions of *flex,* and because it can be
+or using `yyrestart()` to do so; the latter is available for
+compatibility with previous versions of `flex`, and because it can be
 used to switch input files in the middle of scanning. It can also be
 used to throw away the current input buffer, by calling it with an
-argument of *yyin;* but better is to use **YY\_FLUSH\_BUFFER** (see
-above). Note that **yyrestart()** does *not* reset the start condition
-to **INITIAL** (see Start Conditions, below).
+argument of *yyin;* but better is to use `YY_FLUSH_BUFFER` (see
+above). Note that `yyrestart()` does *not* reset the start condition
+to `INITIAL` (see Start Conditions, below).
 
-If **yylex()** stops scanning due to executing a *return* statement in
+If `yylex()` stops scanning due to executing a *return* statement in
 one of the actions, the scanner may then be called again and it will
 resume scanning where it left off.
 
 By default (and for purposes of efficiency), the scanner uses
 block-reads rather than simple *getc()* calls to read characters from
 *yyin.* The nature of how it gets its input can be controlled by
-defining the **YY\_INPUT** macro. YY\_INPUT's calling sequence is
+defining the `YY_INPUT` macro. YY\_INPUT's calling sequence is
 "YY\_INPUT(buf,result,max\_size)". Its action is to place up to
 *max\_size* characters in the character array *buf* and return in the
 integer variable *result* either the number of characters read or the
@@ -835,30 +799,30 @@ This definition will change the input processing to occur one character
 at a time.
 
 When the scanner receives an end-of-file indication from YY\_INPUT, it
-then checks the **yywrap()** function. If **yywrap()** returns false
+then checks the `yywrap()` function. If `yywrap()` returns false
 (zero), then it is assumed that the function has gone ahead and set up
 *yyin* to point to another input file, and scanning continues. If it
 returns true (non-zero), then the scanner terminates, returning 0 to its
 caller. Note that in either case, the start condition remains unchanged;
-it does *not* revert to **INITIAL.**
+it does *not* revert to `INITIAL`.
 
-If you do not supply your own version of **yywrap(),** then you must
-either use **%option noyywrap** (in which case the scanner behaves as
-though **yywrap()** returned 1), or you must link with **-lfl** to
+If you do not supply your own version of `yywrap()`, then you must
+either use `%option noyywrap` (in which case the scanner behaves as
+though `yywrap()` returned 1), or you must link with `-lfl` to
 obtain the default version of the routine, which always returns 1.
 
 Three routines are available for scanning from in-memory buffers rather
-than files: **yy\_scan\_string(), yy\_scan\_bytes(),** and
-**yy\_scan\_buffer().** See the discussion of them below in the section
+than files: `yy_scan_string(), yy_scan_bytes()`, and
+`yy_scan_buffer()`. See the discussion of them below in the section
 Multiple Input Buffers.
 
-The scanner writes its **ECHO** output to the *yyout* global (default,
+The scanner writes its `ECHO` output to the *yyout* global (default,
 stdout), which may be redefined by the user simply by assigning it to
-some other **FILE** pointer.
+some other `FILE` pointer.
 
 # START CONDITIONS
 
-*flex* provides a mechanism for conditionally activating rules. Any rule
+`flex` provides a mechanism for conditionally activating rules. Any rule
 whose pattern is prefixed with "&lt;sc&gt;" will only be active when the
 scanner is in the start condition named "sc". For example,
 
@@ -879,17 +843,17 @@ will be active only when the current start condition is either
 "INITIAL", "STRING", or "QUOTE".
 
 Start conditions are declared in the definitions (first) section of the
-input using unindented lines beginning with either **%s** or **%x**
+input using unindented lines beginning with either `%s` or `%x`
 followed by a list of names. The former declares *inclusive* start
 conditions, the latter *exclusive* start conditions. A start condition
-is activated using the **BEGIN** action. Until the next **BEGIN** action
+is activated using the `BEGIN` action. Until the next `BEGIN` action
 is executed, rules with the given start condition will be active and
 rules with other start conditions will be inactive. If the start
 condition is *inclusive,* then rules with no start conditions at all
 will also be active. If it is *exclusive,* then *only* rules qualified
 with the start condition will be active. A set of rules contingent on
 the same exclusive start condition describe a scanner which is
-independent of any of the other rules in the *flex* input. Because of
+independent of any of the other rules in the `flex` input. Because of
 this, exclusive start conditions make it easy to specify "mini-scanners"
 which scan portions of the input that are syntactically different from
 the rest (e.g., comments).
@@ -916,15 +880,15 @@ is equivalent to
 
         <INITIAL,example>bar    something_else();
 
-Without the **&lt;INITIAL,example&gt;** qualifier, the *bar* pattern in
+Without the `<INITIAL,example>` qualifier, the *bar* pattern in
 the second example wouldn't be active (i.e., couldn't match) when in
-start condition **example.** If we just used **&lt;example&gt;** to
-qualify *bar,* though, then it would only be active in **example** and
-not in **INITIAL,** while in the first example it's active in both,
-because in the first example the **example** startion condition is an
-*inclusive* **(%s)** start condition.
+start condition `example`. If we just used `<example>` to
+qualify *bar,* though, then it would only be active in `example` and
+not in `INITIAL`, while in the first example it's active in both,
+because in the first example the `example` startion condition is an
+*inclusive* `(%s)` start condition.
 
-Also note that the special start-condition specifier **&lt;\*&gt;**
+Also note that the special start-condition specifier `<*>`
 matches every start condition. Thus, the above example could also have
 been written;
 
@@ -936,21 +900,21 @@ been written;
 
         <*>bar    something_else();
 
-The default rule (to **ECHO** any unmatched character) remains active in
+The default rule (to `ECHO` any unmatched character) remains active in
 start conditions. It is equivalent to:
 
 
         <*>.|\n     ECHO;
 
-**BEGIN(0)** returns to the original state where only the rules with no
+`BEGIN(0)` returns to the original state where only the rules with no
 start conditions are active. This state can also be referred to as the
-start-condition "INITIAL", so **BEGIN(INITIAL)** is equivalent to
-**BEGIN(0).** (The parentheses around the start condition name are not
+start-condition "INITIAL", so `BEGIN(INITIAL)` is equivalent to
+`BEGIN(0)`. (The parentheses around the start condition name are not
 required but are considered good style.)
 
-**BEGIN** actions can also be given as indented code at the beginning of
+`BEGIN` actions can also be given as indented code at the beginning of
 the rules section. For example, the following will cause the scanner to
-enter the "SPECIAL" start condition whenever **yylex()** is called and
+enter the "SPECIAL" start condition whenever `yylex()` is called and
 the global variable *enter\_special* is true:
 
 
@@ -1047,13 +1011,13 @@ fashion:
         <comment>"*"+"/"        BEGIN(comment_caller);
 
 Furthermore, you can access the current start condition using the
-integer-valued **YY\_START** macro. For example, the above assignments
+integer-valued `YY_START` macro. For example, the above assignments
 to *comment\_caller* could instead be written
 
 
         comment_caller = YY_START;
 
-Flex provides **YYSTATE** as an alias for **YY\_START** (since that is
+Flex provides `YYSTATE` as an alias for `YY_START` (since that is
 what's used by AT&T *lex).*
 
 Note that start conditions do not have their own name-space; %s's and
@@ -1153,34 +1117,34 @@ Start condition scopes may be nested.
 Three routines are available for manipulating stacks of start
 conditions:
 
-**void yy\_push\_state(int new\_state)**  
+`void yy_push_state(int new_state)`
 pushes the current start condition onto the top of the start condition
-stack and switches to *new\_state* as though you had used **BEGIN
-new\_state** (recall that start condition names are also integers).
+stack and switches to *new\_state* as though you had used
+`BEGIN new_state` (recall that start condition names are also integers).
 
-**void yy\_pop\_state()**  
-pops the top of the stack and switches to it via **BEGIN.**
+`void yy_pop_state()`
+pops the top of the stack and switches to it via `BEGIN`.
 
-**int yy\_top\_state()**  
+`int yy_top_state()`
 returns the top of the stack without altering the stack's contents.
 
 The start condition stack grows dynamically and so has no built-in size
 limitation. If memory is exhausted, program execution aborts.
 
-To use start condition stacks, your scanner must include a **%option
-stack** directive (see Options below).
+To use start condition stacks, your scanner must include a
+`%option stack` directive (see Options below).
 
 # MULTIPLE INPUT BUFFERS
 
 Some scanners (such as those which support "include" files) require
-reading from several input streams. As *flex* scanners do a large amount
+reading from several input streams. As `flex` scanners do a large amount
 of buffering, one cannot control where the next input will be read from
-by simply writing a **YY\_INPUT** which is sensitive to the scanning
-context. **YY\_INPUT** is only called when the scanner reaches the end
+by simply writing a `YY_INPUT` which is sensitive to the scanning
+context. `YY_INPUT` is only called when the scanner reaches the end
 of its buffer, which may be a long time after scanning a statement such
 as an "include" which requires switching the input source.
 
-To negotiate these sorts of problems, *flex* provides a mechanism for
+To negotiate these sorts of problems, `flex` provides a mechanism for
 creating and switching between multiple input buffers. An input buffer
 is created by using:
 
@@ -1189,33 +1153,33 @@ is created by using:
 
 which takes a *FILE* pointer and a size and creates a buffer associated
 with the given file and large enough to hold *size* characters (when in
-doubt, use **YY\_BUF\_SIZE** for the size). It returns a
-**YY\_BUFFER\_STATE** handle, which may then be passed to other routines
-(see below). The **YY\_BUFFER\_STATE** type is a pointer to an opaque
-**struct yy\_buffer\_state** structure, so you may safely initialize
-YY\_BUFFER\_STATE variables to **((YY\_BUFFER\_STATE) 0)** if you wish,
+doubt, use `YY_BUF_SIZE` for the size). It returns a
+`YY_BUFFER_STATE` handle, which may then be passed to other routines
+(see below). The `YY_BUFFER_STATE` type is a pointer to an opaque
+`struct yy_buffer_state` structure, so you may safely initialize
+YY\_BUFFER\_STATE variables to `((YY_BUFFER_STATE) 0)` if you wish,
 and also refer to the opaque structure in order to correctly declare
 input buffers in source files other than that of your scanner. Note that
-the *FILE* pointer in the call to **yy\_create\_buffer** is only used as
-the value of *yyin* seen by **YY\_INPUT;** if you redefine **YY\_INPUT**
+the *FILE* pointer in the call to `yy_create_buffer` is only used as
+the value of *yyin* seen by `YY_INPUT`; if you redefine `YY_INPUT`
 so it no longer uses *yyin,* then you can safely pass a nil *FILE*
-pointer to **yy\_create\_buffer.** You select a particular buffer to
+pointer to `yy_create_buffer`. You select a particular buffer to
 scan from using:
 
 
         void yy_switch_to_buffer( YY_BUFFER_STATE new_buffer )
 
 switches the scanner's input buffer so subsequent tokens will come from
-*new\_buffer.* Note that **yy\_switch\_to\_buffer()** may be used by
+*new\_buffer.* Note that `yy_switch_to_buffer()` may be used by
 yywrap() to set things up for continued scanning, instead of opening a
 new file and pointing *yyin* at it. Note also that switching input
-sources via either **yy\_switch\_to\_buffer()** or **yywrap()** does
+sources via either `yy_switch_to_buffer()` or `yywrap()` does
 *not* change the start condition.
 
 
         void yy_delete_buffer( YY_BUFFER_STATE buffer )
 
-is used to reclaim the storage associated with a buffer. ( **buffer**
+is used to reclaim the storage associated with a buffer. ( `buffer`
 can be nil, in which case the routine does nothing.) You can also clear
 the current contents of a buffer using:
 
@@ -1224,17 +1188,17 @@ the current contents of a buffer using:
 
 This function discards the buffer's contents, so the next time the
 scanner attempts to match a token from the buffer, it will first fill
-the buffer anew using **YY\_INPUT.**
+the buffer anew using `YY_INPUT`.
 
-**yy\_new\_buffer()** is an alias for **yy\_create\_buffer(),** provided
+`yy_new_buffer()` is an alias for `yy_create_buffer()`, provided
 for compatibility with the C++ use of *new* and *delete* for creating
 and destroying dynamic objects.
 
-Finally, the **YY\_CURRENT\_BUFFER** macro returns a
-**YY\_BUFFER\_STATE** handle to the current buffer.
+Finally, the `YY_CURRENT_BUFFER` macro returns a
+`YY_BUFFER_STATE` handle to the current buffer.
 
 Here is an example of using these features for writing a scanner which
-expands include files (the **&lt;&lt;EOF&gt;&gt;** feature is discussed
+expands include files (the `<<EOF>>` feature is discussed
 below):
 
 
@@ -1294,34 +1258,34 @@ below):
 Three routines are available for setting up input buffers for scanning
 in-memory strings instead of files. All of them create a new input
 buffer for scanning the string, and return a corresponding
-**YY\_BUFFER\_STATE** handle (which you should delete with
-**yy\_delete\_buffer()** when done with it). They also switch to the new
-buffer using **yy\_switch\_to\_buffer(),** so the next call to
-**yylex()** will start scanning the string.
+`YY_BUFFER_STATE` handle (which you should delete with
+`yy_delete_buffer()` when done with it). They also switch to the new
+buffer using `yy_switch_to_buffer()`, so the next call to
+`yylex()` will start scanning the string.
 
-**yy\_scan\_string(const char \*str)**  
+`yy_scan_string(const char *str)`
 scans a NUL-terminated string.
 
-**yy\_scan\_bytes(const char \*bytes, int len)**  
+`yy_scan_bytes(const char *bytes, int len)`
 scans *len* bytes (including possibly NUL's) starting at location
 *bytes.*
 
 Note that both of these functions create and scan a *copy* of the string
-or bytes. (This may be desirable, since **yylex()** modifies the
+or bytes. (This may be desirable, since `yylex()` modifies the
 contents of the buffer it is scanning.) You can avoid the copy by using:
 
-**yy\_scan\_buffer(char \*base, yy\_size\_t size)**  
+`yy_scan_buffer(char *base, yy_size_t size)`
 which scans in place the buffer starting at *base,* consisting of *size*
 bytes, the last two bytes of which *must* be
-**YY\_END\_OF\_BUFFER\_CHAR** (ASCII NUL). These last two bytes are not
-scanned; thus, scanning consists of **base\[0\]** through
-**base\[size-2\],** inclusive.
+`YY_END_OF_BUFFER_CHAR` (ASCII NUL). These last two bytes are not
+scanned; thus, scanning consists of `base[0]` through
+`base[size-2]`, inclusive.
 
 If you fail to set up *base* in this manner (i.e., forget the final two
-**YY\_END\_OF\_BUFFER\_CHAR** bytes), then **yy\_scan\_buffer()**
+`YY_END_OF_BUFFER_CHAR` bytes), then `yy_scan_buffer()`
 returns a nil pointer instead of creating a new input buffer.
 
-The type **yy\_size\_t** is an integral type to which you can cast an
+The type `yy_size_t` is an integral type to which you can cast an
 integer expression reflecting the size of the buffer.
 
 # END-OF-FILE RULES
@@ -1333,13 +1297,13 @@ doing one of four things:
 
 -   assigning *yyin* to a new input file (in previous versions of flex,
     after doing the assignment you had to call the special action
-    **YY\_NEW\_FILE;** this is no longer necessary);
+    `YY_NEW_FILE`; this is no longer necessary);
 
 -   executing a *return* statement;
 
--   executing the special **yyterminate()** action;
+-   executing the special `yyterminate()` action;
 
--   or, switching to a new buffer using **yy\_switch\_to\_buffer()** as
+-   or, switching to a new buffer using `yy_switch_to_buffer()` as
     shown in the example above.
 
 &lt;&lt;EOF&gt;&gt; rules may not be used with other patterns; they may
@@ -1373,10 +1337,10 @@ example:
 
 # MISCELLANEOUS MACROS
 
-The macro **YY\_USER\_ACTION** can be defined to provide an action which
+The macro `YY_USER_ACTION` can be defined to provide an action which
 is always executed prior to the matched rule's action. For example, it
 could be \#define'd to call a routine to convert yytext to lower-case.
-When **YY\_USER\_ACTION** is invoked, the variable *yy\_act* gives the
+When `YY_USER_ACTION` is invoked, the variable *yy\_act* gives the
 number of the matched rule (rules are numbered starting with 1). Suppose
 you want to profile how often each of your rules is matched. The
 following would do the trick:
@@ -1385,105 +1349,105 @@ following would do the trick:
         #define YY_USER_ACTION ++ctr[yy_act]
 
 where *ctr* is an array to hold the counts for the different rules. Note
-that the macro **YY\_NUM\_RULES** gives the total number of rules
-(including the default rule, even if you use **-s),** so a correct
+that the macro `YY_NUM_RULES` gives the total number of rules
+(including the default rule, even if you use `-s)`, so a correct
 declaration for *ctr* is:
 
 
         int ctr[YY_NUM_RULES];
 
-The macro **YY\_USER\_INIT** may be defined to provide an action which
+The macro `YY_USER_INIT` may be defined to provide an action which
 is always executed before the first scan (and before the scanner's
 internal initializations are done). For example, it could be used to
 call a routine to read in a data table or open a logging file.
 
-The macro **yy\_set\_interactive(is\_interactive)** can be used to
+The macro `yy_set_interactive(is_interactive)` can be used to
 control whether the current buffer is considered *interactive.* An
 interactive buffer is processed more slowly, but must be used when the
 scanner's input source is indeed interactive to avoid problems due to
-waiting to fill buffers (see the discussion of the **-I** flag below). A
+waiting to fill buffers (see the discussion of the `-I` flag below). A
 non-zero value in the macro invocation marks the buffer as interactive,
 a zero value as non-interactive. Note that use of this macro overrides
-**%option always-interactive** or **%option never-interactive** (see
-Options below). **yy\_set\_interactive()** must be invoked prior to
+`%option always-interactive` or `%option never-interactive` (see
+Options below). `yy_set_interactive()` must be invoked prior to
 beginning to scan the buffer that is (or is not) to be considered
 interactive.
 
-The macro **yy\_set\_bol(at\_bol)** can be used to control whether the
+The macro `yy_set_bol(at_bol)` can be used to control whether the
 current buffer's scanning context for the next token match is done as
 though at the beginning of a line. A non-zero macro argument makes rules
 anchored with
 
-The macro **YY\_AT\_BOL()** returns true if the next token scanned from
+The macro `YY_AT_BOL()` returns true if the next token scanned from
 the current buffer will have '^' rules active, false otherwise.
 
 In the generated scanner, the actions are all gathered in one large
-switch statement and separated using **YY\_BREAK,** which may be
+switch statement and separated using `YY_BREAK`, which may be
 redefined. By default, it is simply a "break", to separate each rule's
-action from the following rule's. Redefining **YY\_BREAK** allows, for
+action from the following rule's. Redefining `YY_BREAK` allows, for
 example, C++ users to \#define YY\_BREAK to do nothing (while being very
 careful that every rule ends with a "break" or a "return"!) to avoid
 suffering from unreachable statement warnings where because a rule's
-action ends with "return", the **YY\_BREAK** is inaccessible.
+action ends with "return", the `YY_BREAK` is inaccessible.
 
 # VALUES AVAILABLE TO THE USER
 
 This section summarizes the various values available to the user in the
 rule actions.
 
--   **char \*yytext** holds the text of the current token. It may be
+-   `char *yytext` holds the text of the current token. It may be
     modified but not lengthened (you cannot append characters to the
     end).
 
-    If the special directive **%array** appears in the first section of
-    the scanner description, then **yytext** is instead declared **char
-    yytext\[YYLMAX\],** where **YYLMAX** is a macro definition that you
+    If the special directive `%array` appears in the first section of
+    the scanner description, then `yytext` is instead declared
+    `char yytext[YYLMAX],` where `YYLMAX` is a macro definition that you
     can redefine in the first section if you don't like the default
-    value (generally 8KB). Using **%array** results in somewhat slower
-    scanners, but the value of **yytext** becomes immune to calls to
+    value (generally 8KB). Using `%array` results in somewhat slower
+    scanners, but the value of `yytext` becomes immune to calls to
     *input()* and *unput(),* which potentially destroy its value when
-    **yytext** is a character pointer. The opposite of **%array** is
-    **%pointer,** which is the default.
+    `yytext` is a character pointer. The opposite of `%array` is
+    `%pointer`, which is the default.
 
-    You cannot use **%array** when generating C++ scanner classes (the
-    **-+** flag).
+    You cannot use `%array` when generating C++ scanner classes (the
+    `-+` flag).
 
--   **int yyleng** holds the length of the current token.
+-   `int yyleng` holds the length of the current token.
 
--   **FILE \*yyin** is the file which by default *flex* reads from. It
+-   `FILE *yyin` is the file which by default `flex` reads from. It
     may be redefined but doing so only makes sense before scanning
     begins or after an EOF has been encountered. Changing it in the
-    midst of scanning will have unexpected results since *flex* buffers
-    its input; use **yyrestart()** instead. Once scanning terminates
+    midst of scanning will have unexpected results since `flex` buffers
+    its input; use `yyrestart()` instead. Once scanning terminates
     because an end-of-file has been seen, you can assign *yyin* at the
     new input file and then call the scanner again to continue scanning.
 
--   **void yyrestart( FILE \*new\_file )** may be called to point *yyin*
+-   `void yyrestart( FILE *new_file )` may be called to point *yyin*
     at the new input file. The switch-over to the new file is immediate
     (any previously buffered-up input is lost). Note that calling
-    **yyrestart()** with *yyin* as an argument thus throws away the
+    `yyrestart()` with *yyin* as an argument thus throws away the
     current input buffer and continues scanning the same input file.
 
--   **FILE \*yyout** is the file to which **ECHO** actions are done. It
+-   `FILE *yyout` is the file to which `ECHO` actions are done. It
     can be reassigned by the user.
 
--   **YY\_CURRENT\_BUFFER** returns a **YY\_BUFFER\_STATE** handle to
+-   `YY_CURRENT_BUFFER` returns a `YY_BUFFER_STATE` handle to
     the current buffer.
 
--   **YY\_START** returns an integer value corresponding to the current
-    start condition. You can subsequently use this value with **BEGIN**
+-   `YY_START` returns an integer value corresponding to the current
+    start condition. You can subsequently use this value with `BEGIN`
     to return to that start condition.
 
 # INTERFACING WITH YACC
 
-One of the main uses of *flex* is as a companion to the *yacc*
+One of the main uses of `flex` is as a companion to the *yacc*
 parser-generator. *yacc* parsers expect to call a routine named
-**yylex()** to find the next input token. The routine is supposed to
+`yylex()` to find the next input token. The routine is supposed to
 return the type of the next token as well as putting any associated
-value in the global **yylval.** To use *flex* with *yacc,* one specifies
-the **-d** option to *yacc* to instruct it to generate the file
-**y.tab.h** containing definitions of all the **%tokens** appearing in
-the *yacc* input. This file is then included in the *flex* scanner. For
+value in the global `yylval`. To use `flex` with *yacc,* one specifies
+the `-d` option to *yacc* to instruct it to generate the file
+`y.tab.h` containing definitions of all the `%tokens` appearing in
+the *yacc* input. This file is then included in the `flex` scanner. For
 example, if one of the tokens is "TOK\_NUMBER", part of the scanner
 might look like:
 
@@ -1498,24 +1462,24 @@ might look like:
 
 # OPTIONS
 
-*flex* has the following options:
+`flex` has the following options:
 
-**-b**  
+`-b`
 Generate backing-up information to *lex.backup.* This is a list of
 scanner states which require backing up and the input characters on
 which they do so. By adding rules one can remove backing-up states. If
-*all* backing-up states are eliminated and **-Cf** or **-CF** is used,
-the generated scanner will run faster (see the **-p** flag). Only users
+*all* backing-up states are eliminated and `-Cf` or `-CF` is used,
+the generated scanner will run faster (see the `-p` flag). Only users
 who wish to squeeze every last cycle out of their scanners need worry
 about this option. (See the section on Performance Considerations
 below.)
 
-**-c**  
+`-c`
 is a do-nothing, deprecated option included for POSIX compliance.
 
-**-d**  
+`-d`
 makes the generated scanner run in *debug* mode. Whenever a pattern is
-recognized and the global **yy\_flex\_debug** is non-zero (which is the
+recognized and the global `yy_flex_debug` is non-zero (which is the
 default), the scanner will write to *stderr* a line of the form:
 
 <!-- -->
@@ -1530,82 +1494,81 @@ the end of its input buffer (or encounters a NUL; at this point, the two
 look the same as far as the scanner's concerned), or reaches an
 end-of-file.
 
-**-f**  
+`-f`
 specifies *fast scanner.* No table compression is done and stdio is
 bypassed. The result is large but fast. This option is equivalent to
-**-Cfr** (see below).
+`-Cfr` (see below).
 
-**-h**  
-generates a "help" summary of *flex's* options to *stdout* and then
-exits. **-?** and **--help** are synonyms for **-h.**
+`-h`
+generates a "help" summary of `flex`'s options to *stdout* and then
+exits. `-?` and `--help` are synonyms for `-h`.
 
-**-i**  
-instructs *flex* to generate a *case-insensitive* scanner. The case of
-letters given in the *flex* input patterns will be ignored, and tokens
+`-i`
+instructs `flex` to generate a *case-insensitive* scanner. The case of
+letters given in the `flex` input patterns will be ignored, and tokens
 in the input will be matched regardless of case. The matched text given
 in *yytext* will have the preserved case (i.e., it will not be folded).
 
-**-l**  
+`-l`
 turns on maximum compatibility with the original AT&T *lex*
 implementation. Note that this does not mean *full* compatibility. Use
 of this option costs a considerable amount of performance, and it cannot
-be used with the **-+, -f, -F, -Cf,** or **-CF** options. For details on
+be used with the `-+, -f, -F, -Cf`, or `-CF` options. For details on
 the compatibilities it provides, see the section "Incompatibilities With
 Lex And POSIX" below. This option also results in the name
-**YY\_FLEX\_LEX\_COMPAT** being \#define'd in the generated scanner.
+`YY_FLEX_LEX_COMPAT` being \#define'd in the generated scanner.
 
-**-n**  
+`-n`
 is another do-nothing, deprecated option included only for POSIX
 compliance.
 
-**-p**  
+`-p`
 generates a performance report to stderr. The report consists of
-comments regarding features of the *flex* input file which will cause a
+comments regarding features of the `flex` input file which will cause a
 serious loss of performance in the resulting scanner. If you give the
 flag twice, you will also get comments regarding features that lead to
 minor performance losses.
 
-Note that the use of **REJECT,** **%option yylineno,** and variable
+Note that the use of `REJECT`, `%option yylineno`, and variable
 trailing context (see the Deficiencies / Bugs section below) entails a
-substantial performance penalty; use of *yymore(),* the **^** operator,
-and the **-I** flag entail minor performance penalties.
+substantial performance penalty; use of *yymore(),* the `^` operator,
+and the `-I` flag entail minor performance penalties.
 
-**-s**  
+`-s`
 causes the *default rule* (that unmatched scanner input is echoed to
 *stdout)* to be suppressed. If the scanner encounters input that does
 not match any of its rules, it aborts with an error. This option is
 useful for finding holes in a scanner's rule set.
 
-**-t**  
-instructs *flex* to write the scanner it generates to standard output
-instead of **lex.yy.c.**
+`-t`
+instructs `flex` to write the scanner it generates to standard output
+instead of `lex.yy.c`.
 
-**-v**  
-specifies that *flex* should write to *stderr* a summary of statistics
+`-v`
+specifies that `flex` should write to *stderr* a summary of statistics
 regarding the scanner it generates. Most of the statistics are
-meaningless to the casual *flex* user, but the first line identifies the
-version of *flex* (same as reported by **-V),** and the next line the
+meaningless to the casual `flex` user, but the first line identifies the
+version of `flex` (same as reported by `-V)`, and the next line the
 flags used when generating the scanner, including those that are on by
 default.
 
-**-w**  
+`-w`
 suppresses warning messages.
 
-**-B**  
-instructs *flex* to generate a *batch* scanner, the opposite of
-*interactive* scanners generated by **-I** (see below). In general, you
-use **-B** when you are *certain* that your scanner will never be used
+`-B`
+instructs `flex` to generate a *batch* scanner, the opposite of
+*interactive* scanners generated by `-I` (see below). In general, you
+use `-B` when you are *certain* that your scanner will never be used
 interactively, and you want to squeeze a *little* more performance out
 of it. If your goal is instead to squeeze out a *lot* more performance,
-you should be using the **-Cf** or **-CF** options (discussed below),
-which turn on **-B** automatically anyway.
+you should be using the `-Cf` or `-CF` options (discussed below),
+which turn on `-B` automatically anyway.
 
-**-F**  
+`-F`
 specifies that the
-
 fast scanner table representation should be used (and stdio bypassed).
 This representation is about as fast as the full table representation
-**(-f),** and for some sets of patterns will be considerably smaller
+`(-f)`, and for some sets of patterns will be considerably smaller
 (and for others, larger). In general, if the pattern set contains both
 "keywords" and a catch-all, "identifier" rule, such as in the set:
 
@@ -1618,13 +1581,13 @@ This representation is about as fast as the full table representation
 
 then you're better off using the full table representation. If only the
 "identifier" rule is present and you then use a hash table or some such
-to detect the keywords, you're better off using **-F.**
+to detect the keywords, you're better off using `-F`.
 
-> This option is equivalent to **-CFr** (see below). It cannot be used
-> with **-+.**
+This option is equivalent to `-CFr` (see below). It cannot be used
+with `-+`.
 
-**-I**  
-instructs *flex* to generate an *interactive* scanner. An interactive
+`-I`
+instructs `flex` to generate an *interactive* scanner. An interactive
 scanner is one that only looks ahead to decide what token has been
 matched if it absolutely must. It turns out that always looking one
 extra character ahead, even if the scanner has already seen enough text
@@ -1634,129 +1597,129 @@ interactive performance; for example, when a user types a newline, it is
 not recognized as a newline token until they enter *another* token,
 which often means typing in another whole line.
 
-*Flex* scanners default to *interactive* unless you use the **-Cf** or
-**-CF** table-compression options (see below). That's because if you're
+`flex` scanners default to *interactive* unless you use the `-Cf` or
+`-CF` table-compression options (see below). That's because if you're
 looking for high-performance you should be using one of these options,
-so if you didn't, *flex* assumes you'd rather trade off a bit of
+so if you didn't, `flex` assumes you'd rather trade off a bit of
 run-time performance for intuitive interactive behavior. Note also that
-you *cannot* use **-I** in conjunction with **-Cf** or **-CF.** Thus,
+you *cannot* use `-I` in conjunction with `-Cf` or `-CF`. Thus,
 this option is not really needed; it is on by default for all those
 cases in which it is allowed.
 
-You can force a scanner to *not* be interactive by using **-B** (see
+You can force a scanner to *not* be interactive by using `-B` (see
 above).
 
-**-L**  
-instructs *flex* not to generate **\#line** directives. Without this
-option, *flex* peppers the generated scanner with \#line directives so
+`-L`
+instructs `flex` not to generate `#line` directives. Without this
+option, `flex` peppers the generated scanner with \#line directives so
 error messages in the actions will be correctly located with respect to
-either the original *flex* input file (if the errors are due to code in
-the input file), or **lex.yy.c** (if the errors are *flex's* fault --
+either the original `flex` input file (if the errors are due to code in
+the input file), or `lex.yy.c` (if the errors are `flex`'s fault --
 you should report these sorts of errors to the email address given
 below).
 
-**-T**  
-makes *flex* run in *trace* mode. It will generate a lot of messages to
+`-T`
+makes `flex` run in *trace* mode. It will generate a lot of messages to
 *stderr* concerning the form of the input and the resultant
 non-deterministic and deterministic finite automata. This option is
-mostly for use in maintaining *flex.*
+mostly for use in maintaining `flex`.
 
-**-V**  
-prints the version number to *stdout* and exits. **--version** is a
-synonym for **-V.**
+`-V`
+prints the version number to *stdout* and exits. `--version` is a
+synonym for `-V`.
 
-**-7**  
-instructs *flex* to generate a 7-bit scanner, i.e., one which can only
-recognized 7-bit characters in its input. The advantage of using **-7**
+`-7`
+instructs `flex` to generate a 7-bit scanner, i.e., one which can only
+recognized 7-bit characters in its input. The advantage of using `-7`
 is that the scanner's tables can be up to half the size of those
-generated using the **-8** option (see below). The disadvantage is that
+generated using the `-8` option (see below). The disadvantage is that
 such scanners often hang or crash if their input contains an 8-bit
 character.
 
-Note, however, that unless you generate your scanner using the **-Cf**
-or **-CF** table compression options, use of **-7** will save only a
+Note, however, that unless you generate your scanner using the `-Cf`
+or `-CF` table compression options, use of `-7` will save only a
 small amount of table space, and make your scanner considerably less
-portable. *Flex's* default behavior is to generate an 8-bit scanner
-unless you use the **-Cf** or **-CF,** in which case *flex* defaults to
+portable. `flex`'s default behavior is to generate an 8-bit scanner
+unless you use the `-Cf` or `-CF`, in which case `flex` defaults to
 generating 7-bit scanners unless your site was always configured to
 generate 8-bit scanners (as will often be the case with non-USA sites).
 You can tell whether flex generated a 7-bit or an 8-bit scanner by
-inspecting the flag summary in the **-v** output as described above.
+inspecting the flag summary in the `-v` output as described above.
 
-Note that if you use **-Cfe** or **-CFe** (those table compression
+Note that if you use `-Cfe` or `-CFe` (those table compression
 options, but also using equivalence classes as discussed see below),
 flex still defaults to generating an 8-bit scanner, since usually with
 these compression options full 8-bit tables are not much more expensive
 than 7-bit tables.
 
-**-8**  
-instructs *flex* to generate an 8-bit scanner, i.e., one which can
+`-8`
+instructs `flex` to generate an 8-bit scanner, i.e., one which can
 recognize 8-bit characters. This flag is only needed for scanners
-generated using **-Cf** or **-CF,** as otherwise flex defaults to
+generated using `-Cf` or `-CF`, as otherwise flex defaults to
 generating an 8-bit scanner anyway.
 
-See the discussion of **-7** above for flex's default behavior and the
+See the discussion of `-7` above for flex's default behavior and the
 tradeoffs between 7-bit and 8-bit scanners.
 
-**-+**  
+`-+`
 specifies that you want flex to generate a C++ scanner class. See the
 section on Generating C++ Scanners below for details.
 
-**-C\[aefFmr\]**  
+`-C[aefFmr]`
 controls the degree of table compression and, more generally, trade-offs
 between small scanners and fast scanners.
 
-**-Ca** ("align") instructs flex to trade off larger tables in the
+`-Ca` ("align") instructs flex to trade off larger tables in the
 generated scanner for faster performance because the elements of the
 tables are better aligned for memory access and computation. On some
 RISC architectures, fetching and manipulating longwords is more
 efficient than with smaller-sized units such as shortwords. This option
 can double the size of the tables used by your scanner.
 
-**-Ce** directs *flex* to construct *equivalence classes,* i.e., sets of
+`-Ce` directs `flex` to construct *equivalence classes,* i.e., sets of
 characters which have identical lexical properties (for example, if the
-only appearance of digits in the *flex* input is in the character class
+only appearance of digits in the `flex` input is in the character class
 "\[0-9\]" then the digits '0', '1', ..., '9' will all be put in the same
 equivalence class). Equivalence classes usually give dramatic reductions
 in the final table/object file sizes (typically a factor of 2-5) and are
 pretty cheap performance-wise (one array look-up per character scanned).
 
-**-Cf** specifies that the *full* scanner tables should be generated -
-*flex* should not compress the tables by taking advantages of similar
+`-Cf` specifies that the *full* scanner tables should be generated -
+`flex` should not compress the tables by taking advantages of similar
 transition functions for different states.
 
-**-CF** specifies that the alternate fast scanner representation
-(described above under the **-F** flag) should be used. This option
-cannot be used with **-+.**
+`-CF` specifies that the alternate fast scanner representation
+(described above under the `-F` flag) should be used. This option
+cannot be used with `-+`.
 
-**-Cm** directs *flex* to construct *meta-equivalence classes,* which
+`-Cm` directs `flex` to construct *meta-equivalence classes,* which
 are sets of equivalence classes (or characters, if equivalence classes
 are not being used) that are commonly used together. Meta-equivalence
 classes are often a big win when using compressed tables, but they have
 a moderate performance impact (one or two "if" tests and one array
 look-up per character scanned).
 
-**-Cr** causes the generated scanner to *bypass* use of the standard I/O
-library (stdio) for input. Instead of calling **fread()** or **getc(),**
-the scanner will use the **read()** system call, resulting in a
+`-Cr` causes the generated scanner to *bypass* use of the standard I/O
+library (stdio) for input. Instead of calling `fread()` or `getc()`,
+the scanner will use the `read()` system call, resulting in a
 performance gain which varies from system to system, but in general is
-probably negligible unless you are also using **-Cf** or **-CF.** Using
-**-Cr** can cause strange behavior if, for example, you read from *yyin*
+probably negligible unless you are also using `-Cf` or `-CF`. Using
+`-Cr` can cause strange behavior if, for example, you read from *yyin*
 using stdio prior to calling the scanner (because the scanner will miss
 whatever text your previous reads left in the stdio input buffer).
 
-**-Cr** has no effect if you define **YY\_INPUT** (see The Generated
+`-Cr` has no effect if you define `YY_INPUT` (see The Generated
 Scanner above).
 
-A lone **-C** specifies that the scanner tables should be compressed but
+A lone `-C` specifies that the scanner tables should be compressed but
 neither equivalence classes nor meta-equivalence classes should be used.
 
-The options **-Cf** or **-CF** and **-Cm** do not make sense together -
+The options `-Cf` or `-CF` and `-Cm` do not make sense together -
 there is no opportunity for meta-equivalence classes if the table is not
 being compressed. Otherwise the options may be freely mixed, and are
 cumulative.
 
-The default setting is **-Cem,** which specifies that *flex* should
+The default setting is `-Cem`, which specifies that `flex` should
 generate equivalence classes and meta-equivalence classes. This setting
 provides the highest degree of table compression. You can trade off
 faster-executing scanners at the cost of larger tables with the
@@ -1779,20 +1742,20 @@ Note that scanners with the smallest tables are usually generated and
 compiled the quickest, so during development you will usually want to
 use the default, maximal compression.
 
-> **-Cfe** is often a good compromise between speed and size for
-> production scanners.
+`-Cfe` is often a good compromise between speed and size for
+production scanners.
 
-**-ooutput**  
-directs flex to write the scanner to the file **output** instead of
-**lex.yy.c.** If you combine **-o** with the **-t** option, then the
-scanner is written to *stdout* but its **\#line** directives (see the
-**\\-L** option above) refer to the file **output.**
+`-ooutput`
+directs flex to write the scanner to the file `output` instead of
+`lex.yy.c`. If you combine `-o` with the `-t` option, then the
+scanner is written to *stdout* but its `#line` directives (see the
+`-L` option above) refer to the file `output`.
 
-**-Pprefix**  
-changes the default *yy* prefix used by *flex* for all globally-visible
+`-Pprefix`
+changes the default *yy* prefix used by `flex` for all globally-visible
 variable and function names to instead be *prefix.* For example,
-**-Pfoo** changes the name of **yytext** to **footext.** It also changes
-the name of the default output file from **lex.yy.c** to **lex.foo.c.**
+`-Pfoo` changes the name of `yytext` to `footext`. It also changes
+the name of the default output file from `lex.yy.c` to `lex.foo.c`.
 Here are all of the names affected:
 
 <!-- -->
@@ -1814,28 +1777,28 @@ Here are all of the names affected:
         yytext
         yywrap
 
-(If you are using a C++ scanner, then only **yywrap** and
-**yyFlexLexer** are affected.) Within your scanner itself, you can still
+(If you are using a C++ scanner, then only `yywrap` and
+`yyFlexLexer` are affected.) Within your scanner itself, you can still
 refer to the global variables and functions using either version of
 their name; but externally, they have the modified name.
 
-> This option lets you easily link together multiple *flex* programs
-> into the same executable. Note, though, that using this option also
-> renames **yywrap(),** so you now *must* either provide your own
-> (appropriately-named) version of the routine for your scanner, or use
-> **%option noyywrap,** as linking with **-lfl** no longer provides one
-> for you by default.
+This option lets you easily link together multiple `flex` programs
+into the same executable. Note, though, that using this option also
+renames `yywrap()`, so you now *must* either provide your own
+(appropriately-named) version of the routine for your scanner, or use
+`%option noyywrap`, as linking with `-lfl` no longer provides one
+for you by default.
 
-**-Sskeleton\_file**  
-overrides the default skeleton file from which *flex* constructs its
-scanners. You'll never need this option unless you are doing *flex*
+`-Sskeleton_file`
+overrides the default skeleton file from which `flex` constructs its
+scanners. You'll never need this option unless you are doing `flex`
 maintenance or development.
 
-*flex* also provides a mechanism for controlling options within the
+`flex` also provides a mechanism for controlling options within the
 scanner specification itself, rather than from the flex command-line.
-This is done by including **%option** directives in the first section of
+This is done by including `%option` directives in the first section of
 the scanner specification. You can specify multiple options with a
-single **%option** directive, and multiple directives in the first
+single `%option` directive, and multiple directives in the first
 section of your flex input file.
 
 Most options are given simply as names, optionally preceded by the word
@@ -1874,79 +1837,79 @@ are equivalent to flex flags or their negation:
         array           equivalent to "%array"
         pointer         equivalent to "%pointer" (default)
 
-Some **%option's** provide features otherwise not available:
+Some `%option`s provide features otherwise not available:
 
-**always-interactive**  
+`always-interactive`
 instructs flex to generate a scanner which always considers its input
 "interactive". Normally, on each new input file the scanner calls
-**isatty()** in an attempt to determine whether the scanner's input
+`isatty()` in an attempt to determine whether the scanner's input
 source is interactive and thus should be read a character at a time.
 When this option is used, however, then no such call is made.
 
-**main**  
-directs flex to provide a default **main()** program for the scanner,
-which simply calls **yylex().** This option implies **noyywrap** (see
+`main`
+directs flex to provide a default `main()` program for the scanner,
+which simply calls `yylex()`. This option implies `noyywrap` (see
 below).
 
-**never-interactive**  
+`never-interactive`
 instructs flex to generate a scanner which never considers its input
-"interactive" (again, no call made to **isatty()).** This is the
-opposite of **always-interactive.**
+"interactive" (again, no call made to `isatty())`. This is the
+opposite of `always-interactive`.
 
-**stack**  
+`stack`
 enables the use of start condition stacks (see Start Conditions above).
 
-**stdinit**  
-if set (i.e., **%option stdinit)** initializes *yyin* and *yyout* to
+`stdinit`
+if set (i.e., `%option stdinit`) initializes *yyin* and *yyout* to
 *stdin* and *stdout,* instead of the default of *nil.* Some existing
 *lex* programs depend on this behavior, even though it is not compliant
 with ANSI C, which does not require *stdin* and *stdout* to be
 compile-time constant.
 
-**yylineno**  
-directs *flex* to generate a scanner that maintains the number of the
-current line read from its input in the global variable **yylineno.**
-This option is implied by **%option lex-compat.**
+`yylineno`
+directs `flex` to generate a scanner that maintains the number of the
+current line read from its input in the global variable `yylineno`.
+This option is implied by `%option lex-compat`.
 
-**yywrap**  
-if unset (i.e., **%option noyywrap),** makes the scanner not call
-**yywrap()** upon an end-of-file, but simply assume that there are no
+`yywrap`
+if unset (i.e., `%option noyywrap`), makes the scanner not call
+`yywrap()` upon an end-of-file, but simply assume that there are no
 more files to scan (until the user points *yyin* at a new file and calls
-**yylex()** again).
+`yylex()` again).
 
-*flex* scans your rule actions to determine whether you use the
-**REJECT** or **yymore()** features. The **reject** and **yymore**
+`flex` scans your rule actions to determine whether you use the
+`REJECT` or `yymore()` features. The `reject` and `yymore`
 options are available to override its decision as to whether you use the
-options, either by setting them (e.g., **%option reject)** to indicate
+options, either by setting them (e.g., `%option reject`) to indicate
 the feature is indeed used, or unsetting them to indicate it actually is
-not used (e.g., **%option noyymore).**
+not used (e.g., `%option noyymore`).
 
 Three options take string-delimited values, offset with '=':
 
 
         %option outfile="ABC"
 
-is equivalent to **-oABC,** and
+is equivalent to `-oABC`, and
 
 
         %option prefix="XYZ"
 
-is equivalent to **-PXYZ.** Finally,
+is equivalent to `-PXYZ`. Finally,
 
 
         %option yyclass="foo"
 
-only applies when generating a C++ scanner ( **-+** option). It informs
-*flex* that you have derived **foo** as a subclass of **yyFlexLexer,**
-so *flex* will place your actions in the member function
-**foo::yylex()** instead of **yyFlexLexer::yylex().** It also generates
-a **yyFlexLexer::yylex()** member function that emits a run-time error
-(by invoking **yyFlexLexer::LexerError())** if called. See Generating
+only applies when generating a C++ scanner ( `-+` option). It informs
+`flex` that you have derived `foo` as a subclass of `yyFlexLexer`,
+so `flex` will place your actions in the member function
+`foo::yylex()` instead of `yyFlexLexer::yylex()`. It also generates
+a `yyFlexLexer::yylex()` member function that emits a run-time error
+(by invoking `yyFlexLexer::LexerError()`) if called. See Generating
 C++ Scanners, below, for additional information.
 
 A number of options are available for lint purists who want to suppress
 the appearance of unneeded routines in the generated scanner. Each of
-the following, if unset (e.g., **%option nounput** ), results in the
+the following, if unset (e.g., `%option nounput`), results in the
 corresponding routine not appearing in the generated scanner:
 
 
@@ -1954,15 +1917,15 @@ corresponding routine not appearing in the generated scanner:
         yy_push_state, yy_pop_state, yy_top_state
         yy_scan_buffer, yy_scan_bytes, yy_scan_string
 
-(though **yy\_push\_state()** and friends won't appear anyway unless you
-use **%option stack).**
+(though `yy_push_state()` and friends won't appear anyway unless you
+use `%option stack`).
 
 # PERFORMANCE CONSIDERATIONS
 
-The main design goal of *flex* is that it generate high-performance
+The main design goal of `flex` is that it generate high-performance
 scanners. It has been optimized for dealing well with large sets of
 rules. Aside from the effects on scanner speed of the table compression
-**-C** options outlined above, there are a number of options/actions
+`-C` options outlined above, there are a number of options/actions
 which degrade performance. These are, from most expensive to least:
 
 
@@ -1979,17 +1942,17 @@ which degrade performance. These are, from most expensive to least:
         yymore()
 
 with the first three all being quite expensive and the last two being
-quite cheap. Note also that **unput()** is implemented as a routine call
-that potentially does quite a bit of work, while **yyless()** is a
+quite cheap. Note also that `unput()` is implemented as a routine call
+that potentially does quite a bit of work, while `yyless()` is a
 quite-cheap macro; so if just putting back some excess text you scanned,
-use **yyless().**
+use `yyless()`.
 
-**REJECT** should be avoided at all costs when performance is important.
+`REJECT` should be avoided at all costs when performance is important.
 It is a particularly expensive option.
 
 Getting rid of backing up is messy and often may be an enormous amount
 of work for a complicated scanner. In principal, one begins by using the
-**-b** flag to generate a *lex.backup* file. For example, on the input
+`-b` flag to generate a *lex.backup* file. For example, on the input
 
 
         %%
@@ -2037,8 +2000,8 @@ State \#9 concerns when "fooba" has been scanned and an 'r' does not
 follow.
 
 The final comment reminds us that there's no point going to all the
-trouble of removing backing up from the rules unless we're using **-Cf**
-or **-CF,** since there's no performance gain doing so with compressed
+trouble of removing backing up from the rules unless we're using `-Cf`
+or `-CF`, since there's no performance gain doing so with compressed
 scanners.
 
 The way to remove the backing up is to add "error" rules:
@@ -2071,7 +2034,7 @@ Backing up messages tend to cascade. With a complicated set of rules
 it's not uncommon to get hundreds of messages. If one can decipher them,
 though, it often only takes a dozen or so rules to eliminate the backing
 up (though it's easy to make a mistake and have an error rule
-accidentally match a valid token. A possible future *flex* feature will
+accidentally match a valid token. A possible future `flex` feature will
 be to automatically add rules to eliminate backing up).
 
 It's important to keep in mind that you gain the benefits of eliminating
@@ -2080,7 +2043,7 @@ just one means you gain nothing.
 
 *Variable* trailing context (where both the leading and trailing parts
 do not have a fixed length) entails almost the same performance loss as
-**REJECT** (i.e., substantial). So when possible a rule like:
+`REJECT` (i.e., substantial). So when possible a rule like:
 
 
         %%
@@ -2109,7 +2072,7 @@ tokens matched, the faster the scanner will run. This is because with
 long tokens the processing of most input characters takes place in the
 (short) inner scanning loop, and does not often have to go through the
 additional work of setting up the scanning environment (e.g.,
-**yytext)** for the action. Recall the scanner for C comments:
+`yytext)` for the action. Recall the scanner for C comments:
 
 
         %x comment
@@ -2194,7 +2157,7 @@ recognition of newlines with that of the other tokens:
 
 One has to be careful here, as we have now reintroduced backing up into
 the scanner. In particular, while *we* know that there will never be any
-characters in the input stream other than letters or newlines, *flex*
+characters in the input stream other than letters or newlines, `flex`
 can't figure this out, and it will plan for possibly needing to back up
 when it has scanned a token like "auto" and then the next character is
 something other than a newline or a letter. Previously it would then
@@ -2218,16 +2181,16 @@ doesn't include a newline:
         [a-z]+   |
         .|\n     /* it's not a keyword */
 
-Compiled with **-Cf,** this is about as fast as one can get a *flex*
+Compiled with `-Cf`, this is about as fast as one can get a `flex`
 scanner to go for this particular problem.
 
-A final note: *flex* is slow when matching NUL's, particularly when a
+A final note: `flex` is slow when matching NUL's, particularly when a
 token contains multiple NUL's. It's best to write rules which match
 *short* amounts of text if it's anticipated that the text will often
 include NUL's.
 
 Another final note regarding performance: as mentioned above in the
-section How the Input is Matched, dynamically resizing **yytext** to
+section How the Input is Matched, dynamically resizing `yytext` to
 accommodate huge tokens is a slow process because it presently requires
 that the (huge) token be rescanned from the beginning. Thus if
 performance is vital, you should attempt to match "large" quantities of
@@ -2236,117 +2199,118 @@ about 8K characters/token.
 
 # GENERATING C++ SCANNERS
 
-*flex* provides two different ways to generate scanners for use with
-C++. The first way is to simply compile a scanner generated by *flex*
+`flex` provides two different ways to generate scanners for use with
+C++. The first way is to simply compile a scanner generated by `flex`
 using a C++ compiler instead of a C compiler. You should not encounter
 any compilations errors (please report any you find to the email address
 given in the Author section below). You can then use C++ code in your
 rule actions instead of C code. Note that the default input source for
 your scanner remains *yyin,* and default echoing is still done to
-*yyout.* Both of these remain *FILE \** variables and not C++ *streams.*
+`yyout`. Both of these remain `FILE *` variables and not C++ streams.
 
-You can also use *flex* to generate a C++ scanner class, using the
+You can also use `flex` to generate a C++ scanner class, using the
 `-+` option (or, equivalently, `%option c++`).
 When using this option, `flex` defaults to
-generating the scanner to the file **lex.yy.cc** instead of
-**lex.yy.c.** The generated scanner includes the header file
-*FlexLexer.h,* which defines the interface to two C++ classes.
+generating the scanner to the file `lex.yy.cc` instead of
+`lex.yy.c`. The generated scanner includes the header file
+`FlexLexer.h`, which defines the interface to two C++ classes.
 
 smcpeak 2021-04-29: Flex-2.5.4 also allows the user to choose C++ mode
 by invoking `flex` as `flex++`.  I have removed that feature.  (I
 dislike the idea that a program's behavior depends on its name.)
 
-The first class, **FlexLexer,** provides an abstract base class defining
+The first class, `FlexLexer`, provides an abstract base class defining
 the general scanner class interface. It provides the following member
 functions:
 
-**const char\* YYText()**  
+`const char* YYText()`
 returns the text of the most recently matched token, the equivalent of
-**yytext.**
+`yytext`.
 
-**int YYLeng()**  
+`int YYLeng()`
 returns the length of the most recently matched token, the equivalent of
-**yyleng.**
+`yyleng`.
 
-**int lineno() const**  
-returns the current input line number (see **%option yylineno),** or
-**1** if **%option yylineno** was not used.
+`int lineno() const`
+returns the current input line number (see `%option yylineno`), or
+`1` if `%option yylineno` was not used.
 
-**void set\_debug( int flag )**  
+`void set_debug( int flag )`
 sets the debugging flag for the scanner, equivalent to assigning to
-**yy\_flex\_debug** (see the Options section above). Note that you must
-build the scanner using **%option debug** to include debugging
+`yy_flex_debug` (see the Options section above). Note that you must
+build the scanner using `%option debug` to include debugging
 information in it.
 
-**int debug() const**  
+`int debug() const`
 returns the current setting of the debugging flag.
 
 Also provided are member functions equivalent to
-**yy\_switch\_to\_buffer(),** **yy\_create\_buffer()** (though the first
-argument is an **istream\*** object pointer and not a **FILE\*),**
-**yy\_flush\_buffer(),** **yy\_delete\_buffer(),** and **yyrestart()**
-(again, the first argument is a **istream\*** object pointer).
+`yy_switch_to_buffer()`, `yy_create_buffer()` (though the first
+argument is an `istream*` object pointer and not a `FILE*`),
+`yy_flush_buffer()`, `yy_delete_buffer()`, and `yyrestart()`
+(again, the first argument is a `istream*` object pointer).
 
-The second class defined in *FlexLexer.h* is **yyFlexLexer,** which is
-derived from **FlexLexer.** It defines the following additional member
+The second class defined in *FlexLexer.h* is `yyFlexLexer`, which is
+derived from `FlexLexer`. It defines the following additional member
 functions:
 
-**yyFlexLexer( istream\* arg\_yyin = 0, ostream\* arg\_yyout = 0 )**  
-constructs a **yyFlexLexer** object using the given streams for input
-and output. If not specified, the streams default to **cin** and
-**cout,** respectively.
+`yyFlexLexer( istream* arg_yyin = 0, ostream* arg_yyout = 0 )`
+constructs a `yyFlexLexer` object using the given streams for input
+and output. If not specified, the streams default to `cin` and
+`cout`, respectively.
 
-**virtual int yylex()**  
-performs the same role is **yylex()** does for ordinary flex scanners:
+`virtual int yylex()`
+performs the same role is `yylex()` does for ordinary flex scanners:
 it scans the input stream, consuming tokens, until a rule's action
-returns a value. If you derive a subclass **S** from **yyFlexLexer** and
-want to access the member functions and variables of **S** inside
-**yylex(),** then you need to use **%option yyclass="S"** to inform
-*flex* that you will be using that subclass instead of **yyFlexLexer.**
-In this case, rather than generating **yyFlexLexer::yylex(),** *flex*
-generates **S::yylex()** (and also generates a dummy
-**yyFlexLexer::yylex()** that calls **yyFlexLexer::LexerError()** if
+returns a value. If you derive a subclass `S` from `yyFlexLexer` and
+want to access the member functions and variables of `S` inside
+`yylex()`, then you need to use `%option yyclass="S"` to inform
+`flex` that you will be using that subclass instead of `yyFlexLexer`.
+In this case, rather than generating `yyFlexLexer::yylex()`, `flex`
+generates `S::yylex()` (and also generates a dummy
+`yyFlexLexer::yylex()` that calls `yyFlexLexer::LexerError()` if
 called).
 
-**virtual void switch\_streams(istream\* new\_in = 0,**  
-**ostream\* new\_out = 0)** reassigns **yyin** to **new\_in** (if
-non-nil) and **yyout** to **new\_out** (ditto), deleting the previous
-input buffer if **yyin** is reassigned.
+`virtual void switch_streams(istream* new_in = 0, ostream* new_out = 0)`
+reassigns `yyin` to `new_in` (if
+non-nil) and `yyout` to `new_out` (ditto), deleting the previous
+input buffer if `yyin` is reassigned.
 
-**int yylex( istream\* new\_in, ostream\* new\_out = 0 )**  
-first switches the input streams via **switch\_streams( new\_in,
-new\_out )** and then returns the value of **yylex().**
+`int yylex( istream* new_in, ostream* new_out = 0 )`
+first switches the input streams via
+`switch_streams( new_in, new_out )` and then returns the value
+of `yylex()`.
 
-In addition, **yyFlexLexer** defines the following protected virtual
+In addition, `yyFlexLexer` defines the following protected virtual
 functions which you can redefine in derived classes to tailor the
 scanner:
 
-**virtual int LexerInput( char\* buf, int max\_size )**  
-reads up to **max\_size** characters into **buf** and returns the number
+`virtual int LexerInput( char* buf, int max_size )`
+reads up to `max_size` characters into `buf` and returns the number
 of characters read. To indicate end-of-input, return 0 characters. Note
-that "interactive" scanners (see the **-B** and **-I** flags) define the
-macro **YY\_INTERACTIVE.** If you redefine **LexerInput()** and need to
+that "interactive" scanners (see the `-B` and `-I` flags) define the
+macro `YY_INTERACTIVE`. If you redefine `LexerInput()` and need to
 take different actions depending on whether or not the scanner might be
 scanning an interactive input source, you can test for the presence of
-this name via **\#ifdef.**
+this name via `#ifdef`.
 
-**virtual void LexerOutput( const char\* buf, int size )**  
-writes out **size** characters from the buffer **buf,** which, while
+`virtual void LexerOutput( const char* buf, int size )`
+writes out `size` characters from the buffer `buf`, which, while
 NUL-terminated, may also contain "internal" NUL's if the scanner's rules
 can match text with NUL's in them.
 
-**virtual void LexerError( const char\* msg )**  
+`virtual void LexerError( const char* msg )`
 reports a fatal error message. The default version of this function
-writes the message to the stream **cerr** and exits.
+writes the message to the stream `cerr` and exits.
 
-Note that a **yyFlexLexer** object contains its *entire* scanning state.
+Note that a `yyFlexLexer` object contains its *entire* scanning state.
 Thus you can use such objects to create reentrant scanners. You can
-instantiate multiple instances of the same **yyFlexLexer** class, and
+instantiate multiple instances of the same `yyFlexLexer` class, and
 you can also combine multiple C++ scanner classes together in the same
-program using the **-P** option discussed above.
+program using the `-P` option discussed above.
 
-Finally, note that the **%array** feature is not available to C++
-scanner classes; you must use **%pointer** (the default).
+Finally, note that the `%array` feature is not available to C++
+scanner classes; you must use `%pointer` (the default).
 
 Here is an example of a simple C++ scanner:
 
@@ -2409,10 +2373,10 @@ Here is an example of a simple C++ scanner:
             }
 
 If you want to create multiple (different) lexer classes, you use the
-**-P** flag (or the **prefix=** option) to rename each **yyFlexLexer**
-to some other **xxFlexLexer.** You then can include
-**&lt;FlexLexer.h&gt;** in your other sources once per lexer class,
-first renaming **yyFlexLexer** as follows:
+`-P` flag (or the `prefix=` option) to rename each `yyFlexLexer`
+to some other `xxFlexLexer`. You then can include
+`<FlexLexer.h>` in your other sources once per lexer class,
+first renaming `yyFlexLexer` as follows:
 
 
         #undef yyFlexLexer
@@ -2423,57 +2387,57 @@ first renaming **yyFlexLexer** as follows:
         #define yyFlexLexer zzFlexLexer
         #include <FlexLexer.h>
 
-if, for example, you used **%option prefix="xx"** for one of your
-scanners and **%option prefix="zz"** for the other.
+if, for example, you used `%option prefix="xx"` for one of your
+scanners and `%option prefix="zz"` for the other.
 
 IMPORTANT: the present form of the scanning class is *experimental* and
 may change considerably between major releases.
 
 # INCOMPATIBILITIES WITH LEX AND POSIX
 
-*flex* is a rewrite of the AT&T Unix *lex* tool (the two implementations
+`flex` is a rewrite of the AT&T Unix *lex* tool (the two implementations
 do not share any code, though), with some extensions and
 incompatibilities, both of which are of concern to those who wish to
 write scanners acceptable to either implementation. Flex is fully
 compliant with the POSIX *lex* specification, except that when using
-**%pointer** (the default), a call to **unput()** destroys the contents
-of **yytext,** which is counter to the POSIX specification.
+`%pointer` (the default), a call to `unput()` destroys the contents
+of `yytext`, which is counter to the POSIX specification.
 
 In this section we discuss all of the known areas of incompatibility
 between flex, AT&T lex, and the POSIX specification.
 
-*flex's* **-l** option turns on maximum compatibility with the original
+`flex`'s `-l` option turns on maximum compatibility with the original
 AT&T *lex* implementation, at the cost of a major loss in the generated
 scanner's performance. We note below which incompatibilities can be
-overcome using the **-l** option.
+overcome using the `-l` option.
 
-*flex* is fully compatible with *lex* with the following exceptions:
+`flex` is fully compatible with *lex* with the following exceptions:
 
--   The undocumented *lex* scanner internal variable **yylineno** is not
-    supported unless **-l** or **%option yylineno** is used.
+-   The undocumented *lex* scanner internal variable `yylineno` is not
+    supported unless `-l` or `%option yylineno` is used.
 
-    **yylineno** should be maintained on a per-buffer basis, rather than
+    `yylineno` should be maintained on a per-buffer basis, rather than
     a per-scanner (single global variable) basis.
 
-    **yylineno** is not part of the POSIX specification.
+    `yylineno` is not part of the POSIX specification.
 
--   The **input()** routine is not redefinable, though it may be called
+-   The `input()` routine is not redefinable, though it may be called
     to read characters following whatever has been matched by a rule. If
-    **input()** encounters an end-of-file the normal **yywrap()**
+    `input()` encounters an end-of-file the normal `yywrap()`
     processing is done. A \`\`real'' end-of-file is returned by
-    **input()** as *EOF.*
+    `input()` as *EOF.*
 
-    Input is instead controlled by defining the **YY\_INPUT** macro.
+    Input is instead controlled by defining the `YY_INPUT` macro.
 
-    The *flex* restriction that **input()** cannot be redefined is in
+    The `flex` restriction that `input()` cannot be redefined is in
     accordance with the POSIX specification, which simply does not
     specify any way of controlling the scanner's input other than by
     making an initial assignment to *yyin.*
 
--   The **unput()** routine is not redefinable. This restriction is in
+-   The `unput()` routine is not redefinable. This restriction is in
     accordance with POSIX.
 
--   *flex* scanners are not as reentrant as *lex* scanners. In
+-   `flex` scanners are not as reentrant as *lex* scanners. In
     particular, if you have an interactive scanner and an interrupt
     handler which long-jumps out of the scanner, and the scanner is
     subsequently called again, you may get the following message:
@@ -2491,19 +2455,19 @@ To reenter the scanner, first use
 Note that this call will throw away any buffered input; usually this
 isn't a problem with an interactive scanner.
 
-> Also note that flex C++ scanner classes *are* reentrant, so if using
-> C++ is an option for you, you should use them instead. See "Generating
-> C++ Scanners" above for details.
+Also note that flex C++ scanner classes *are* reentrant, so if using
+C++ is an option for you, you should use them instead. See "Generating
+C++ Scanners" above for details.
 
--   **output()** is not supported. Output from the **ECHO** macro is
+-   `output()` is not supported. Output from the `ECHO` macro is
     done to the file-pointer *yyout* (default *stdout).*
 
-    **output()** is not part of the POSIX specification.
+    `output()` is not part of the POSIX specification.
 
 -   *lex* does not support exclusive start conditions (%x), though they
     are in the POSIX specification.
 
--   When definitions are expanded, *flex* encloses them in parentheses.
+-   When definitions are expanded, `flex` encloses them in parentheses.
     With lex, the following:
 
 <!-- -->
@@ -2516,21 +2480,21 @@ isn't a problem with an interactive scanner.
 
 will not match the string "foo" because when the macro is expanded the
 rule is equivalent to "foo\[A-Z\]\[A-Z0-9\]\*?" and the precedence is
-such that the '?' is associated with "\[A-Z0-9\]\*". With *flex,* the
+such that the '?' is associated with "\[A-Z0-9\]\*". With `flex`, the
 rule will be expanded to "foo(\[A-Z\]\[A-Z0-9\]\*)?" and so the string
 "foo" will match.
 
-> Note that if the definition begins with **^** or ends with **$** then
-> it is *not* expanded with parentheses, to allow these operators to
-> appear in definitions without losing their special meanings. But the
-> **&lt;s&gt;, /,** and **&lt;&lt;EOF&gt;&gt;** operators cannot be used
-> in a *flex* definition.
->
-> Using **-l** results in the *lex* behavior of no parentheses around
-> the definition.
->
-> The POSIX specification is that the definition be enclosed in
-> parentheses.
+Note that if the definition begins with `^` or ends with `$` then
+it is *not* expanded with parentheses, to allow these operators to
+appear in definitions without losing their special meanings. But the
+`<s>`, `/`, and `<<EOF>>` operators cannot be used
+in a `flex` definition.
+
+Using `-l` results in the `lex` behavior of no parentheses around
+the definition.
+
+The POSIX specification is that the definition be enclosed in
+parentheses.
 
 -   Some implementations of *lex* allow a rule's action to begin on a
     separate line, if the rule's pattern has trailing whitespace:
@@ -2542,40 +2506,40 @@ rule will be expanded to "foo(\[A-Z\]\[A-Z0-9\]\*)?" and so the string
         foo|bar<space here>
           { foobar_action(); }
 
-*flex* does not support this feature.
+`flex` does not support this feature.
 
--   The *lex* **%r** (generate a Ratfor scanner) option is not
+-   The *lex* `%r` (generate a Ratfor scanner) option is not
     supported. It is not part of the POSIX specification.
 
--   After a call to **unput(),** *yytext* is undefined until the next
-    token is matched, unless the scanner was built using **%array.**
+-   After a call to `unput()`, *yytext* is undefined until the next
+    token is matched, unless the scanner was built using `%array`.
     This is not the case with *lex* or the POSIX specification. The
-    **-l** option does away with this incompatibility.
+    `-l` option does away with this incompatibility.
 
--   The precedence of the **{}** (numeric range) operator is different.
+-   The precedence of the `{}` (numeric range) operator is different.
     *lex* interprets "abc{1,3}" as "match one, two, or three occurrences
-    of 'abc'", whereas *flex* interprets it as "match 'ab' followed by
+    of 'abc'", whereas `flex` interprets it as "match 'ab' followed by
     one, two, or three occurrences of 'c'". The latter is in agreement
     with the POSIX specification.
 
--   The precedence of the **^** operator is different. *lex* interprets
+-   The precedence of the `^` operator is different. *lex* interprets
     "^foo\|bar" as "match either 'foo' at the beginning of a line, or
-    'bar' anywhere", whereas *flex* interprets it as "match either 'foo'
+    'bar' anywhere", whereas `flex` interprets it as "match either 'foo'
     or 'bar' if they come at the beginning of a line". The latter is in
     agreement with the POSIX specification.
 
--   The special table-size declarations such as **%a** supported by
-    *lex* are not required by *flex* scanners; *flex* ignores them.
+-   The special table-size declarations such as `%a` supported by
+    *lex* are not required by `flex` scanners; `flex` ignores them.
 
 -   The name
 
 FLEX\_SCANNER is \#define'd so scanners may be written for use with
-either *flex* or *lex.* Scanners also include
-**YY\_FLEX\_MAJOR\_VERSION** and **YY\_FLEX\_MINOR\_VERSION** indicating
-which version of *flex* generated the scanner (for example, for the 2.5
+either `flex` or *lex.* Scanners also include
+`YY_FLEX_MAJOR_VERSION` and `YY_FLEX_MINOR_VERSION` indicating
+which version of `flex` generated the scanner (for example, for the 2.5
 release, these defines would be 2 and 5 respectively).
 
-The following *flex* features are not included in *lex* or the POSIX
+The following `flex` features are not included in *lex* or the POSIX
 specification:
 
 
@@ -2600,7 +2564,7 @@ specification:
         multiple actions on a line
 
 plus almost all of the flex flags. The last feature in the list refers
-to the fact that with *flex* you can put multiple actions on the same
+to the fact that with `flex` you can put multiple actions on the same
 line, separated with semi-colons, while with *lex,* the following
 
 
@@ -2611,12 +2575,12 @@ is (rather surprisingly) truncated to
 
         foo    handle_foo();
 
-*flex* does not truncate the action. Actions that are not enclosed in
+`flex` does not truncate the action. Actions that are not enclosed in
 braces are simply terminated at the end of the line.
 
 # DIAGNOSTICS
 
-*warning, rule cannot be matched* indicates that the given rule cannot
+`warning, rule cannot be matched` indicates that the given rule cannot
 be matched because it follows other rules that will always match the
 same text as it. For example, in the following "foo" cannot be matched
 because it comes after an identifier "catch-all" rule:
@@ -2625,49 +2589,49 @@ because it comes after an identifier "catch-all" rule:
         [a-z]+    got_identifier();
         foo       got_foo();
 
-Using **REJECT** in a scanner suppresses this warning.
+Using `REJECT` in a scanner suppresses this warning.
 
-*warning,* **-s** *option given but default rule can be matched* means
+`warning, '-s' option given but default rule can be matched` means
 that it is possible (perhaps only in a particular start condition) that
 the default rule (match any single character) is the only one that will
-match a particular input. Since **-s** was given, presumably this is not
+match a particular input. Since `-s` was given, presumably this is not
 intended.
 
-*reject\_used\_but\_not\_detected undefined* or
-*yymore\_used\_but\_not\_detected undefined -* These errors can occur at
-compile time. They indicate that the scanner uses **REJECT** or
-**yymore()** but that *flex* failed to notice the fact, meaning that
-*flex* scanned the first two sections looking for occurrences of these
+`reject_used_but_not_detected undefined` or
+`yymore_used_but_not_detected undefined` - These errors can occur at
+compile time. They indicate that the scanner uses `REJECT` or
+`yymore()` but that `flex` failed to notice the fact, meaning that
+`flex` scanned the first two sections looking for occurrences of these
 actions and failed to find any, but somehow you snuck some in (via a
-\#include file, for example). Use **%option reject** or **%option
-yymore** to indicate to flex that you really do use these features.
+\#include file, for example). Use `%option reject` or
+`%option yymore` to indicate to flex that you really do use these features.
 
-*flex scanner jammed -* a scanner compiled with **-s** has encountered
+`flex scanner jammed` - a scanner compiled with `-s` has encountered
 an input string which wasn't matched by any of its rules. This error can
 also occur due to internal problems.
 
-*token too large, exceeds YYLMAX -* your scanner uses **%array** and one
-of its rules matched a string longer than the **YYLMAX** constant (8K
-bytes by default). You can increase the value by \#define'ing **YYLMAX**
-in the definitions section of your *flex* input.
+`token too large, exceeds YYLMAX` - your scanner uses `%array` and one
+of its rules matched a string longer than the `YYLMAX` constant (8K
+bytes by default). You can increase the value by \#define'ing `YYLMAX`
+in the definitions section of your `flex` input.
 
-*scanner requires -8 flag to* *use the character 'x' -* Your scanner
+`scanner requires -8 flag to use the character 'x'` - Your scanner
 specification includes recognizing the 8-bit character *'x'* and you did
 not specify the -8 flag, and your scanner defaulted to 7-bit because you
-used the **-Cf** or **-CF** table compression options. See the
-discussion of the **-7** flag for details.
+used the `-Cf` or `-CF` table compression options. See the
+discussion of the `-7` flag for details.
 
-*flex scanner push-back overflow -* you used **unput()** to push back so
+`flex scanner push-back overflow` - you used `unput()` to push back so
 much text that the scanner's buffer could not hold both the pushed-back
-text and the current token in **yytext.** Ideally the scanner should
+text and the current token in `yytext`. Ideally the scanner should
 dynamically resize the buffer in this case, but at present it does not.
 
-*input buffer overflow, can't enlarge buffer because scanner uses REJECT
--* the scanner was working on matching an extremely large token and
+`input buffer overflow, can't enlarge buffer because scanner uses REJECT` -
+the scanner was working on matching an extremely large token and
 needed to expand the input buffer. This doesn't work with scanners that
-use **REJECT.**
+use `REJECT`.
 
-*fatal flex scanner internal error--end of buffer missed -* This can
+`fatal flex scanner internal error--end of buffer missed` - This can
 occur in an scanner which is reentered after a long-jump has jumped out
 (or over) the scanner's activation frame. Before reentering the scanner,
 use:
@@ -2677,31 +2641,31 @@ use:
 
 or, as noted above, switch to using the C++ scanner class.
 
-*too many start conditions in &lt;&gt; construct! -* you listed more
+`too many start conditions in <> construct!` - you listed more
 start conditions in a &lt;&gt; construct than exist (so you must have
 listed at least one of them twice).
 
 # FILES
 
-**-lfl**  
+`-lfl`:
 library with which scanners must be linked.
 
-*lex.yy.c*  
+`lex.yy.c`:
 generated scanner (called *lexyy.c* on some systems).
 
-*lex.yy.cc*  
-generated C++ scanner class, when using **-+.**
+`lex.yy.cc`:
+generated C++ scanner class, when using `-+`.
 
-*&lt;FlexLexer.h&gt;*  
-header file defining the C++ scanner base class, **FlexLexer,** and its
-derived class, **yyFlexLexer.**
+`<FlexLexer.h>`:
+header file defining the C++ scanner base class, `FlexLexer`, and its
+derived class, `yyFlexLexer`.
 
-*flex.skl*  
+`flex.skl`:
 skeleton scanner. This file is only used when building flex, not when
 flex executes.
 
-*lex.backup*  
-backing-up information for **-b** flag (called *lex.bck* on some
+`lex.backup`:
+backing-up information for `-b` flag (called `lex.bck` on some
 systems).
 
 # DEFICIENCIES / BUGS
@@ -2727,8 +2691,8 @@ trailing context. For example, in the following:
         abc      |
         xyz/def
 
-Use of **unput()** invalidates yytext and yyleng, unless the **%array**
-directive or the **-l** option has been used.
+Use of `unput()` invalidates yytext and yyleng, unless the `%array`
+directive or the `-l` option has been used.
 
 Pattern-matching of NUL's is substantially slower than matching other
 characters.
@@ -2737,18 +2701,18 @@ Dynamic resizing of the input buffer is slow, as it entails rescanning
 all the text matched so far by the current (generally huge) token.
 
 Due to both buffering of input and read-ahead, you cannot intermix calls
-to &lt;stdio.h&gt; routines, such as, for example, **getchar(),** with
-*flex* rules and expect it to work. Call **input()** instead.
+to &lt;stdio.h&gt; routines, such as, for example, `getchar()`, with
+`flex` rules and expect it to work. Call `input()` instead.
 
-The total table entries listed by the **-v** flag excludes the number of
+The total table entries listed by the `-v` flag excludes the number of
 table entries needed to determine what rule has been matched. The number
 of entries is equal to the number of DFA states if the scanner does not
-use **REJECT,** and somewhat greater than the number of states if it
+use `REJECT`, and somewhat greater than the number of states if it
 does.
 
-**REJECT** cannot be used with the **-f** or **-F** options.
+`REJECT` cannot be used with the `-f` or `-F` options.
 
-The *flex* internal algorithms need documentation.
+The `flex` internal algorithms need documentation.
 
 # SEE ALSO
 
@@ -2761,7 +2725,7 @@ M. E. Lesk and E. Schmidt, *LEX - Lexical Analyzer Generator*
 
 Alfred Aho, Ravi Sethi and Jeffrey Ullman, *Compilers: Principles,
 Techniques and Tools,* Addison-Wesley (1986). Describes the
-pattern-matching techniques used by *flex* (deterministic finite
+pattern-matching techniques used by `flex` (deterministic finite
 automata).
 
 # AUTHOR
@@ -2771,7 +2735,7 @@ Jacobson. Original version by Jef Poskanzer. The fast table
 representation is a partial implementation of a design done by Van
 Jacobson. The implementation was done by Kevin Gong and Vern Paxson.
 
-Thanks to the many *flex* beta-testers, feedbackers, and contributors,
+Thanks to the many `flex` beta-testers, feedbackers, and contributors,
 especially Francois Pinard, Casey Leedom, Robert Abramovitz, Stan
 Adermann, Terry Allen, David Barker-Plummer, John Basrai, Neal Becker,
 Nelson H.F. Beebe, benson@odi.com, Karl Berry, Peter A. Bigot, Simon
