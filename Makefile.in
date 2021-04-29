@@ -4,7 +4,7 @@
 
 CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
-LDFLAGS = 
+LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 
 # Enable all GCC warnings.
