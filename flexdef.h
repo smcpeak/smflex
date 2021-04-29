@@ -11,7 +11,7 @@
  * to contract no. DE-AC03-76SF00098 between the United States
  * Department of Energy and the University of California.
  *
- * Redistribution and use in source and binary forms are permitted provided
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided
  * that: (1) source distributions retain this entire copyright notice and
  * comment, and (2) distributions including binaries display the following
  * acknowledgement:  ``This product includes software developed by the
