@@ -12,9 +12,6 @@ dnl# "obsolete" usage.
 dnl#
 AC_INIT(initscan.c)
 
-dnl# Create config.h from conf.in.
-AC_CONFIG_HEADER(config.h:conf.in)
-
 dnl# Set @LN_S@ to "ln -s", typically.
 AC_LN_S
 
@@ -34,17 +31,5 @@ dnl# If $MAKE is set, propagate that via @SET_MAKE@.
 AC_PROG_MAKE_SET
 
 dnl# When config.status is invoked (which happens implicitly at the end
-dnl# of 'configure'):
-dnl#
-dnl#   1. Create Makefile by substituting variables.
-dnl#   2. If "$CONFIG_HEADERS" is not empty, then create 'stamp-h' with
-dnl#      and updated timestamp.
-dnl#
-dnl# Bullet 2 is part of the mechanism to ensure the generated files are
-dnl# regenerated when any of the *.in files changes.  However, the usage
-dnl# here is not what the current autoconf manual recommends.
-dnl#
-dnl# See https://www.gnu.org/software/autoconf/manual/autoconf-2.67/html_node/Automatic-Remaking.html
-dnl#
-AC_OUTPUT(Makefile,
-[test -z "$CONFIG_HEADERS" || echo timestamp > stamp-h])
+dnl# of 'configure'), create Makefile by substituting variables.
+AC_OUTPUT(Makefile)

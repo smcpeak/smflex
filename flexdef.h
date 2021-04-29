@@ -32,8 +32,6 @@
 #include <ctype.h>
 #include <stddef.h>                    /* size_t */
 
-#include "config.h"
-
 #ifdef __TURBOC__
 #define HAVE_STRING_H 1
 #define MS_DOS 1
