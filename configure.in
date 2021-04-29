@@ -14,11 +14,5 @@ AC_TYPE_SIZE_T
 AC_HEADER_STDC
 AC_HAVE_HEADERS(string.h malloc.h sys/types.h)
 
-case "$YACC" in
-*bison*)
-  AC_ALLOCA
-  ;;
-esac
-
 AC_OUTPUT(Makefile,
 [test -z "$CONFIG_HEADERS" || echo timestamp > stamp-h])

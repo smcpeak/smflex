@@ -36,45 +36,7 @@
 /* $Header$ */
 
 
-/* Some versions of bison are broken in that they use alloca() but don't
- * declare it properly.  The following is the patented (just kidding!)
- * #ifdef chud to fix the problem, courtesy of Francois Pinard.
- */
-#ifdef YYBISON
-/* AIX requires this to be the first thing in the file.  What a piece.  */
-# ifdef _AIX
- #pragma alloca
-# endif
-#endif
-
 #include "flexdef.h"
-
-/* The remainder of the alloca() cruft has to come after including flexdef.h,
- * so HAVE_ALLOCA_H is (possibly) defined.
- */
-#ifdef YYBISON
-# ifdef __GNUC__
-#  ifndef alloca
-#   define alloca __builtin_alloca
-#  endif
-# else
-#  if HAVE_ALLOCA_H
-#   include <alloca.h>
-#  else
-#   ifdef __hpux
-void *alloca ();
-#   else
-#    ifdef __TURBOC__
-#     include <malloc.h>
-#    else
-char *alloca ();
-#    endif
-#   endif
-#  endif
-# endif
-#endif
-
-/* Bletch, ^^^^ that was ugly! */
 
 
 int pat, scnum, eps, headcnt, trailcnt, anyccl, lastchar, i, rulelen;

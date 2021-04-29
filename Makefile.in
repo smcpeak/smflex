@@ -71,7 +71,7 @@ SOURCES = ccl.c dfa.c ecs.c gen.c main.c misc.c nfa.c parse.y \
 
 # Object files to compile and link into 'flex'.
 OBJECTS = ccl.o dfa.o ecs.o gen.o main.o misc.o nfa.o parse.o \
-	scan.o skel.o sym.o tblcmp.o yylex.o @ALLOCA@
+	scan.o skel.o sym.o tblcmp.o yylex.o
 
 # Runtime library sources, also included in the distribution.
 LIBSRCS = libmain.c libyywrap.c
@@ -162,14 +162,6 @@ skel.o: skel.c flexdef.h config.h
 sym.o: sym.c flexdef.h config.h
 tblcmp.o: tblcmp.c flexdef.h config.h
 
-# TODO: I think the alloca stuff is not needed anymore.
-alloca.o: alloca.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c -Dxmalloc=yy_flex_xmalloc alloca.c
-
-alloca.c: $(srcdir)/MISC/alloca.c
-	rm -f alloca.c
-	cp $(srcdir)/MISC/alloca.c .
-
 # Run a quick check to see if the current flex produces the same
 # output as it did before.
 test: check
@@ -236,7 +228,7 @@ mostlyclean:
 	rm -f a.out *.bak core errs scan.tmp
 
 clean: mostlyclean
-	rm -f flex parse.c parse.h *.o alloca.c lex.yy.c lex.yy.cc \
+	rm -f flex parse.c parse.h *.o lex.yy.c lex.yy.cc \
 		$(FLEXLIB) config.log config.cache
 
 distclean: clean
