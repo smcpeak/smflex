@@ -47,10 +47,6 @@ void flexinit PROTO((int, char**));
 void readin PROTO((void));
 void set_up_initial_allocations PROTO((void));
 
-#ifdef NEED_ARGV_FIXUP
-extern void argv_fixup PROTO((int *, char ***));
-#endif
-
 
 /* these globals are all defined and commented in flexdef.h */
 int printstats, syntaxerror, eofseen, ddebug, trace, nowarn, spprdflt;
@@ -137,9 +133,6 @@ char **argv;
 
 #ifdef THINK_C
 	argc = ccommand( &argv );
-#endif
-#ifdef NEED_ARGV_FIXUP
-	argv_fixup( &argc, &argv );
 #endif
 
 	flexinit( argc, argv );

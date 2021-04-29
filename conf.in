@@ -1,4 +1,1 @@
 /* $Header: /home/daffy/u0/vern/flex/RCS/conf.in,v 1.2 95/01/09 12:11:51 vern Exp $ */
-
-/* Define if platform-specific command line handling is necessary.  */
-#undef NEED_ARGV_FIXUP
