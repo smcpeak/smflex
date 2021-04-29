@@ -26,7 +26,21 @@ FLEX = flex
 FLEXLIB = libfl.a
 
 SHELL = /bin/sh
+
+# Directory containing the sources.  Often this is just ".", but if
+# the user runs 'configure' in a different directory, then this points
+# back to the source dir from there.
+#
+# e.g.: "mkdir obj; cd obj; ../configure"
+#
+# See https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.70/html_node/Build-Directories.html
+#
 srcdir = @srcdir@
+
+# This tells 'make' to search for dependencies in the source directory
+# as well as the current directory.  However, things can get messed up
+# if you do a build in the source directory and in another one because
+# 'make' will pull generated sources from both places, making a mess.
 VPATH = @srcdir@
 
 LN_S = @LN_S@
