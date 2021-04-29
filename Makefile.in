@@ -20,6 +20,9 @@ DEFS = @DEFS@
 LDFLAGS = 
 LIBS = @LIBS@
 
+# Enable all GCC warnings.
+CFLAGS += -Wall
+
 # Installation targeting.  Files will be installed under the tree
 # rooted at prefix.  flex will be installed in bindir, libfl.a in
 # libdir, and FlexLexer.h will be installed in includedir.
