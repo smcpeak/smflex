@@ -2246,12 +2246,15 @@ your scanner remains *yyin,* and default echoing is still done to
 *yyout.* Both of these remain *FILE \** variables and not C++ *streams.*
 
 You can also use *flex* to generate a C++ scanner class, using the
-**-+** option (or, equivalently, **%option c++),** which is
-automatically specified if the name of the flex executable ends in a
-'+', such as *flex++.* When using this option, flex defaults to
+`-+` option (or, equivalently, `%option c++`).
+When using this option, `flex` defaults to
 generating the scanner to the file **lex.yy.cc** instead of
 **lex.yy.c.** The generated scanner includes the header file
 *FlexLexer.h,* which defines the interface to two C++ classes.
+
+smcpeak 2021-04-29: Flex-2.5.4 also allows the user to choose C++ mode
+by invoking `flex` as `flex++`.  I have removed that feature.  (I
+dislike the idea that a program's behavior depends on its name.)
 
 The first class, **FlexLexer,** provides an abstract base class defining
 the general scanner class interface. It provides the following member

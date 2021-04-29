@@ -603,10 +603,6 @@ char **argv;
 
 	program_name = argv[0];
 
-	if ( program_name[0] != '\0' &&
-	     program_name[strlen( program_name ) - 1] == '+' )
-		C_plus_plus = true;
-
 	/* read flags */
 	for ( --argc, ++argv; argc ; --argc, ++argv )
 		{

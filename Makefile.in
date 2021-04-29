@@ -59,9 +59,6 @@ srcdir = @srcdir@
 # 'make' will pull generated sources from both places, making a mess.
 VPATH = @srcdir@
 
-# Make a symbolic link.
-LN_S = @LN_S@
-
 # Bison, operating in yacc compatibility mode.
 YACC = @YACC@
 
@@ -226,8 +223,6 @@ $(FLEXLIB): $(LIBOBJS)
 # Install to the chosen --prefix.
 install: $(FLEX) $(FLEXLIB) installdirs
 	$(INSTALL_PROGRAM) $(FLEX) $(bindir)/$(FLEX)
-	@rm -f $(bindir)/$(FLEX)++
-	cd $(bindir) && $(LN_S) $(FLEX) $(FLEX)++
 	$(INSTALL_DATA) $(FLEXLIB) $(libdir)/$(FLEXLIB)
 	-cd $(libdir) && $(RANLIB) $(FLEXLIB)
 	$(INSTALL_DATA) $(srcdir)/FlexLexer.h $(includedir)/FlexLexer.h
@@ -237,7 +232,7 @@ installdirs:
 	  $(bindir) $(libdir) $(includedir)
 
 uninstall:
-	rm -f $(bindir)/$(FLEX) $(bindir)/$(FLEX)++
+	rm -f $(bindir)/$(FLEX)
 	rm -f $(libdir)/$(FLEXLIB)
 	rm -f $(includedir)/FlexLexer.h
 

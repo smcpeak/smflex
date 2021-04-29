@@ -12,9 +12,6 @@ dnl# "obsolete" usage.
 dnl#
 AC_INIT(initscan.c)
 
-dnl# Set @LN_S@ to "ln -s", typically.
-AC_LN_S
-
 dnl# Set @YACC@ to "bison -y", typically.
 AC_PROG_YACC
 
