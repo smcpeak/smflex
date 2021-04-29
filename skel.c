@@ -1,7 +1,5 @@
 /* File created from ./flex.skl via ./mkskel.sh */
 
-#include "flexdef.h"
-
 /* NULL-terminated array of NUL-terminated lines, *without* line
  * terminators. */
 const char *skel[] = {

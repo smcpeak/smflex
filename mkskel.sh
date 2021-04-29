@@ -20,8 +20,6 @@ exec 3>"$dest_file"
 cat >&3 <<!
 /* File created from $contents_file via $0 */
 
-#include "flexdef.h"
-
 /* NULL-terminated array of NUL-terminated lines, *without* line
  * terminators. */
 const char *$array_name[] = {
