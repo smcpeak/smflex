@@ -56,7 +56,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 # ------------------------------------------------------------
 
 # Preprocessor flags.
-CPPFLAGS = -I. -I$(srcdir)
+CPPFLAGS += -I. -I$(srcdir)
 
 # Rule for compiling one C source file.
 .c.o:
