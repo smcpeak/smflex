@@ -135,8 +135,9 @@ alloca.c: $(srcdir)/MISC/alloca.c
 test: check
 check: $(FLEX)
 	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) $(srcdir)/scan.l \
-	| sed s,\"$(srcdir)/scan.l\",\"scan.l\", \
-	| diff -b scan.c -
+	  | sed s,\"$(srcdir)/scan.l\",\"scan.l\", > scan.actual.c
+	diff -b scan.c scan.actual.c
+	rm scan.actual.c
 	@echo "Check successful, using COMPRESSION=\"$(COMPRESSION)\""
 
 bigcheck:
