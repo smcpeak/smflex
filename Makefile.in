@@ -89,23 +89,23 @@ $(FLEX): .bootstrap $(OBJECTS) $(FLEXLIB)
 	$(CC) $(CFLAGS) -o $(FLEX) $(LDFLAGS) $(OBJECTS) $(FLEXLIB) $(LIBS)
 
 .bootstrap: initscan.c
-	@rm -f scan.c
+	rm -f scan.c
 	cp $(srcdir)/initscan.c scan.c
 	touch .bootstrap
 
 parse.c: parse.y
 	$(YACC) -d $(srcdir)/parse.y
-	@sed '/extern char.*malloc/d' <y.tab.c >parse.tmp
-	@mv parse.tmp parse.c
-	@mv y.tab.h parse.h
-	@rm -f y.tab.c
+	sed '/extern char.*malloc/d' <y.tab.c >parse.tmp
+	mv parse.tmp parse.c
+	mv y.tab.h parse.h
+	rm -f y.tab.c
 
 parse.h: parse.c
 
 scan.c: scan.l
 	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) $(srcdir)/scan.l >scan.c
-	@sed s,\"$(srcdir)/scan.l\",\"scan.l\", <scan.c >scan.tmp
-	@mv scan.tmp scan.c
+	sed s,\"$(srcdir)/scan.l\",\"scan.l\", <scan.c >scan.tmp
+	mv scan.tmp scan.c
 
 scan.o: scan.c parse.h flexdef.h config.h
 yylex.o: yylex.c parse.h flexdef.h config.h
