@@ -48,23 +48,8 @@
  #pragma warn -pia
 #endif
 
-#ifdef HAVE_STRING_H
-#include <string.h>
-#else
-#include <strings.h>
-#endif
-
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
-#ifdef HAVE_MALLOC_H
-#include <malloc.h>
-#endif
-
-#ifdef STDC_HEADERS
-#include <stdlib.h>
-#endif
+#include <string.h>                    /* strcpy, etc. */
+#include <stdlib.h>                    /* malloc, etc. */
 
 /* As an aid for the internationalization patch to flex, which
  * is maintained outside this distribution for copyright reasons.

@@ -1,16 +1,4 @@
 /* $Header: /home/daffy/u0/vern/flex/RCS/conf.in,v 1.2 95/01/09 12:11:51 vern Exp $ */
 
-/* Define if you have the ANSI C header files.  */
-#undef STDC_HEADERS
-
-/* Define if you have the <malloc.h> header file.  */
-#undef HAVE_MALLOC_H
-
-/* Define if you have the <string.h> header file.  */
-#undef HAVE_STRING_H
-
-/* Define if you have the <sys/types.h> header file.  */
-#undef HAVE_SYS_TYPES_H
-
 /* Define if platform-specific command line handling is necessary.  */
 #undef NEED_ARGV_FIXUP

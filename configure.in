@@ -33,17 +33,6 @@ AC_PROG_INSTALL
 dnl# If $MAKE is set, propagate that via @SET_MAKE@.
 AC_PROG_MAKE_SET
 
-dnl# Arrange for config.h to #define STDC_HEADERS if needed.
-dnl#
-dnl# TODO: Remove this.
-AC_HEADER_STDC
-
-dnl# Possibly #define HAVE_MALLOC_H, HAVE_STRING_H, and/or
-dnl# HAVE_SYS_TYPES_H if the respective files are present.
-dnl#
-dnl# TODO: I suspect all of these can be removed.
-AC_HAVE_HEADERS(string.h malloc.h sys/types.h)
-
 dnl# When config.status is invoked (which happens implicitly at the end
 dnl# of 'configure'):
 dnl#
