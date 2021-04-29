@@ -1,21 +1,71 @@
-dnl Process this file with autoconf to produce a configure script.
-dnl
+dnl# Process this file with autoconf to produce a configure script.
+dnl#
+
+dnl# Initialize autoconf and specify the name of a file in srcdir for
+dnl# sanity checking.
+dnl#
+dnl# The autoconf manual explains that the use of a single argument with
+dnl# AC_INIT is obsolete, but the recommended alternative requires
+dnl# specifying a package version number, and I think it is inappropriate
+dnl# for that information to appear here.  So I am choosing to retain the
+dnl# "obsolete" usage.
+dnl#
 AC_INIT(initscan.c)
+
+dnl# Create config.h from conf.in.
 AC_CONFIG_HEADER(config.h:conf.in)
 
+dnl# Set @LN_S@ to "ln -s", typically.
 AC_LN_S
+
+dnl# Set @YACC@ to "bison -y", typically.
 AC_PROG_YACC
+
+dnl# Set @CC@ to "gcc", usually.
 AC_PROG_CC
+
+dnl# Set @RANLIB@ to "ranlib", typically.
 AC_PROG_RANLIB
+
+dnl# Set @INSTALL@ to "/usr/bin/install -c", at least on cygwin.
 AC_PROG_INSTALL
 
-# If $MAKE is set, propagate that via @SET_MAKE@.
+dnl# If $MAKE is set, propagate that via @SET_MAKE@.
 AC_PROG_MAKE_SET
 
+dnl# Arrange for config.h to #define const if needed.
+dnl#
+dnl# TODO: Remove this, as it should not be needed.
 AC_CONST
+
+dnl# Arrange for config.h to #define size_t if needed.
+dnl#
+dnl# TODO: Remove this.
 AC_TYPE_SIZE_T
+
+dnl# Arrange for config.h to #define STDC_HEADERS if needed.
+dnl#
+dnl# TODO: Remove this.
 AC_HEADER_STDC
+
+dnl# Possibly #define HAVE_MALLOC_H, HAVE_STRING_H, and/or
+dnl# HAVE_SYS_TYPES_H if the respective files are present.
+dnl#
+dnl# TODO: I suspect all of these can be removed.
 AC_HAVE_HEADERS(string.h malloc.h sys/types.h)
 
+dnl# When config.status is invoked (which happens implicitly at the end
+dnl# of 'configure'):
+dnl#
+dnl#   1. Create Makefile by substituting variables.
+dnl#   2. If "$CONFIG_HEADERS" is not empty, then create 'stamp-h' with
+dnl#      and updated timestamp.
+dnl#
+dnl# Bullet 2 is part of the mechanism to ensure the generated files are
+dnl# regenerated when any of the *.in files changes.  However, the usage
+dnl# here is not what the current autoconf manual recommends.
+dnl#
+dnl# See https://www.gnu.org/software/autoconf/manual/autoconf-2.67/html_node/Automatic-Remaking.html
+dnl#
 AC_OUTPUT(Makefile,
 [test -z "$CONFIG_HEADERS" || echo timestamp > stamp-h])

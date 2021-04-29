@@ -2043,6 +2043,7 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
+
 ac_config_headers="$ac_config_headers config.h:conf.in"
 
 
@@ -2056,6 +2057,7 @@ else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no, using $LN_S" >&5
 $as_echo "no, using $LN_S" >&6; }
 fi
+
 
 for ac_prog in 'bison -y' byacc
 do
@@ -2099,6 +2101,7 @@ fi
   test -n "$YACC" && break
 done
 test -n "$YACC" || YACC="yacc"
+
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -2889,6 +2892,7 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
+
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}ranlib", so it can be a program name with args.
 set dummy ${ac_tool_prefix}ranlib; ac_word=$2
@@ -2980,6 +2984,7 @@ esac
 else
   RANLIB="$ac_cv_prog_RANLIB"
 fi
+
 
 ac_aux_dir=
 for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
@@ -3103,6 +3108,7 @@ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
 
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${MAKE-make} sets \$(MAKE)" >&5
 $as_echo_n "checking whether ${MAKE-make} sets \$(MAKE)... " >&6; }
 set x ${MAKE-make}
@@ -3133,6 +3139,7 @@ else
 $as_echo "no" >&6; }
   SET_MAKE="MAKE=${MAKE-make}"
 fi
+
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for an ANSI C-conforming const" >&5
@@ -3215,6 +3222,7 @@ if test $ac_cv_c_const = no; then
 $as_echo "#define const /**/" >>confdefs.h
 
 fi
+
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -3624,6 +3632,7 @@ _ACEOF
 
 fi
 
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ANSI C header files" >&5
 $as_echo_n "checking for ANSI C header files... " >&6; }
 if ${ac_cv_header_stdc+:} false; then :
@@ -3735,6 +3744,7 @@ if test $ac_cv_header_stdc = yes; then
 $as_echo "#define STDC_HEADERS 1" >>confdefs.h
 
 fi
+
 
 for ac_header in string.h malloc.h sys/types.h
 do :
