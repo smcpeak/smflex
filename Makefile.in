@@ -126,10 +126,8 @@ $(FLEX): .bootstrap $(OBJECTS) $(FLEXLIB)
 # Bison-generated parser for flex's input language.
 parse.c: parse.y
 	$(YACC) -d $(srcdir)/parse.y
-	sed '/extern char.*malloc/d' <y.tab.c >parse.tmp
-	mv parse.tmp parse.c
-	mv y.tab.h parse.h
-	rm -f y.tab.c
+	mv -f y.tab.c parse.c
+	mv -f y.tab.h parse.h
 
 # This rule tells 'make' that in order to create 'parse.h' it must first
 # create 'parse.c'.  The latter is what actually makes 'parse.h'.
