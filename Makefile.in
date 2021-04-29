@@ -119,7 +119,7 @@ scan.o: scan.c parse.h flexdef.h config.h
 yylex.o: yylex.c parse.h flexdef.h config.h
 
 skel.c: flex.skl mkskel.sh
-	$(SHELL) $(srcdir)/mkskel.sh $(srcdir)/flex.skl >skel.c
+	$(SHELL) $(srcdir)/mkskel.sh $(srcdir)/flex.skl skel.c skel
 
 main.o: main.c flexdef.h config.h version.h
 ccl.o: ccl.c flexdef.h config.h
