@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <stddef.h>                    /* size_t */
 
 #include "config.h"
 

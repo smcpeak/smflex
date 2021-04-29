@@ -1,8 +1,5 @@
 /* $Header: /home/daffy/u0/vern/flex/RCS/conf.in,v 1.2 95/01/09 12:11:51 vern Exp $ */
 
-/* Define to `unsigned' if <sys/types.h> doesn't define.  */
-#undef size_t
-
 /* Define if you have the ANSI C header files.  */
 #undef STDC_HEADERS
 
