@@ -265,7 +265,7 @@ and reference sections:
 which recognized lexical patterns in text. <code>flex</code> reads the
 given input files, or its standard input if no file names are given, for
 a description of a scanner to generate. The description is in the form
-of pairs of regular expressions and C code, called <em>rules. flex</em>
+of pairs of regular expressions and C code, called <em>rules</em>.  <code>flex</code>
 generates as output a C source file, <code>lex.yy.c</code>, which
 defines a routine <code>yylex()</code>. This file is compiled and linked
 with the <code>-lfl</code> library to produce an executable. When the
@@ -622,7 +622,14 @@ to <code>[:alpha:]</code>.
 
 <ul>
 
-<li><p>A negated character class such as the example "[^A-Z]" above <em>will match a newline</em> unless "\n" (or an equivalent escape sequence) is one of the characters explicitly present in the negated character class (e.g., "[^A-Z\n]"). This is unlike how many other regular expression tools treat negated character classes, but unfortunately the inconsistency is historically entrenched. Matching newlines means that a pattern like [^"]* can match the entire input unless there's another quote in the input.</p></li>
+<li><p>A negated character class such as the example "[^A-Z]" above
+    <em>will match a newline</em> unless "\n" (or an equivalent escape
+    sequence) is one of the characters explicitly present in the negated
+    character class (e.g., "[^A-Z\n]"). This is unlike how many other
+    regular expression tools treat negated character classes, but
+    unfortunately the inconsistency is historically entrenched. Matching
+    newlines means that a pattern like [^"]* can match the entire input
+    unless there's another quote in the input.
 
 <li><p>A rule can have at most one instance of trailing context (the
     '/' operator or the '$' operator). The start condition, '^', and
@@ -1374,8 +1381,8 @@ condition <em>scope</em>. A start condition scope is begun with:
 
 <p>where <code>SCs</code> is a list of one or more start
 conditions. Inside the start condition scope, every rule automatically has
-the prefix <code>&lt;SCs&gt;</code> applied to it, until a <em>'}'</em>
-which matches the initial <em>'{'</em>. So, for example,
+the prefix <code>&lt;SCs&gt;</code> applied to it, until a <code>'}'</code>
+which matches the initial <code>'{'</code>. So, for example,
 
 <pre><code>
     &lt;ESC&gt;{
@@ -1405,7 +1412,7 @@ conditions:
 <dt><code>void yy_push_state(int new_state)</code></dt>
 
 <dd><p>pushes the current start condition onto the top of the start
-    condition stack and switches to <em>new_state</em> as though you had
+    condition stack and switches to <code>new_state</code> as though you had
     used <code>BEGIN new_state</code> (recall that start condition names
     are also integers).
 </dd>
@@ -1448,7 +1455,7 @@ input buffer is created by using:
 </code></pre>
 
 <p>which takes a <code>FILE</code> pointer and a size and creates a buffer
-associated with the given file and large enough to hold <em>size</em>
+associated with the given file and large enough to hold <code>size</code>
 characters (when in doubt, use <code>YY_BUF_SIZE</code> for the size). It
 returns a <code>YY_BUFFER_STATE</code> handle, which may then be
 passed to other routines (see below). The <code>YY_BUFFER_STATE</code>
@@ -1469,7 +1476,7 @@ from using:
 </code></pre>
 
 <p>switches the scanner's input buffer so subsequent tokens will come
-from <em>new_buffer</em>. Note that <code>yy_switch_to_buffer()</code>
+from <code>new_buffer</code>. Note that <code>yy_switch_to_buffer()</code>
 may be used by yywrap() to set things up for continued scanning, instead
 of opening a new file and pointing <code>yyin</code> at it. Note also
 that switching input sources via either <code>yy_switch_to_buffer()</code>
@@ -1493,7 +1500,7 @@ the buffer anew using <code>YY_INPUT</code>.
 
 <p><code>yy_new_buffer()</code> is an alias for
 <code>yy_create_buffer()</code>, provided for compatibility with the
-C++ use of <em>new</em> and <em>delete</em> for creating and destroying
+C++ use of <code>new</code> and <code>delete</code> for creating and destroying
 dynamic objects.
 
 <p>Finally, the <code>YY_CURRENT_BUFFER</code> macro returns a
@@ -1575,8 +1582,8 @@ call to <code>yylex()</code> will start scanning the string.
 
 <dt><code>yy_scan_bytes(const char *bytes, int len)</code></dt>
 
-<dd><p>scans <em>len</em> bytes (including possibly NUL's) starting at
-    location <em>bytes</em>.
+<dd><p>scans <code>len</code> bytes (including possibly NUL's) starting at
+    location <code>bytes</code>.
 </dd>
 
 </dl>
@@ -1590,13 +1597,13 @@ copy by using:
 
 <dt><code>yy_scan_buffer(char *base, yy_size_t size)</code></dt>
 
-<dd><p>which scans in place the buffer starting at <em>base</em>, consisting
-    of <em>size</em> bytes, the last two bytes of which <em>must</em> be
+<dd><p>which scans in place the buffer starting at <code>base</code>, consisting
+    of <code>size</code> bytes, the last two bytes of which <em>must</em> be
     <code>YY_END_OF_BUFFER_CHAR</code> (ASCII NUL). These last two bytes
     are not scanned; thus, scanning consists of <code>base[0]</code> through
     <code>base[size-2]</code>, inclusive.
 
-<p>If you fail to set up <em>base</em> in this manner (i.e.,
+<p>If you fail to set up <code>base</code> in this manner (i.e.,
 forget the final two <code>YY_END_OF_BUFFER_CHAR</code> bytes), then
 <code>yy_scan_buffer()</code> returns a nil pointer instead of creating
 a new input buffer.
@@ -1664,7 +1671,7 @@ example:
 action which is always executed prior to the matched rule's action. For
 example, it could be #define'd to call a routine to convert yytext to
 lower-case. When <code>YY_USER_ACTION</code> is invoked, the variable
-<em>yy_act</em> gives the number of the matched rule (rules are numbered
+<code>yy_act</code> gives the number of the matched rule (rules are numbered
 starting with 1). Suppose you want to profile how often each of your
 rules is matched. The following would do the trick:
 
@@ -1672,10 +1679,10 @@ rules is matched. The following would do the trick:
     #define YY_USER_ACTION ++ctr[yy_act]
 </code></pre>
 
-<p>where <em>ctr</em> is an array to hold the counts for the different
+<p>where <code>ctr</code> is an array to hold the counts for the different
 rules. Note that the macro <code>YY_NUM_RULES</code> gives the
 total number of rules (including the default rule, even if you use
-<code>-s</code>), so a correct declaration for <em>ctr</em> is:
+<code>-s</code>), so a correct declaration for <code>ctr</code> is:
 
 <pre><code>
     int ctr[YY_NUM_RULES];
@@ -1733,7 +1740,7 @@ declared <code>char yytext[YYLMAX]</code>, where <code>YYLMAX</code>
 is a macro definition that you can redefine in the first section if you
 don't like the default value (generally 8KB). Using <code>%array</code>
 results in somewhat slower scanners, but the value of <code>yytext</code>
-becomes immune to calls to <em>input()</em> and <em>unput()</em>, which
+becomes immune to calls to <code>input()</code> and <code>unput()</code>, which
 potentially destroy its value when <code>yytext</code> is a character
 pointer. The opposite of <code>%array</code> is <code>%pointer</code>,
 which is the default.
@@ -1757,14 +1764,14 @@ which is the default.
 <h1 id="interfacing-with-yacc">INTERFACING WITH YACC</h1>
 
 <p>One of the main uses of <code>flex</code> is as a companion to
-the <em>yacc</em> parser-generator. <em>yacc</em> parsers expect
+the <code>yacc</code> parser-generator. <code>yacc</code> parsers expect
 to call a routine named <code>yylex()</code> to find the next
 input token. The routine is supposed to return the type of the
 next token as well as putting any associated value in the global
-<code>yylval</code>. To use <code>flex</code> with <em>yacc</em>, one
-specifies the <code>-d</code> option to <em>yacc</em> to instruct it to
+<code>yylval</code>. To use <code>flex</code> with <code>yacc</code>, one
+specifies the <code>-d</code> option to <code>yacc</code> to instruct it to
 generate the file <code>y.tab.h</code> containing definitions of all
-the <code>%tokens</code> appearing in the <em>yacc</em> input. This
+the <code>%tokens</code> appearing in the <code>yacc</code> input. This
 file is then included in the <code>flex</code> scanner. For example,
 if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
@@ -1786,7 +1793,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dt><code>-b</code></dt>
 
-<dd><p>Generate backing-up information to <em>lex.backup</em>. This is a list
+<dd><p>Generate backing-up information to <code>lex.backup</code>. This is a list
     of scanner states which require backing up and the input characters on
     which they do so. By adding rules one can remove backing-up states. If
     <em>all</em> backing-up states are eliminated and <code>-Cf</code>
@@ -1805,7 +1812,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dd><p>makes the generated scanner run in <em>debug</em> mode. Whenever
     a pattern is recognized and the global <code>yy_flex_debug</code> is
-    non-zero (which is the default), the scanner will write to <em>stderr</em>
+    non-zero (which is the default), the scanner will write to <code>stderr</code>
     a line of the form:
 </dd>
 
@@ -1834,7 +1841,7 @@ an end-of-file.
 <dt><code>-h</code></dt>
 
 <dd><p>generates a "help" summary of <code>flex</code>'s options to
-    <em>stdout</em> and then exits. <code>-?</code> and <code>--help</code>
+    <code>stdout</code> and then exits. <code>-?</code> and <code>--help</code>
     are synonyms for <code>-h</code>.
 </dd>
 
@@ -1876,14 +1883,14 @@ an end-of-file.
 <p>Note that the use of <code>REJECT</code>, <code>%option
 yylineno</code>, and variable trailing context (see the Deficiencies /
 Bugs section below) entails a substantial performance penalty; use of
-<em>yymore()</em>, the <code>^</code> operator, and the <code>-I</code>
+<code>yymore()</code>, the <code>^</code> operator, and the <code>-I</code>
 flag entail minor performance penalties.
 </dd>
 
 <dt><code>-s</code></dt>
 
 <dd><p>causes the <em>default rule</em> (that unmatched scanner input is
-    echoed to <em>stdout</em>) to be suppressed. If the scanner encounters
+    echoed to <code>stdout</code>) to be suppressed. If the scanner encounters
     input that does not match any of its rules, it aborts with an error. This
     option is useful for finding holes in a scanner's rule set.
 </dd>
@@ -1896,7 +1903,7 @@ flag entail minor performance penalties.
 
 <dt><code>-v</code></dt>
 
-<dd><p>specifies that <code>flex</code> should write to <em>stderr</em>
+<dd><p>specifies that <code>flex</code> should write to <code>stderr</code>
     a summary of statistics regarding the scanner it generates. Most of
     the statistics are meaningless to the casual <code>flex</code> user,
     but the first line identifies the version of <code>flex</code> (same
@@ -1967,7 +1974,7 @@ be used with <code>-+</code>.
     a newline, it is not recognized as a newline token until they enter
     <em>another</em> token, which often means typing in another whole line.
 
-<p><em>Flex</em> scanners default to <em>interactive</em> unless you
+<p><code>flex</code> scanners default to <em>interactive</em> unless you
 use the <code>-Cf</code> or <code>-CF</code> table-compression options
 (see below). That's because if you're looking for high-performance
 you should be using one of these options, so if you didn't,
@@ -1995,14 +2002,14 @@ by default for all those cases in which it is allowed.
 <dt><code>-T</code></dt>
 
 <dd><p>makes <code>flex</code> run in <em>trace</em> mode. It will generate a
-    lot of messages to <em>stderr</em> concerning the form of the input and
+    lot of messages to <code>stderr</code> concerning the form of the input and
     the resultant non-deterministic and deterministic finite automata. This
     option is mostly for use in maintaining <code>flex</code>.
 </dd>
 
 <dt><code>-V</code></dt>
 
-<dd><p>prints the version number to <em>stdout</em> and
+<dd><p>prints the version number to <code>stdout</code> and
     exits. <code>--version</code> is a synonym for <code>-V</code>.
 </dd>
 
@@ -2018,7 +2025,7 @@ by default for all those cases in which it is allowed.
 <p>Note, however, that unless you generate your scanner using the
 <code>-Cf</code> or <code>-CF</code> table compression options, use of
 <code>-7</code> will save only a small amount of table space, and make
-your scanner considerably less portable. <em>Flex</em>'s default behavior
+your scanner considerably less portable. <code>flex</code>'s default behavior
 is to generate an 8-bit scanner unless you use the <code>-Cf</code> or
 <code>-CF</code>, in which case <code>flex</code> defaults to generating
 7-bit scanners unless your site was always configured to generate 8-bit
@@ -2146,16 +2153,16 @@ for production scanners.
 
 <dd><p>directs flex to write the scanner to the file <code>output</code>
     instead of <code>lex.yy.c</code>. If you combine <code>-o</code> with the
-    <code>-t</code> option, then the scanner is written to <em>stdout</em>
+    <code>-t</code> option, then the scanner is written to <code>stdout</code>
     but its <code>#line</code> directives (see the <code>\-L</code> option
     above) refer to the file <code>output</code>.
 </dd>
 
 <dt><code>-Pprefix</code></dt>
 
-<dd><p>changes the default <em>yy</em> prefix used by <code>flex</code>
+<dd><p>changes the default <code>yy</code> prefix used by <code>flex</code>
     for all globally-visible variable and function names to instead be
-    <em>prefix</em>. For example, <code>-Pfoo</code> changes the name
+    <code>prefix</code>. For example, <code>-Pfoo</code> changes the name
     of <code>yytext</code> to <code>footext</code>. It also changes
     the name of the default output file from <code>lex.yy.c</code> to
     <code>lex.foo.c</code>. Here are all of the names affected:
@@ -2286,11 +2293,11 @@ number are equivalent to flex flags or their negation:
 <dt><code>stdinit</code></dt>
 
 <dd><p>if set (i.e., <code>%option stdinit</code>) initializes
-    <code>yyin</code> and <code>yyout</code> to <em>stdin</em> and
-    <em>stdout</em>, instead of the default of <em>nil</em>. Some existing
+    <code>yyin</code> and <code>yyout</code> to <code>stdin</code> and
+    <code>stdout</code>, instead of the default of <code>nil</code>. Some existing
     <code>lex</code> programs depend on this behavior, even though it is
-    not compliant with ANSI C, which does not require <em>stdin</em> and
-    <em>stdout</em> to be compile-time constant.
+    not compliant with ANSI C, which does not require <code>stdin</code> and
+    <code>stdout</code> to be compile-time constant.
 </dd>
 
 <dt><code>yylineno</code></dt>
@@ -2395,7 +2402,7 @@ is important. It is a particularly expensive option.
 
 <p>Getting rid of backing up is messy and often may be an enormous amount
 of work for a complicated scanner. In principal, one begins by using the
-<code>-b</code> flag to generate a <em>lex.backup</em> file. For example,
+<code>-b</code> flag to generate a <code>lex.backup</code> file. For example,
 on the input
 
 <pre><code>
@@ -2663,15 +2670,15 @@ find to the email address given in the Author section below). You can
 then use C++ code in your rule actions instead of C code. Note that
 the default input source for your scanner remains <code>yyin</code>,
 and default echoing is still done to <code>yyout</code>. Both of these
-remain <em>FILE *</em> variables and not C++ <em>streams</em>.
+remain <code>FILE *</code> variables and not C++ <em>streams</em>.
 
 <p>You can also use <code>flex</code> to generate a C++ scanner class,
 using the <code>-+</code> option (or, equivalently, <code>%option
 c++</code>), which is automatically specified if the name of the flex
-executable ends in a '+', such as <em>flex++</em>. When using this option,
+executable ends in a '+', such as <code>flex++</code>. When using this option,
 flex defaults to generating the scanner to the file <code>lex.yy.cc</code>
 instead of <code>lex.yy.c</code>. The generated scanner includes the
-header file <em>FlexLexer.h</em>, which defines the interface to two
+header file <code>FlexLexer.h</code>, which defines the interface to two
 C++ classes.
 
 <p>The first class, <code>FlexLexer</code>, provides an abstract base
@@ -2721,7 +2728,7 @@ and not a <code>FILE*</code>), <code>yy_flush_buffer()</code>,
 <code>yy_delete_buffer()</code>, and <code>yyrestart()</code> (again,
 the first argument is a <code>istream*</code> object pointer).
 
-<p>The second class defined in <em>FlexLexer.h</em> is
+<p>The second class defined in <code>FlexLexer.h</code> is
 <code>yyFlexLexer</code>, which is derived from <code>FlexLexer</code>. It
 defines the following additional member functions:
 
@@ -2927,7 +2934,7 @@ rather than a per-scanner (single global variable) basis.
     be called to read characters following whatever has been matched by
     a rule. If <code>input()</code> encounters an end-of-file the normal
     <code>yywrap()</code> processing is done. A ``real'' end-of-file is
-    returned by <code>input()</code> as <em>EOF</em>.
+    returned by <code>input()</code> as <code>EOF</code>.
 
 <p>Input is instead controlled by defining the <code>YY_INPUT</code>
 macro.
@@ -2964,7 +2971,7 @@ so if using C++ is an option for you, you should use them instead. See
 
 <li><p><code>output()</code> is not supported. Output from the
     <code>ECHO</code> macro is done to the file-pointer <code>yyout</code>
-    (default <em>stdout</em>).
+    (default <code>stdout</code>).
 
 <p><code>output()</code> is not part of the POSIX specification.</p></li>
 
@@ -3085,7 +3092,7 @@ enclosed in braces are simply terminated at the end of the line.
 
 <h1 id="diagnostics">DIAGNOSTICS</h1>
 
-<p><em>warning, rule cannot be matched</em> indicates that the given
+<p><code>warning, rule cannot be matched</code> indicates that the given
 rule cannot be matched because it follows other rules that will always
 match the same text as it. For example, in the following "foo" cannot
 be matched because it comes after an identifier "catch-all" rule:
@@ -3097,14 +3104,14 @@ be matched because it comes after an identifier "catch-all" rule:
 
 <p>Using <code>REJECT</code> in a scanner suppresses this warning.
 
-<p><em>warning</em>, <code>-s</code> <em>option given but default rule can
-be matched</em> means that it is possible (perhaps only in a particular
+<p><code>warning, -s option given but default rule can be matched</code>
+means that it is possible (perhaps only in a particular
 start condition) that the default rule (match any single character) is
 the only one that will match a particular input. Since <code>-s</code>
 was given, presumably this is not intended.
 
-<p><em>reject_used_but_not_detected undefined</em> or
-<em>yymore_used_but_not_detected undefined -</em> These errors can occur
+<p><code>reject_used_but_not_detected undefined</code> or
+<code>yymore_used_but_not_detected undefined</code>- These errors can occur
 at compile time. They indicate that the scanner uses <code>REJECT</code>
 or <code>yymore()</code> but that <code>flex</code> failed to notice the
 fact, meaning that <code>flex</code> scanned the first two sections
@@ -3113,35 +3120,35 @@ but somehow you snuck some in (via a #include file, for example). Use
 <code>%option reject</code> or <code>%option yymore</code> to indicate
 to flex that you really do use these features.
 
-<p><em>flex scanner jammed -</em> a scanner compiled with <code>-s</code>
+<p><code>flex scanner jammed</code>-  a scanner compiled with <code>-s</code>
 has encountered an input string which wasn't matched by any of its
 rules. This error can also occur due to internal problems.
 
-<p><em>token too large, exceeds YYLMAX -</em> your scanner uses
+<p><code>token too large, exceeds YYLMAX</code>-  your scanner uses
 <code>%array</code> and one of its rules matched a string longer than
 the <code>YYLMAX</code> constant (8K bytes by default). You can increase
 the value by #define'ing <code>YYLMAX</code> in the definitions section
 of your <code>flex</code> input.
 
-<p><em>scanner requires -8 flag to</em> <em>use the character 'x'
--</em> Your scanner specification includes recognizing the 8-bit
-character <em>'x'</em> and you did not specify the -8 flag, and your
+<p><code>scanner requires -8 flag to use the character 'x'</code>-
+Your scanner specification includes recognizing the 8-bit
+character <code>'x'</code> and you did not specify the -8 flag, and your
 scanner defaulted to 7-bit because you used the <code>-Cf</code> or
 <code>-CF</code> table compression options. See the discussion of the
 <code>-7</code> flag for details.
 
-<p><em>flex scanner push-back overflow -</em> you used
+<p><code>flex scanner push-back overflow</code>-  you used
 <code>unput()</code> to push back so much text that the scanner's
 buffer could not hold both the pushed-back text and the current token
 in <code>yytext</code>. Ideally the scanner should dynamically resize
 the buffer in this case, but at present it does not.
 
-<p><em>input buffer overflow, can't enlarge buffer because scanner uses
-REJECT -</em> the scanner was working on matching an extremely large
+<p><code>input buffer overflow, can't enlarge buffer because scanner uses REJECT</code>-
+the scanner was working on matching an extremely large
 token and needed to expand the input buffer. This doesn't work with
 scanners that use <code>REJECT</code>.
 
-<p><em>fatal flex scanner internal error--end of buffer missed -</em>
+<p><code>fatal flex scanner internal error--end of buffer missed</code>-
 This can occur in an scanner which is reentered after a long-jump has
 jumped out (or over) the scanner's activation frame. Before reentering
 the scanner, use:
@@ -3152,7 +3159,7 @@ the scanner, use:
 
 <p>or, as noted above, switch to using the C++ scanner class.
 
-<p><em>too many start conditions in &lt;&gt; construct! -</em> you listed
+<p><code>too many start conditions in &lt;&gt; construct!</code>-  you listed
 more start conditions in a &lt;&gt; construct than exist (so you must
 have listed at least one of them twice).
 
@@ -3165,32 +3172,32 @@ have listed at least one of them twice).
 <dd><p>library with which scanners must be linked.
 </dd>
 
-<dt><em>lex.yy.c</em></dt>
+<dt><code>lex.yy.c</code></dt>
 
-<dd><p>generated scanner (called <em>lexyy.c</em> on some systems).
+<dd><p>generated scanner (called <code>lexyy.c</code> on some systems).
 </dd>
 
-<dt><em>lex.yy.cc</em></dt>
+<dt><code>lex.yy.cc</code></dt>
 
 <dd><p>generated C++ scanner class, when using <code>-+</code>.
 </dd>
 
-<dt><em>&lt;FlexLexer.h&gt;</em></dt>
+<dt><code>&lt;FlexLexer.h&gt;</code></dt>
 
 <dd><p>header file defining the C++ scanner base class,
     <code>FlexLexer</code>, and its derived class, <code>yyFlexLexer</code>.
 </dd>
 
-<dt><em>flex.skl</em></dt>
+<dt><code>flex.skl</code></dt>
 
 <dd><p>skeleton scanner. This file is only used when building flex, not when
     flex executes.
 </dd>
 
-<dt><em>lex.backup</em></dt>
+<dt><code>lex.backup</code></dt>
 
 <dd><p>backing-up information for <code>-b</code> flag (called
-    <em>lex.bck</em> on some systems).
+    <code>lex.bck</code> on some systems).
 </dd>
 
 </dl>
