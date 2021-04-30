@@ -45,8 +45,6 @@
 #define __FLEX_LEXER_H
 #include <iostream>
 
-extern "C++" {
-
 struct yy_buffer_state;
 typedef int yy_state_type;
 
@@ -93,7 +91,6 @@ protected:
   int yy_flex_debug;      // only has effect with -d or "%option debug"
 };
 
-}
 #endif
 
 #if defined(yyFlexLexer) || ! defined(yyFlexLexerOnce)
