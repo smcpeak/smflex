@@ -586,12 +586,15 @@ char **argv;
 	do_yylineno = yytext_is_array = in_rule = reject = do_stdinit = false;
 	yymore_really_used = reject_really_used = unspecified;
 	interactive = csize = unspecified;
-	do_yywrap = gen_line_dirs = usemecs = useecs = true;
+	gen_line_dirs = usemecs = useecs = true;
 	performance_report = 0;
 	did_outfilename = 0;
 	prefix = "yy";
 	yyclass = 0;
 	use_read = use_stdout = false;
+
+	/* smcpeak 2021-04-30: Changed the default value to false. */
+	do_yywrap = false;
 
 	sawcmpflag = false;
 
@@ -937,7 +940,12 @@ _( "Variable trailing context rules entail a large performance penalty\n" ) );
 
 	if ( ! do_yywrap )
 		{
-		outn( "\n#define yywrap() 1" );
+		/* When yywrap is disabled, include a hint about that in
+		 * a comment.  When a scanner that defines yywrap is
+		 * compiled, GCC will emit an error that includes this
+		 * line of code.  That may help people discover the new
+		 * default value. */
+		outn( "\n#define yywrap() 1 /*disabled without option yywrap*/" );
 		outn( "#define YY_SKIP_YYWRAP" );
 		}
 

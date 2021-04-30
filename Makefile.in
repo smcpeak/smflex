@@ -96,10 +96,10 @@ OBJECTS = ccl.o dfa.o ecs.o gen.o main.o misc.o nfa.o parse.o \
 	scan.o skel.o sym.o tblcmp.o yylex.o
 
 # Runtime library sources, also included in the distribution.
-LIBSRCS = libmain.c libyywrap.c
+LIBSRCS = libmain.c
 
 # Object files to compile and archive into $(FLEXLIB).
-LIBOBJS = libmain.o libyywrap.o
+LIBOBJS = libmain.o
 
 # Complete set of files and directories to be included in the
 # distribution tarball, except that 'scan.c' gets renamed to

@@ -8,6 +8,11 @@
 
 %}
 
+/* This test uses yywrap, and that feature now has to be explicitly
+ * requested. */
+%option yywrap
+
+
 %%
 username           printf("USERNAME");
 

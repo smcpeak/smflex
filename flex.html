@@ -1068,24 +1068,19 @@ input file):
 <p>This definition will change the input processing to occur one character
 at a time.
 
-<p>When the scanner receives an end-of-file indication from YY_INPUT, it
-then checks the <code>yywrap()</code> function. If <code>yywrap()</code>
-returns false (zero), then it is assumed that the function has gone ahead
-and set up <code>yyin</code> to point to another input file, and scanning
-continues. If it returns true (non-zero), then the scanner terminates,
-returning 0 to its caller. Note that in either case, the start condition
-remains unchanged; it does <em>not</em> revert to <code>INITIAL</code>.
+<p>When the scanner receives an end-of-file indication from YY_INPUT,
+the scanner terminates, returning 0 to its caller.  The start
+condition remains unchanged; it does <em>not</em> revert to
+<code>INITIAL</code>.
 
-<p>If you do not supply your own version of <code>yywrap()</code>,
-then you must either use <code>%option noyywrap</code> (in which case
-the scanner behaves as though <code>yywrap()</code> returned 1), or you
-must link with <code>-lfl</code> to obtain the default version of the
-routine, which always returns 1.
+<p>If you instead want the scanner to continue scanning a new file, as
+if its contents came right after the previous one, then set
+<a href="#option-yywrap"><code>%option yywrap</code></a>.
 
 <p>Three routines are available for scanning from in-memory buffers rather
 than files: <code>yy_scan_string()</code>, <code>yy_scan_bytes()</code>,
 and <code>yy_scan_buffer()</code>. See the discussion of them below in
-the section Multiple Input Buffers.
+the section <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
 
 <p>The scanner writes its <code>ECHO</code> output to the
 <code>yyout</code> global (default, stdout), which may be redefined by
@@ -1477,7 +1472,7 @@ from using:
 
 <p>switches the scanner's input buffer so subsequent tokens will come
 from <code>new_buffer</code>. Note that <code>yy_switch_to_buffer()</code>
-may be used by yywrap() to set things up for continued scanning, instead
+may be used by <code>yywrap()</code> to set things up for continued scanning, instead
 of opening a new file and pointing <code>yyin</code> at it. Note also
 that switching input sources via either <code>yy_switch_to_buffer()</code>
 or <code>yywrap()</code> does <em>not</em> change the start condition.
@@ -1617,7 +1612,7 @@ cast an integer expression reflecting the size of the buffer.
 <h1 id="end-of-file-rules">END-OF-FILE RULES</h1>
 
 <p>The special rule "&lt;&lt;EOF&gt;&gt;" indicates actions which are to
-be taken when an end-of-file is encountered and yywrap() returns non-zero
+be taken when an end-of-file is encountered and <code>yywrap()</code> returns non-zero
 (i.e., indicates no further files to process). The action must finish
 by doing one of four things:
 
@@ -2170,11 +2165,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     version of their name; but externally, they have the modified name.
 
     <p>This option lets you easily link together multiple <code>flex</code>
-    programs into the same executable. Note, though, that using this
-    option also renames <code>yywrap()</code>, so you now <em>must</em>
-    either provide your own (appropriately-named) version of the routine
-    for your scanner, or use <code>%option noyywrap</code>, as linking with
-    <code>-lfl</code> no longer provides one for you by default.
+    programs into the same executable.
 
 </dd>
 
@@ -2281,12 +2272,33 @@ number are equivalent to flex flags or their negation:
     lex-compat</code>.
 </dd>
 
-<dt><code>yywrap</code></dt>
+<dt id="option-yywrap"><code>yywrap</code></dt>
 
-<dd><p>if unset (i.e., <code>%option noyywrap</code>), makes the scanner not
-    call <code>yywrap()</code> upon an end-of-file, but simply assume that
-    there are no more files to scan (until the user points <code>yyin</code>
-    at a new file and calls <code>yylex()</code> again).
+<dd><p>if set (i.e., <code>%option yywrap</code>), makes the scanner
+    call <code>yywrap()</code> upon an end-of-file.  If unset
+    (i.e., <code>%option noyywrap</code>), then the scanner behaves
+    as though <code>yywrap()</code> always returns 1 (meaning no more
+    files).  The default is <strong>unset</strong>.
+
+    <p>If set, you must provide a definition of the
+    <code>int yywrap(void)</code> function (either in your scanner
+    definition, or in another file that it links with).  In that case,
+    when the scanner reaches the end of one file, it calls
+    <code>yywrap()</code>.  If <code>yywrap()</code> returns false
+    (zero), then it is assumed that the function has set
+    <code>yyin</code> to point to another input file, and scanning
+    continues.  If it returns true (non-zero), then the scanner
+    terminates, returning 0 to its caller.
+
+    <p>smcpeak 2021-04-30: In flex-2.5.4, the default behavior was to
+    enable <code>yywrap()</code>.  I have inverted that.
+
+    <p>Rationale: Most users do not want <code>yywrap()</code>.  Those
+    that do can easiily set the option asking for it.  That does
+    introduce a backward compatibility issue; oh well.  My main goal
+    is to remove <code>libfl.a</code> entirely for better portability,
+    and for that, the default has to change.
+
 </dd>
 
 </dl>
