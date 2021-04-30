@@ -87,6 +87,7 @@ all: out/cppscan.ok
 all: out/cppscan-yywrap.ok
 all: out/cpp-prefix.ok
 all: out/cpp-prefix-yywrap.ok
+all: out/cpp-prefix-yywrap-yyclass.ok
 
 # These tests read a second file.
 username-yywrap.ok: username-yywrap.input2

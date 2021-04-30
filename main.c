@@ -938,15 +938,11 @@ _( "Variable trailing context rules entail a large performance penalty\n" ) );
 		outn( "\n#define YY_USES_REJECT" );
 
 	if ( ! do_yywrap )
-		{
-		/* When yywrap is disabled, include a hint about that in
-		 * a comment.  When a scanner that defines yywrap is
-		 * compiled, GCC will emit an error that includes this
-		 * line of code.  That may help people discover the new
-		 * default value. */
-		outn( "\n#define yywrap() 1 /*disabled without option yywrap*/" );
-		outn( "#define YY_SKIP_YYWRAP" );
-		}
+		outn( "\n#define YY_SKIP_YYWRAP" );
+
+	if ( C_plus_plus && yyclass )
+		out_str( "\n#define YY_DERIVED_CLASS %s /*from option yyclass*/\n",
+			yyclass );
 
 	if ( ddebug )
 		outn( "\n#define FLEX_DEBUG" );

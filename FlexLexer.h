@@ -82,7 +82,7 @@ public:      // methods
   // method.  It is called by 'yylex()' on EOF to possibly supply new
   // input.  It must either call 'switch_streams' and return 0, or else
   // return 1, the latter meaning there is no more input.
-  int yywrap();
+  virtual int yywrap();
 
   // Low-level buffer manipulation.  See manual for details.
   void yy_switch_to_buffer(yy_buffer_state_impl *new_buffer);

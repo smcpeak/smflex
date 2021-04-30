@@ -1333,7 +1333,9 @@ char *yytext;
  * section 1.
  */
 
-#ifndef YY_SKIP_YYWRAP
+#ifdef YY_SKIP_YYWRAP
+#define yywrap() 1 /*disabled without option yywrap*/
+#else
 #ifdef __cplusplus
 extern "C" int yywrap YY_PROTO(( void ));
 #else
@@ -1485,7 +1487,7 @@ YY_DECL
 	Char nmdef[MAXLINE], myesc();
 
 
-#line 1489 "scan.c"
+#line 1491 "scan.c"
 
 	if ( yy_init )
 		{
@@ -2722,7 +2724,7 @@ YY_RULE_SETUP
 #line 649 "scan.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 2726 "scan.c"
+#line 2728 "scan.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(SECT2):
 case YY_STATE_EOF(CODEBLOCK):

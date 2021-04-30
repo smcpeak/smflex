@@ -2729,6 +2729,15 @@ input:
     previous input buffer if <code>yyin</code> is reassigned.
 </dd>
 
+<dt><code>virtual int yywrap()</code></dt>
+
+<dd><p>If <a href="#option-yywrap"><code>%option yywrap</code></a>
+    is specified, then this will be invoked before <code>yylex()</code>
+    returns EOF.  If not using <code>%option yyclass</code>, then
+    define this as a method of <code>yyFlexLexer</code>, using the
+    existing declaration in <code>FlexLexer.h</code>.  Otherwise,
+    declare and define it as a method of your derived class.
+
 <dt><code>yy_switch_to_buffer()</code>,
     <code>yy_create_buffer()</code>,
     <code>yy_flush_buffer()</code>,

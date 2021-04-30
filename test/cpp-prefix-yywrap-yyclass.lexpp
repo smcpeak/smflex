@@ -1,0 +1,54 @@
+/* cpp-prefix-yywrap-yyclass.lexpp */
+/* C++ scanner using %option prefix, %option yywrap, and
+ * %option yyclass. */
+
+%option c++
+%option main
+%option prefix="MyLexer"
+%option yywrap
+%option yyclass="MyClass"
+
+%{
+#include <fstream>           // ifstream
+using std::ifstream;
+
+class MyClass : public MyLexerFlexLexer {
+public:
+  int yylex();
+  int yywrap();
+};
+%}
+
+%%
+username           cout << "USERNAME";
+
+%%
+
+/* Non-NULL once we have read the second input. */
+static istream *secondFile = NULL;
+
+int MyClass::yywrap()
+{
+  if (!secondFile) {
+    secondFile = new ifstream("cppscan-yywrap.input2");
+    if (secondFile->fail()) {
+      perror("new ifstream(cppscan-yywrap.input2)");
+      delete secondFile;
+      exit(2);
+    }
+
+    switch_streams(secondFile);
+
+    /* Not done, keep going. */
+    return 0;
+  }
+  else {
+    delete secondFile;
+
+    /* All done. */
+    return 1;
+  }
+}
+
+
+/* EOF */
