@@ -13,12 +13,12 @@ CXX := g++
 # C compilation options.
 CFLAGS := -g -Wall
 
-# C++ compilation options.  This needs another directory for FlexLexer.h.
-CXXFLAGS := $(CFLAGS) -I..
-
 # Flex produces scanners that define 'yyunput' and 'input' even when
 # they are not used.
 CFLAGS += -Wno-unused-function
+
+# C++ compilation options.  This needs another directory for FlexLexer.h.
+CXXFLAGS := $(CFLAGS) -I..
 
 # Run flex on one file.
 .PRECIOUS: out/%.yy.c
@@ -30,6 +30,11 @@ out/%.yy.c: %.lex
 .PRECIOUS: out/%.o
 out/%.o: out/%.c
 	$(CC) -o$@ -c $(CFLAGS) $<
+
+# Compile a C file in out/ as if it were C++.
+.PRECIOUS: out/%.c_as_cc.o
+out/%.c_as_cc.o: out/%.c
+	$(CXX) -o$@ -xc++ -c $(CXXFLAGS) $<
 
 # Compile a C file in test/.
 out/%.o: %.c
@@ -50,10 +55,15 @@ out/%.o: out/%.cc
 out/%.exe: out/%.yy.o
 	$(CC) -o$@ $(CFLAGS) $^
 
-# username is special because uses testmain.
+# Link C-compiled-as-C++ object file.
+.PRECIOUS: out/%.c_as_cc.exe
+out/%.c_as_cc.exe: out/%.yy.c_as_cc.o
+	$(CXX) -o$@ $(CXXFLAGS) $^
+
+# username is special because it uses testmain.
 out/username.exe: out/testmain.o
 
-# cppscan is special because it needs C++ linking.
+# cppscan needs C++ linking.
 out/cppscan.exe: out/cppscan.yy.o
 	$(CXX) -o$@ $(CXXFLAGS) $^
 
@@ -67,6 +77,7 @@ out/%.ok: out/%.exe %.input %.expect
 all: out/username.ok
 all: out/username-yywrap.ok
 all: out/username-main.ok
+all: out/username-main.c_as_cc.ok
 all: out/cppscan.ok
 
 # This test reads a second file.
