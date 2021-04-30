@@ -35,7 +35,7 @@ $ make install
 
 # Usage
 
-See [flex.md](flex.md).
+See [flex.html](flex.html).
 
 # Change history
 

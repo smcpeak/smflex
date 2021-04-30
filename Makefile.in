@@ -108,7 +108,7 @@ LIBOBJS = libmain.o libyywrap.o
 DISTFILES = README.md NEWS COPYING FlexLexer.h \
 	configure.in Makefile.in mkskel.sh flex.skl \
 	$(HEADERS) $(SOURCES) $(LIBSRCS) \
-	flex.md scan.c install.sh mkinstalldirs configure \
+	flex.html scan.c install.sh mkinstalldirs configure \
 	test
 
 # Name of the distribution, meaning what goes before ".tar.gz" in the
