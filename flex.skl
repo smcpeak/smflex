@@ -28,6 +28,9 @@
 #include <iostream>
 using std::istream;
 using std::ostream;
+using std::cin;
+using std::cout;
+using std::cerr;
 %*
 #include <unistd.h>
 
@@ -1541,7 +1544,12 @@ void *ptr;
 int main()
 	{
 	/* Keep retrieving tokens and discarding them until EOF. */
+%-
 	while (yylex() != 0)
+%+
+	yyFlexLexer lexer;
+	while (lexer.yylex() != 0)
+%*
 		{} /* nothing */
 	return 0;
 	}
