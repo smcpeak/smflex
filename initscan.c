@@ -25,7 +25,6 @@
  * then we can assume a C++ compiler will be used).
  */
 
-
 #include <stdlib.h>          /* malloc, free, realloc, exit */
 #include <stdio.h>           /* FILE, etc. */
 
@@ -92,6 +91,7 @@
 /* Size of default input buffer. */
 #define YY_BUF_SIZE 16384
 
+
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
 extern int yyleng;
@@ -136,7 +136,10 @@ extern FILE *yyin, *yyout;
  */
 typedef unsigned int yy_size_t;
 
-
+/* This structure contains the buffer state for a particular input
+ * source.  By buffering, it allows efficient access to the bytes in
+ * that source one at a time; its principal operations are to get the
+ * next character and to put a character back. */
 struct yy_buffer_state
 	{
 	FILE *yy_input_file;
@@ -1324,7 +1327,7 @@ char *yytext;
 #define OPTION 17
 #define LINEDIR 18
 
-#line 1328 "scan.c"
+#line 1331 "scan.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -1482,7 +1485,7 @@ YY_DECL
 	Char nmdef[MAXLINE], myesc();
 
 
-#line 1486 "scan.c"
+#line 1489 "scan.c"
 
 	if ( yy_init )
 		{
@@ -2719,7 +2722,7 @@ YY_RULE_SETUP
 #line 649 "scan.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 2723 "scan.c"
+#line 2726 "scan.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(SECT2):
 case YY_STATE_EOF(CODEBLOCK):

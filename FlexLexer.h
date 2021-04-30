@@ -1,5 +1,3 @@
-// $Header$
-
 // FlexLexer.h -- define interfaces for lexical analyzer classes generated
 //                by flex
 
@@ -8,6 +6,9 @@
 //
 // This code is derived from software contributed to Berkeley by
 // Kent Williams and Tom Epperly.
+//
+// 2021-04-30: It has (much later) been heavily modified by
+// Scott McPeak.
 //
 // Redistribution and use in source and binary forms, with or without modification, are permitted provided
 // that: (1) source distributions retain this entire copyright notice and
@@ -23,109 +24,86 @@
 // WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-// This file defines FlexLexer, an abstract class which specifies the
-// external interface provided to flex C++ lexer objects, and yyFlexLexer,
-// which defines a particular lexer class.
-//
-// If you want to create multiple lexer classes, you use the -P flag
-// to rename each yyFlexLexer to some other xxFlexLexer.  You then
-// include <FlexLexer.h> in your other sources once per lexer class:
-//
-//      #undef yyFlexLexer
-//      #define yyFlexLexer xxFlexLexer
-//      #include <FlexLexer.h>
-//
-//      #undef yyFlexLexer
-//      #define yyFlexLexer zzFlexLexer
-//      #include <FlexLexer.h>
-//      ...
+#ifndef FLEX_LEXER_H
+#define FLEX_LEXER_H
 
-#ifndef __FLEX_LEXER_H
-// Never included before - need to define base class.
-#define __FLEX_LEXER_H
-#include <iostream>
+#include <iostream>                    // istream, ostream
 
-struct yy_buffer_state;
-typedef int yy_state_type;
-
-class FlexLexer {
-public:
+// This class encapsulates the scanner state.  This primarily consists
+// of knowing which tokens are candidates based on what has been seen
+// so far, as well as the user-specified "start conditions".  It also
+// has a pointer to 'yy_current_buffer', which buffers data from the
+// actual input source.
+//
+// This class clients to retrieve one token at a time using 'yylex()'
+// and inspect the text of each token using 'YYText()' and 'YYLeng()'.
+//
+// If "%option yyclass" is used, then this is a base class for a derived
+// class defined by the user.  The derived class can have additional
+// data members that the scanner actions can use, and only it (not the
+// base class) should be instantiated.
+//
+class yyFlexLexer {
+public:      // types
   typedef std::istream istream;
   typedef std::ostream ostream;
 
-  virtual ~FlexLexer()    { }
+  // Details of the buffer state.  Defined in FlexLexer.h.
+  struct yy_buffer_state_impl;
 
-  const char* YYText()    { return yytext; }
-  int YYLeng()            { return yyleng; }
+  // smcpeak: I believe this type represents a "state" in the finite
+  // state automaton that is responsible for recognizing tokens.  It
+  // is *not* the type used to represent "start conditions".
+  //
+  // TODO: I think that 'flex' can select a different type for this
+  // when using the C interface, but evidently cannot for C++.  That
+  // could affect table compression.  I should investigate if both
+  // can be made to use the same mechanism.
+  typedef int yy_state_type;
 
-  virtual void
-          yy_switch_to_buffer(struct yy_buffer_state *new_buffer) = 0;
-  virtual struct yy_buffer_state *
-          yy_create_buffer(istream *s, int size) = 0;
-  virtual void yy_delete_buffer(struct yy_buffer_state *b) = 0;
-  virtual void yyrestart(istream* s) = 0;
-
-  virtual int yylex() = 0;
-
-  // Call yylex with new input/output sources.
-  int yylex(istream *new_in, ostream *new_out = 0)
-  {
-    switch_streams(new_in, new_out);
-    return yylex();
-  }
-
-  // Switch to new input/output streams.  A nil stream pointer
-  // indicates "keep the current one".
-  virtual void switch_streams(istream* new_in = 0,
-                              ostream* new_out = 0) = 0;
-
-  int lineno() const              { return yylineno; }
-
-  int debug() const               { return yy_flex_debug; }
-  void set_debug( int flag )      { yy_flex_debug = flag; }
-
-protected:
-  char* yytext;
-  int yyleng;
-  int yylineno;           // only maintained if you use %option yylineno
-  int yy_flex_debug;      // only has effect with -d or "%option debug"
-};
-
-#endif
-
-#if defined(yyFlexLexer) || ! defined(yyFlexLexerOnce)
-// Either this is the first time through (yyFlexLexerOnce not defined),
-// or this is a repeated include to define a different flavor of
-// yyFlexLexer, as discussed in the flex man page.
-#define yyFlexLexerOnce
-
-class yyFlexLexer : public FlexLexer {
-public:
+public:      // methods
   // arg_yyin and arg_yyout default to the cin and cout, but we
   // only make that assignment when initializing in yylex().
   yyFlexLexer(istream *arg_yyin = 0, ostream *arg_yyout = 0);
 
   virtual ~yyFlexLexer();
 
-  void yy_switch_to_buffer(struct yy_buffer_state *new_buffer);
-  struct yy_buffer_state *yy_create_buffer(istream *s, int size);
-  void yy_delete_buffer(struct yy_buffer_state *b);
+  // Get the next token.  Return 0 on EOF.
+  int yylex();
+
+  // Switch to new input/output streams.  A NULL stream pointer
+  // indicates "keep the current one".
+  void switch_streams(istream *new_in, ostream *new_out);
+
+  // Low-level buffer manipulation.  See manual for details.
+  void yy_switch_to_buffer(yy_buffer_state_impl *new_buffer);
+  yy_buffer_state_impl *yy_create_buffer(istream *s, int size);
+  void yy_delete_buffer(yy_buffer_state_impl *b);
   void yyrestart(istream *s);
 
-  virtual int yylex();
-  virtual void switch_streams(istream *new_in, ostream *new_out);
+  const char* YYText()            { return yytext; }
+  int YYLeng()                    { return yyleng; }
 
-protected:
+  int lineno() const              { return yylineno; }
+
+  int debug() const               { return yy_flex_debug; }
+  void set_debug( int flag )      { yy_flex_debug = flag; }
+
+protected:   // methods
+  // As explained in the manual, these methods may be overridden by
+  // a derived class to provide an alternate source and sink.
   virtual int LexerInput(char *buf, int max_size);
   virtual void LexerOutput(const char *buf, int size);
+
+  // This can be overridden to customize how errors are handled.
   virtual void LexerError(const char *msg);
 
   void yyunput(int c, char *buf_ptr);
   int yyinput();
 
   void yy_load_buffer_state();
-  void yy_init_buffer(struct yy_buffer_state *b, istream *s);
-  void yy_flush_buffer(struct yy_buffer_state *b);
+  void yy_init_buffer(yy_buffer_state_impl *b, istream *s);
+  void yy_flush_buffer(yy_buffer_state_impl *b);
 
   int yy_start_stack_ptr;
   int yy_start_stack_depth;
@@ -139,10 +117,16 @@ protected:
   yy_state_type yy_try_NUL_trans(yy_state_type current_state);
   int yy_get_next_buffer();
 
+protected:   // data
+  char* yytext;
+  int yyleng;
+  int yylineno;           // only maintained if you use %option yylineno
+  int yy_flex_debug;      // only has effect with -d or "%option debug"
+
   istream *yyin;  // input source for default LexerInput
   ostream *yyout; // output sink for default LexerOutput
 
-  struct yy_buffer_state *yy_current_buffer;
+  yy_buffer_state_impl *yy_current_buffer;
 
   // yy_hold_char holds the character lost when yytext is formed.
   char yy_hold_char;
@@ -182,4 +166,4 @@ protected:
   int yy_prev_more_offset;
 };
 
-#endif
+#endif // FLEX_LEXER_H

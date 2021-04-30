@@ -67,7 +67,7 @@
     h6 {
       font-weight: normal;
     }
-    ol, ul {
+    ol, ul, dl {
       padding-left: 1.7em;
       margin-top: 1em;
     }
@@ -2132,7 +2132,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     above) refer to the file <code>output</code>.
 </dd>
 
-<dt><code>-Pprefix</code></dt>
+<dt id="prefix-option"><code>-Pprefix</code></dt>
 
 <dd><p>changes the default <code>yy</code> prefix used by <code>flex</code>
     for all globally-visible variable and function names to instead be
@@ -2159,8 +2159,10 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
         yywrap
 </code></pre>
 
-    <p>(If you are using a C++ scanner, then only <code>yywrap</code> and
-    <code>yyFlexLexer</code> are affected.) Within your scanner itself,
+    <p>If you are using a C++ scanner, then only <code>yywrap</code> and
+    <code>yyFlexLexer</code> (the scanner class) are affected.
+
+    <p>Within your scanner itself,
     you can still refer to the global variables and functions using either
     version of their name; but externally, they have the modified name.
 
@@ -2664,85 +2666,38 @@ performance is vital, you should attempt to match "large" quantities of
 text but not "huge" quantities, where the cutoff between the two is at
 about 8K characters/token.
 
+
+<!-- ======================================================= -->
 <h1 id="generating-cpp-scanners">GENERATING C++ SCANNERS</h1>
 
 <p><code>flex</code> provides two different ways to generate scanners
-for use with C++. The first way is to simply compile a scanner generated
+for use with C++. The first way is to simply compile a C-interface scanner generated
 by <code>flex</code> using a C++ compiler instead of a C compiler. You
 should not encounter any compilations errors (please report any you
 find to the email address given in the Author section below). You can
 then use C++ code in your rule actions instead of C code. Note that
 the default input source for your scanner remains <code>yyin</code>,
 and default echoing is still done to <code>yyout</code>. Both of these
-remain <code>FILE *</code> variables and not C++ <em>streams</em>.
+remain <code>FILE *</code> variables and not C++ <code>iostream</code>s.
 
-<p>You can also use <code>flex</code> to generate a C++ scanner class,
+<p>Alternatively, you can use <code>flex</code> to generate a C++-interface scanner class,
 using the <code>-+</code> option (or, equivalently, <code>%option c++</code>).
 When using this option,
 flex defaults to generating the scanner to the file <code>lex.yy.cc</code>
 instead of <code>lex.yy.c</code>. The generated scanner includes the
-header file <code>FlexLexer.h</code>, which defines the interface to two
-C++ classes.
+header file <code>FlexLexer.h</code>, which defines the interface to
+the C++ scanner class.
 
-<p>smcpeak 2021-04-29: Flex-2.5.4 also allows the user to choose C++
-mode by invoking <code>flex</code> as <code>flex++</code>.  I have
-removed that feature.  (I dislike the idea that a program's behavior
-depends on its name.)
+<p>The scanner class, called <code>yyFlexLexer</code> by default
+(overridden with the <a href="#prefix-option"><code>-P</code></a> option),
+encapsulates the scanner state.
 
-<p>The first class, <code>FlexLexer</code>, provides an abstract base
-class defining the general scanner class interface. It provides the
-following member functions:
+<p>The following methods manage the process of running the scanner over
+input:
 
 <dl>
 
-<dt><code>const char* YYText()</code></dt>
-
-<dd><p>returns the text of the most recently matched token, the equivalent
-    of <code>yytext</code>.
-</dd>
-
-<dt><code>int YYLeng()</code></dt>
-
-<dd><p>returns the length of the most recently matched token, the equivalent
-    of <code>yyleng</code>.
-</dd>
-
-<dt><code>int lineno() const</code></dt>
-
-<dd><p>returns the current input line number (see <code>%option
-    yylineno</code>), or <code>1</code> if <code>%option yylineno</code>
-    was not used.
-</dd>
-
-<dt><code>void set_debug( int flag )</code></dt>
-
-<dd><p>sets the debugging flag for the scanner, equivalent to assigning to
-    <code>yy_flex_debug</code> (see the Options section above). Note that
-    you must build the scanner using <code>%option debug</code> to include
-    debugging information in it.
-</dd>
-
-<dt><code>int debug() const</code></dt>
-
-<dd><p>returns the current setting of the debugging flag.
-</dd>
-
-</dl>
-
-<p>Also provided are member functions equivalent to
-<code>yy_switch_to_buffer()</code>, <code>yy_create_buffer()</code>
-(though the first argument is an <code>istream*</code> object pointer
-and not a <code>FILE*</code>), <code>yy_flush_buffer()</code>,
-<code>yy_delete_buffer()</code>, and <code>yyrestart()</code> (again,
-the first argument is a <code>istream*</code> object pointer).
-
-<p>The second class defined in <code>FlexLexer.h</code> is
-<code>yyFlexLexer</code>, which is derived from <code>FlexLexer</code>. It
-defines the following additional member functions:
-
-<dl>
-
-<dt><code>yyFlexLexer( istream* arg_yyin = 0, ostream* arg_yyout = 0 )</code></dt>
+<dt><code>yyFlexLexer(istream *arg_yyin = NULL, ostream *arg_yyout = NULL)</code></dt>
 
 <dd><p>constructs a <code>yyFlexLexer</code> object using the given
     streams for input and output. If not specified, the streams default to
@@ -2764,28 +2719,77 @@ defines the following additional member functions:
     <code>yyFlexLexer::LexerError()</code> if called).
 </dd>
 
-<dt><code>virtual void switch_streams(istream* new_in = 0, ostream* new_out = 0)</code></dt>
+<dt><code>virtual void switch_streams(istream *new_in = NULL, ostream *new_out = NULL)</code></dt>
 
-<dd><p>reassigns <code>yyin</code> to <code>new_in</code> (if non-nil)
+<dd><p>reassigns <code>yyin</code> to <code>new_in</code> (if not NULL)
     and <code>yyout</code> to <code>new_out</code> (ditto), deleting the
     previous input buffer if <code>yyin</code> is reassigned.
 </dd>
 
-<dt><code>int yylex( istream* new_in, ostream* new_out = 0 )</code></dt>
+<dt><code>yy_switch_to_buffer()</code>,
+    <code>yy_create_buffer()</code>,
+    <code>yy_flush_buffer()</code>,
+    <code>yy_delete_buffer()</code>, and <code>yyrestart()</code>
 
-<dd><p>first switches the input streams via <code>switch_streams( new_in,
-    new_out )</code> and then returns the value of <code>yylex()</code>.
+<dd><p>These work like their C-interface counterparts except that the
+    data sources and sinks are <code>i/ostream</code> pointers rather
+    than <code>FILE*</code>.
+
+</dl>
+
+<p>When <code>yylex()</code> returns a non-zero value, these methods
+can be used to inspect the token:
+
+<dl>
+
+<dt><code>const char *YYText()</code></dt>
+
+<dd><p>returns the text of the most recently matched token, the equivalent
+    of <code>yytext</code>.
+</dd>
+
+<dt><code>int YYLeng()</code></dt>
+
+<dd><p>returns the length of the most recently matched token, the equivalent
+    of <code>yyleng</code>.
+</dd>
+
+<dt><code>int lineno() const</code></dt>
+
+<dd><p>returns the current input line number
+    (see <code>%option yylineno</code>), or <code>1</code> if
+    <code>%option yylineno</code> was not used.
+</dd>
+
+</dl>
+
+<p>These methods support scanner debugging:
+
+<dl>
+
+<dt><code>void set_debug(int flag)</code></dt>
+
+<dd><p>sets the debugging flag for the scanner, equivalent to assigning to
+    <code>yy_flex_debug</code> (see the Options section above). Note that
+    you must build the scanner using <code>%option debug</code> to include
+    debugging information in it.
+</dd>
+
+<dt><code>int debug() const</code></dt>
+
+<dd><p>returns the current setting of the debugging flag.
 </dd>
 
 </dl>
 
 <p>In addition, <code>yyFlexLexer</code> defines the following protected
-virtual functions which you can redefine in derived classes to tailor
-the scanner:
+virtual functions which you can redefine in derived classes to adjust
+how the scanner gets access to its input.  By overriding these,
+<code>yyin</code> and <code>yyout</code> can be bypassed entirely:
 
 <dl>
 
-<dt><code>virtual int LexerInput( char* buf, int max_size )</code></dt>
+<dt><code>virtual int LexerInput(char *buf, int max_size)</code></dt>
 
 <dd><p>reads up to <code>max_size</code> characters into <code>buf</code> and
     returns the number of characters read. To indicate end-of-input, return 0
@@ -2797,14 +2801,14 @@ the scanner:
     via <code>#ifdef</code>.
 </dd>
 
-<dt><code>virtual void LexerOutput( const char* buf, int size )</code></dt>
+<dt><code>virtual void LexerOutput(const char *buf, int size)</code></dt>
 
 <dd><p>writes out <code>size</code> characters from the buffer
     <code>buf</code>, which, while NUL-terminated, may also contain "internal"
     NUL's if the scanner's rules can match text with NUL's in them.
 </dd>
 
-<dt><code>virtual void LexerError( const char* msg )</code></dt>
+<dt><code>virtual void LexerError(const char *msg)</code></dt>
 
 <dd><p>reports a fatal error message. The default version of this function
     writes the message to the stream <code>cerr</code> and exits.
@@ -2874,13 +2878,17 @@ to C++ scanner classes; you must use <code>%pointer</code> (the default).
 
     %%
 
-    int main( int /* argc */, char** /* argv */ )
-        {
-        FlexLexer* lexer = new yyFlexLexer;
-        while(lexer-&gt;yylex() != 0)
-            ;
+    int main()
+    {
+        // Instantiate the scanner, which by default reads from cin (stdin).
+        FlexLexer lexer;
+
+        // Read tokens until EOF, doing only what the scanner actions do.
+        while (lexer.yylex() != 0)
+            {}
+
         return 0;
-        }</code></pre>
+    }</code></pre>
 
 <p>If you want to create multiple (different) lexer classes, you use
 the <code>-P</code> flag (or the <code>prefix=</code> option) to rename
@@ -2901,8 +2909,26 @@ once per lexer class, first renaming <code>yyFlexLexer</code> as follows:
 <p>if, for example, you used <code>%option prefix="xx"</code> for one
 of your scanners and <code>%option prefix="zz"</code> for the other.
 
-<p>IMPORTANT: the present form of the scanning class is
-<em>experimental</em> and may change considerably between major releases.
+<p>smcpeak 2021-04-30: I have made several changes to the C++ interface
+compared to flex-2.5.4:
+
+<ul>
+
+<li><p>The separate <code>FlexLexer</code> abstract base class is gone.
+    It was not very useful (since a client would have no way of knowing
+    what the token codes meant), and interferes with being able to easily
+    combine multiple scanners in one program (since the cleanest way to
+    do that would be to emit <em>two</em> headers, which is undesirable).
+
+<li><p>Previously it was possible to select C++ mode by invoking
+    <code>flex</code> as <code>flex++</code>; that has been removed.  (I
+    dislike the idea that a program's behavior depends on its name.)
+
+<li><p>The <code>int yylex(istream *new_in, ostream *new_out = 0)</code>
+    method is gone.  The replacement for <code>yylex(i,o)</code> is
+    <code>switch_streams(i,o)</code> then <code>yylex()</code>.
+
+</ul>
 
 <h1 id="incompatibilities-with-lex-and-posix">INCOMPATIBILITIES WITH LEX AND POSIX</h1>
 
