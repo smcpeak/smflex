@@ -64,7 +64,7 @@ public:      // types
 public:      // methods
   // arg_yyin and arg_yyout default to the cin and cout, but we
   // only make that assignment when initializing in yylex().
-  yyFlexLexer(istream *arg_yyin = 0, ostream *arg_yyout = 0);
+  yyFlexLexer(istream *arg_yyin = NULL, ostream *arg_yyout = NULL);
 
   virtual ~yyFlexLexer();
 
@@ -73,7 +73,10 @@ public:      // methods
 
   // Switch to new input/output streams.  A NULL stream pointer
   // indicates "keep the current one".
-  void switch_streams(istream *new_in, ostream *new_out);
+  //
+  // The scanner core does *not* delete these objects; the client is
+  // responsible for deallocation if needed.
+  void switch_streams(istream *new_in = NULL, ostream *new_out = NULL);
 
   // Low-level buffer manipulation.  See manual for details.
   void yy_switch_to_buffer(yy_buffer_state_impl *new_buffer);
