@@ -2704,7 +2704,7 @@ input:
     <code>cin</code> and <code>cout</code>, respectively.
 </dd>
 
-<dt><code>virtual int yylex()</code></dt>
+<dt><code>int yylex()</code></dt>
 
 <dd><p>performs the same role is <code>yylex()</code> does for ordinary flex
     scanners: it scans the input stream, consuming tokens, until a rule's
@@ -2719,7 +2719,7 @@ input:
     <code>yyFlexLexer::LexerError()</code> if called).
 </dd>
 
-<dt><code>virtual void switch_streams(istream *new_in = NULL, ostream *new_out = NULL)</code></dt>
+<dt><code>void switch_streams(istream *new_in = NULL, ostream *new_out = NULL)</code></dt>
 
 <dd><p>reassigns <code>yyin</code> to <code>new_in</code> (if not NULL)
     and <code>yyout</code> to <code>new_out</code> (ditto), deleting the
