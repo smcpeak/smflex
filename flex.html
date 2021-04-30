@@ -1814,22 +1814,18 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     a pattern is recognized and the global <code>yy_flex_debug</code> is
     non-zero (which is the default), the scanner will write to <code>stderr</code>
     a line of the form:
-</dd>
 
-</dl>
-
-<pre><code>
-    --accepting rule at line 53 (&quot;the matched text&quot;)
+    <pre><code>
+        --accepting rule at line 53 (&quot;the matched text&quot;)
 </code></pre>
 
-<p>The line number refers to the location of the rule in the file
-defining the scanner (i.e., the file that was fed to flex). Messages
-are also generated when the scanner backs up, accepts the default rule,
-reaches the end of its input buffer (or encounters a NUL; at this point,
-the two look the same as far as the scanner's concerned), or reaches
-an end-of-file.
-
-<dl>
+    <p>The line number refers to the location of the rule in the file
+    defining the scanner (i.e., the file that was fed to flex). Messages
+    are also generated when the scanner backs up, accepts the default rule,
+    reaches the end of its input buffer (or encounters a NUL; at this point,
+    the two look the same as far as the scanner's concerned), or reaches
+    an end-of-file.
+</dd>
 
 <dt><code>-f</code></dt>
 
@@ -1880,11 +1876,11 @@ an end-of-file.
     you give the flag twice, you will also get comments regarding features
     that lead to minor performance losses.
 
-<p>Note that the use of <code>REJECT</code>, <code>%option
-yylineno</code>, and variable trailing context (see the Deficiencies /
-Bugs section below) entails a substantial performance penalty; use of
-<code>yymore()</code>, the <code>^</code> operator, and the <code>-I</code>
-flag entail minor performance penalties.
+    <p>Note that the use of <code>REJECT</code>, <code>%option yylineno</code>,
+    and variable trailing context (see the Deficiencies /
+    Bugs section below) entails a substantial performance penalty; use of
+    <code>yymore()</code>, the <code>^</code> operator, and the <code>-I</code>
+    flag entail minor performance penalties.
 </dd>
 
 <dt><code>-s</code></dt>
@@ -1930,37 +1926,27 @@ flag entail minor performance penalties.
 
 <dt><code>-F</code></dt>
 
-<dd><p>specifies that the
-</dd>
+<dd><p>specifies that the fast scanner table representation should be used
+    (and stdio bypassed). This representation is about as fast as the
+    full table representation <code>(-f)</code>, and for some sets of
+    patterns will be considerably smaller (and for others, larger). In
+    general, if the pattern set contains both "keywords" and a
+    catch-all, "identifier" rule, such as in the set:
 
-</dl>
-
-<p>fast scanner table representation should be used (and stdio
-bypassed). This representation is about as fast as the full table
-representation <code>(-f)</code>, and for some sets of patterns will
-be considerably smaller (and for others, larger). In general, if the
-pattern set contains both "keywords" and a catch-all, "identifier" rule,
-such as in the set:
-
-<pre><code>
-    &quot;case&quot;    return TOK_CASE;
-    &quot;switch&quot;  return TOK_SWITCH;
-    ...
-    &quot;default&quot; return TOK_DEFAULT;
-    [a-z]+    return TOK_ID;
+    <pre><code>
+        &quot;case&quot;    return TOK_CASE;
+        &quot;switch&quot;  return TOK_SWITCH;
+        ...
+        &quot;default&quot; return TOK_DEFAULT;
+        [a-z]+    return TOK_ID;
 </code></pre>
 
-<p>then you're better off using the full table representation. If only
-the "identifier" rule is present and you then use a hash table or some
-such to detect the keywords, you're better off using <code>-F</code>.
+    <p>then you're better off using the full table representation. If only
+    the "identifier" rule is present and you then use a hash table or some
+    such to detect the keywords, you're better off using <code>-F</code>.
 
-<blockquote>
-
-<p>This option is equivalent to <code>-CFr</code> (see below). It cannot
-be used with <code>-+</code>.
-</blockquote>
-
-<dl>
+    <p>This option is equivalent to <code>-CFr</code> (see below). It cannot
+    be used with <code>-+</code>.
 
 <dt><code>-I</code></dt>
 
@@ -1974,18 +1960,18 @@ be used with <code>-+</code>.
     a newline, it is not recognized as a newline token until they enter
     <em>another</em> token, which often means typing in another whole line.
 
-<p><code>flex</code> scanners default to <em>interactive</em> unless you
-use the <code>-Cf</code> or <code>-CF</code> table-compression options
-(see below). That's because if you're looking for high-performance
-you should be using one of these options, so if you didn't,
-<code>flex</code> assumes you'd rather trade off a bit of run-time
-performance for intuitive interactive behavior. Note also that you
-<em>cannot</em> use <code>-I</code> in conjunction with <code>-Cf</code>
-or <code>-CF</code>. Thus, this option is not really needed; it is on
-by default for all those cases in which it is allowed.
+    <p><code>flex</code> scanners default to <em>interactive</em> unless you
+    use the <code>-Cf</code> or <code>-CF</code> table-compression options
+    (see below). That's because if you're looking for high-performance
+    you should be using one of these options, so if you didn't,
+    <code>flex</code> assumes you'd rather trade off a bit of run-time
+    performance for intuitive interactive behavior. Note also that you
+    <em>cannot</em> use <code>-I</code> in conjunction with <code>-Cf</code>
+    or <code>-CF</code>. Thus, this option is not really needed; it is on
+    by default for all those cases in which it is allowed.
 
-<p>You can force a scanner to <em>not</em> be interactive by using
-<code>-B</code> (see above).
+    <p>You can force a scanner to <em>not</em> be interactive by using
+    <code>-B</code> (see above).
 </dd>
 
 <dt><code>-L</code></dt>
@@ -2022,22 +2008,22 @@ by default for all those cases in which it is allowed.
     disadvantage is that such scanners often hang or crash if their input
     contains an 8-bit character.
 
-<p>Note, however, that unless you generate your scanner using the
-<code>-Cf</code> or <code>-CF</code> table compression options, use of
-<code>-7</code> will save only a small amount of table space, and make
-your scanner considerably less portable. <code>flex</code>'s default behavior
-is to generate an 8-bit scanner unless you use the <code>-Cf</code> or
-<code>-CF</code>, in which case <code>flex</code> defaults to generating
-7-bit scanners unless your site was always configured to generate 8-bit
-scanners (as will often be the case with non-USA sites). You can tell
-whether flex generated a 7-bit or an 8-bit scanner by inspecting the
-flag summary in the <code>-v</code> output as described above.
+    <p>Note, however, that unless you generate your scanner using the
+    <code>-Cf</code> or <code>-CF</code> table compression options, use of
+    <code>-7</code> will save only a small amount of table space, and make
+    your scanner considerably less portable. <code>flex</code>'s default behavior
+    is to generate an 8-bit scanner unless you use the <code>-Cf</code> or
+    <code>-CF</code>, in which case <code>flex</code> defaults to generating
+    7-bit scanners unless your site was always configured to generate 8-bit
+    scanners (as will often be the case with non-USA sites). You can tell
+    whether flex generated a 7-bit or an 8-bit scanner by inspecting the
+    flag summary in the <code>-v</code> output as described above.
 
-<p>Note that if you use <code>-Cfe</code> or <code>-CFe</code> (those
-table compression options, but also using equivalence classes as discussed
-see below), flex still defaults to generating an 8-bit scanner, since
-usually with these compression options full 8-bit tables are not much
-more expensive than 7-bit tables.
+    <p>Note that if you use <code>-Cfe</code> or <code>-CFe</code> (those
+    table compression options, but also using equivalence classes as discussed
+    see below), flex still defaults to generating an 8-bit scanner, since
+    usually with these compression options full 8-bit tables are not much
+    more expensive than 7-bit tables.
 </dd>
 
 <dt><code>-8</code></dt>
@@ -2047,8 +2033,8 @@ more expensive than 7-bit tables.
     for scanners generated using <code>-Cf</code> or <code>-CF</code>,
     as otherwise flex defaults to generating an 8-bit scanner anyway.
 
-<p>See the discussion of <code>-7</code> above for flex's default behavior
-and the tradeoffs between 7-bit and 8-bit scanners.
+    <p>See the discussion of <code>-7</code> above for flex's default behavior
+    and the tradeoffs between 7-bit and 8-bit scanners.
 </dd>
 
 <dt><code>-+</code></dt>
@@ -2062,92 +2048,85 @@ and the tradeoffs between 7-bit and 8-bit scanners.
 <dd><p>controls the degree of table compression and, more generally,
     trade-offs between small scanners and fast scanners.
 
-<p><code>-Ca</code> ("align") instructs flex to trade off larger tables
-in the generated scanner for faster performance because the elements
-of the tables are better aligned for memory access and computation. On
-some RISC architectures, fetching and manipulating longwords is more
-efficient than with smaller-sized units such as shortwords. This option
-can double the size of the tables used by your scanner.
+    <p><code>-Ca</code> ("align") instructs flex to trade off larger tables
+    in the generated scanner for faster performance because the elements
+    of the tables are better aligned for memory access and computation. On
+    some RISC architectures, fetching and manipulating longwords is more
+    efficient than with smaller-sized units such as shortwords. This option
+    can double the size of the tables used by your scanner.
 
-<p><code>-Ce</code> directs <code>flex</code> to construct <em>equivalence
-classes</em>, i.e., sets of characters which have identical lexical
-properties (for example, if the only appearance of digits in the
-<code>flex</code> input is in the character class "[0-9]" then the
-digits '0', '1', ..., '9' will all be put in the same equivalence
-class). Equivalence classes usually give dramatic reductions in the final
-table/object file sizes (typically a factor of 2-5) and are pretty cheap
-performance-wise (one array look-up per character scanned).
+    <p><code>-Ce</code> directs <code>flex</code> to construct <em>equivalence
+    classes</em>, i.e., sets of characters which have identical lexical
+    properties (for example, if the only appearance of digits in the
+    <code>flex</code> input is in the character class "[0-9]" then the
+    digits '0', '1', ..., '9' will all be put in the same equivalence
+    class). Equivalence classes usually give dramatic reductions in the final
+    table/object file sizes (typically a factor of 2-5) and are pretty cheap
+    performance-wise (one array look-up per character scanned).
 
-<p><code>-Cf</code> specifies that the <em>full</em> scanner tables
-should be generated - <code>flex</code> should not compress the tables
-by taking advantages of similar transition functions for different states.
+    <p><code>-Cf</code> specifies that the <em>full</em> scanner tables
+    should be generated - <code>flex</code> should not compress the tables
+    by taking advantages of similar transition functions for different states.
 
-<p><code>-CF</code> specifies that the alternate fast scanner
-representation (described above under the <code>-F</code> flag) should
-be used. This option cannot be used with <code>-+</code>.
+    <p><code>-CF</code> specifies that the alternate fast scanner
+    representation (described above under the <code>-F</code> flag) should
+    be used. This option cannot be used with <code>-+</code>.
 
-<p><code>-Cm</code> directs <code>flex</code> to construct
-<em>meta-equivalence classes</em>, which are sets of equivalence classes
-(or characters, if equivalence classes are not being used) that are
-commonly used together. Meta-equivalence classes are often a big win
-when using compressed tables, but they have a moderate performance impact
-(one or two "if" tests and one array look-up per character scanned).
+    <p><code>-Cm</code> directs <code>flex</code> to construct
+    <em>meta-equivalence classes</em>, which are sets of equivalence classes
+    (or characters, if equivalence classes are not being used) that are
+    commonly used together. Meta-equivalence classes are often a big win
+    when using compressed tables, but they have a moderate performance impact
+    (one or two "if" tests and one array look-up per character scanned).
 
-<p><code>-Cr</code> causes the generated scanner to <em>bypass</em>
-use of the standard I/O library (stdio) for input. Instead of calling
-<code>fread()</code> or <code>getc()</code>, the scanner will use the
-<code>read()</code> system call, resulting in a performance gain which
-varies from system to system, but in general is probably negligible
-unless you are also using <code>-Cf</code> or <code>-CF</code>. Using
-<code>-Cr</code> can cause strange behavior if, for example, you read from
-<code>yyin</code> using stdio prior to calling the scanner (because the
-scanner will miss whatever text your previous reads left in the stdio
-input buffer).
+    <p><code>-Cr</code> causes the generated scanner to <em>bypass</em>
+    use of the standard I/O library (stdio) for input. Instead of calling
+    <code>fread()</code> or <code>getc()</code>, the scanner will use the
+    <code>read()</code> system call, resulting in a performance gain which
+    varies from system to system, but in general is probably negligible
+    unless you are also using <code>-Cf</code> or <code>-CF</code>. Using
+    <code>-Cr</code> can cause strange behavior if, for example, you read from
+    <code>yyin</code> using stdio prior to calling the scanner (because the
+    scanner will miss whatever text your previous reads left in the stdio
+    input buffer).
 
-<p><code>-Cr</code> has no effect if you define <code>YY_INPUT</code>
-(see The Generated Scanner above).
+    <p><code>-Cr</code> has no effect if you define <code>YY_INPUT</code>
+    (see The Generated Scanner above).
 
-<p>A lone <code>-C</code> specifies that the scanner tables should be
-compressed but neither equivalence classes nor meta-equivalence classes
-should be used.
+    <p>A lone <code>-C</code> specifies that the scanner tables should be
+    compressed but neither equivalence classes nor meta-equivalence classes
+    should be used.
 
-<p>The options <code>-Cf</code> or <code>-CF</code> and <code>-Cm</code>
-do not make sense together - there is no opportunity for meta-equivalence
-classes if the table is not being compressed. Otherwise the options may
-be freely mixed, and are cumulative.
+    <p>The options <code>-Cf</code> or <code>-CF</code> and <code>-Cm</code>
+    do not make sense together - there is no opportunity for meta-equivalence
+    classes if the table is not being compressed. Otherwise the options may
+    be freely mixed, and are cumulative.
 
-<p>The default setting is <code>-Cem</code>, which specifies
-that <code>flex</code> should generate equivalence classes and
-meta-equivalence classes. This setting provides the highest degree of
-table compression. You can trade off faster-executing scanners at the
-cost of larger tables with the following generally being true:
-</dd>
+    <p>The default setting is <code>-Cem</code>, which specifies
+    that <code>flex</code> should generate equivalence classes and
+    meta-equivalence classes. This setting provides the highest degree of
+    table compression. You can trade off faster-executing scanners at the
+    cost of larger tables with the following generally being true:
 
-</dl>
-
-<pre><code>
-    slowest &amp; smallest
-          -Cem
-          -Cm
-          -Ce
-          -C
-          -C{f,F}e
-          -C{f,F}
-          -C{f,F}a
-    fastest &amp; largest
+    <pre><code>
+        slowest &amp; smallest
+              -Cem
+              -Cm
+              -Ce
+              -C
+              -C{f,F}e
+              -C{f,F}
+              -C{f,F}a
+        fastest &amp; largest
 </code></pre>
 
-<p>Note that scanners with the smallest tables are usually generated
-and compiled the quickest, so during development you will usually want
-to use the default, maximal compression.
+    <p>Note that scanners with the smallest tables are usually generated
+    and compiled the quickest, so during development you will usually want
+    to use the default, maximal compression.
 
-<blockquote>
-
-<p><code>-Cfe</code> is often a good compromise between speed and size
-for production scanners.
-</blockquote>
-
-<dl>
+    <p><code>-Cfe</code> is often a good compromise between speed and size
+    for production scanners.
+</dd>
 
 <dt><code>-ooutput</code></dt>
 
@@ -2166,44 +2145,38 @@ for production scanners.
     of <code>yytext</code> to <code>footext</code>. It also changes
     the name of the default output file from <code>lex.yy.c</code> to
     <code>lex.foo.c</code>. Here are all of the names affected:
-</dd>
 
-</dl>
-
-<pre><code>
-    yy_create_buffer
-    yy_delete_buffer
-    yy_flex_debug
-    yy_init_buffer
-    yy_flush_buffer
-    yy_load_buffer_state
-    yy_switch_to_buffer
-    yyin
-    yyleng
-    yylex
-    yylineno
-    yyout
-    yyrestart
-    yytext
-    yywrap
+    <pre><code>
+        yy_create_buffer
+        yy_delete_buffer
+        yy_flex_debug
+        yy_init_buffer
+        yy_flush_buffer
+        yy_load_buffer_state
+        yy_switch_to_buffer
+        yyin
+        yyleng
+        yylex
+        yylineno
+        yyout
+        yyrestart
+        yytext
+        yywrap
 </code></pre>
 
-<p>(If you are using a C++ scanner, then only <code>yywrap</code> and
-<code>yyFlexLexer</code> are affected.) Within your scanner itself,
-you can still refer to the global variables and functions using either
-version of their name; but externally, they have the modified name.
+    <p>(If you are using a C++ scanner, then only <code>yywrap</code> and
+    <code>yyFlexLexer</code> are affected.) Within your scanner itself,
+    you can still refer to the global variables and functions using either
+    version of their name; but externally, they have the modified name.
 
-<blockquote>
+    <p>This option lets you easily link together multiple <code>flex</code>
+    programs into the same executable. Note, though, that using this
+    option also renames <code>yywrap()</code>, so you now <em>must</em>
+    either provide your own (appropriately-named) version of the routine
+    for your scanner, or use <code>%option noyywrap</code>, as linking with
+    <code>-lfl</code> no longer provides one for you by default.
 
-<p>This option lets you easily link together multiple <code>flex</code>
-programs into the same executable. Note, though, that using this
-option also renames <code>yywrap()</code>, so you now <em>must</em>
-either provide your own (appropriately-named) version of the routine
-for your scanner, or use <code>%option noyywrap</code>, as linking with
-<code>-lfl</code> no longer provides one for you by default.
-</blockquote>
-
-<dl>
+</dd>
 
 <dt><code>-Sskeleton_file</code></dt>
 
