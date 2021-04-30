@@ -12,6 +12,9 @@
  * requested. */
 %option yywrap
 
+/* Also get a main() so I do not have to write my own. */
+%option main
+
 
 %%
 username           printf("USERNAME");
