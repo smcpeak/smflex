@@ -2238,8 +2238,27 @@ number are equivalent to flex flags or their negation:
 <dt><code>main</code></dt>
 
 <dd><p>directs flex to provide a default <code>main()</code> program for the
-    scanner, which simply calls <code>yylex()</code>. This option implies
-    <code>noyywrap</code> (see below).
+    scanner.  Its definition is:
+
+    <pre><code>
+      int main()
+      {
+        /* Keep retrieving tokens and discarding them until EOF. */
+        while (yylex() != 0)
+          {} /* nothing */
+        return 0;
+      }
+</code></pre>
+
+    <p>smcpeak 2021-04-30: In flex-2.5.4, the <code>main()</code>
+    function generated this way called <code>yylex()</code> just once.
+    I do not see how that could ever have been useful.  I have changed
+    it to be what the old <code>libfl.a</code> contained.  This way
+    I can eliminate <code>libfl.a</code> without losing functionality.
+
+    <p>smcpeak 2021-04-30: In flex-2.5.4, <code>%option main</code>
+    implied <code>%option noyywrap</code>.  These two features are
+    orthogonal, so I have removed that implication.
 </dd>
 
 <dt><code>never-interactive</code></dt>

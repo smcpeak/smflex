@@ -3628,7 +3628,9 @@ void *ptr;
 #if YY_MAIN
 int main()
 	{
-	yylex();
+	/* Keep retrieving tokens and discarding them until EOF. */
+	while (yylex() != 0)
+		{} /* nothing */
 	return 0;
 	}
 #endif

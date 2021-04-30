@@ -36,10 +36,8 @@ bindir = $(exec_prefix)/bin
 libdir = $(exec_prefix)/lib
 includedir = $(prefix)/include
 
-# You can define these to be "lex" and "libl.a" if you want to replace
-# lex at your site.
+# Name of the scanner generator executable.
 FLEX = flex
-FLEXLIB = libfl.a
 
 SHELL = /bin/sh
 
@@ -64,10 +62,6 @@ YACC = @YACC@
 
 # C compiler.
 CC = @CC@
-
-# Library archiver (creator).
-AR = ar
-RANLIB = @RANLIB@
 
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -95,19 +89,13 @@ SOURCES = ccl.c dfa.c ecs.c gen.c main.c misc.c nfa.c parse.y \
 OBJECTS = ccl.o dfa.o ecs.o gen.o main.o misc.o nfa.o parse.o \
 	scan.o skel.o sym.o tblcmp.o yylex.o
 
-# Runtime library sources, also included in the distribution.
-LIBSRCS = libmain.c
-
-# Object files to compile and archive into $(FLEXLIB).
-LIBOBJS = libmain.o
-
 # Complete set of files and directories to be included in the
 # distribution tarball, except that 'scan.c' gets renamed to
 # 'initscan.c' during the packaging process, and 'test/out' gets
 # removed.
 DISTFILES = README.md NEWS COPYING FlexLexer.h \
 	configure.in Makefile.in mkskel.sh flex.skl \
-	$(HEADERS) $(SOURCES) $(LIBSRCS) \
+	$(HEADERS) $(SOURCES) \
 	flex.html scan.c install.sh mkinstalldirs configure \
 	test
 
@@ -134,8 +122,8 @@ COMPRESSION =
 all: $(FLEX)
 
 # Link the final flex executable.
-$(FLEX): .bootstrap $(OBJECTS) $(FLEXLIB)
-	$(CC) $(CFLAGS) -o $(FLEX) $(LDFLAGS) $(OBJECTS) $(FLEXLIB) $(LIBS)
+$(FLEX): .bootstrap $(OBJECTS)
+	$(CC) $(CFLAGS) -o $(FLEX) $(LDFLAGS) $(OBJECTS) $(LIBS)
 
 # This creates the initial scan.c from initscan.c.  The latter is
 # checked in to the repo so one does not need to have flex already
@@ -218,16 +206,9 @@ bigcheck:
 	rm -f scan.c ; $(MAKE)
 	@echo "All checks successful"
 
-# Create flex runtime library.
-$(FLEXLIB): $(LIBOBJS)
-	$(AR) cru $(FLEXLIB) $(LIBOBJS)
-	-$(RANLIB) $(FLEXLIB)
-
 # Install to the chosen --prefix.
-install: $(FLEX) $(FLEXLIB) installdirs
+install: $(FLEX) installdirs
 	$(INSTALL_PROGRAM) $(FLEX) $(bindir)/$(FLEX)
-	$(INSTALL_DATA) $(FLEXLIB) $(libdir)/$(FLEXLIB)
-	-cd $(libdir) && $(RANLIB) $(FLEXLIB)
 	$(INSTALL_DATA) $(srcdir)/FlexLexer.h $(includedir)/FlexLexer.h
 
 installdirs:
@@ -236,7 +217,6 @@ installdirs:
 
 uninstall:
 	rm -f $(bindir)/$(FLEX)
-	rm -f $(libdir)/$(FLEXLIB)
 	rm -f $(includedir)/FlexLexer.h
 
 tags: $(SOURCES)
@@ -250,7 +230,7 @@ mostlyclean:
 
 clean: mostlyclean
 	rm -f flex parse.c parse.h *.o lex.yy.c lex.yy.cc \
-		$(FLEXLIB) config.log config.cache
+		config.log config.cache
 	$(MAKE) -C test clean
 
 distclean: clean

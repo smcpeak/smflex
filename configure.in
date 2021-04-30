@@ -18,9 +18,6 @@ AC_PROG_YACC
 dnl# Set @CC@ to "gcc", usually.
 AC_PROG_CC
 
-dnl# Set @RANLIB@ to "ranlib", typically.
-AC_PROG_RANLIB
-
 dnl# Set @INSTALL@ to "/usr/bin/install -c", at least on cygwin.
 AC_PROG_INSTALL
 
