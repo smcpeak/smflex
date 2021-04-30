@@ -632,9 +632,9 @@ to <code>[:alpha:]</code>.
     '$' which does not occur at the end of a rule loses its special properties
     and is treated as a normal character.
 
-<p>The following are illegal:</p></li>
-
 </ul>
+
+<p>The following are illegal:
 
 <pre><code>
     foo/bar$
@@ -643,11 +643,8 @@ to <code>[:alpha:]</code>.
 
 <p>Note that the first of these, can be written "foo/bar\n".
 
-<blockquote>
-
 <p>The following will result in '$' or '^' being treated as a normal
 character:
-</blockquote>
 
 <pre><code>
     foo|(bar$)
@@ -794,175 +791,192 @@ an action:
 
 <ul>
 
-<li><p><code>ECHO</code> copies yytext to the scanner's output.</p></li>
+<li><p><code>ECHO</code> copies yytext to the scanner's output.
 
-<li><p><code>BEGIN</code> followed by the name of a start condition places the scanner in the corresponding start condition (see below).</p></li>
+<li><p><code>BEGIN</code> followed by the name of a start condition
+    places the scanner in the corresponding start condition (see
+    below).
 
-<li><p><code>REJECT</code> directs the scanner to proceed on to the "second best" rule which matched the input (or a prefix of the input). The rule is chosen as described above in "How the Input is Matched", and <code>yytext</code> and <code>yyleng</code> set up appropriately. It may either be one which matched as much text as the originally chosen rule but came later in the <code>flex</code> input file, or one which matched less text. For example, the following will both count the words in the input and call the routine special() whenever "frob" is seen:</p></li>
+<li><p><code>REJECT</code>
+    directs the scanner to proceed on to the "second best" rule which
+    matched the input (or a prefix of the input). The rule is chosen as
+    described above in "How the Input is Matched", and
+    <code>yytext</code> and <code>yyleng</code> set up appropriately. It
+    may either be one which matched as much text as the originally
+    chosen rule but came later in the <code>flex</code> input file, or
+    one which matched less text. For example, the following will both
+    count the words in the input and call the routine special() whenever
+    "frob" is seen:
 
-</ul>
+    <pre><code>
+                int word_count = 0;
+        %%
 
-<pre><code>
-            int word_count = 0;
-    %%
+        frob        special(); REJECT;
+        [^ \t\n]+   ++word_count;
+    </code></pre>
 
-    frob        special(); REJECT;
-    [^ \t\n]+   ++word_count;
-</code></pre>
+    <p>Without the <code>REJECT</code>, any "frob"'s in the input would not
+    be counted as words, since the scanner normally executes only one action
+    per token. Multiple <code>REJECT</code>s are allowed, each one finding
+    the next best choice to the currently active rule. For example, when
+    the following scanner scans the token "abcd", it will write "abcdabcaba"
+    to the output:
 
-<p>Without the <code>REJECT</code>, any "frob"'s in the input would not
-be counted as words, since the scanner normally executes only one action
-per token. Multiple <code>REJECT</code>s are allowed, each one finding
-the next best choice to the currently active rule. For example, when
-the following scanner scans the token "abcd", it will write "abcdabcaba"
-to the output:
+    <pre><code>
+        %%
+        a        |
+        ab       |
+        abc      |
+        abcd     ECHO; REJECT;
+        .|\n     /* eat up any unmatched character */
+    </code></pre>
 
-<pre><code>
-    %%
-    a        |
-    ab       |
-    abc      |
-    abcd     ECHO; REJECT;
-    .|\n     /* eat up any unmatched character */
-</code></pre>
+    <p>(The first three rules share the fourth's action since they use the
+    special '|' action.) <code>REJECT</code> is a particularly expensive
+    feature in terms of scanner performance; if it is used in <em>any</em>
+    of the scanner's actions it will slow down <em>all</em> of the scanner's
+    matching. Furthermore, <code>REJECT</code> cannot be used with the
+    <code>-Cf</code> or <code>-CF</code> options (see below).
 
-<p>(The first three rules share the fourth's action since they use the
-special '|' action.) <code>REJECT</code> is a particularly expensive
-feature in terms of scanner performance; if it is used in <em>any</em>
-of the scanner's actions it will slow down <em>all</em> of the scanner's
-matching. Furthermore, <code>REJECT</code> cannot be used with the
-<code>-Cf</code> or <code>-CF</code> options (see below).
+    <p>Note also that unlike the other special actions, <code>REJECT</code>
+    is a <em>branch</em>; code immediately following it in the action will
+    <em>not</em> be executed.
 
-<blockquote>
+<li><p><code>yymore()</code>
+    tells the scanner that the next time it matches a rule, the
+    corresponding token should be <em>appended</em> onto the current
+    value of <code>yytext</code> rather than replacing it. For example,
+    given the input "mega-kludge" the following will write
+    "mega-mega-kludge" to the output:
 
-<p>Note also that unlike the other special actions, <code>REJECT</code>
-is a <em>branch</em>; code immediately following it in the action will
-<em>not</em> be executed.
-</blockquote>
+    <pre><code>
+        %%
+        mega-    ECHO; yymore();
+        kludge   ECHO;
+    </code></pre>
 
-<ul>
+    <p>First "mega-" is matched and echoed to the output. Then "kludge"
+    is matched, but the previous "mega-" is still hanging around at the
+    beginning of <code>yytext</code> so the <code>ECHO</code> for the "kludge"
+    rule will actually write "mega-kludge".
 
-<li><p><code>yymore()</code> tells the scanner that the next time it matches a rule, the corresponding token should be <em>appended</em> onto the current value of <code>yytext</code> rather than replacing it. For example, given the input "mega-kludge" the following will write "mega-mega-kludge" to the output:</p></li>
+    <p>Two notes regarding use of <code>yymore()</code>. First,
+    <code>yymore()</code> depends on the value of <code>yyleng</code>
+    correctly reflecting the size of the current token, so you must not modify
+    <code>yyleng</code> if you are using <code>yymore()</code>. Second,
+    the presence of <code>yymore()</code> in the scanner's action entails
+    a minor performance penalty in the scanner's matching speed.
 
-</ul>
+<li><p><code>yyless(n)</code>
+    returns all but the first <code>n</code> characters of the current
+    token back to the input stream, where they will be rescanned when
+    the scanner looks for the next match. <code>yytext</code> and
+    <code>yyleng</code> are adjusted appropriately (e.g.,
+    <code>yyleng</code> will now be equal to <code>n</code> ). For
+    example, on the input "foobar" the following will write out
+    "foobarbar":
 
-<pre><code>
-    %%
-    mega-    ECHO; yymore();
-    kludge   ECHO;
-</code></pre>
+    <pre><code>
+        %%
+        foobar    ECHO; yyless(3);
+        [a-z]+    ECHO;
+    </code></pre>
 
-<p>First "mega-" is matched and echoed to the output. Then "kludge"
-is matched, but the previous "mega-" is still hanging around at the
-beginning of <code>yytext</code> so the <code>ECHO</code> for the "kludge"
-rule will actually write "mega-kludge".
+    <p>An argument of 0 to <code>yyless</code> will cause the entire current
+    input string to be scanned again. Unless you've changed how the scanner
+    will subsequently process its input (using <code>BEGIN</code>, for
+    example), this will result in an endless loop.
 
-<p>Two notes regarding use of <code>yymore()</code>. First,
-<code>yymore()</code> depends on the value of <code>yyleng</code>
-correctly reflecting the size of the current token, so you must not modify
-<code>yyleng</code> if you are using <code>yymore()</code>. Second,
-the presence of <code>yymore()</code> in the scanner's action entails
-a minor performance penalty in the scanner's matching speed.
+    <p>Note that <code>yyless</code> is a macro and can only be used in the
+    flex input file, not from other source files.
 
-<ul>
+<li><p><code>unput(c)</code>
+    puts the character <code>c</code> back onto the input stream. It
+    will be the next character scanned. The following action will take
+    the current token and cause it to be rescanned enclosed in
+    parentheses.
 
-<li><p><code>yyless(n)</code> returns all but the first <code>n</code> characters of the current token back to the input stream, where they will be rescanned when the scanner looks for the next match. <code>yytext</code> and <code>yyleng</code> are adjusted appropriately (e.g., <code>yyleng</code> will now be equal to <code>n</code> ). For example, on the input "foobar" the following will write out "foobarbar":</p></li>
+    <pre><code>
+        {
+        int i;
+        /* Copy yytext because unput() trashes yytext */
+        char *yycopy = strdup( yytext );
+        unput( &#39;)&#39; );
+        for ( i = yyleng - 1; i &gt;= 0; --i )
+            unput( yycopy[i] );
+        unput( &#39;(&#39; );
+        free( yycopy );
+        }
+    </code></pre>
 
-</ul>
+    <p>Note that since each <code>unput()</code> puts the given character
+    back at the <em>beginning</em> of the input stream, pushing back strings
+    must be done back-to-front.
 
-<pre><code>
-    %%
-    foobar    ECHO; yyless(3);
-    [a-z]+    ECHO;
-</code></pre>
+    <p>An important potential problem when using <code>unput()</code>
+    is that if you are using <code>%pointer</code> (the default),
+    a call to <code>unput()</code> <em>destroys</em> the contents of
+    <code>yytext</code>, starting with its rightmost character and devouring
+    one character to the left with each call. If you need the value of yytext
+    preserved after a call to <code>unput()</code> (as in the above example),
+    you must either first copy it elsewhere, or build your scanner using
+    <code>%array</code> instead (see How The Input Is Matched).
 
-<p>An argument of 0 to <code>yyless</code> will cause the entire current
-input string to be scanned again. Unless you've changed how the scanner
-will subsequently process its input (using <code>BEGIN</code>, for
-example), this will result in an endless loop.
+    <p>Finally, note that you cannot put back <code>EOF</code> to attempt
+    to mark the input stream with an end-of-file.
 
-<p>Note that <code>yyless</code> is a macro and can only be used in the
-flex input file, not from other source files.
+<li><p><code>input()</code>
+    reads the next character from the input stream. For example, the
+    following is one way to eat up C comments:
 
-<ul>
+    <pre><code>
+        %%
+        &quot;/*&quot;        {
+                    register int c;
 
-<li><p><code>unput(c)</code> puts the character <code>c</code> back onto the input stream. It will be the next character scanned. The following action will take the current token and cause it to be rescanned enclosed in parentheses.</p></li>
-
-</ul>
-
-<pre><code>
-    {
-    int i;
-    /* Copy yytext because unput() trashes yytext */
-    char *yycopy = strdup( yytext );
-    unput( &#39;)&#39; );
-    for ( i = yyleng - 1; i &gt;= 0; --i )
-        unput( yycopy[i] );
-    unput( &#39;(&#39; );
-    free( yycopy );
-    }
-</code></pre>
-
-<p>Note that since each <code>unput()</code> puts the given character
-back at the <em>beginning</em> of the input stream, pushing back strings
-must be done back-to-front.
-
-<p>An important potential problem when using <code>unput()</code>
-is that if you are using <code>%pointer</code> (the default),
-a call to <code>unput()</code> <em>destroys</em> the contents of
-<code>yytext</code>, starting with its rightmost character and devouring
-one character to the left with each call. If you need the value of yytext
-preserved after a call to <code>unput()</code> (as in the above example),
-you must either first copy it elsewhere, or build your scanner using
-<code>%array</code> instead (see How The Input Is Matched).
-
-<p>Finally, note that you cannot put back <code>EOF</code> to attempt
-to mark the input stream with an end-of-file.
-
-<ul>
-
-<li><p><code>input()</code> reads the next character from the input stream. For example, the following is one way to eat up C comments:</p></li>
-
-</ul>
-
-<pre><code>
-    %%
-    &quot;/*&quot;        {
-                register int c;
-
-                for ( ; ; )
-                    {
-                    while ( (c = input()) != &#39;*&#39; &amp;&amp;
-                            c != EOF )
-                        ;    /* eat up text of comment */
-
-                    if ( c == &#39;*&#39; )
+                    for ( ; ; )
                         {
-                        while ( (c = input()) == &#39;*&#39; )
-                            ;
-                        if ( c == &#39;/&#39; )
-                            break;    /* found the end */
-                        }
+                        while ( (c = input()) != &#39;*&#39; &amp;&amp;
+                                c != EOF )
+                            ;    /* eat up text of comment */
 
-                    if ( c == EOF )
-                        {
-                        error( &quot;EOF in comment&quot; );
-                        break;
+                        if ( c == &#39;*&#39; )
+                            {
+                            while ( (c = input()) == &#39;*&#39; )
+                                ;
+                            if ( c == &#39;/&#39; )
+                                break;    /* found the end */
+                            }
+
+                        if ( c == EOF )
+                            {
+                            error( &quot;EOF in comment&quot; );
+                            break;
+                            }
                         }
                     }
-                }
-</code></pre>
+    </code></pre>
 
-<p>(Note that if the scanner is compiled using <code>C++</code>, then
-<code>input()</code> is instead referred to as <code>yyinput()</code>,
-in order to avoid a name clash with the <code>C++</code> stream by the
-name of <code>input</code>.)
+    <p>(Note that if the scanner is compiled using <code>C++</code>, then
+    <code>input()</code> is instead referred to as <code>yyinput()</code>,
+    in order to avoid a name clash with the <code>C++</code> stream by the
+    name of <code>input</code>.)
 
-<ul>
+<li><p><code>YY_FLUSH_BUFFER</code>
+    flushes the scanner's internal buffer so that the next time the
+    scanner attempts to match a token, it will first refill the buffer
+    using <code>YY_INPUT</code> (see The Generated Scanner, below). This
+    action is a special case of the more general
+    <code>yy_flush_buffer()</code> function, described below in the
+    section Multiple Input Buffers.
 
-<li><p><code>YY_FLUSH_BUFFER</code> flushes the scanner's internal buffer so that the next time the scanner attempts to match a token, it will first refill the buffer using <code>YY_INPUT</code> (see The Generated Scanner, below). This action is a special case of the more general <code>yy_flush_buffer()</code> function, described below in the section Multiple Input Buffers.</p></li>
-
-<li><p><code>yyterminate()</code> can be used in lieu of a return statement in an action. It terminates the scanner and returns a 0 to the scanner's caller, indicating "all done". By default, <code>yyterminate()</code> is also called when an end-of-file is encountered. It is a macro and may be redefined.</p></li>
+<li><p><code>yyterminate()</code>
+    can be used in lieu of a return statement in an action. It
+    terminates the scanner and returns a 0 to the scanner's caller,
+    indicating "all done". By default, <code>yyterminate()</code> is
+    also called when an end-of-file is encountered. It is a macro and
+    may be redefined.
 
 </ul>
 
