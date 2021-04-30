@@ -1,0 +1,12 @@
+/* cpp-prefix.lexpp */
+/* C++ scanner using %option prefix. */
+
+%option c++
+%option main
+%option prefix="MyLexer"
+
+%%
+username           cout << "USERNAME";
+
+%%
+/* EOF */

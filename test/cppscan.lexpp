@@ -1,4 +1,4 @@
-/* cppscan.lex */
+/* cppscan.lexpp */
 /* Scanner using C++. */
 
 %option c++

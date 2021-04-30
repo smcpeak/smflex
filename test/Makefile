@@ -4,6 +4,9 @@
 # Default target, runs all tests.
 all:
 
+# Remove built-in implicit rules.
+.SUFFIXES:
+
 # C compiler and linker.
 #
 # TODO: Get this from ./configure.
@@ -41,13 +44,15 @@ out/%.o: %.c
 	@mkdir -p out
 	$(CC) -o$@ -c $(CFLAGS) $<
 
-# cppscan is special because it should write to a .cc file.
-out/cppscan.yy.cc: cppscan.lex
+# Run flex on one file that generates a C++-interface scanner.
+.PRECIOUS: out/%.yy.cc
+out/%.yy.cc: %.lexpp
 	@mkdir -p out
 	../flex -o$@ $<
 
 # Compile C++ file in out/.
-out/%.o: out/%.cc
+.PRECIOUS: out/%.oo
+out/%.oo: out/%.cc
 	$(CXX) -o$@ -c $(CXXFLAGS) $<
 
 # Link C object files in out/ to make an executable.
@@ -63,8 +68,8 @@ out/%.c_as_cc.exe: out/%.yy.c_as_cc.o
 # username is special because it uses testmain.
 out/username.exe: out/testmain.o
 
-# cppscan needs C++ linking.
-out/cppscan.exe: out/cppscan.yy.o
+# Use C++ linking for *.oo files.
+out/%.exe: out/%.yy.oo
 	$(CXX) -o$@ $(CXXFLAGS) $^
 
 # Run one test, producing an "ok" file to mark success.
@@ -79,9 +84,13 @@ all: out/username-yywrap.ok
 all: out/username-main.ok
 all: out/username-main.c_as_cc.ok
 all: out/cppscan.ok
+all: out/cppscan-yywrap.ok
+all: out/cpp-prefix.ok
+all: out/cpp-prefix-yywrap.ok
 
-# This test reads a second file.
+# These tests read a second file.
 username-yywrap.ok: username-yywrap.input2
+cppscan-yywrap.ok: cppscan-yywrap.input2
 
 # Command to print a message at the end.
 all:

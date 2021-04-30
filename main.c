@@ -320,10 +320,9 @@ void check_options()
 
 			if ( do_yylineno )
 				GEN_PREFIX( "lineno" );
+			if ( do_yywrap )
+				GEN_PREFIX( "wrap" );
 			}
-
-		if ( do_yywrap )
-			GEN_PREFIX( "wrap" );
 
 		outn( "" );
 		}

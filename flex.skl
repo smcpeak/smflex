@@ -313,6 +313,7 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
  * section 1.
  */
 
+%-       The global yywrap is only used for the C interface scanner.
 #ifndef YY_SKIP_YYWRAP
 #ifdef __cplusplus
 extern "C" int yywrap YY_PROTO(( void ));
@@ -320,6 +321,7 @@ extern "C" int yywrap YY_PROTO(( void ));
 extern int yywrap YY_PROTO(( void ));
 #endif
 #endif
+%*
 
 %-
 #ifndef YY_NO_UNPUT

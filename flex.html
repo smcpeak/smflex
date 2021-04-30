@@ -2159,8 +2159,8 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
         yywrap
 </code></pre>
 
-    <p>If you are using a C++ scanner, then only <code>yywrap</code> and
-    <code>yyFlexLexer</code> (the scanner class) are affected.
+    <p>If you are using a C++ scanner, then only
+    <code>yyFlexLexer</code> (the scanner class name) is affected.
 
     <p>Within your scanner itself,
     you can still refer to the global variables and functions using either
@@ -2310,6 +2310,9 @@ number are equivalent to flex flags or their negation:
     <code>yyin</code> to point to another input file, and scanning
     continues.  If it returns true (non-zero), then the scanner
     terminates, returning 0 to its caller.
+
+    <p>When using <code>%option c++</code>, <code>yywrap()</code> is
+    a method of the <code>yyFlexLexer</code> class.
 
     <p>smcpeak 2021-04-30: In flex-2.5.4, the default behavior was to
     enable <code>yywrap()</code>.  I have inverted that.

@@ -1,0 +1,45 @@
+/* cppscan-yywrap.lexpp */
+/* Scanner using C++ and yywrap. */
+
+%option c++
+%option main
+%option yywrap
+
+%{
+#include <fstream>           // ifstream
+using std::ifstream;
+%}
+
+%%
+username           cout << "USERNAME";
+
+%%
+
+/* Non-NULL once we have read the second input. */
+static istream *secondFile = NULL;
+
+int yyFlexLexer::yywrap()
+{
+  if (!secondFile) {
+    secondFile = new ifstream("cppscan-yywrap.input2");
+    if (secondFile->fail()) {
+      perror("new ifstream(cppscan-yywrap.input2)");
+      delete secondFile;
+      exit(2);
+    }
+
+    switch_streams(secondFile);
+
+    /* Not done, keep going. */
+    return 0;
+  }
+  else {
+    delete secondFile;
+
+    /* All done. */
+    return 1;
+  }
+}
+
+
+/* EOF */
