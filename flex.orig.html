@@ -147,6 +147,18 @@
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
+  <script>
+    // Ugly hack to remove the leading blank line from <pre><code> blocks, from:
+    // https://stackoverflow.com/questions/14946908/how-can-i-ignore-leading-and-trailing-linebreaks-within-an-html-code-block-usi
+    window.onload = function (){
+      // remove leading linebreaks from code blocks.
+      var pre = document.getElementsByTagName("code");
+      for (var i = 0, len = pre.length; i < len; i++) {
+        var text = pre[i].firstChild.nodeValue;
+        pre[i].firstChild.nodeValue = text.replace(/^\n+|\n+$/g, "");
+      }
+    }
+  </script>
 </head>
 <body>
 <header id="title-block-header">
@@ -1505,8 +1517,8 @@
 <dt><strong>virtual int yylex()</strong></dt>
 <dd><p>performs the same role is <strong>yylex()</strong> does for ordinary flex scanners: it scans the input stream, consuming tokens, until a rule's action returns a value. If you derive a subclass <strong>S</strong> from <strong>yyFlexLexer</strong> and want to access the member functions and variables of <strong>S</strong> inside <strong>yylex(),</strong> then you need to use <strong>%option yyclass="S"</strong> to inform <em>flex</em> that you will be using that subclass instead of <strong>yyFlexLexer.</strong> In this case, rather than generating <strong>yyFlexLexer::yylex(),</strong> <em>flex</em> generates <strong>S::yylex()</strong> (and also generates a dummy <strong>yyFlexLexer::yylex()</strong> that calls <strong>yyFlexLexer::LexerError()</strong> if called).</p>
 </dd>
-<dt><strong>virtual void switch_streams(istream* new_in = 0,</strong></dt>
-<dd><p><strong>ostream* new_out = 0)</strong> reassigns <strong>yyin</strong> to <strong>new_in</strong> (if non-nil) and <strong>yyout</strong> to <strong>new_out</strong> (ditto), deleting the previous input buffer if <strong>yyin</strong> is reassigned.</p>
+<dt><code>virtual void switch_streams(istream* new_in = 0, ostream* new_out = 0)</code></dt>
+<dd><p>reassigns <strong>yyin</strong> to <strong>new_in</strong> (if non-nil) and <strong>yyout</strong> to <strong>new_out</strong> (ditto), deleting the previous input buffer if <strong>yyin</strong> is reassigned.</p>
 </dd>
 <dt><strong>int yylex( istream* new_in, ostream* new_out = 0 )</strong></dt>
 <dd><p>first switches the input streams via <strong>switch_streams( new_in, new_out )</strong> and then returns the value of <strong>yylex().</strong></p>
