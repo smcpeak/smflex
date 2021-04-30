@@ -2646,13 +2646,17 @@ and default echoing is still done to <code>yyout</code>. Both of these
 remain <code>FILE *</code> variables and not C++ <em>streams</em>.
 
 <p>You can also use <code>flex</code> to generate a C++ scanner class,
-using the <code>-+</code> option (or, equivalently, <code>%option
-c++</code>), which is automatically specified if the name of the flex
-executable ends in a '+', such as <code>flex++</code>. When using this option,
+using the <code>-+</code> option (or, equivalently, <code>%option c++</code>).
+When using this option,
 flex defaults to generating the scanner to the file <code>lex.yy.cc</code>
 instead of <code>lex.yy.c</code>. The generated scanner includes the
 header file <code>FlexLexer.h</code>, which defines the interface to two
 C++ classes.
+
+<p>smcpeak 2021-04-29: Flex-2.5.4 also allows the user to choose C++
+mode by invoking <code>flex</code> as <code>flex++</code>.  I have
+removed that feature.  (I dislike the idea that a program's behavior
+depends on its name.)
 
 <p>The first class, <code>FlexLexer</code>, provides an abstract base
 class defining the general scanner class interface. It provides the
