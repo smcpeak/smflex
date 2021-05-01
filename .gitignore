@@ -5,6 +5,4 @@
 config.cache
 config.log
 config.status
-parse.c
-parse.h
 scan.c

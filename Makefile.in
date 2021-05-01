@@ -1,6 +1,8 @@
 # Makefile.in
 # @configure_input@
 
+# NOTE: This Makefile requires GNU make.
+
 # If the following line is not empty, it specifies the value of $(MAKE)
 # to use when invoking make recursively.
 @SET_MAKE@
@@ -58,10 +60,13 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 # Bison, operating in yacc compatibility mode.
-YACC = @YACC@
+YACC = bison -y
 
 # C compiler.
 CC = @CC@
+
+# Preprocessor flags.
+CPPFLAGS += -I. -I$(srcdir)
 
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -70,8 +75,16 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 # You normally do not need to modify anything below this point.
 # ------------------------------------------------------------
 
-# Preprocessor flags.
-CPPFLAGS += -I. -I$(srcdir)
+# Default target.
+all: $(FLEX)
+
+# Turn off default rules.  (One reason this is important is there is
+# a default rule for running bison, but I want to ensure bison only
+# runs when specifically requested.)
+.SUFFIXES:
+
+# Enable the following rule.
+.SUFFIXES: .c .o
 
 # Rule for compiling one C source file.
 .c.o:
@@ -91,13 +104,14 @@ OBJECTS = ccl.o dfa.o ecs.o gen.o main.o misc.o nfa.o parse.o \
 
 # Complete set of files and directories to be included in the
 # distribution tarball, except that 'scan.c' gets renamed to
-# 'initscan.c' during the packaging process, and 'test/out' gets
-# removed.
+# 'initscan.c' during the packaging process, and a few things
+# in 'test' get removed.
 DISTFILES = README.md NEWS COPYING FlexLexer.h \
 	configure.in Makefile.in mkskel.sh flex.skl \
 	$(HEADERS) $(SOURCES) \
 	flex.html scan.c install.sh mkinstalldirs configure \
-	test
+	test \
+	parse.c parse.h
 
 # Name of the distribution, meaning what goes before ".tar.gz" in the
 # distribution tarball file name, and also the name of the directory
@@ -117,9 +131,6 @@ FLEX_FLAGS = $(PERF_REPORT)
 COMPRESSION =
 
 
-# Default target.
-all: $(FLEX)
-
 # Link the final flex executable.
 $(FLEX): .bootstrap $(OBJECTS)
 	$(CC) $(CFLAGS) -o $(FLEX) $(LDFLAGS) $(OBJECTS) $(LIBS)
@@ -134,6 +145,13 @@ $(FLEX): .bootstrap $(OBJECTS)
 	cp $(srcdir)/initscan.c scan.c
 	touch .bootstrap
 
+
+# The bison rules are usually disabled because 'git' will check out
+# files with unpredictably-ordered timestamps and I do not want to
+# rebuild this needlessly.  Run 'make RUN_BISON=1' to activate the rule
+# and rebuild the parser if needed.
+ifeq ($(RUN_BISON),1)
+
 # Bison-generated parser for flex's input language.
 parse.c: parse.y
 	$(YACC) -d $(srcdir)/parse.y
@@ -143,6 +161,9 @@ parse.c: parse.y
 # This rule tells 'make' that in order to create 'parse.h' it must first
 # create 'parse.c'.  The latter is what actually makes 'parse.h'.
 parse.h: parse.c
+
+endif # RUN_BISON
+
 
 # scan.c is the output of running flex on 'scan.l'.  It is used by
 # flex to read it input file.  Hence, flex is partially written in
@@ -240,7 +261,7 @@ mostlyclean:
 	rm -f a.out *.bak core errs scan.tmp
 
 clean: mostlyclean
-	rm -f flex parse.c parse.h *.o lex.yy.c lex.yy.cc \
+	rm -f flex *.o lex.yy.c lex.yy.cc \
 		config.log config.cache
 	$(MAKE) -C test clean
 
