@@ -3112,7 +3112,11 @@ revision history before 2021-04-30.
 
 <h1 id="diagnostics">DIAGNOSTICS</h1>
 
-<p><code>warning, rule cannot be matched</code> indicates that the given
+<dl>
+
+<dt><p><code>warning, rule cannot be matched</code>
+
+<dd>indicates that the given
 rule cannot be matched because it follows other rules that will always
 match the same text as it. For example, in the following "foo" cannot
 be matched because it comes after an identifier "catch-all" rule:
@@ -3122,16 +3126,19 @@ be matched because it comes after an identifier "catch-all" rule:
     foo       got_foo();
 </code></pre>
 
-<p>Using <code>REJECT</code> in a scanner suppresses this warning.
+Using <code>REJECT</code> in a scanner suppresses this warning.
 
-<p><code>warning, -s option given but default rule can be matched</code>
-means that it is possible (perhaps only in a particular
+<dt><p><code>warning, -s option given but default rule can be matched</code>
+
+<dd>means that it is possible (perhaps only in a particular
 start condition) that the default rule (match any single character) is
 the only one that will match a particular input. Since <code>-s</code>
 was given, presumably this is not intended.
 
-<p><code>reject_used_but_not_detected undefined</code> or
-<code>yymore_used_but_not_detected undefined</code>- These errors can occur
+<dt><p><code>reject_used_but_not_detected undefined</code> or
+    <code>yymore_used_but_not_detected undefined</code>
+
+<dd>These errors can occur
 at compile time. They indicate that the scanner uses <code>REJECT</code>
 or <code>yymore()</code> but that <code>flex</code> failed to notice the
 fact, meaning that <code>flex</code> scanned the first two sections
@@ -3140,36 +3147,45 @@ but somehow you snuck some in (via a #include file, for example). Use
 <code>%option reject</code> or <code>%option yymore</code> to indicate
 to flex that you really do use these features.
 
-<p><code>flex scanner jammed</code>-  a scanner compiled with <code>-s</code>
+<dt><p><code>flex scanner jammed</code>
+
+<dd>a scanner compiled with <code>-s</code>
 has encountered an input string which wasn't matched by any of its
 rules. This error can also occur due to internal problems.
 
-<p><code>token too large, exceeds YYLMAX</code>-  your scanner uses
+<dt><p><code>token too large, exceeds YYLMAX</code>
+
+<dd>your scanner uses
 <code>%array</code> and one of its rules matched a string longer than
 the <code>YYLMAX</code> constant (8K bytes by default). You can increase
 the value by #define'ing <code>YYLMAX</code> in the definitions section
 of your <code>flex</code> input.
 
-<p><code>scanner requires -8 flag to use the character 'x'</code>-
-Your scanner specification includes recognizing the 8-bit
+<dt><p><code>scanner requires -8 flag to use the character 'x'</code>
+
+<dd>Your scanner specification includes recognizing the 8-bit
 character <code>'x'</code> and you did not specify the -8 flag, and your
 scanner defaulted to 7-bit because you used the <code>-Cf</code> or
 <code>-CF</code> table compression options. See the discussion of the
 <code>-7</code> flag for details.
 
-<p><code>flex scanner push-back overflow</code>-  you used
+<dt><p><code>flex scanner push-back overflow</code>
+
+<dd>you used
 <code>unput()</code> to push back so much text that the scanner's
 buffer could not hold both the pushed-back text and the current token
 in <code>yytext</code>. Ideally the scanner should dynamically resize
 the buffer in this case, but at present it does not.
 
-<p><code>input buffer overflow, can't enlarge buffer because scanner uses REJECT</code>-
-the scanner was working on matching an extremely large
+<dt><p><code>input buffer overflow, can't enlarge buffer because scanner uses REJECT</code>
+
+<dd>the scanner was working on matching an extremely large
 token and needed to expand the input buffer. This doesn't work with
 scanners that use <code>REJECT</code>.
 
-<p><code>fatal flex scanner internal error--end of buffer missed</code>-
-This can occur in an scanner which is reentered after a long-jump has
+<dt><p><code>fatal flex scanner internal error--end of buffer missed</code>
+
+<dd>This can occur in an scanner which is reentered after a long-jump has
 jumped out (or over) the scanner's activation frame. Before reentering
 the scanner, use:
 
@@ -3177,11 +3193,16 @@ the scanner, use:
     yyrestart( yyin );
 </code></pre>
 
-<p>or, as noted above, switch to using the C++ scanner class.
+or, as noted above, switch to using the C++ scanner class.
 
-<p><code>too many start conditions in &lt;&gt; construct!</code>-  you listed
+<dt><p><code>too many start conditions in &lt;&gt; construct!</code>
+
+<dd>you listed
 more start conditions in a &lt;&gt; construct than exist (so you must
 have listed at least one of them twice).
+
+</dl>
+
 
 <h1 id="files">FILES</h1>
 
