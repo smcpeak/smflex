@@ -38,6 +38,8 @@ char copyright[] =
 #include "flexdef.h"
 #include "version.h"
 
+#include <stdio.h>                     /* remove */
+
 static char flex_version[] = FLEX_VERSION;
 
 
@@ -346,7 +348,6 @@ int exit_status;
 
 	{
 	int tblsiz;
-	int unlink();
 
 	if ( skelfile != NULL )
 		{
@@ -369,7 +370,7 @@ int exit_status;
 			lerrsf( _( "error closing output file %s" ),
 				outfilename );
 
-		else if ( unlink( outfilename ) )
+		else if ( remove( outfilename ) )
 			lerrsf( _( "error deleting output file %s" ),
 				outfilename );
 		}

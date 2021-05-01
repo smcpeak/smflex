@@ -58,7 +58,6 @@
 
 #ifdef VMS
 #ifndef __VMS_POSIX
-#define unlink remove
 #define SHORT_FILE_NAMES
 #endif
 #endif
