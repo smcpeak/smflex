@@ -136,7 +136,6 @@ gen.o: gen.c flexdef.h
 misc.o: misc.c flexdef.h
 nfa.o: nfa.c flexdef.h
 parse.o: parse.c flexdef.h
-skel.o: skel.c flexdef.h
 sym.o: sym.c flexdef.h
 tblcmp.o: tblcmp.c flexdef.h
 
