@@ -1,0 +1,5 @@
+/* cpp-manual-example.input */
+
+3 hello /*comment*/ "there"
+
+25

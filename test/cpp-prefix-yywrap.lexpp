@@ -19,7 +19,7 @@ username           cout << "USERNAME";
 /* Non-NULL once we have read the second input. */
 static istream *secondFile = NULL;
 
-int yyFlexLexer::yywrap()
+int MyLexerFlexLexer::yywrap()
 {
   if (!secondFile) {
     secondFile = new ifstream("cppscan-yywrap.input2");

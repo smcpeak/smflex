@@ -1,4 +1,4 @@
-/* File created from ./flex.skl via ./mkskel.sh */
+/* File created from flex.skl via mkskel.sh */
 
 /* NULL-terminated array of NUL-terminated lines, *without* line
  * terminators. */
@@ -29,8 +29,7 @@ const char *skel[] = {
   " * then we can assume a C++ compiler will be used).",
   " */",
   "",
-  "%+",
-  "#include <FlexLexer.h>       /* FlexLexer */",
+  "%% This is where the C++-interface scanner includes its header.",
   "",
   "%*    Both interfaces use malloc and free for the buffer.",
   "#include <stdlib.h>          /* malloc, free, realloc, exit */",

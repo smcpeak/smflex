@@ -2720,26 +2720,43 @@ about 8K characters per token.
 for use with C++. The first way is to simply compile a C-interface scanner generated
 by <code>flex</code> using a C++ compiler instead of a C compiler. You
 should not encounter any compilations errors (please report any you
-find to the email address given in the <a href="#author">Author</a> section). You can
-then use C++ code in your rule actions instead of C code. Note that
-the default input source for your scanner remains <code>yyin</code>,
-and default echoing is still done to <code>yyout</code>. Both of these
-remain <code>FILE *</code> variables and not C++ <code>iostream</code>s.
+find). You can
+then use C++ code in your rule actions instead of C code.  However,
+the scanner otherwise has the traditional C interface: its data is stored in
+global variables (so cannot be instantiated more than once), it is
+accessed with global functions such as <code>yylex()</code>, and
+the default input and output objects, <code>yyin</code> and
+<code>yyout</code>, remain <code>FILE *</code> variables and not C++
+<code>iostream</code>s.
 
-<p>Alternatively, you can use <code>flex</code> to generate a C++-interface scanner class,
-using the <code>-+</code> option (or, equivalently, <code>%option c++</code>).
-When using this option,
-flex defaults to generating the scanner to the file <code>lex.yy.cc</code>
-instead of <code>lex.yy.c</code>. The generated scanner includes the
-header file <code>FlexLexer.h</code>, which defines the interface to
-the C++ scanner class.
+<p>Alternatively, you can use <code>flex</code> to generate a
+C++-interface scanner class by using the <code>-+</code> option (or,
+equivalently, <code>%option c++</code>).  When using this option,
+<code>flex</code> generates <em>two</em> output files, by default called
+<code>lex.yy.h</code> and <code>lex.yy.cc</code>.  You can use
+<code>-o</code> or <code>%option outfile</code> to change the name of
+the <code>.cc</code> file; the <code>.h</code> file name then is computed
+by replacing the former's extension with <code>.h</code>.
 
-<p>The scanner class, called <code>yyFlexLexer</code> by default
-(overridden with the <a href="#prefix-option"><code>-P</code></a> option),
-encapsulates the scanner state.
+<p>The header file defines a C++ class, by default called
+<code>yyFlexLexer</code>, that encapsulates the scanner state.  Among
+other things, that means you can instantiate more than one scanner
+instance at a time.  The name of the scanner class can be changed with
+the <a href="#prefix-option"><code>-P</code></a> command line option or
+the <code>%option prefix</code> input file option: a specified prefix
+of <code>foo</code> generates a class called <code>fooFlexLexer</code>.
+Furthermore, if you
+use <code>%option yyclass</code>, then you can define a class that
+inherits <code>yyFlexLexer</code> in order to add additional members.
 
-<p>The following methods manage the process of running the scanner over
-input:
+<p>The C++ file implements the methods of the scanner class, the most
+important being the <code>yylex()</code> method, which returns scanned
+tokens one at a time.  When <code>option %yyclass</code> is used, the
+<code>yylex()</code> method is a member of the derived class, so the
+actions you write can access all of its members.
+
+<p>The following scanner class methods manage the process of running the
+scanner over input:
 
 <dl>
 
@@ -2751,23 +2768,18 @@ input:
 
 <dt><code>int yylex()</code>
 
-<dd><p>performs the same role is <code>yylex()</code> does for ordinary flex
+<dd><p>performs the same role as <code>yylex()</code> does for ordinary flex
     scanners: it scans the input stream, consuming tokens, until a rule's
-    action returns a value. If you derive a subclass <code>S</code> from
-    <code>yyFlexLexer</code> and want to access the member functions and
-    variables of <code>S</code> inside <code>yylex()</code>, then you need
-    to use <code>%option yyclass="S"</code> to inform <code>flex</code> that
-    you will be using that subclass instead of <code>yyFlexLexer</code>. In
-    this case, rather than generating <code>yyFlexLexer::yylex()</code>,
-    <code>flex</code> generates <code>S::yylex()</code> (and also
-    generates a dummy <code>yyFlexLexer::yylex()</code> that calls
-    <code>yyFlexLexer::LexerError()</code> if called).
+    action returns a value.
 
 <dt><code>void switch_streams(istream *new_in = NULL, ostream *new_out = NULL)</code>
 
 <dd><p>reassigns <code>yyin</code> to <code>new_in</code> (if not NULL)
     and <code>yyout</code> to <code>new_out</code> (ditto), deleting the
-    previous input buffer if <code>yyin</code> is reassigned.
+    previous input buffer if <code>yyin</code> is reassigned.  However,
+    while <code>flex</code> manages allocation and deallocation its own
+    buffer objects, it does <em>not</em> deallocate any stream objects,
+    so you have to arrange for that yourself.
 
 <dt><code>virtual int yywrap()</code>
 
@@ -2872,14 +2884,17 @@ to C++ scanner classes; you must use <code>%pointer</code> (the default).
 
 <p>Here is an example of a simple C++ scanner:
 
-<pre><code>
+<pre><code><!-- BEGIN example: cpp-manual-example.lexpp -->
         // An example of using the flex C++ scanner class.
+
+    %option c++
+    %option prefix="Example"
 
     %{
     int mylineno = 0;
     %}
 
-    string  \&quot;[^\n&quot;]+\&quot;
+    string  \"[^\n"]+\"
 
     ws      [ \t]+
 
@@ -2894,17 +2909,17 @@ to C++ scanner classes; you must use <code>%pointer</code> (the default).
 
     {ws}    /* skip blanks and tabs */
 
-    &quot;/*&quot;    {
+    "/*"    {
             int c;
 
             while((c = yyinput()) != 0)
                 {
-                if(c == &#39;\n&#39;)
+                if(c == '\n')
                     ++mylineno;
 
-                else if(c == &#39;*&#39;)
+                else if(c == '*')
                     {
-                    if((c = yyinput()) == &#39;/&#39;)
+                    if((c = yyinput()) == '/')
                         break;
                     else
                         unput(c);
@@ -2912,46 +2927,38 @@ to C++ scanner classes; you must use <code>%pointer</code> (the default).
                 }
             }
 
-    {number}  cout &lt;&lt; &quot;number &quot; &lt;&lt; YYText() &lt;&lt; &#39;\n&#39;;
+    {number}  std::cout &lt;&lt; "number " &lt;&lt; YYText() &lt;&lt; '\n';
 
     \n        mylineno++;
 
-    {name}    cout &lt;&lt; &quot;name &quot; &lt;&lt; YYText() &lt;&lt; &#39;\n&#39;;
+    {name}    std::cout &lt;&lt; "name " &lt;&lt; YYText() &lt;&lt; '\n';
 
-    {string}  cout &lt;&lt; &quot;string &quot; &lt;&lt; YYText() &lt;&lt; &#39;\n&#39;;
+    {string}  std::cout &lt;&lt; "string " &lt;&lt; YYText() &lt;&lt; '\n';
 
     %%
 
     int main()
     {
         // Instantiate the scanner, which by default reads from cin (stdin).
-        FlexLexer lexer;
+        ExampleFlexLexer lexer;
 
         // Read tokens until EOF, doing only what the scanner actions do.
         while (lexer.yylex() != 0)
             {}
 
         return 0;
-    }</code></pre>
+    }
+</code></pre><!-- END example -->
 
 <p>If you want to create multiple (different) lexer classes, you use
-the <code>-P</code> flag (or the <code>prefix=</code> option) to rename
+the <code>-P</code> flag (or <code>%option prefix</code>) to rename
 each <code>yyFlexLexer</code> to some other <code>xxFlexLexer</code>. You
-then can include <code>&lt;FlexLexer.h&gt;</code> in your other sources
-once per lexer class, first renaming <code>yyFlexLexer</code> as follows:
+then can freely include the generated header files in your other sources
+without conflicts.
 
-<pre><code>
-    #undef yyFlexLexer
-    #define yyFlexLexer xxFlexLexer
-    #include &lt;FlexLexer.h&gt;
-
-    #undef yyFlexLexer
-    #define yyFlexLexer zzFlexLexer
-    #include &lt;FlexLexer.h&gt;
-</code></pre>
-
-<p>if, for example, you used <code>%option prefix="xx"</code> for one
-of your scanners and <code>%option prefix="zz"</code> for the other.
+<p><strong>Recommendation</strong>: Use <code>%option prefix</code> in
+every scanner definition from the start to save the hassle of renaming
+things later.
 
 
 <h1 id="incompatibilities-with-flex">INCOMPATIBILITIES WITH FLEX</h1>
@@ -3033,6 +3040,20 @@ to transition to my <code>flex</code>, and this list can help that.
 
         <p>Replacement: None.  If there is a compelling case for such an
         interface, let me know and I'll consider re-adding it.
+
+    <li><p>The single <code>FlexLexer.h</code> header has been replaced
+        by generating a different header for every scanner class.
+
+        <p>Rationale: The old method was clumsy and not entirely
+        effective, depending on the project's <code>#include</code>
+        structure.  It was also sometimes annoying to retrieve that
+        header from a system include directory.  The new way keeps all
+        scanners cleanly separated and there is no dependence on
+        system includes.
+
+        <p>Replacement: Replace all uses of <code>FlexLexer.h</code>
+        with <code>lex.yy.h</code> or the whatever name you have
+        selected with <code>-o</code> or <code>%option outfile</code>.
 
     <li><p>Previously it was possible to select C++ mode by invoking
         <code>flex</code> as <code>flex++</code>; that sensitivity to

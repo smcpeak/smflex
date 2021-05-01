@@ -128,6 +128,9 @@ static char outfile_path[MAXLINE];
 static int outfile_created = 0;
 static char *skelname = NULL;
 
+/* Name of the C++ scanner header file. */
+static char header_file_name[MAXLINE];
+
 
 int main( argc, argv )
 int argc;
@@ -155,8 +158,15 @@ char **argv;
 			_( "-s option given but default rule can be matched" ),
 			rule_linenum[default_rule] );
 
-	/* Generate the C state transition tables from the DFA. */
+	/* Generate the C state transition tables from the DFA.  Write the
+	 * generated scanner code to the primary output file. */
 	make_tables();
+
+	if ( C_plus_plus )
+		{
+		/* Emit the header file with class definitions. */
+		emit_header_file( header_file_name );
+		}
 
 	/* Note, flexend does not return.  It exits with its argument
 	 * as status.
@@ -300,9 +310,7 @@ void check_options()
 	if ( strcmp( prefix, "yy" ) )
 		{
 #define GEN_PREFIX(name) out_str3( "#define yy%s %s%s\n", name, prefix, name )
-		if ( C_plus_plus )
-			GEN_PREFIX( "FlexLexer" );
-		else
+		if ( ! C_plus_plus )
 			{
 			GEN_PREFIX( "_create_buffer" );
 			GEN_PREFIX( "_delete_buffer" );
@@ -325,9 +333,9 @@ void check_options()
 				GEN_PREFIX( "lineno" );
 			if ( do_yywrap )
 				GEN_PREFIX( "wrap" );
-			}
 
-		outn( "" );
+			outn( "" );
+			}
 		}
 	}
 
@@ -825,6 +833,44 @@ char **argv;
 	}
 
 
+/* Construct the name of the header file from the C++ output file name
+ * by replacing the extension with "h".  Put it in 'header_file_name'. */
+static void compute_header_file_name()
+	{
+	char *last_dot;
+
+	strcpy( header_file_name, outfilename );
+	last_dot = strrchr( header_file_name, '.' );
+	if ( last_dot == NULL )
+		{
+		/* No dot, so add one. */
+		last_dot = strrchr ( header_file_name, '\0' );
+		*last_dot = '.';
+		}
+	strcpy( last_dot+1, "h" );
+	}
+
+
+/* Given a file name, return its "base name", i.e., the name without
+ * any path components.  Return 'fname' itself if there are no path
+ * separators.  Either way, the return value points into 'fname'. */
+static char *basename(char *fname)
+	{
+	/* Find the last slash. */
+	char *last_slash = strrchr( fname, '/' );
+	if ( ! last_slash )
+		{
+		/* Maybe we are on Windows, using backslash? */
+		last_slash = strrchr( fname, '\\' );
+		}
+
+	if ( last_slash )
+		return last_slash + 1;
+	else
+		return fname;
+	}
+
+
 /* readin - read in the rules section of the input file(s) */
 
 void readin()
@@ -925,7 +971,23 @@ _( "Variable trailing context rules entail a large performance penalty\n" ) );
 	if ( did_outfilename )
 		line_directive_out( scanner_c_file, 0 );
 
-	/* Copy the first chunk from the skeleton. */
+	/* Copy the first chunk from the skeleton.  From here on, extending
+	 * into 'make_tables()', we alternate between inserting fragments of
+	 * code and calling 'skelout()' to copy successive chunks.  The logic
+	 * here is tightly synchronized with the skeleton file organization. */
+	skelout();
+
+	if ( C_plus_plus )
+		{
+		compute_header_file_name();
+
+		/* Emit an include directive for the generated header.  We remove
+		 * path components from the name because the main file and the
+		 * header file are in the same directory. */
+		out_str( "\n#include \"%s\"  /* Lexer class */\n",
+			basename( header_file_name ) );
+		}
+
 	skelout();
 
 	if ( reject )
@@ -994,13 +1056,14 @@ _( "Variable trailing context rules entail a large performance penalty\n" ) );
 		{
 		if ( yyclass )
 			{
-			outn( "int yyFlexLexer::yylex()" );
+			emit_with_class_name_substitution( scanner_c_file,
+			      "int yyFlexLexer::yylex()" );
 			outn( "\t{" );
-			outn(
+			emit_with_class_name_substitution( scanner_c_file,
 "\tLexerError( \"yyFlexLexer::yylex invoked but %option yyclass used\" );" );
 			outn( "\treturn 0;" );
 			outn( "\t}" );
-	
+
 			out_str( "\n#define YY_DECL int %s::yylex()\n",
 				yyclass );
 			}

@@ -827,12 +827,9 @@ void skelout()
 		else if ( do_copy )
 			{
 			if ( skelfile )
-				/* Skeleton file reads include final
-				 * newline, skel[] array does not.
-				 */
-				out( buf );
-			else
-				outn( buf );
+				/* Remove newline. */
+				buf[ strlen( buf ) - 1 ] = '\0';
+			emit_with_class_name_substitution( scanner_c_file, buf );
 			}
 		}
 	}

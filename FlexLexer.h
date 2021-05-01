@@ -24,8 +24,8 @@
 // WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-#ifndef FLEX_LEXER_H
-#define FLEX_LEXER_H
+#ifndef yyFlexLexer_CLASS_DEFINED
+#define yyFlexLexer_CLASS_DEFINED
 
 #include <iostream>                    // istream, ostream
 
@@ -175,4 +175,4 @@ protected:   // data
   int yy_prev_more_offset;
 };
 
-#endif // FLEX_LEXER_H
+#endif // yyFlexLexer_CLASS_DEFINED

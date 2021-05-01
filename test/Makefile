@@ -20,8 +20,8 @@ CFLAGS := -g -Wall
 # they are not used.
 CFLAGS += -Wno-unused-function
 
-# C++ compilation options.  This needs another directory for FlexLexer.h.
-CXXFLAGS := $(CFLAGS) -I..
+# C++ compilation options.
+CXXFLAGS := $(CFLAGS)
 
 # Run flex on one file.
 .PRECIOUS: out/%.yy.c
@@ -83,13 +83,30 @@ out/%.ok: out/%.exe %.input %.expect
 	diff -b -u $*.expect out/$*.actual
 	touch $@
 
+# Check that what is in the manual matches what is in the tests.
+out/%.matches: % ../flex.html
+	@mkdir -p out
+	cat ../flex.html | \
+	  sed -n -e '/-- BEGIN example: $* --/,/-- END example --/p' | \
+	  grep -v -- '-- BEGIN example' | \
+	  grep -v -- '-- END example' | \
+	  sed -e 's/^    //' \
+	      -e 's/&lt;/</g' \
+	      -e 's/&gt;/>/g' \
+	      -e 's/&amp;/&/g' > out/$*.manual
+	diff -u $* out/$*.manual
+	touch $@
+
 # Tests to run.
 all: out/username.ok
 all: out/username-yywrap.ok
 all: out/username-main.ok
 all: out/username-main.c_as_cc.ok
+all: out/cpp-manual-example.ok
+all: out/cpp-manual-example.lexpp.matches
 all: out/cppscan.ok
 all: out/cppscan-yywrap.ok
+all: out/cppscan-main.ok
 all: out/cpp-prefix.ok
 all: out/cpp-prefix-yywrap.ok
 all: out/cpp-prefix-yywrap-yyclass.ok

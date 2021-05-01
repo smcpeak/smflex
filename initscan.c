@@ -25,6 +25,7 @@
  * then we can assume a C++ compiler will be used).
  */
 
+
 #include <stdlib.h>          /* malloc, free, realloc, exit */
 #include <stdio.h>           /* FILE, etc. */
 
@@ -1327,7 +1328,7 @@ char *yytext;
 #define OPTION 17
 #define LINEDIR 18
 
-#line 1331 "scan.c"
+#line 1055 "scan.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -1479,7 +1480,7 @@ YY_DECL
 	Char nmdef[MAXLINE], myesc();
 
 
-#line 1483 "scan.c"
+#line 1087 "scan.c"
 
 	if ( yy_init )
 		{
@@ -2711,7 +2712,7 @@ YY_RULE_SETUP
 #line 648 "scan.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 2715 "scan.c"
+#line 2271 "scan.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(SECT2):
 case YY_STATE_EOF(CODEBLOCK):

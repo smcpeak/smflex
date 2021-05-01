@@ -416,6 +416,9 @@ extern FILE *scanner_c_file;
 /* If true, use platform-native line endings; otherwise LF only. */
 extern int write_native_line_endings;
 
+/* Defined in header.c, this has the contents of the header to emit. */
+extern char const *header_contents[];
+
 /* Variables for stack of states having only one out-transition:
  * onestate - state number
  * onesym - transition symbol
@@ -767,6 +770,14 @@ extern void indent_put2s PROTO((char[], char[]));
 extern void indent_puts PROTO((char[]));
 
 extern void make_tables PROTO((void));	/* generate transition tables */
+
+/* Write 'line' and a newline to 'fp', except if it contains any
+ * occurrences of "yyFlexLexer", replace the "yy" part with 'prefix'. */
+extern void emit_with_class_name_substitution
+	PROTO((FILE *fp, char const *line));
+
+/* Write the header file containing the C++ lexer class definition. */
+extern void emit_header_file PROTO((char const *header_file_name));
 
 
 /* from file main.c */

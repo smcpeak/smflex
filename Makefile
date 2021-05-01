@@ -44,11 +44,11 @@ all: $(FLEX)
 HEADERS = flexdef.h version.h
 
 # Sources to include in the distribution, and also on which to run tags.
-SOURCES = ccl.c dfa.c ecs.c gen.c main.c misc.c nfa.c parse.y \
+SOURCES = ccl.c dfa.c ecs.c gen.c header.c main.c misc.c nfa.c parse.y \
 	scan.l skel.c sym.c tblcmp.c yylex.c
 
 # Object files to compile and link into 'flex'.
-OBJECTS = ccl.o dfa.o ecs.o gen.o main.o misc.o nfa.o parse.o \
+OBJECTS = ccl.o dfa.o ecs.o gen.o header.o main.o misc.o nfa.o parse.o \
 	scan.o skel.o sym.o tblcmp.o yylex.o
 
 # Complete set of files and directories to be included in the
@@ -125,6 +125,10 @@ scan.c: scan.l
 skel.c: flex.skl mkskel.sh
 	$(SHELL) mkskel.sh flex.skl skel.c skel
 
+# Similarly, 'header.c' contains the contents of 'FlexLexer.h'.
+header.c: FlexLexer.h mkskel.sh
+	$(SHELL) mkskel.sh FlexLexer.h header.c header_contents
+
 # Compile-time dependencies.
 scan.o: scan.c parse.h flexdef.h
 yylex.o: yylex.c parse.h flexdef.h
@@ -190,7 +194,6 @@ bigcheck:
 # Install to the chosen --prefix.
 install: $(FLEX) installdirs
 	$(INSTALL_PROGRAM) $(FLEX) $(bindir)/$(FLEX)
-	$(INSTALL_DATA) FlexLexer.h $(includedir)/FlexLexer.h
 
 installdirs:
 	$(SHELL) mkinstalldirs \
@@ -198,7 +201,6 @@ installdirs:
 
 uninstall:
 	rm -f $(bindir)/$(FLEX)
-	rm -f $(includedir)/FlexLexer.h
 
 tags: $(SOURCES)
 	ctags $(SOURCES)

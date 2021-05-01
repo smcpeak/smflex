@@ -1,0 +1,23 @@
+/* cppscan-main.lexpp */
+/* Scanner using C++ where I provide 'main()'. */
+
+%option c++
+
+%%
+username           cout << "USERNAME";
+
+%%
+
+int main()
+{
+  // Instantiate the scanner, which by default reads from cin (stdin).
+  yyFlexLexer lexer;
+
+  // Read tokens until EOF, doing only what the scanner actions do.
+  while (lexer.yylex() != 0)
+    {}
+
+  return 0;
+}
+
+/* EOF */
