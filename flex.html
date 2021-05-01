@@ -473,83 +473,150 @@ verbatim to the output up to the next "*/".
 <p>The patterns in the input are written using an extended set of regular
 expressions. These are:
 
-<pre><code>
-    x          match the character &#39;x&#39;
-    .          any character (byte) except newline
-    [xyz]      a &quot;character class&quot;; in this case, the pattern
-                 matches either an &#39;x&#39;, a &#39;y&#39;, or a &#39;z&#39;
-    [abj-oZ]   a &quot;character class&quot; with a range in it; matches
-                 an &#39;a&#39;, a &#39;b&#39;, any letter from &#39;j&#39; through &#39;o&#39;,
-                 or a &#39;Z&#39;
-    [^A-Z]     a &quot;negated character class&quot;, i.e., any character
-                 but those in the class.  In this case, any
-                 character EXCEPT an uppercase letter.
-    [^A-Z\n]   any character EXCEPT an uppercase letter or
-                 a newline
-    r*         zero or more r&#39;s, where r is any regular expression
-    r+         one or more r&#39;s
-    r?         zero or one r&#39;s (that is, &quot;an optional r&quot;)
-    r{2,5}     anywhere from two to five r&#39;s
-    r{2,}      two or more r&#39;s
-    r{4}       exactly 4 r&#39;s
-    {name}     the expansion of the &quot;name&quot; definition
-               (see above)
-    &quot;[xyz]\&quot;foo&quot;
-               the literal string: [xyz]&quot;foo
-    \X         if X is an &#39;a&#39;, &#39;b&#39;, &#39;f&#39;, &#39;n&#39;, &#39;r&#39;, &#39;t&#39;, or &#39;v&#39;,
-                 then the ANSI-C interpretation of \x.
-                 Otherwise, a literal &#39;X&#39; (used to escape
-                 operators such as &#39;*&#39;)
-    \0         a NUL character (ASCII code 0)
-    \123       the character with octal value 123
-    \x2a       the character with hexadecimal value 2a
-    (r)        match an r; parentheses are used to override
-                 precedence (see below)
+<dl>
 
+<dt><code>x</code>
 
-    rs         the regular expression r followed by the
-                 regular expression s; called &quot;concatenation&quot;
+<dd>match the character 'x'
 
+<dt><code>.</code>
 
-    r|s        either an r or an s
+<dd>any character (byte) except newline
 
+<dt><code>[xyz]</code>
 
-    r/s        an r but only if it is followed by an s.  The
-                 text matched by s is included when determining
-                 whether this rule is the &quot;longest match&quot;,
-                 but is then returned to the input before
-                 the action is executed.  So the action only
-                 sees the text matched by r.  This type
-                 of pattern is called trailing context&quot;.
-                 (There are some combinations of r/s that flex
-                 cannot match correctly; see notes in the
-                 Deficiencies / Bugs section below regarding
-                 &quot;dangerous trailing context&quot;.)
-    ^r         an r, but only at the beginning of a line (i.e.,
-                 which just starting to scan, or right after a
-                 newline has been scanned).
-    r$         an r, but only at the end of a line (i.e., just
-                 before a newline).  Equivalent to &quot;r/\n&quot;.
+<dd>a "character class"; in this case, the pattern matches either an
+'x', a 'y', or a 'z'
 
-               Note that flex&#39;s notion of &quot;newline&quot; is exactly
-               whatever the C compiler used to compile flex
-               interprets &#39;\n&#39; as; in particular, on some DOS
-               systems you must either filter out \r&#39;s in the
-               input yourself, or explicitly use r/\r\n for &quot;r$&quot;.
+<dt><code>[abj-oZ]</code>
 
+<dd>a "character class" with a range in it; matches an 'a', a 'b', any
+letter from 'j' through 'o', or a 'Z'
 
-    &lt;s&gt;r       an r, but only in start condition s (see
-                 <a href="#start-conditions">Start Conditions</a>)
-    &lt;s1,s2,s3&gt;r
-               same, but in any of start conditions s1,
-                 s2, or s3
-    &lt;*&gt;r       an r in any start condition, even an exclusive one.
+<dt><code>[^A-Z]</code>
 
+<dd>a "negated character class", i.e., any character but those in the
+class.  In this case, any character EXCEPT an uppercase letter.
 
-    &lt;&lt;EOF&gt;&gt;    an end-of-file
-    &lt;s1,s2&gt;&lt;&lt;EOF&gt;&gt;
-               an end-of-file when in start condition s1 or s2
-</code></pre>
+<dt><code>[^A-Z\n]</code>
+
+<dd>any character EXCEPT an uppercase letter or a newline
+
+<dt><code>r*</code>
+
+<dd>zero or more <code>r</code>'s, where <code>r</code> is any regular
+expression
+
+<dt><code>r+</code>
+
+<dd>one or more <code>r</code>'s
+
+<dt><code>r?</code>
+
+<dd>zero or one <code>r</code>'s (that is, "an optional <code>r</code>")
+
+<dt><code>r{2,5}</code>
+
+<dd>anywhere from two to five <code>r</code>'s
+
+<dt><code>r{2,}</code>
+
+<dd>two or more <code>r</code>'s
+
+<dt><code>r{4}</code>
+
+<dd>exactly 4 <code>r</code>'s
+
+<dt><code>{name}</code>
+
+<dd>the expansion of the "name" definition (see "definitions"
+    subsection of
+    <a href="#format-of-the-input-file">Format of the Input File</a>)
+
+<dt><code>"[xyz]\"foo"</code>
+
+<dd>the literal string: [xyz]"foo
+
+<dt><code>\X</code>
+
+<dd>if X is an 'a', 'b', 'f', 'n', 'r', 't', or 'v', then the ANSI-C
+interpretation of \x.  Otherwise, a literal 'X' (used to escape
+operators such as '*')
+
+<dt><code>\0</code>
+
+<dd>a NUL character (ASCII code 0)
+
+<dt><code>\123</code>
+
+<dd>the character with octal value 123
+
+<dt><code>\x2a</code>
+
+<dd>the character with hexadecimal value 2a
+
+<dt><code>(r)</code>
+
+<dd>match an <code>r</code>; parentheses are used to override
+precedence (see below)
+
+<dt><code>rs</code>
+
+<dd>the regular expression <code>r</code> followed by the
+regular expression <code>s</code>; called "concatenation"
+
+<dt><code>r|s</code>
+
+<dd>either an <code>r</code> or an <code>s</code>
+
+<dt><code>r/s</code>
+
+<dd>an <code>r</code> but only if it is followed by an <code>s</code>.
+The text matched by <code>s</code> is
+included when determining whether this rule is the "longest
+match", but is then returned to the input before the action is
+executed.  So the action only sees the text matched by <code>r</code>.  This type of
+pattern is called "trailing context".  (There are some combinations
+of <code>r/s</code> that flex cannot match correctly; see notes in the
+<a href="#deficiencies-n-bugs">Deficiencies / Bugs</a> section below
+regarding "dangerous trailing context".)
+
+<dt><code>^r</code>
+
+<dd>an <code>r</code>, but only at the beginning of a line (i.e., which
+just starting to scan, or right after a newline has been scanned).
+
+<dt><code>r$</code>
+
+<dd>an <code>r</code>, but only at the end of a line (i.e., just
+before a newline).  Equivalent to "r/\n".
+Note that flex's notion of "newline" is exactly whatever the C
+compiler used to compile flex interprets '\n' as; in particular, on some
+DOS systems you must either filter out \r's in the input yourself, or
+explicitly use r/\r\n for "r$".
+
+<dt><code>&lt;s&gt;r</code>
+
+<dd>an <code>r</code>, but only in start condition <code>s</code> (see
+<a href="#start-conditions">Start Conditions</a>)
+
+<dt><code>&lt;s1,s2,s3&gt;r</code>
+
+<dd>same, but in any of start conditions s1, s2, or s3
+
+<dt><code>&lt;*&gt;r</code>
+
+<dd>an <code>r</code> in any start condition, even an exclusive one.
+
+<dt><code>&lt;&lt;EOF&gt;&gt;</code>
+
+<dd>an end-of-file
+
+<dt><code>&lt;s1,s2&gt;&lt;&lt;EOF&gt;&gt;</code>
+
+<dd>an end-of-file when in start condition s1 or s2
+
+</dl>
 
 <p>Note that inside of a character class, all regular expression operators
 lose their special meaning except escape ('\') and the character class
