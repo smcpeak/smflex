@@ -3001,7 +3001,7 @@ following exceptions:
 <p><code>yylineno</code> should be maintained on a per-buffer basis,
 rather than a per-scanner (single global variable) basis.
 
-<p><code>yylineno</code> is not part of the POSIX specification.</p></li>
+<p><code>yylineno</code> is not part of the POSIX specification.
 
 <li><p>The <code>input()</code> routine is not redefinable, though it may
     be called to read characters following whatever has been matched by
@@ -3106,7 +3106,7 @@ rather than a per-scanner (single global variable) basis.
     undefined until the next token is matched, unless the scanner was
     built using <code>%array</code>. This is not the case with
     <code>lex</code> or the POSIX specification. The <code>-l</code>
-    option does away with this incompatibility.</p></li>
+    option does away with this incompatibility.
 
 <li><p>
     The precedence of the <code>{}</code> (numeric range) operator is
@@ -3114,7 +3114,7 @@ rather than a per-scanner (single global variable) basis.
     two, or three occurrences of 'abc'", whereas <code>flex</code>
     interprets it as "match 'ab' followed by one, two, or three
     occurrences of 'c'". The latter is in agreement with the POSIX
-    specification.</p></li>
+    specification.
 
 <li><p>
     The precedence of the <code>^</code> operator is different.
@@ -3122,12 +3122,12 @@ rather than a per-scanner (single global variable) basis.
     beginning of a line, or 'bar' anywhere", whereas <code>flex</code>
     interprets it as "match either 'foo' or 'bar' if they come at the
     beginning of a line". The latter is in agreement with the POSIX
-    specification.</p></li>
+    specification.
 
 <li><p>
     The special table-size declarations such as <code>%a</code>
     supported by <code>lex</code> are not required by <code>flex</code>
-    scanners; <code>flex</code> ignores them.</p></li>
+    scanners; <code>flex</code> ignores them.
 
 <li><p>
     The name <code>FLEX_SCANNER</code> is #define'd so scanners may be
