@@ -1472,23 +1472,20 @@ conditions:
 
 <dl>
 
-<dt><code>void yy_push_state(int new_state)</code></dt>
+<dt><code>void yy_push_state(int new_state)</code>
 
 <dd><p>pushes the current start condition onto the top of the start
     condition stack and switches to <code>new_state</code> as though you had
     used <code>BEGIN new_state</code> (recall that start condition names
     are also integers).
-</dd>
 
-<dt><code>void yy_pop_state()</code></dt>
+<dt><code>void yy_pop_state()</code>
 
 <dd><p>pops the top of the stack and switches to it via <code>BEGIN</code>.
-</dd>
 
-<dt><code>int yy_top_state()</code></dt>
+<dt><code>int yy_top_state()</code>
 
 <dd><p>returns the top of the stack without altering the stack's contents.
-</dd>
 
 </dl>
 
@@ -1638,16 +1635,14 @@ call to <code>yylex()</code> will start scanning the string.
 
 <dl>
 
-<dt><code>yy_scan_string(const char *str)</code></dt>
+<dt><code>yy_scan_string(const char *str)</code>
 
 <dd><p>scans a NUL-terminated string.
-</dd>
 
-<dt><code>yy_scan_bytes(const char *bytes, int len)</code></dt>
+<dt><code>yy_scan_bytes(const char *bytes, int len)</code>
 
 <dd><p>scans <code>len</code> bytes (including possibly NUL's) starting at
     location <code>bytes</code>.
-</dd>
 
 </dl>
 
@@ -1658,7 +1653,7 @@ copy by using:
 
 <dl>
 
-<dt><code>yy_scan_buffer(char *base, yy_size_t size)</code></dt>
+<dt><code>yy_scan_buffer(char *base, yy_size_t size)</code>
 
 <dd><p>which scans in place the buffer starting at <code>base</code>, consisting
     of <code>size</code> bytes, the last two bytes of which <em>must</em> be
@@ -1673,7 +1668,6 @@ a new input buffer.
 
 <p>The type <code>yy_size_t</code> is an integral type to which you can
 cast an integer expression reflecting the size of the buffer.
-</dd>
 
 </dl>
 
@@ -1880,7 +1874,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dl>
 
-<dt><code>-b</code></dt>
+<dt><code>-b</code>
 
 <dd><p>Generate backing-up information to <code>lex.backup</code>. This is a list
     of scanner states which require backing up and the input characters on
@@ -1890,14 +1884,12 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     (see the <code>-p</code> flag). Only users who wish to squeeze every
     last cycle out of their scanners need worry about this option. (See the
     section <a href="#performance-considerations">Performance Considerations</a>.)
-</dd>
 
-<dt><code>-c</code></dt>
+<dt><code>-c</code>
 
 <dd><p>is a do-nothing, deprecated option included for POSIX compliance.
-</dd>
 
-<dt><code>-d</code></dt>
+<dt><code>-d</code>
 
 <dd><p>makes the generated scanner run in <em>debug</em> mode. Whenever
     a pattern is recognized and the global <code>yy_flex_debug</code> is
@@ -1914,32 +1906,28 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     reaches the end of its input buffer (or encounters a NUL; at this point,
     the two look the same as far as the scanner's concerned), or reaches
     an end-of-file.
-</dd>
 
-<dt><code>-f</code></dt>
+<dt><code>-f</code>
 
 <dd><p>specifies <em>fast scanner</em>. No table compression is done and stdio
     is bypassed. The result is large but fast. This option is equivalent to
     <code>-Cfr</code> (see below).
-</dd>
 
-<dt><code>-h</code></dt>
+<dt><code>-h</code>
 
 <dd><p>generates a "help" summary of <code>flex</code>'s options to
     <code>stdout</code> and then exits. <code>-?</code> and <code>--help</code>
     are synonyms for <code>-h</code>.
-</dd>
 
-<dt><code>-i</code></dt>
+<dt><code>-i</code>
 
 <dd><p>instructs <code>flex</code> to generate a <em>case-insensitive</em>
     scanner. The case of letters given in the <code>flex</code> input patterns
     will be ignored, and tokens in the input will be matched regardless
     of case. The matched text given in <code>yytext</code> will have the
     preserved case (i.e., it will not be folded).
-</dd>
 
-<dt><code>-l</code></dt>
+<dt><code>-l</code>
 
 <dd><p>turns on maximum compatibility with the original AT&amp;T
     <code>lex</code> implementation. Note that this does not mean
@@ -1950,15 +1938,13 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     <a href="#incompatibilities-with-lex-and-posix">Incompatibilities
     With Lex And POSIX</a>. This option also results in the name
     <code>YY_FLEX_LEX_COMPAT</code> being #define'd in the generated scanner.
-</dd>
 
-<dt><code>-n</code></dt>
+<dt><code>-n</code>
 
 <dd><p>is another do-nothing, deprecated option included only for POSIX
     compliance.
-</dd>
 
-<dt><code>-p</code></dt>
+<dt><code>-p</code>
 
 <dd><p>generates a performance report to stderr. The report consists of
     comments regarding features of the <code>flex</code> input file which
@@ -1972,23 +1958,20 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     entails a substantial performance penalty; use of
     <code>yymore()</code>, the <code>^</code> operator, and the <code>-I</code>
     flag entail minor performance penalties.
-</dd>
 
-<dt><code>-s</code></dt>
+<dt><code>-s</code>
 
 <dd><p>causes the <em>default rule</em> (that unmatched scanner input is
     echoed to <code>stdout</code>) to be suppressed. If the scanner encounters
     input that does not match any of its rules, it aborts with an error. This
     option is useful for finding holes in a scanner's rule set.
-</dd>
 
-<dt><code>-t</code></dt>
+<dt><code>-t</code>
 
 <dd><p>instructs <code>flex</code> to write the scanner it generates to
     standard output instead of <code>lex.yy.c</code>.
-</dd>
 
-<dt><code>-v</code></dt>
+<dt><code>-v</code>
 
 <dd><p>specifies that <code>flex</code> should write to <code>stderr</code>
     a summary of statistics regarding the scanner it generates. Most of
@@ -1996,14 +1979,12 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     but the first line identifies the version of <code>flex</code> (same
     as reported by <code>-V</code>), and the next line the flags used when
     generating the scanner, including those that are on by default.
-</dd>
 
-<dt><code>-w</code></dt>
+<dt><code>-w</code>
 
 <dd><p>suppresses warning messages.
-</dd>
 
-<dt><code>-B</code></dt>
+<dt><code>-B</code>
 
 <dd><p>instructs <code>flex</code> to generate a <em>batch</em> scanner, the
     opposite of <em>interactive</em> scanners generated by <code>-I</code>
@@ -2013,9 +1994,8 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     your goal is instead to squeeze out a <em>lot</em> more performance,
     you should be using the <code>-Cf</code> or <code>-CF</code> options
     (discussed below), which turn on <code>-B</code> automatically anyway.
-</dd>
 
-<dt><code>-F</code></dt>
+<dt><code>-F</code>
 
 <dd><p>specifies that the fast scanner table representation should be used
     (and stdio bypassed). This representation is about as fast as the
@@ -2039,7 +2019,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     <p>This option is equivalent to <code>-CFr</code> (see below). It cannot
     be used with <code>-+</code>.
 
-<dt><code>-I</code></dt>
+<dt><code>-I</code>
 
 <dd><p>instructs <code>flex</code> to generate an <em>interactive</em>
     scanner. An interactive scanner is one that only looks ahead to decide
@@ -2063,9 +2043,8 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
     <p>You can force a scanner to <em>not</em> be interactive by using
     <code>-B</code> (see above).
-</dd>
 
-<dt><code>-L</code></dt>
+<dt><code>-L</code>
 
 <dd><p>instructs <code>flex</code> not to generate <code>#line</code>
     directives. Without this option, <code>flex</code> peppers the generated
@@ -2074,23 +2053,20 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     input file (if the errors are due to code in the input file), or
     <code>lex.yy.c</code> (if the errors are <code>flex</code>'s fault --
     you should report these sorts of errors to the email address given below).
-</dd>
 
-<dt><code>-T</code></dt>
+<dt><code>-T</code>
 
 <dd><p>makes <code>flex</code> run in <em>trace</em> mode. It will generate a
     lot of messages to <code>stderr</code> concerning the form of the input and
     the resultant non-deterministic and deterministic finite automata. This
     option is mostly for use in maintaining <code>flex</code>.
-</dd>
 
-<dt><code>-V</code></dt>
+<dt><code>-V</code>
 
 <dd><p>prints the version number to <code>stdout</code> and
     exits. <code>--version</code> is a synonym for <code>-V</code>.
-</dd>
 
-<dt><code>-7</code></dt>
+<dt><code>-7</code>
 
 <dd><p>instructs <code>flex</code> to generate a 7-bit scanner, i.e., one
     which can only recognized 7-bit characters in its input. The advantage of
@@ -2115,9 +2091,8 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     see below), flex still defaults to generating an 8-bit scanner, since
     usually with these compression options full 8-bit tables are not much
     more expensive than 7-bit tables.
-</dd>
 
-<dt><code>-8</code></dt>
+<dt><code>-8</code>
 
 <dd><p>instructs <code>flex</code> to generate an 8-bit scanner, i.e.,
     one which can recognize 8-bit characters. This flag is only needed
@@ -2126,16 +2101,14 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
     <p>See the discussion of <code>-7</code> above for flex's default behavior
     and the tradeoffs between 7-bit and 8-bit scanners.
-</dd>
 
-<dt><code>-+</code></dt>
+<dt><code>-+</code>
 
 <dd><p>specifies that you want flex to generate a C++ scanner class. See
     <a href="#generating-cpp-scanners">Generating C++ Scanners</a>
     for details.
-</dd>
 
-<dt><code>-C[aefFmr]</code></dt>
+<dt><code>-C[aefFmr]</code>
 
 <dd><p>controls the degree of table compression and, more generally,
     trade-offs between small scanners and fast scanners.
@@ -2218,18 +2191,16 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
     <p><code>-Cfe</code> is often a good compromise between speed and size
     for production scanners.
-</dd>
 
-<dt><code>-ooutput</code></dt>
+<dt><code>-ooutput</code>
 
 <dd><p>directs flex to write the scanner to the file <code>output</code>
     instead of <code>lex.yy.c</code>. If you combine <code>-o</code> with the
     <code>-t</code> option, then the scanner is written to <code>stdout</code>
     but its <code>#line</code> directives (see the <code>\-L</code> option
     above) refer to the file <code>output</code>.
-</dd>
 
-<dt id="prefix-option"><code>-Pprefix</code></dt>
+<dt id="prefix-option"><code>-Pprefix</code>
 
 <dd><p>changes the default <code>yy</code> prefix used by <code>flex</code>
     for all globally-visible variable and function names to instead be
@@ -2266,14 +2237,12 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     <p>This option lets you easily link together multiple <code>flex</code>
     programs into the same executable.
 
-</dd>
 
-<dt><code>-Sskeleton_file</code></dt>
+<dt><code>-Sskeleton_file</code>
 
 <dd><p>overrides the default skeleton file from which <code>flex</code>
     constructs its scanners. You'll never need this option unless you are
     doing <code>flex</code> maintenance or development.
-</dd>
 
 </dl>
 
@@ -2325,16 +2294,15 @@ number are equivalent to flex flags or their negation:
 
 <dl>
 
-<dt><code>always-interactive</code></dt>
+<dt><code>always-interactive</code>
 
 <dd><p>instructs flex to generate a scanner which always considers its
     input "interactive". Normally, on each new input file the scanner calls
     <code>isatty()</code> in an attempt to determine whether the scanner's
     input source is interactive and thus should be read a character at a
     time. When this option is used, however, then no such call is made.
-</dd>
 
-<dt><code>main</code></dt>
+<dt><code>main</code>
 
 <dd><p>directs flex to provide a default <code>main()</code> program for the
     scanner.  Its definition is:
@@ -2358,22 +2326,19 @@ number are equivalent to flex flags or their negation:
     <p>smcpeak 2021-04-30: In flex-2.5.4, <code>%option main</code>
     implied <code>%option noyywrap</code>.  These two features are
     orthogonal, so I have removed that implication.
-</dd>
 
-<dt><code>never-interactive</code></dt>
+<dt><code>never-interactive</code>
 
 <dd><p>instructs flex to generate a scanner which never considers its input
     "interactive" (again, no call made to <code>isatty()</code>). This is
     the opposite of <code>always-interactive</code>.
-</dd>
 
-<dt><code>stack</code></dt>
+<dt><code>stack</code>
 
 <dd><p>enables the use of start condition stacks
     (see <a href="#start-conditions">Start Conditions</a>).
-</dd>
 
-<dt><code>stdinit</code></dt>
+<dt><code>stdinit</code>
 
 <dd><p>if set (i.e., <code>%option stdinit</code>) initializes
     <code>yyin</code> and <code>yyout</code> to <code>stdin</code> and
@@ -2381,17 +2346,15 @@ number are equivalent to flex flags or their negation:
     <code>lex</code> programs depend on this behavior, even though it is
     not compliant with ANSI C, which does not require <code>stdin</code> and
     <code>stdout</code> to be compile-time constant.
-</dd>
 
-<dt><code>yylineno</code></dt>
+<dt><code>yylineno</code>
 
 <dd><p>directs <code>flex</code> to generate a scanner that maintains
     the number of the current line read from its input in the global
     variable <code>yylineno</code>. This option is implied by <code>%option
     lex-compat</code>.
-</dd>
 
-<dt id="option-yywrap"><code>yywrap</code></dt>
+<dt id="option-yywrap"><code>yywrap</code>
 
 <dd><p>if set (i.e., <code>%option yywrap</code>), makes the scanner
     call <code>yywrap()</code> upon an end-of-file.  If unset
@@ -2421,7 +2384,6 @@ number are equivalent to flex flags or their negation:
     is to remove <code>libfl.a</code> entirely for better portability,
     and for that, the default has to change.
 
-</dd>
 
 </dl>
 
@@ -2805,7 +2767,7 @@ input:
     streams for input and output. If not specified, the streams default to
     <code>cin</code> and <code>cout</code>, respectively.
 
-<dt><code>int yylex()</code></dt>
+<dt><code>int yylex()</code>
 
 <dd><p>performs the same role is <code>yylex()</code> does for ordinary flex
     scanners: it scans the input stream, consuming tokens, until a rule's
@@ -2819,13 +2781,13 @@ input:
     generates a dummy <code>yyFlexLexer::yylex()</code> that calls
     <code>yyFlexLexer::LexerError()</code> if called).
 
-<dt><code>void switch_streams(istream *new_in = NULL, ostream *new_out = NULL)</code></dt>
+<dt><code>void switch_streams(istream *new_in = NULL, ostream *new_out = NULL)</code>
 
 <dd><p>reassigns <code>yyin</code> to <code>new_in</code> (if not NULL)
     and <code>yyout</code> to <code>new_out</code> (ditto), deleting the
     previous input buffer if <code>yyin</code> is reassigned.
 
-<dt><code>virtual int yywrap()</code></dt>
+<dt><code>virtual int yywrap()</code>
 
 <dd><p>If <a href="#option-yywrap"><code>%option yywrap</code></a>
     is specified, then this will be invoked before <code>yylex()</code>
@@ -2902,20 +2864,17 @@ how the scanner gets access to its input.  By overriding these,
     actions depending on whether or not the scanner might be scanning an
     interactive input source, you can test for the presence of this name
     via <code>#ifdef</code>.
-</dd>
 
 <dt><code>virtual void LexerOutput(const char *buf, int size)</code>
 
 <dd><p>writes out <code>size</code> characters from the buffer
     <code>buf</code>, which, while NUL-terminated, may also contain "internal"
     NUL's if the scanner's rules can match text with NUL's in them.
-</dd>
 
 <dt><code>virtual void LexerError(const char *msg)</code>
 
 <dd><p>reports a fatal error message. The default version of this function
     writes the message to the stream <code>cerr</code> and exits.
-</dd>
 
 </dl>
 
@@ -3326,35 +3285,29 @@ have listed at least one of them twice).
 <dt><code>-lfl</code>
 
 <dd><p>library with which scanners must be linked.
-</dd>
 
 <dt><code>lex.yy.c</code>
 
 <dd><p>generated scanner (called <code>lexyy.c</code> on some systems).
-</dd>
 
 <dt><code>lex.yy.cc</code>
 
 <dd><p>generated C++ scanner class, when using <code>-+</code>.
-</dd>
 
 <dt><code>&lt;FlexLexer.h&gt;</code>
 
 <dd><p>header file defining the C++ scanner base class,
     <code>FlexLexer</code>, and its derived class, <code>yyFlexLexer</code>.
-</dd>
 
 <dt><code>flex.skl</code>
 
 <dd><p>skeleton scanner. This file is only used when building flex, not when
     flex executes.
-</dd>
 
 <dt><code>lex.backup</code>
 
 <dd><p>backing-up information for <code>-b</code> flag (called
     <code>lex.bck</code> on some systems).
-</dd>
 
 </dl>
 
