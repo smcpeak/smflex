@@ -414,6 +414,9 @@ extern int defs1_offset, prolog_offset, action_offset, action_index;
 /* The file to which we are writing the C or C++ scanner implementation. */
 extern FILE *scanner_c_file;
 
+/* If true, use platform-native line endings; otherwise LF only. */
+extern int write_native_line_endings;
+
 /* Variables for stack of states having only one out-transition:
  * onestate - state number
  * onesym - transition symbol

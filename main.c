@@ -61,6 +61,7 @@ int skel_ind = 0;
 char *action_array;
 int action_size, defs1_offset, prolog_offset, action_offset, action_index;
 FILE *scanner_c_file = NULL;
+int write_native_line_endings;
 char *infilename = NULL, *outfilename = NULL;
 int did_outfilename;
 char *prefix, *yyclass;
@@ -282,7 +283,8 @@ void check_options()
 			outfilename = outfile_path;
 			}
 
-		scanner_c_file = fopen( outfilename, "w" );
+		scanner_c_file = fopen( outfilename,
+			write_native_line_endings ? "w" : "wb" );
 
 		if ( scanner_c_file == NULL )
 			lerrsf( _( "could not create %s" ), outfilename );
@@ -585,6 +587,7 @@ char **argv;
 	gen_line_dirs = usemecs = useecs = true;
 	performance_report = 0;
 	did_outfilename = 0;
+	write_native_line_endings = 0;
 	prefix = "yy";
 	yyclass = 0;
 	use_read = false;
@@ -724,6 +727,10 @@ char **argv;
 
 				case 'L':
 					gen_line_dirs = false;
+					break;
+
+				case 'n':
+					write_native_line_endings = true;
 					break;
 
 				case 'o':
@@ -1099,6 +1106,7 @@ _( "%s [-bcdfhilnpstvwBFILTV78+? -C[aefFmr] -ooutput -Pprefix -Sskeleton]\n" ),
 	fprintf( f, _( "\t-h  produce this help message\n" ) );
 	fprintf( f, _( "\t-i  generate case-insensitive scanner\n" ) );
 	fprintf( f, _( "\t-l  maximal compatibility with original lex\n" ) );
+	fprintf( f, _( "\t-n  write output using platform native line endings\n" ) );
 	fprintf( f, _( "\t-p  generate performance report to stderr\n" ) );
 	fprintf( f,
 		_( "\t-s  suppress default rule to ECHO unmatched text\n" ) );

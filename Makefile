@@ -156,7 +156,12 @@ check: $(FLEX)
 	@# Fix the file names in #line directives so they match.
 	@#
 	sed -e 's,"scan.tmp.c","scan.c",' < scan.tmp.c > scan.actual.c
-	diff -b scan.c scan.actual.c
+	@#
+	@# This comparison does not ignore whitespace since the
+	@# default is for flex to always use LF line endings, even
+	@# on Windows.
+	@#
+	diff scan.c scan.actual.c
 	rm scan.actual.c scan.tmp.c
 	@echo "Check successful, using COMPRESSION=\"$(COMPRESSION)\""
 

@@ -1943,6 +1943,11 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     With Lex And POSIX</a>. This option also results in the name
     <code>YY_FLEX_LEX_COMPAT</code> being #define'd in the generated scanner.
 
+<dt><code>-n</code>
+
+<dd><p>Write output files using platform native line endings.  The
+    default behavior is to always use LF line endings.
+
 <dt><code>-p</code>
 
 <dd><p>generates a performance report to stderr. The report consists of
@@ -3054,14 +3059,24 @@ the incompatibilities.
     </ul>
 
 <li><p><code>flex-2.5.4</code> accepted and ignored the <code>-c</code>
-    and <code>-n</code> command line options.  They are no longer
-    accepted.
+    command line option.  This option is no longer accepted.
 
     <p>Rationale: The original behavior was for compatibility with
     POSIX, which I do not care about, and I want to remove
     anything unnecessary in order to ease further maintenance.
 
-    <p>Replacement: Do not pass these options.
+    <p>Replacement: Do not pass the <code>-c</code> option.
+
+<li><p><code>flex-2.5.4</code> accepted and ignored the <code>-n</code>
+    command line option.  Now, <code>-n</code> means to use platform
+    native line endings.
+
+    <p>As with <code>-c</code>, I do not care about POSIX compatibility.
+    And since I needed an option letter, and "n" is a natural choice for
+    this, and its behavior is fairly harmless if used unintentionally, I
+    chose to reuse it.
+
+    <p>Replacement: Do not pass <code>-n</code> if you want it ignored.
 
 <li><p><code>flex-2.5.4</code> accepted the <code>-t</code> command line
     option, and the input file <code>%option stdout</code>, to specify
