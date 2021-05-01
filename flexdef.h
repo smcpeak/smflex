@@ -6,7 +6,7 @@
  *
  * This code is derived from software contributed to Berkeley by
  * Vern Paxson.
- * 
+ *
  * The United States Government has rights in this work pursuant
  * to contract no. DE-AC03-76SF00098 between the United States
  * Department of Energy and the University of California.
@@ -215,7 +215,7 @@
 
 /* The percentage the number of homogeneous out-transitions of a state
  * must be of the number of total out-transitions of the state in order
- * that the state's transition table is first compared with a potential 
+ * that the state's transition table is first compared with a potential
  * template of the most common out-transition instead of with the first
  * proto in the proto queue.
  */
@@ -303,7 +303,7 @@ typedef struct hash_entry **hash_table;
 #define START_COND_HASH_SIZE 101
 #define CCL_HASH_SIZE 101
 
-extern struct hash_entry *ndtbl[NAME_TABLE_HASH_SIZE]; 
+extern struct hash_entry *ndtbl[NAME_TABLE_HASH_SIZE];
 extern struct hash_entry *sctbl[START_COND_HASH_SIZE];
 extern struct hash_entry *ccltab[CCL_HASH_SIZE];
 
@@ -383,7 +383,7 @@ extern int yymore_really_used, reject_really_used;
  * do_stdinit - whether to initialize yyin/yyout to stdin/stdout
  * input_files - array holding names of input files
  * num_input_files - size of input_files array
- * program_name - name with which program was invoked 
+ * program_name - name with which program was invoked
  *
  * action_array - array to hold the rule actions
  * action_size - size of action_array
