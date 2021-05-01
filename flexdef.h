@@ -381,7 +381,6 @@ extern int yymore_really_used, reject_really_used;
  * prefix - the prefix used for externally visible names ("yy" by default)
  * yyclass - yyFlexLexer subclass to use for YY_DECL
  * do_stdinit - whether to initialize yyin/yyout to stdin/stdout
- * use_stdout - the -t flag
  * input_files - array holding names of input files
  * num_input_files - size of input_files array
  * program_name - name with which program was invoked 
@@ -403,7 +402,7 @@ extern int skel_ind;
 extern char *infilename, *outfilename;
 extern int did_outfilename;
 extern char *prefix, *yyclass;
-extern int do_stdinit, use_stdout;
+extern int do_stdinit;
 extern char **input_files;
 extern int num_input_files;
 extern char *program_name;

@@ -63,7 +63,7 @@ int action_size, defs1_offset, prolog_offset, action_offset, action_index;
 char *infilename = NULL, *outfilename = NULL;
 int did_outfilename;
 char *prefix, *yyclass;
-int do_stdinit, use_stdout;
+int do_stdinit;
 int onestate[ONE_STACK_SIZE], onesym[ONE_STACK_SIZE];
 int onenext[ONE_STACK_SIZE], onedef[ONE_STACK_SIZE], onesp;
 int current_mns, current_max_rules;
@@ -264,7 +264,7 @@ void check_options()
 			}
 		}
 
-	if ( ! use_stdout )
+	/* Reopen stdout to the C output file. */
 		{
 		FILE *prev_stdout;
 
@@ -417,8 +417,6 @@ int exit_status;
 			putc( 'p', stderr );
 		if ( spprdflt )
 			putc( 's', stderr );
-		if ( use_stdout )
-			putc( 't', stderr );
 		if ( printstats )
 			putc( 'v', stderr );	/* always true! */
 		if ( nowarn )
@@ -590,7 +588,7 @@ char **argv;
 	did_outfilename = 0;
 	prefix = "yy";
 	yyclass = 0;
-	use_read = use_stdout = false;
+	use_read = false;
 
 	/* smcpeak 2021-04-30: Changed the default value to false. */
 	do_yywrap = false;
@@ -760,10 +758,6 @@ char **argv;
 
 				case 's':
 					spprdflt = true;
-					break;
-
-				case 't':
-					use_stdout = true;
 					break;
 
 				case 'T':
@@ -1116,10 +1110,6 @@ _( "%s [-bcdfhilnpstvwBFILTV78+? -C[aefFmr] -ooutput -Pprefix -Sskeleton]\n" ),
 			prefix, C_plus_plus ? "cc" : "c" );
 		outfilename = outfile_path;
 		}
-
-	fprintf( f,
-		_( "\t-t  write generated scanner on stdout instead of %s\n" ),
-		outfilename );
 
 	fprintf( f,
 		_( "\t-v  write summary of scanner statistics to f\n" ) );

@@ -1965,11 +1965,6 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     input that does not match any of its rules, it aborts with an error. This
     option is useful for finding holes in a scanner's rule set.
 
-<dt><code>-t</code>
-
-<dd><p>instructs <code>flex</code> to write the scanner it generates to
-    standard output instead of <code>lex.yy.c</code>.
-
 <dt><code>-v</code>
 
 <dd><p>specifies that <code>flex</code> should write to <code>stderr</code>
@@ -2194,10 +2189,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dt><code>-ooutput</code>
 
 <dd><p>directs flex to write the scanner to the file <code>output</code>
-    instead of <code>lex.yy.c</code>. If you combine <code>-o</code> with the
-    <code>-t</code> option, then the scanner is written to <code>stdout</code>
-    but its <code>#line</code> directives (see the <code>\-L</code> option
-    above) refer to the file <code>output</code>.
+    instead of <code>lex.yy.c</code>.
 
 <dt id="prefix-option"><code>-Pprefix</code>
 
@@ -2236,7 +2228,6 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     <p>This option lets you easily link together multiple <code>flex</code>
     programs into the same executable.
 
-
 <dt><code>-Sskeleton_file</code>
 
 <dd><p>overrides the default skeleton file from which <code>flex</code>
@@ -2251,6 +2242,14 @@ the flex command-line. This is done by including <code>%option</code>
 directives in the first section of the scanner specification. You can
 specify multiple options with a single <code>%option</code> directive,
 and multiple directives in the first section of your flex input file.
+
+<p><strong>Warning</strong>: Unlike most other programs, in
+<code>flex</code>, options specified within the input file take
+precedence over those specified on the command line.  The only
+exception is the output file name, where the
+command line option <code>-o</code> takes precedence over the input
+file <code>%option outfile</code>.  TODO: Make all command line options
+take precedence.
 
 <p>Most options are given simply as names, optionally preceded by the
 word "no" (with no intervening whitespace) to negate their meaning. A
@@ -2280,7 +2279,6 @@ number are equivalent to flex flags or their negation:
     meta-ecs        -Cm option
     perf-report     -p option
     read            -Cr option
-    stdout          -t option
     verbose         -v option
     warn            opposite of -w option
                     (use &quot;%option nowarn&quot; for -w)
@@ -3064,6 +3062,19 @@ the incompatibilities.
     anything unnecessary in order to ease further maintenance.
 
     <p>Replacement: Do not pass these options.
+
+<li><p><code>flex-2.5.4</code> accepted the <code>-t</code> command line
+    option, and the input file <code>%option stdout</code>, to specify
+    that output be written to stdout instead of a file.  These options
+    are no longer accepted.
+
+    <p>Rationale: I want to have <code>flex</code> write <em>two</em>
+    files, a C or C++ implementation file and an accompanying header
+    file.  It would then be weird to continue allowing one of those
+    files to be written to stdout; I prefer the uniformity of both going
+    to files.
+
+    <p>Replacement: Arrange to receive the output in files.
 
 </ul>
 

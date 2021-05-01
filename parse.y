@@ -147,10 +147,18 @@ optionlist	:  optionlist option
 		|
 		;
 
+/* The grammar process options that take arguments.  Other options
+ * are handled directly in the lexer. */
 option		:  OPT_OUTFILE '=' NAME
 			{
-			outfilename = copy_string( nmstr );
-			did_outfilename = 1;
+			/* Only record the specified file name if we
+			 * do not already have one.  This way, the -o
+			 * command line option takes precedence. */
+			if ( ! did_outfilename )
+				{
+				outfilename = copy_string( nmstr );
+				did_outfilename = 1;
+				}
 			}
 		|  OPT_PREFIX '=' NAME
 			{ prefix = copy_string( nmstr ); }

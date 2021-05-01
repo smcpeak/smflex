@@ -29,6 +29,11 @@ out/%.yy.c: %.lex
 	@mkdir -p out
 	../flex -o$@ $<
 
+# Run flex on outfile.lex, avoiding use of -o option.
+out/outfile-specified.yy.c: outfile.lex
+	@mkdir -p out
+	../flex $<
+
 # Compile a C file in out/.
 .PRECIOUS: out/%.o
 out/%.o: out/%.c
@@ -88,6 +93,7 @@ all: out/cppscan-yywrap.ok
 all: out/cpp-prefix.ok
 all: out/cpp-prefix-yywrap.ok
 all: out/cpp-prefix-yywrap-yyclass.ok
+all: out/outfile-specified.ok
 
 # These tests read a second file.
 username-yywrap.ok: username-yywrap.input2

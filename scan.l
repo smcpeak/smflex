@@ -255,7 +255,6 @@ LEXOPT		[aceknopr]
 	reject		reject_really_used = option_sense;
 	stack		action_define( "YY_STACK_USED", option_sense );
 	stdinit		do_stdinit = option_sense;
-	stdout		use_stdout = option_sense;
 	unput		ACTION_IFDEF("YY_NO_UNPUT", ! option_sense);
 	verbose		printstats = option_sense;
 	warn		nowarn = ! option_sense;

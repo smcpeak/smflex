@@ -105,13 +105,12 @@ DISTFILES = README.md NEWS COPYING FlexLexer.h \
 # Instead, the 'dist' target sets it when invoking 'dist2'.
 DIST_NAME = flex
 
-# Which "flex" to use to generate scan.c from scan.l.  This could be
-# useful to set if, while developing, the current 'flex' is broken.
+# How to invoke the 'flex' built here.
 FLEX_EXEC = ./$(FLEX)
 
 # Flags to pass to $(FLEX_EXEC).
 PERF_REPORT = -p
-FLEX_FLAGS = -t $(PERF_REPORT)
+FLEX_FLAGS = $(PERF_REPORT)
 
 # Default compression to use when generating scan.c.  This is overridden
 # by the 'bigcheck' target.  Empty means none.
@@ -149,9 +148,10 @@ parse.h: parse.c
 # flex to read it input file.  Hence, flex is partially written in
 # its own language.  See the .bootstrap target.
 scan.c: scan.l
-	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) $(srcdir)/scan.l >scan.c
-	sed s,\"$(srcdir)/scan.l\",\"scan.l\", <scan.c >scan.tmp
-	mv scan.tmp scan.c
+	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.tmp1.c $(srcdir)/scan.l
+	sed 's,"$(srcdir)/scan.l","scan.l",' < scan.tmp1.c > scan.tmp2.c
+	rm scan.tmp1.c
+	mv -f scan.tmp2.c scan.c
 
 # 'skel.c' contains the contents of 'flex.skl' as a C string.
 skel.c: flex.skl mkskel.sh
@@ -172,15 +172,26 @@ skel.o: skel.c flexdef.h
 sym.o: sym.c flexdef.h
 tblcmp.o: tblcmp.c flexdef.h
 
-# Run a quick check to see if the current flex produces the same
-# output as it did before.
+# Main set of automated tests.
 test: check
 check: $(FLEX)
+	@#
+	@# Run the tests in test/.
+	@#
 	$(MAKE) -C test CC=$(CC)
-	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) $(srcdir)/scan.l \
-	  | sed s,\"$(srcdir)/scan.l\",\"scan.l\", > scan.actual.c
+	@#
+	@# Check to see if the current flex produces the same output
+	@# as it did before.
+	@#
+	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.tmp.c $(srcdir)/scan.l
+	@#
+	@# Fix the file names in #line directives so they match.
+	@#
+	sed -e 's,"$(srcdir)/scan.l","scan.l",' \
+	    -e 's,"scan.tmp.c","scan.c",' \
+	  < scan.tmp.c > scan.actual.c
 	diff -b scan.c scan.actual.c
-	rm scan.actual.c
+	rm scan.actual.c scan.tmp.c
 	@echo "Check successful, using COMPRESSION=\"$(COMPRESSION)\""
 
 # With various compression modes:
