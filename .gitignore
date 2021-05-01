@@ -1,8 +1,9 @@
 *.exe
 *.o
 .bootstrap
-/Makefile
 config.cache
 config.log
+config.mk
 config.status
+personal.mk
 scan.c

@@ -23,4 +23,4 @@ AC_PROG_MAKE_SET
 
 dnl# When config.status is invoked (which happens implicitly at the end
 dnl# of 'configure'), create Makefile by substituting variables.
-AC_OUTPUT(Makefile)
+AC_OUTPUT(config.mk)

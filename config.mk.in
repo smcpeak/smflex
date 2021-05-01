@@ -1,0 +1,41 @@
+# @configure_input@
+# config.mk.in
+# Variable settings created by 'configure'.
+
+# When this file is called config.mk, you should not edit it by hand.
+# If you want to customize something, instead create personal.mk and
+# put the adjustments there.
+
+# If the following line is not empty, it specifies the value of $(MAKE)
+# to use when invoking make recursively.
+@SET_MAKE@
+
+# Debugging and optimization options for the C compiler.
+CFLAGS = @CFLAGS@
+
+# Preprocessing options for C and C++.
+CPPFLAGS = @CPPFLAGS@
+
+# Options for the linker, particularly -L search options.
+LDFLAGS = @LDFLAGS@
+
+# Additional libraries to link with.
+LIBS = @LIBS@
+
+# Installation targeting.  Files will be installed under the tree rooted
+# at prefix.  flex will be installed in bindir and FlexLexer.h will be
+# installed in includedir.
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = $(exec_prefix)/bin
+includedir = $(prefix)/include
+
+# C compiler.
+CC = @CC@
+
+# Programs that copy files into the installation directory.
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+
+# EOF

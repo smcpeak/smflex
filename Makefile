@@ -1,79 +1,28 @@
-# Makefile.in
-# @configure_input@
+# flex/Makefile
 
 # NOTE: This Makefile requires GNU make.
 
-# If the following line is not empty, it specifies the value of $(MAKE)
-# to use when invoking make recursively.
-@SET_MAKE@
-
-# In general, the intent is to use variables in a manner consistent
-# with how autoconf expects them to be used:
-# https://www.gnu.org/software/autoconf/manual/autoconf-2.67/html_node/Preset-Output-Variables.html
-
-# Debugging and optimization options for the C compiler.
-CFLAGS = @CFLAGS@
-
-# Preprocessing options for C and C++.
-CPPFLAGS = @CPPFLAGS@
-
-# I removed DEFS because it was unused at the time, and I do not forsee
-# a need for it.
-
-# Options for the linker, particularly -L search options.
-LDFLAGS = @LDFLAGS@
-
-# Additional libraries to link with.
-LIBS = @LIBS@
-
-# Enable all GCC warnings.
-CFLAGS += -Wall
-
-# Installation targeting.  Files will be installed under the tree
-# rooted at prefix.  flex will be installed in bindir, libfl.a in
-# libdir, and FlexLexer.h will be installed in includedir.
-prefix = @prefix@
-exec_prefix = @exec_prefix@
-bindir = $(exec_prefix)/bin
-libdir = $(exec_prefix)/lib
-includedir = $(prefix)/include
+# Pull in the configure-generated settings.
+ifeq ($(wildcard config.mk),)
+  $(error config.mk does not exist.  Please run ./configure first.)
+endif
+include config.mk
 
 # Name of the scanner generator executable.
 FLEX = flex
 
+# Shell to use when running recipes.
 SHELL = /bin/sh
-
-# Directory containing the sources.  Often this is just ".", but if
-# the user runs 'configure' in a different directory, then this points
-# back to the source dir from there.
-#
-# e.g.: "mkdir obj; cd obj; ../configure"
-#
-# See https://www.gnu.org/software/autoconf/manual/autoconf-2.67/html_node/Build-Directories.html
-#
-srcdir = @srcdir@
-
-# This tells 'make' to search for dependencies in the source directory
-# as well as the current directory.  However, things can get messed up
-# if you do a build in the source directory and in another one because
-# 'make' will pull generated sources from both places, making a mess.
-VPATH = @srcdir@
 
 # Bison, operating in yacc compatibility mode.
 YACC = bison -y
 
-# C compiler.
-CC = @CC@
+# Enable all GCC warnings.
+CFLAGS += -Wall
 
-# Preprocessor flags.
-CPPFLAGS += -I. -I$(srcdir)
-
-INSTALL = @INSTALL@
-INSTALL_DATA = @INSTALL_DATA@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
-
-# You normally do not need to modify anything below this point.
-# ------------------------------------------------------------
+# Now optionally pull in local customizations via personal.mk.  Those
+# can override settings above or from config.mk.
+-include personal.mk
 
 # Default target.
 all: $(FLEX)
@@ -107,7 +56,7 @@ OBJECTS = ccl.o dfa.o ecs.o gen.o main.o misc.o nfa.o parse.o \
 # 'initscan.c' during the packaging process, and a few things
 # in 'test' get removed.
 DISTFILES = README.md NEWS COPYING FlexLexer.h \
-	configure.in Makefile.in mkskel.sh flex.skl \
+	configure.in Makefile config.mk.in mkskel.sh flex.skl \
 	$(HEADERS) $(SOURCES) \
 	flex.html scan.c install.sh mkinstalldirs configure \
 	test \
@@ -142,7 +91,7 @@ $(FLEX): .bootstrap $(OBJECTS)
 # evolve as flex itself changes.
 .bootstrap: initscan.c
 	rm -f scan.c
-	cp $(srcdir)/initscan.c scan.c
+	cp initscan.c scan.c
 	touch .bootstrap
 
 
@@ -154,7 +103,7 @@ ifeq ($(RUN_BISON),1)
 
 # Bison-generated parser for flex's input language.
 parse.c: parse.y
-	$(YACC) -d $(srcdir)/parse.y
+	$(YACC) -d parse.y
 	mv -f y.tab.c parse.c
 	mv -f y.tab.h parse.h
 
@@ -169,14 +118,12 @@ endif # RUN_BISON
 # flex to read it input file.  Hence, flex is partially written in
 # its own language.  See the .bootstrap target.
 scan.c: scan.l
-	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.tmp1.c $(srcdir)/scan.l
-	sed 's,"$(srcdir)/scan.l","scan.l",' < scan.tmp1.c > scan.tmp2.c
-	rm scan.tmp1.c
-	mv -f scan.tmp2.c scan.c
+	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.tmp.c scan.l
+	mv -f scan.tmp.c scan.c
 
 # 'skel.c' contains the contents of 'flex.skl' as a C string.
 skel.c: flex.skl mkskel.sh
-	$(SHELL) $(srcdir)/mkskel.sh $(srcdir)/flex.skl skel.c skel
+	$(SHELL) mkskel.sh flex.skl skel.c skel
 
 # Compile-time dependencies.
 scan.o: scan.c parse.h flexdef.h
@@ -204,13 +151,11 @@ check: $(FLEX)
 	@# Check to see if the current flex produces the same output
 	@# as it did before.
 	@#
-	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.tmp.c $(srcdir)/scan.l
+	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.tmp.c scan.l
 	@#
 	@# Fix the file names in #line directives so they match.
 	@#
-	sed -e 's,"$(srcdir)/scan.l","scan.l",' \
-	    -e 's,"scan.tmp.c","scan.c",' \
-	  < scan.tmp.c > scan.actual.c
+	sed -e 's,"scan.tmp.c","scan.c",' < scan.tmp.c > scan.actual.c
 	diff -b scan.c scan.actual.c
 	rm scan.actual.c scan.tmp.c
 	@echo "Check successful, using COMPRESSION=\"$(COMPRESSION)\""
@@ -241,11 +186,11 @@ bigcheck:
 # Install to the chosen --prefix.
 install: $(FLEX) installdirs
 	$(INSTALL_PROGRAM) $(FLEX) $(bindir)/$(FLEX)
-	$(INSTALL_DATA) $(srcdir)/FlexLexer.h $(includedir)/FlexLexer.h
+	$(INSTALL_DATA) FlexLexer.h $(includedir)/FlexLexer.h
 
 installdirs:
-	$(SHELL) $(srcdir)/mkinstalldirs \
-	  $(bindir) $(libdir) $(includedir)
+	$(SHELL) mkinstalldirs \
+	  $(bindir) $(includedir)
 
 uninstall:
 	rm -f $(bindir)/$(FLEX)
@@ -261,13 +206,12 @@ mostlyclean:
 	rm -f a.out *.bak core errs scan.tmp
 
 clean: mostlyclean
-	rm -f flex *.o lex.yy.c lex.yy.cc \
+	rm -f $(FLEX) *.o lex.yy.c lex.yy.cc \
 		config.log config.cache
 	$(MAKE) -C test clean
 
 distclean: clean
-	rm -f .bootstrap $(FLEX) scan.c tags TAGS Makefile config.status \
-	  config.log config.cache
+	rm -f .bootstrap scan.c tags TAGS config.mk config.status
 
 maintainer-clean: distclean
 	@echo "This command is intended for maintainers to use;"
@@ -285,11 +229,9 @@ dist2:
 	rm -f $(DIST_NAME).tar $(DIST_NAME).tar.gz
 	mkdir $(DIST_NAME)
 	tar cf - $(DISTFILES) | (cd $(DIST_NAME) && tar xfB -)
-	rm -rf $(DIST_NAME)/test/out
-	rm -f $(DIST_NAME)/test/.gitignore
+	rm -r $(DIST_NAME)/test/out
+	rm $(DIST_NAME)/test/.gitignore
 	mv $(DIST_NAME)/scan.c $(DIST_NAME)/initscan.c
-	chmod 444 $(DIST_NAME)/initscan.c
-	chmod +w $(DIST_NAME)/Makefile.in
 	tar chf $(DIST_NAME).tar $(DIST_NAME)
 	gzip <$(DIST_NAME).tar >$(DIST_NAME).tar.gz
 	rm $(DIST_NAME).tar
@@ -321,12 +263,12 @@ dist-test-clean:
 
 # For an explanation of the following Makefile rules, see node
 # `Automatic Remaking' in GNU Autoconf documentation.
-Makefile: $(srcdir)/Makefile.in config.status
+config.mk: config.mk.in config.status
 	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
 config.status: configure
 	./config.status --recheck
 configure: configure.in
-	cd $(srcdir) && autoconf
+	autoconf
 
 # Tell versions [3.59,3.63) of GNU make not to export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
