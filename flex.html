@@ -1618,13 +1618,17 @@ by doing one of four things:
 
 <ul>
 
-<li><p>assigning <code>yyin</code> to a new input file (in previous versions of flex, after doing the assignment you had to call the special action <code>YY_NEW_FILE;</code> this is no longer necessary);</p></li>
+<li><p>assigning <code>yyin</code>
+    to a new input file (in previous versions of flex, after doing the
+    assignment you had to call the special action
+    <code>YY_NEW_FILE;</code> this is no longer necessary);
 
-<li><p>executing a <code>return</code> statement;</p></li>
+<li><p>executing a <code>return</code> statement;
 
-<li><p>executing the special <code>yyterminate()</code> action;</p></li>
+<li><p>executing the special <code>yyterminate()</code> action;
 
-<li><p>or, switching to a new buffer using <code>yy_switch_to_buffer()</code> as shown in the example above.</p></li>
+<li><p>or, switching to a new buffer using <code>yy_switch_to_buffer()</code>
+    as shown in the example above.
 
 </ul>
 
