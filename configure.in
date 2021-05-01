@@ -30,3 +30,44 @@ AC_PROG_INSTALL
 dnl# When config.status is invoked (which happens implicitly at the end
 dnl# of 'configure'), create Makefile by substituting variables.
 AC_OUTPUT(config.mk)
+
+dnl# Clear the default help message.  This magic incantation comes from:
+dnl# https://stackoverflow.com/questions/29928799/can-you-override-the-default-configure-help-message-generated-as-part-of-running
+m4_cleardivert([HELP_BEGIN])dnl
+m4_cleardivert([HELP_CANON])dnl
+m4_cleardivert([HELP_ENABLE])dnl
+m4_cleardivert([HELP_WITH])dnl
+m4_cleardivert([HELP_VAR])dnl
+m4_cleardivert([HELP_VAR_END])dnl
+m4_cleardivert([HELP_END])dnl
+
+dnl# Specify custom --help text, since the default is mostly a
+dnl# useless wall of text that has nothing to do with my software.
+m4_divert_push([HELP_BEGIN])dnl
+if test "$ac_init_help" = "long"; then
+  cat <<_ACEOF
+This is the configure script for flex.
+
+Usage:
+
+  ./configure [[options]] [[VAR=VALUE]]
+
+Options:
+
+  --prefix=DIR         Install into DIR [[$ac_default_prefix]].
+
+Variables:
+
+  CC                   C compiler.
+  CFLAGS               Debug and optimization options for C compiler.
+  CPPFLAGS             Preprocessing options.
+  LDFLAGS              Link options, such as -LDIR.
+  LIBS                 Additional libraries, such as -lsomelib.
+
+_ACEOF
+
+  # Stop after printing the help.
+  exit 0
+fi
+m4_divert_pop([HELP_BEGIN])dnl
+# EOF

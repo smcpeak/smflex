@@ -1187,151 +1187,31 @@ for ac_var in $ac_precious_vars; do
   eval ac_cv_env_${ac_var}_set=\${${ac_var}+set}
   eval ac_cv_env_${ac_var}_value=\$${ac_var}
 done
-
-#
-# Report the --help message.
-#
 if test "$ac_init_help" = "long"; then
-  # Omit some internal or obsolete options to make the list less imposing.
-  # This message is too long to be a string in the A/UX 3.1 sh.
   cat <<_ACEOF
-\`configure' configures this package to adapt to many kinds of systems.
+This is the configure script for flex.
 
-Usage: $0 [OPTION]... [VAR=VALUE]...
+Usage:
 
-To assign environment variables (e.g., CC, CFLAGS...), specify them as
-VAR=VALUE.  See below for descriptions of some of the useful variables.
+  ./configure [options] [VAR=VALUE]
 
-Defaults for the options are specified in brackets.
+Options:
 
-Configuration:
-  -h, --help              display this help and exit
-      --help=short        display options specific to this package
-      --help=recursive    display the short help of all the included packages
-  -V, --version           display version information and exit
-  -q, --quiet, --silent   do not print \`checking ...' messages
-      --cache-file=FILE   cache test results in FILE [disabled]
-  -C, --config-cache      alias for \`--cache-file=config.cache'
-  -n, --no-create         do not create output files
-      --srcdir=DIR        find the sources in DIR [configure dir or \`..']
+  --prefix=DIR         Install into DIR [$ac_default_prefix].
 
-Installation directories:
-  --prefix=PREFIX         install architecture-independent files in PREFIX
-                          [$ac_default_prefix]
-  --exec-prefix=EPREFIX   install architecture-dependent files in EPREFIX
-                          [PREFIX]
+Variables:
 
-By default, \`make install' will install all the files in
-\`$ac_default_prefix/bin', \`$ac_default_prefix/lib' etc.  You can specify
-an installation prefix other than \`$ac_default_prefix' using \`--prefix',
-for instance \`--prefix=\$HOME'.
+  CC                   C compiler.
+  CFLAGS               Debug and optimization options for C compiler.
+  CPPFLAGS             Preprocessing options.
+  LDFLAGS              Link options, such as -LDIR.
+  LIBS                 Additional libraries, such as -lsomelib.
 
-For better control, use the options below.
-
-Fine tuning of the installation directories:
-  --bindir=DIR            user executables [EPREFIX/bin]
-  --sbindir=DIR           system admin executables [EPREFIX/sbin]
-  --libexecdir=DIR        program executables [EPREFIX/libexec]
-  --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
-  --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
-  --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
-  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
-  --libdir=DIR            object code libraries [EPREFIX/lib]
-  --includedir=DIR        C header files [PREFIX/include]
-  --oldincludedir=DIR     C header files for non-gcc [/usr/include]
-  --datarootdir=DIR       read-only arch.-independent data root [PREFIX/share]
-  --datadir=DIR           read-only architecture-independent data [DATAROOTDIR]
-  --infodir=DIR           info documentation [DATAROOTDIR/info]
-  --localedir=DIR         locale-dependent data [DATAROOTDIR/locale]
-  --mandir=DIR            man documentation [DATAROOTDIR/man]
-  --docdir=DIR            documentation root [DATAROOTDIR/doc/PACKAGE]
-  --htmldir=DIR           html documentation [DOCDIR]
-  --dvidir=DIR            dvi documentation [DOCDIR]
-  --pdfdir=DIR            pdf documentation [DOCDIR]
-  --psdir=DIR             ps documentation [DOCDIR]
 _ACEOF
 
-  cat <<\_ACEOF
-_ACEOF
+  # Stop after printing the help.
+  exit 0
 fi
-
-if test -n "$ac_init_help"; then
-
-  cat <<\_ACEOF
-
-Some influential environment variables:
-  CC          C compiler command
-  CFLAGS      C compiler flags
-  LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
-              nonstandard directory <lib dir>
-  LIBS        libraries to pass to the linker, e.g. -l<library>
-  CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
-              you have headers in a nonstandard directory <include dir>
-
-Use these variables to override the choices made by `configure' or to help
-it to find libraries and programs with nonstandard names/locations.
-
-Report bugs to the package provider.
-_ACEOF
-ac_status=$?
-fi
-
-if test "$ac_init_help" = "recursive"; then
-  # If there are subdirs, report their specific --help.
-  for ac_dir in : $ac_subdirs_all; do test "x$ac_dir" = x: && continue
-    test -d "$ac_dir" ||
-      { cd "$srcdir" && ac_pwd=`pwd` && srcdir=. && test -d "$ac_dir"; } ||
-      continue
-    ac_builddir=.
-
-case "$ac_dir" in
-.) ac_dir_suffix= ac_top_builddir_sub=. ac_top_build_prefix= ;;
-*)
-  ac_dir_suffix=/`$as_echo "$ac_dir" | sed 's|^\.[\\/]||'`
-  # A ".." for each directory in $ac_dir_suffix.
-  ac_top_builddir_sub=`$as_echo "$ac_dir_suffix" | sed 's|/[^\\/]*|/..|g;s|/||'`
-  case $ac_top_builddir_sub in
-  "") ac_top_builddir_sub=. ac_top_build_prefix= ;;
-  *)  ac_top_build_prefix=$ac_top_builddir_sub/ ;;
-  esac ;;
-esac
-ac_abs_top_builddir=$ac_pwd
-ac_abs_builddir=$ac_pwd$ac_dir_suffix
-# for backward compatibility:
-ac_top_builddir=$ac_top_build_prefix
-
-case $srcdir in
-  .)  # We are building in place.
-    ac_srcdir=.
-    ac_top_srcdir=$ac_top_builddir_sub
-    ac_abs_top_srcdir=$ac_pwd ;;
-  [\\/]* | ?:[\\/]* )  # Absolute name.
-    ac_srcdir=$srcdir$ac_dir_suffix;
-    ac_top_srcdir=$srcdir
-    ac_abs_top_srcdir=$srcdir ;;
-  *) # Relative name.
-    ac_srcdir=$ac_top_build_prefix$srcdir$ac_dir_suffix
-    ac_top_srcdir=$ac_top_build_prefix$srcdir
-    ac_abs_top_srcdir=$ac_pwd/$srcdir ;;
-esac
-ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
-
-    cd "$ac_dir" || { ac_status=$?; continue; }
-    # Check for guested configure.
-    if test -f "$ac_srcdir/configure.gnu"; then
-      echo &&
-      $SHELL "$ac_srcdir/configure.gnu" --help=recursive
-    elif test -f "$ac_srcdir/configure"; then
-      echo &&
-      $SHELL "$ac_srcdir/configure" --help=recursive
-    else
-      $as_echo "$as_me: WARNING: no configuration information is in $ac_dir" >&2
-    fi || ac_status=$?
-    cd "$ac_pwd" || { ac_status=$?; break; }
-  done
-fi
-
-test -n "$ac_init_help" && exit $ac_status
 if $ac_init_version; then
   cat <<\_ACEOF
 configure
@@ -3823,3 +3703,6 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
+
+
+# EOF
