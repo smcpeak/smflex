@@ -775,7 +775,7 @@ case <code>yytext</code> will be an array. The advantage of using
 <code>%pointer</code> is substantially faster scanning and no buffer
 overflow when matching very large tokens (unless you run out of dynamic
 memory). The disadvantage is that you are restricted in how your actions
-can modify <code>yytext</code> (see the next section), and calls to
+can modify <code>yytext</code> (see <a href="#actions">Actions</a>), and calls to
 the <code>unput()</code> function destroys the present contents of
 <code>yytext</code>, which can be a considerable porting headache when
 moving between different <code>lex</code> versions.
@@ -1040,10 +1040,11 @@ an action:
 <li><p><code>YY_FLUSH_BUFFER</code>
     flushes the scanner's internal buffer so that the next time the
     scanner attempts to match a token, it will first refill the buffer
-    using <code>YY_INPUT</code> (see The Generated Scanner, below). This
+    using <code>YY_INPUT</code> (see
+    <a href="#the-generated-scanner">The Generated Scanner</a>). This
     action is a special case of the more general
-    <code>yy_flush_buffer()</code> function, described below in the
-    section Multiple Input Buffers.
+    <code>yy_flush_buffer()</code> function, described in
+    <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
 
 <li><p><code>yyterminate()</code>
     can be used in lieu of a return statement in an action. It
@@ -1146,7 +1147,7 @@ if its contents came right after the previous one, then set
 
 <p>Three routines are available for scanning from in-memory buffers rather
 than files: <code>yy_scan_string()</code>, <code>yy_scan_bytes()</code>,
-and <code>yy_scan_buffer()</code>. See the discussion of them below in
+and <code>yy_scan_buffer()</code>. See the discussion of them in
 the section <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
 
 <p>The scanner writes its <code>ECHO</code> output to the
@@ -1888,7 +1889,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     or <code>-CF</code> is used, the generated scanner will run faster
     (see the <code>-p</code> flag). Only users who wish to squeeze every
     last cycle out of their scanners need worry about this option. (See the
-    section on Performance Considerations below.)
+    section <a href="#performance-considerations">Performance Considerations</a>.)
 </dd>
 
 <dt><code>-c</code></dt>
@@ -1943,10 +1944,11 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dd><p>turns on maximum compatibility with the original AT&amp;T
     <code>lex</code> implementation. Note that this does not mean
     <em>full</em> compatibility. Use of this option costs a considerable
-    amount of performance, and it cannot be used with the <code>-+, -f,
-    -F, -Cf</code>, or <code>-CF</code> options. For details on the
-    compatibilities it provides, see the section "Incompatibilities
-    With Lex And POSIX" below. This option also results in the name
+    amount of performance, and it cannot be used with the
+    <code>-+, -f, -F, -Cf</code>, or <code>-CF</code> options. For details on the
+    compatibilities it provides, see
+    <a href="#incompatibilities-with-lex-and-posix">Incompatibilities
+    With Lex And POSIX</a>. This option also results in the name
     <code>YY_FLEX_LEX_COMPAT</code> being #define'd in the generated scanner.
 </dd>
 
@@ -1965,8 +1967,9 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     that lead to minor performance losses.
 
     <p>Note that the use of <code>REJECT</code>, <code>%option yylineno</code>,
-    and variable trailing context (see the Deficiencies /
-    Bugs section below) entails a substantial performance penalty; use of
+    and variable trailing context (see
+    <a href="#deficiencies-n-bugs">Deficiencies / Bugs</a>)
+    entails a substantial performance penalty; use of
     <code>yymore()</code>, the <code>^</code> operator, and the <code>-I</code>
     flag entail minor performance penalties.
 </dd>
@@ -2128,7 +2131,8 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dt><code>-+</code></dt>
 
 <dd><p>specifies that you want flex to generate a C++ scanner class. See
-    the section on Generating C++ Scanners below for details.
+    <a href="#generating-cpp-scanners">Generating C++ Scanners</a>
+    for details.
 </dd>
 
 <dt><code>-C[aefFmr]</code></dt>
@@ -2298,7 +2302,7 @@ number are equivalent to flex flags or their negation:
     case-insensitive or
     caseless        -i option
 
-    debug           -d option
+    <span id="debug-option">debug           -d option</span>
     default         opposite of -s option
     ecs             -Ce option
     fast            -F option
@@ -2755,13 +2759,14 @@ particularly when a token contains multiple NUL's. It's best to write
 rules which match <em>short</em> amounts of text if it's anticipated
 that the text will often include NUL's.
 
-<p>Another final note regarding performance: as mentioned above in the
-section How the Input is Matched, dynamically resizing <code>yytext</code>
+<p>Another final note regarding performance: as mentioned in
+<a href="#how-the-input-is-matched">How the Input is Matched</a>,
+dynamically resizing <code>yytext</code>
 to accommodate huge tokens is a slow process because it presently
 requires that the (huge) token be rescanned from the beginning. Thus if
 performance is vital, you should attempt to match "large" quantities of
 text but not "huge" quantities, where the cutoff between the two is at
-about 8K characters/token.
+about 8K characters per token.
 
 
 <!-- ======================================================= -->
@@ -2771,7 +2776,7 @@ about 8K characters/token.
 for use with C++. The first way is to simply compile a C-interface scanner generated
 by <code>flex</code> using a C++ compiler instead of a C compiler. You
 should not encounter any compilations errors (please report any you
-find to the email address given in the Author section below). You can
+find to the email address given in the <a href="#author">Author</a> section). You can
 then use C++ code in your rule actions instead of C code. Note that
 the default input source for your scanner remains <code>yyin</code>,
 and default echoing is still done to <code>yyout</code>. Both of these
@@ -2794,12 +2799,11 @@ input:
 
 <dl>
 
-<dt><code>yyFlexLexer(istream *arg_yyin = NULL, ostream *arg_yyout = NULL)</code></dt>
+<dt><code>yyFlexLexer(istream *arg_yyin = NULL, ostream *arg_yyout = NULL)</code>
 
 <dd><p>constructs a <code>yyFlexLexer</code> object using the given
     streams for input and output. If not specified, the streams default to
     <code>cin</code> and <code>cout</code>, respectively.
-</dd>
 
 <dt><code>int yylex()</code></dt>
 
@@ -2814,14 +2818,12 @@ input:
     <code>flex</code> generates <code>S::yylex()</code> (and also
     generates a dummy <code>yyFlexLexer::yylex()</code> that calls
     <code>yyFlexLexer::LexerError()</code> if called).
-</dd>
 
 <dt><code>void switch_streams(istream *new_in = NULL, ostream *new_out = NULL)</code></dt>
 
 <dd><p>reassigns <code>yyin</code> to <code>new_in</code> (if not NULL)
     and <code>yyout</code> to <code>new_out</code> (ditto), deleting the
     previous input buffer if <code>yyin</code> is reassigned.
-</dd>
 
 <dt><code>virtual int yywrap()</code></dt>
 
@@ -2848,24 +2850,21 @@ can be used to inspect the token:
 
 <dl>
 
-<dt><code>const char *YYText()</code></dt>
+<dt><code>const char *YYText()</code>
 
 <dd><p>returns the text of the most recently matched token, the equivalent
     of <code>yytext</code>.
-</dd>
 
-<dt><code>int YYLeng()</code></dt>
+<dt><code>int YYLeng()</code>
 
 <dd><p>returns the length of the most recently matched token, the equivalent
     of <code>yyleng</code>.
-</dd>
 
-<dt><code>int lineno() const</code></dt>
+<dt><code>int lineno() const</code>
 
 <dd><p>returns the current input line number
     (see <code>%option yylineno</code>), or <code>1</code> if
     <code>%option yylineno</code> was not used.
-</dd>
 
 </dl>
 
@@ -2873,18 +2872,16 @@ can be used to inspect the token:
 
 <dl>
 
-<dt><code>void set_debug(int flag)</code></dt>
+<dt><code>void set_debug(int flag)</code>
 
 <dd><p>sets the debugging flag for the scanner, equivalent to assigning to
-    <code>yy_flex_debug</code> (see the Options section above). Note that
-    you must build the scanner using <code>%option debug</code> to include
+    <code>yy_flex_debug</code>. Note that you must build the scanner using
+    <a href="#debug-option"><code>%option debug</code></a> to include
     debugging information in it.
-</dd>
 
-<dt><code>int debug() const</code></dt>
+<dt><code>int debug() const</code>
 
 <dd><p>returns the current setting of the debugging flag.
-</dd>
 
 </dl>
 
@@ -2895,7 +2892,7 @@ how the scanner gets access to its input.  By overriding these,
 
 <dl>
 
-<dt><code>virtual int LexerInput(char *buf, int max_size)</code></dt>
+<dt><code>virtual int LexerInput(char *buf, int max_size)</code>
 
 <dd><p>reads up to <code>max_size</code> characters into <code>buf</code> and
     returns the number of characters read. To indicate end-of-input, return 0
@@ -2907,14 +2904,14 @@ how the scanner gets access to its input.  By overriding these,
     via <code>#ifdef</code>.
 </dd>
 
-<dt><code>virtual void LexerOutput(const char *buf, int size)</code></dt>
+<dt><code>virtual void LexerOutput(const char *buf, int size)</code>
 
 <dd><p>writes out <code>size</code> characters from the buffer
     <code>buf</code>, which, while NUL-terminated, may also contain "internal"
     NUL's if the scanner's rules can match text with NUL's in them.
 </dd>
 
-<dt><code>virtual void LexerError(const char *msg)</code></dt>
+<dt><code>virtual void LexerError(const char *msg)</code>
 
 <dd><p>reports a fatal error message. The default version of this function
     writes the message to the stream <code>cerr</code> and exits.
@@ -3326,34 +3323,34 @@ have listed at least one of them twice).
 
 <dl>
 
-<dt><code>-lfl</code></dt>
+<dt><code>-lfl</code>
 
 <dd><p>library with which scanners must be linked.
 </dd>
 
-<dt><code>lex.yy.c</code></dt>
+<dt><code>lex.yy.c</code>
 
 <dd><p>generated scanner (called <code>lexyy.c</code> on some systems).
 </dd>
 
-<dt><code>lex.yy.cc</code></dt>
+<dt><code>lex.yy.cc</code>
 
 <dd><p>generated C++ scanner class, when using <code>-+</code>.
 </dd>
 
-<dt><code>&lt;FlexLexer.h&gt;</code></dt>
+<dt><code>&lt;FlexLexer.h&gt;</code>
 
 <dd><p>header file defining the C++ scanner base class,
     <code>FlexLexer</code>, and its derived class, <code>yyFlexLexer</code>.
 </dd>
 
-<dt><code>flex.skl</code></dt>
+<dt><code>flex.skl</code>
 
 <dd><p>skeleton scanner. This file is only used when building flex, not when
     flex executes.
 </dd>
 
-<dt><code>lex.backup</code></dt>
+<dt><code>lex.backup</code>
 
 <dd><p>backing-up information for <code>-b</code> flag (called
     <code>lex.bck</code> on some systems).
