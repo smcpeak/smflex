@@ -259,8 +259,11 @@ config.mk: config.mk.in config.status
 	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
 config.status: configure
 	./config.status --recheck
-configure: configure.in
-	autoconf
+
+# This rule sometimes causes autoconf to run after a git checkout
+# because the timestamps in that case are unpredictable.
+#configure: configure.in
+#	autoconf
 
 # Tell versions [3.59,3.63) of GNU make not to export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
