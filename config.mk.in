@@ -6,10 +6,6 @@
 # If you want to customize something, instead create personal.mk and
 # put the adjustments there.
 
-# If the following line is not empty, it specifies the value of $(MAKE)
-# to use when invoking make recursively.
-@SET_MAKE@
-
 # Debugging and optimization options for the C compiler.
 CFLAGS = @CFLAGS@
 

@@ -18,9 +18,6 @@ AC_PROG_CC
 dnl# Set @INSTALL@ to "/usr/bin/install -c", at least on cygwin.
 AC_PROG_INSTALL
 
-dnl# If $MAKE is set, propagate that via @SET_MAKE@.
-AC_PROG_MAKE_SET
-
 dnl# When config.status is invoked (which happens implicitly at the end
 dnl# of 'configure'), create Makefile by substituting variables.
 AC_OUTPUT(config.mk)
