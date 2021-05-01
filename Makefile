@@ -202,21 +202,13 @@ tags: $(SOURCES)
 TAGS: $(SOURCES)
 	etags $(SOURCES)
 
-mostlyclean:
-	rm -f a.out *.bak core errs scan.tmp
-
-clean: mostlyclean
+clean:
 	rm -f $(FLEX) *.o lex.yy.c lex.yy.cc \
 		config.log config.cache
 	$(MAKE) -C test clean
 
 distclean: clean
 	rm -f .bootstrap scan.c tags TAGS config.mk config.status
-
-maintainer-clean: distclean
-	@echo "This command is intended for maintainers to use;"
-	@echo "it deletes files that may require special tools to rebuild."
-	rm -f skel.c flex*.tar.gz flex*.tar.Z
 
 # Create a source tarball for distribution.
 dist: $(FLEX) $(DISTFILES) parse.c parse.h
