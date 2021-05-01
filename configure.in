@@ -12,6 +12,15 @@ dnl# "obsolete" usage.
 dnl#
 AC_INIT(initscan.c)
 
+# Check that we are not using --srcdir, nor invoking 'configure' from
+# someplace other than the directory where it lives.
+if test "x$srcdir" != "x."; then
+  echo "The specified srcdir, \"$srcdir\", is not \".\"."
+  echo "This build system requires that it be built from within "
+  echo "its source tree, so srcdir must be \".\"."
+  exit 2
+fi
+
 dnl# Set @CC@ to "gcc", usually.
 AC_PROG_CC
 

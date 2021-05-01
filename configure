@@ -1738,6 +1738,15 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+# Check that we are not using --srcdir, nor invoking 'configure' from
+# someplace other than the directory where it lives.
+if test "x$srcdir" != "x."; then
+  echo "The specified srcdir, \"$srcdir\", is not \".\"."
+  echo "This build system requires that it be built from within "
+  echo "its source tree, so srcdir must be \".\"."
+  exit 2
+fi
+
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
