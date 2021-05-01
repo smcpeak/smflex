@@ -329,11 +329,6 @@ void check_options()
 
 		outn( "" );
 		}
-
-	if ( did_outfilename )
-		line_directive_out( scanner_c_file, 0 );
-
-	skelout();
 	}
 
 
@@ -925,6 +920,13 @@ _( "Variable trailing context rules entail a large performance penalty\n" ) );
 			flexerror(
 	_( "variable trailing context rules cannot be used with -f or -F" ) );
 		}
+
+	/* Begin writing the primary output file. */
+	if ( did_outfilename )
+		line_directive_out( scanner_c_file, 0 );
+
+	/* Copy the first chunk from the skeleton. */
+	skelout();
 
 	if ( reject )
 		outn( "\n#define YY_USES_REJECT" );
