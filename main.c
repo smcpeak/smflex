@@ -644,9 +644,6 @@ char **argv;
 					backing_up_report = true;
 					break;
 
-				case 'c':
-					break;
-
 				case 'C':
 					if ( i != 1 )
 						flexerror(
@@ -730,12 +727,6 @@ char **argv;
 
 				case 'L':
 					gen_line_dirs = false;
-					break;
-
-				case 'n':
-					/* Stupid do-nothing deprecated
-					 * option.
-					 */
 					break;
 
 				case 'o':
@@ -1110,13 +1101,11 @@ _( "%s [-bcdfhilnpstvwBFILTV78+? -C[aefFmr] -ooutput -Pprefix -Sskeleton]\n" ),
 
 	fprintf( f, _( "\t-b  generate backing-up information to %s\n" ),
 		backing_name );
-	fprintf( f, _( "\t-c  do-nothing POSIX option\n" ) );
 	fprintf( f, _( "\t-d  turn on debug mode in generated scanner\n" ) );
 	fprintf( f, _( "\t-f  generate fast, large scanner\n" ) );
 	fprintf( f, _( "\t-h  produce this help message\n" ) );
 	fprintf( f, _( "\t-i  generate case-insensitive scanner\n" ) );
 	fprintf( f, _( "\t-l  maximal compatibility with original lex\n" ) );
-	fprintf( f, _( "\t-n  do-nothing POSIX option\n" ) );
 	fprintf( f, _( "\t-p  generate performance report to stderr\n" ) );
 	fprintf( f,
 		_( "\t-s  suppress default rule to ECHO unmatched text\n" ) );

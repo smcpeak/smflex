@@ -1892,10 +1892,6 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     last cycle out of their scanners need worry about this option. (See the
     section <a href="#performance-considerations">Performance Considerations</a>.)
 
-<dt><code>-c</code>
-
-<dd><p>is a do-nothing, deprecated option included for POSIX compliance.
-
 <dt><code>-d</code>
 
 <dd><p>makes the generated scanner run in <em>debug</em> mode. Whenever
@@ -1945,11 +1941,6 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     <a href="#incompatibilities-with-lex-and-posix">Incompatibilities
     With Lex And POSIX</a>. This option also results in the name
     <code>YY_FLEX_LEX_COMPAT</code> being #define'd in the generated scanner.
-
-<dt><code>-n</code>
-
-<dd><p>is another do-nothing, deprecated option included only for POSIX
-    compliance.
 
 <dt><code>-p</code>
 
@@ -3063,8 +3054,17 @@ the incompatibilities.
 
     </ul>
 
-</ul>
+<li><p><code>flex-2.5.4</code> accepted and ignored the <code>-c</code>
+    and <code>-n</code> command line options.  They are no longer
+    accepted.
 
+    <p>Rationale: The original behavior was for compatibility with
+    POSIX, which I do not care about, and I want to remove
+    anything unnecessary in order to ease further maintenance.
+
+    <p>Replacement: Do not pass these options.
+
+</ul>
 
 <h1 id="incompatibilities-with-lex-and-posix">INCOMPATIBILITIES WITH LEX AND POSIX</h1>
 
