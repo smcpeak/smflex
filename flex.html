@@ -395,8 +395,8 @@ by a line with just <code>%%</code> in it:
 
 <p>The <em>definitions</em> section contains declarations of simple
 <em>name</em> definitions to simplify the scanner specification, and
-declarations of <em>start conditions</em>, which are explained in a
-later section.
+declarations of <em>start conditions</em>, which are explained in the
+<a href="#start-conditions">Start Conditions</a> section.
 
 <p>Name definitions have the form:
 
@@ -539,7 +539,7 @@ expressions. These are:
 
 
     &lt;s&gt;r       an r, but only in start condition s (see
-                 below for discussion of start conditions)
+                 <a href="#start-conditions">Start Conditions</a>)
     &lt;s1,s2,s3&gt;r
                same, but in any of start conditions s1,
                  s2, or s3
@@ -800,9 +800,9 @@ an action:
 
 <li><p><code>ECHO</code> copies yytext to the scanner's output.
 
-<li><p><code>BEGIN</code> followed by the name of a start condition
-    places the scanner in the corresponding start condition (see
-    below).
+<li><p><code>BEGIN</code> followed by the name of a
+    <a href="#start-conditions">start condition</a>
+    places the scanner in the corresponding start condition.
 
 <li><p><code>REJECT</code>
     directs the scanner to proceed on to the "second best" rule which
@@ -1035,7 +1035,7 @@ of scanning. It can also be used to throw away the current input
 buffer, by calling it with an argument of <code>yyin</code>; but
 better is to use <code>YY_FLUSH_BUFFER</code> (see above). Note that
 <code>yyrestart()</code> does <em>not</em> reset the start condition to
-<code>INITIAL</code> (see Start Conditions, below).
+<code>INITIAL</code> (see <a href="#start-conditions">Start Conditions</a>).
 
 <p>If <code>yylex()</code> stops scanning due to executing a
 <code>return</code> statement in one of the actions, the scanner may
@@ -2272,7 +2272,8 @@ number are equivalent to flex flags or their negation:
 
 <dt><code>stack</code></dt>
 
-<dd><p>enables the use of start condition stacks (see Start Conditions above).
+<dd><p>enables the use of start condition stacks
+    (see <a href="#start-conditions">Start Conditions</a>).
 </dd>
 
 <dt><code>stdinit</code></dt>
