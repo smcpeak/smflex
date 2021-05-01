@@ -60,6 +60,7 @@ FILE *skelfile = NULL;
 int skel_ind = 0;
 char *action_array;
 int action_size, defs1_offset, prolog_offset, action_offset, action_index;
+FILE *scanner_c_file = NULL;
 char *infilename = NULL, *outfilename = NULL;
 int did_outfilename;
 char *prefix, *yyclass;
@@ -264,10 +265,8 @@ void check_options()
 			}
 		}
 
-	/* Reopen stdout to the C output file. */
+	/* Open the C output file. */
 		{
-		FILE *prev_stdout;
-
 		if ( ! did_outfilename )
 			{
 			char *suffix;
@@ -283,9 +282,9 @@ void check_options()
 			outfilename = outfile_path;
 			}
 
-		prev_stdout = freopen( outfilename, "w", stdout );
+		scanner_c_file = fopen( outfilename, "w" );
 
-		if ( prev_stdout == NULL )
+		if ( scanner_c_file == NULL )
 			lerrsf( _( "could not create %s" ), outfilename );
 
 		outfile_created = 1;
@@ -328,7 +327,7 @@ void check_options()
 		}
 
 	if ( did_outfilename )
-		line_directive_out( stdout, 0 );
+		line_directive_out( scanner_c_file, 0 );
 
 	skelout();
 	}
@@ -360,11 +359,11 @@ int exit_status;
 
 	if ( exit_status != 0 && outfile_created )
 		{
-		if ( ferror( stdout ) )
+		if ( ferror( scanner_c_file ) )
 			lerrsf( _( "error writing output file %s" ),
 				outfilename );
 
-		else if ( fclose( stdout ) )
+		else if ( fclose( scanner_c_file ) )
 			lerrsf( _( "error closing output file %s" ),
 				outfilename );
 

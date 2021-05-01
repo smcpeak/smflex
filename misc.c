@@ -415,7 +415,7 @@ int do_infile;
 		sprintf( directive, line_fmt, linenum, filename );
 	else
 		{
-		if ( output_file == stdout )
+		if ( output_file == scanner_c_file )
 			/* Account for the line directive itself. */
 			++out_linenum;
 
@@ -622,34 +622,41 @@ Char str[];
 void out( str )
 const char str[];
 	{
-	fputs( str, stdout );
+	fputs( str, scanner_c_file );
 	out_line_count( str );
 	}
 
+/* Write to 'scanner_c_file' a string formed from the format string 'fmt',
+ * which must contain exactly "%d" within it, and the given integer 'n'.
+ * Also increment 'out_linenum' according to the number of newlines that
+ * are printed. */
 void out_dec( fmt, n )
 const char fmt[];
 int n;
 	{
-	printf( fmt, n );
+	fprintf( scanner_c_file, fmt, n );
 	out_line_count( fmt );
 	}
 
+/* Like 'out_dec', but for two integers. */
 void out_dec2( fmt, n1, n2 )
 const char fmt[];
 int n1, n2;
 	{
-	printf( fmt, n1, n2 );
+	fprintf( scanner_c_file, fmt, n1, n2 );
 	out_line_count( fmt );
 	}
 
+/* Like 'out_dec', but with hexadecimal formatting. */
 void out_hex( fmt, x )
 const char fmt[];
 unsigned int x;
 	{
-	printf( fmt, x );
+	fprintf( scanner_c_file, fmt, x );
 	out_line_count( fmt );
 	}
 
+/* Increment 'out_linenum' once for every newline in 'str'. */
 void out_line_count( str )
 const char str[];
 	{
@@ -660,29 +667,32 @@ const char str[];
 			++out_linenum;
 	}
 
+/* Like 'out_dec', but for one string. */
 void out_str( fmt, str )
 const char fmt[], str[];
 	{
-	printf( fmt, str );
+	fprintf( scanner_c_file, fmt, str );
 	out_line_count( fmt );
 	out_line_count( str );
 	}
 
+/* Like 'out_dec', but for three strings. */
 void out_str3( fmt, s1, s2, s3 )
 const char fmt[], s1[], s2[], s3[];
 	{
-	printf( fmt, s1, s2, s3 );
+	fprintf( scanner_c_file, fmt, s1, s2, s3 );
 	out_line_count( fmt );
 	out_line_count( s1 );
 	out_line_count( s2 );
 	out_line_count( s3 );
 	}
 
+/* Like 'out_dec', but for one string and one integer. */
 void out_str_dec( fmt, str, n )
 const char fmt[], str[];
 int n;
 	{
-	printf( fmt, str, n );
+	fprintf( scanner_c_file, fmt, str, n );
 	out_line_count( fmt );
 	out_line_count( str );
 	}
@@ -690,16 +700,18 @@ int n;
 void outc( c )
 int c;
 	{
-	putc( c, stdout );
+	fputc( c, scanner_c_file );
 
 	if ( c == '\n' )
 		++out_linenum;
 	}
 
+/* Write 'std' to 'scanner_c_file', followed by a newline. */
 void outn( str )
 const char str[];
 	{
-	puts( str );
+	fputs( str, scanner_c_file );
+	fputc( '\n', scanner_c_file );
 	out_line_count( str );
 	++out_linenum;
 	}
@@ -771,7 +783,7 @@ size_t element_size;
 /* skelout - write out one section of the skeleton file
  *
  * Description
- *    Copies skelfile or skel array to stdout until a line beginning with
+ *    Copies skelfile or skel array to scanner_c_file until a line beginning with
  *    "%%" or EOF is found.
  */
 void skelout()

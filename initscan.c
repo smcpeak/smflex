@@ -2694,7 +2694,7 @@ YY_RULE_SETUP
 case 162:
 YY_RULE_SETUP
 #line 642 "scan.l"
-ECHO;
+out( yytext );   /* Copy section 3 to output. */
 	YY_BREAK
 case YY_STATE_EOF(SECT3):
 #line 643 "scan.l"

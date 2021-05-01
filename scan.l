@@ -639,7 +639,7 @@ LEXOPT		[aceknopr]
 
 
 <SECT3>{
-	.*(\n?)		ECHO;
+	.*(\n?)		out( yytext );   /* Copy section 3 to output. */
 	<<EOF>>		sectnum = 0; yyterminate();
 }
 

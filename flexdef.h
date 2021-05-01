@@ -28,7 +28,7 @@
 
 /* @(#) $Header$ (LBL) */
 
-#include <stdio.h>
+#include <stdio.h>                     /* FILE, etc. */
 #include <ctype.h>
 #include <stddef.h>                    /* size_t */
 #include <string.h>                    /* strcpy, etc. */
@@ -411,6 +411,8 @@ extern char *action_array;
 extern int action_size;
 extern int defs1_offset, prolog_offset, action_offset, action_index;
 
+/* The file to which we are writing the C or C++ scanner implementation. */
+extern FILE *scanner_c_file;
 
 /* Variables for stack of states having only one out-transition:
  * onestate - state number
