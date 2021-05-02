@@ -1311,7 +1311,7 @@ char *yytext;
 #define OPTION 17
 #define LINEDIR 18
 
-#line 1061 "input-scan.lex.c"
+#line 1315 "input-scan.lex.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -1466,7 +1466,7 @@ YY_DECL
   Char nmdef[MAXLINE], myesc();
 
 
-#line 1093 "input-scan.lex.c"
+#line 1470 "input-scan.lex.c"
 
   if (yy_init) {
     yy_init = 0;
@@ -2681,7 +2681,7 @@ YY_RULE_SETUP
 #line 640 "input-scan.lex"
 YY_FATAL_ERROR( "flex scanner jammed" );
   YY_BREAK
-#line 2263 "input-scan.lex.c"
+#line 2685 "input-scan.lex.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(SECT2):
 case YY_STATE_EOF(CODEBLOCK):

@@ -1433,7 +1433,10 @@ void make_tables()
 
 
 /* Write 'line' and a newline to 'fp', except if it contains any
- * occurrences of "yyFlexLexer", replace the "yy" part with 'prefix'. */
+ * occurrences of "yyFlexLexer", replace the "yy" part with 'prefix'.
+ *
+ * NOTE: This does not increment 'out_linenum'.  If 'fp' is the
+ * generated scanner file, the caller must do the increment. */
 void emit_with_class_name_substitution(FILE * fp, char const *line)
 {
   /* Look for the default class name so we can change it. */
@@ -1441,8 +1444,8 @@ void emit_with_class_name_substitution(FILE * fp, char const *line)
   while ((yyFlexLexer = strstr(line, "yyFlexLexer")) != NULL) {
     /* Replace the "yy" in 'yyFlexLexer' with 'prefix'.  By default,
      * 'prefix' is "yy", but we still use the general mechanism. */
-    fprintf(fp, "%.*s%s", (int) (yyFlexLexer - line), line,     /* up to "yy" */
-            prefix);            /* replacement */
+    fprintf(fp, "%.*s%s", (int) (yyFlexLexer - line), line,  /* up to "yy" */
+            prefix);                                         /* replacement */
 
     /* Resume after the "yy". */
     line = yyFlexLexer + 2;

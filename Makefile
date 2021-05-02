@@ -94,6 +94,23 @@ check: $(FLEX)
 	@#
 	if grep scan.tmp input-scan.lex.c; then false; else true; fi
 	@#
+	@# Check that the #line directives referring to itself are right.
+	@# First, get a report comparing actual line numbers (column 1)
+	@# to claimed line numbers (column 3).  For 'nl', the -v2 switch
+	@# says to start numbering with 2, which accounts for the fact
+	@# that a #line directive gives the line number of the following
+	@# line.  The -ba switch says to number all lines, whereas the
+	@# default skips blank lines.
+	@#
+	nl -v2 -ba input-scan.lex.c | grep '#line .*input-scan.lex.c' \
+	  > $(OBJ)/line-report.txt
+	@#
+	@# Now, compare the two columns.
+	@#
+	awk '{ print $$1 }' $(OBJ)/line-report.txt > $(OBJ)/col1.txt
+	awk '{ print $$3 }' $(OBJ)/line-report.txt > $(OBJ)/col3.txt
+	diff $(OBJ)/col1.txt $(OBJ)/col3.txt
+	@#
 	@# Run the tests in test/.
 	@#
 	$(MAKE) -C test CC=$(CC)
