@@ -2,6 +2,9 @@
 
 # NOTE: This Makefile requires GNU make.
 
+# Default target.
+all:
+
 # Pull in the configure-generated settings.
 ifeq ($(wildcard config.mk),)
   $(error config.mk does not exist.  Please run ./configure first.)
@@ -23,9 +26,6 @@ CFLAGS += -Wall
 # Now optionally pull in local customizations via personal.mk.  Those
 # can override settings above or from config.mk.
 -include personal.mk
-
-# Default target.
-all: $(FLEX)
 
 # Turn off default rules.  (One reason this is important is there is
 # a default rule for running bison, but I want to ensure bison only
@@ -81,6 +81,7 @@ COMPRESSION =
 
 
 # Link the final flex executable.
+all: $(FLEX)
 $(FLEX): .bootstrap $(OBJECTS)
 	$(CC) $(CFLAGS) -o $(FLEX) $(LDFLAGS) $(OBJECTS) $(LIBS)
 
