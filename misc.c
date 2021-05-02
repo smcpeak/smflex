@@ -36,6 +36,8 @@
 
 #include "flexdef.h"
 
+#include <ctype.h>                     /* islower, isupper, etc. */
+
 
 /* Add a #define to the action file. */
 void action_define(char *defname, int value)

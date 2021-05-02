@@ -32,7 +32,6 @@
 #include "flexchar.h"           /* Char */
 
 #include <stdio.h>              /* FILE, etc. */
-#include <ctype.h>
 #include <stddef.h>             /* size_t */
 #include <string.h>             /* strcpy, etc. */
 #include <stdlib.h>             /* malloc, etc. */

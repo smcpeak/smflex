@@ -47,6 +47,8 @@
 
 #include "flexdef.h"
 
+#include <ctype.h>                     /* isalnum, isalpha, etc. */
+
 
 int pat, scnum, eps, headcnt, trailcnt, anyccl, lastchar, i, rulelen;
 int trlcontxt, xcluflg, currccl, cclsorted, varlength, variable_trail_rule;
