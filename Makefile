@@ -52,16 +52,16 @@ SOURCES = ccl.c dfa.c ecs.c gen.c header.skl.c main.c misc.c nfa.c input-parse.y
 
 # Object files to compile and link into 'flex'.
 OBJECTS = ccl.o dfa.o ecs.o gen.o header.skl.o main.o misc.o nfa.o input-parse.tab.o \
-          scan.o scanner.skl.o sym.o tblcmp.o yylex.o
+          input-scan.lex.o scanner.skl.o sym.o tblcmp.o yylex.o
 
 # Complete set of files and directories to be included in the
-# distribution tarball, except that 'scan.c' gets renamed to
+# distribution tarball, except that 'input-scan.lex.c' gets renamed to
 # 'initscan.c' during the packaging process, and a few things
 # in 'test' get removed.
 DISTFILES = README.md NEWS COPYING \
             configure.in Makefile config.mk.in encode.sh scanner.skl \
             $(HEADERS) $(SOURCES) \
-            flex.html scan.c install.sh mkinstalldirs configure \
+            flex.html input-scan.lex.c install.sh mkinstalldirs configure \
             test \
             input-parse.tab.c input-parse.tab.h
 
@@ -78,7 +78,7 @@ FLEX_EXEC = ./$(FLEX)
 PERF_REPORT = -p
 FLEX_FLAGS = $(PERF_REPORT)
 
-# Default compression to use when generating scan.c.  This is overridden
+# Default compression to use when generating input-scan.lex.c.  This is overridden
 # by the 'bigcheck' target.  Empty means none.
 COMPRESSION =
 
@@ -88,14 +88,14 @@ all: $(FLEX)
 $(FLEX): .bootstrap $(OBJECTS)
 	$(CC) $(CFLAGS) -o $(FLEX) $(LDFLAGS) $(OBJECTS) $(LIBS)
 
-# This creates the initial scan.c from initscan.c.  The latter is
+# This creates the initial input-scan.lex.c from initscan.c.  The latter is
 # checked in to the repo so one does not need to have flex already
 # in order to build it.  But once the bootstrap is done, indicated
-# by the presence of the .bootstrap file, we let scan.c continue to
+# by the presence of the .bootstrap file, we let input-scan.lex.c continue to
 # evolve as flex itself changes.
 .bootstrap: initscan.c
-	rm -f scan.c
-	cp initscan.c scan.c
+	rm -f input-scan.lex.c
+	cp initscan.c input-scan.lex.c
 	touch .bootstrap
 
 
@@ -103,9 +103,9 @@ $(FLEX): .bootstrap $(OBJECTS)
 test: check
 check: $(FLEX)
 	@#
-	@# Make sure I do not have "scan.tmp" in scan.c.
+	@# Make sure I do not have "scan.tmp" in input-scan.lex.c.
 	@#
-	if grep scan.tmp scan.c; then false; else true; fi
+	if grep scan.tmp input-scan.lex.c; then false; else true; fi
 	if grep scan.tmp initscan.c; then false; else true; fi
 	@#
 	@# Run the tests in test/.
@@ -119,21 +119,21 @@ check: $(FLEX)
 	@#
 	@# Fix the file names in #line directives so they match.
 	@#
-	sed -e 's,"scan.tmp.c","scan.c",' < scan.tmp.c > scan.actual.c
+	sed -e 's,"scan.tmp.c","input-scan.lex.c",' < scan.tmp.c > scan.actual.c
 	@#
 	@# This comparison does not ignore whitespace since the
 	@# default is for flex to always use LF line endings, even
 	@# on Windows.
 	@#
-	diff scan.c scan.actual.c
+	diff input-scan.lex.c scan.actual.c
 	rm scan.actual.c scan.tmp.c
 	@echo "Check successful, using COMPRESSION=\"$(COMPRESSION)\""
 
 # With various compression modes:
 #
-#   1. Regenerate scan.c with that compression mode.
-#   2. Recompile flex with the new scan.c.
-#   3. Run the new flex to make scan.c again, with the same compression
+#   1. Regenerate input-scan.lex.c with that compression mode.
+#   2. Recompile flex with the new input-scan.lex.c.
+#   3. Run the new flex to make input-scan.lex.c again, with the same compression
 #      mode.
 #   4. Check that the second output agrees with the first.
 #
@@ -142,14 +142,14 @@ check: $(FLEX)
 # the same output.
 #
 bigcheck:
-	rm -f scan.c ; $(MAKE) COMPRESSION="-C" check
-	rm -f scan.c ; $(MAKE) COMPRESSION="-Ce" check
-	rm -f scan.c ; $(MAKE) COMPRESSION="-Cm" check
-	rm -f scan.c ; $(MAKE) COMPRESSION="-f" check
-	rm -f scan.c ; $(MAKE) COMPRESSION="-Cfea" check
-	rm -f scan.c ; $(MAKE) COMPRESSION="-CFer" check
-	rm -f scan.c ; $(MAKE) COMPRESSION="-l" PERF_REPORT="" check
-	rm -f scan.c ; $(MAKE)
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-C" check
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-Ce" check
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-Cm" check
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-f" check
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-Cfea" check
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-CFer" check
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-l" PERF_REPORT="" check
+	rm -f input-scan.lex.c ; $(MAKE)
 	@echo "All checks successful"
 
 # Install to the chosen --prefix.
@@ -174,7 +174,7 @@ clean:
 	$(MAKE) -C test clean
 
 distclean: clean
-	rm -f .bootstrap scan.c tags TAGS config.mk config.status
+	rm -f .bootstrap input-scan.lex.c tags TAGS config.mk config.status
 
 # Create a source tarball for distribution.
 dist: $(FLEX) $(DISTFILES) input-parse.tab.c input-parse.tab.h
@@ -189,7 +189,7 @@ dist2:
 	tar cf - $(DISTFILES) | (cd $(DIST_NAME) && tar xfB -)
 	rm -r $(DIST_NAME)/test/out
 	rm $(DIST_NAME)/test/.gitignore
-	mv $(DIST_NAME)/scan.c $(DIST_NAME)/initscan.c
+	mv $(DIST_NAME)/input-scan.lex.c $(DIST_NAME)/initscan.c
 	tar chf $(DIST_NAME).tar $(DIST_NAME)
 	gzip <$(DIST_NAME).tar >$(DIST_NAME).tar.gz
 	rm $(DIST_NAME).tar
@@ -250,11 +250,11 @@ input-parse.tab.c: input-parse.y
 # makes 'input-parse.tab.h'.
 input-parse.tab.h: input-parse.tab.c
 
-# scan.c is the output of running flex on 'input-scan.lex'.  It is used by
-# flex to read it input file.  Hence, flex is partially written in
-# its own language.  See the .bootstrap target.
-scan.c: input-scan.lex
-	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.c input-scan.lex
+# 'input-scan.lex.c' is the output of running flex on 'input-scan.lex'.
+# It is used by flex to read it input file.  Hence, flex is partially
+# written in its own language.  See the .bootstrap target.
+input-scan.lex.c: input-scan.lex
+	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) input-scan.lex
 
 # 'scanner.skl.c' contains the contents of 'scanner.skl' as a C string.
 scanner.skl.c: scanner.skl encode.sh

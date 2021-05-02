@@ -7,4 +7,4 @@ config.log
 config.mk
 config.status
 personal.mk
-scan.c
+input-scan.lex.c
