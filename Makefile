@@ -42,9 +42,9 @@ GENDEPS = -MMD
 # Pull in generated dependencies.
 include $(wildcard *.d)
 
-# Headers to include in the distribution, minus FlexLexer.h for some
-# reason.
-HEADERS = flexdef.h version.h
+# Headers to include in the distribution.
+HEADERS = ccl.h dfa.h ecs.h flexchar.h flexdef.h FlexLexer.h gen.h \
+          main.h misc.h nfa.h parse.h sym.h tblcmp.h version.h yylex.h
 
 # Sources to include in the distribution, and also on which to run tags.
 SOURCES = ccl.c dfa.c ecs.c gen.c header.c main.c misc.c nfa.c parse.y \
@@ -58,7 +58,7 @@ OBJECTS = ccl.o dfa.o ecs.o gen.o header.o main.o misc.o nfa.o parse.o \
 # distribution tarball, except that 'scan.c' gets renamed to
 # 'initscan.c' during the packaging process, and a few things
 # in 'test' get removed.
-DISTFILES = README.md NEWS COPYING FlexLexer.h \
+DISTFILES = README.md NEWS COPYING \
 	configure.in Makefile config.mk.in mkskel.sh flex.skl \
 	$(HEADERS) $(SOURCES) \
 	flex.html scan.c install.sh mkinstalldirs configure \
