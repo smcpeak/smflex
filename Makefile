@@ -21,7 +21,10 @@ SHELL = /bin/sh
 YACC = bison -y
 
 # Enable all GCC warnings.
-CFLAGS += -Wall
+WARNINGS = -Wall
+
+# Flag to enable dependency generation to .d files.
+GENDEPS = -MMD
 
 # Now optionally pull in local customizations via personal.mk.  Those
 # can override settings above or from config.mk.
@@ -32,12 +35,12 @@ CFLAGS += -Wall
 # runs when specifically requested.)
 .SUFFIXES:
 
-# Enable the following rule.
-.SUFFIXES: .c .o
-
 # Rule for compiling one C source file.
-.c.o:
-	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
+%.o: %.c
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) $(WARNINGS) $(GENDEPS) $<
+
+# Pull in generated dependencies.
+include $(wildcard *.d)
 
 # Headers to include in the distribution, minus FlexLexer.h for some
 # reason.
@@ -130,20 +133,6 @@ skel.c: flex.skl mkskel.sh
 header.c: FlexLexer.h mkskel.sh
 	$(SHELL) mkskel.sh FlexLexer.h header.c header_contents
 
-# Compile-time dependencies.
-scan.o: scan.c parse.h flexdef.h
-yylex.o: yylex.c parse.h flexdef.h
-main.o: main.c flexdef.h version.h
-ccl.o: ccl.c flexdef.h
-dfa.o: dfa.c flexdef.h
-ecs.o: ecs.c flexdef.h
-gen.o: gen.c flexdef.h
-misc.o: misc.c flexdef.h
-nfa.o: nfa.c flexdef.h
-parse.o: parse.c flexdef.h
-sym.o: sym.c flexdef.h
-tblcmp.o: tblcmp.c flexdef.h
-
 # Main set of automated tests.
 test: check
 check: $(FLEX)
@@ -210,7 +199,7 @@ TAGS: $(SOURCES)
 	etags $(SOURCES)
 
 clean:
-	rm -f $(FLEX) *.o lex.yy.c lex.yy.cc \
+	rm -f $(FLEX) *.d *.o lex.yy.c lex.yy.cc \
 		config.log config.cache
 	$(MAKE) -C test clean
 
