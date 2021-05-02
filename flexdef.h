@@ -128,52 +128,6 @@
 #define ONE_STACK_SIZE 500      /* stack of states with only one out-transition */
 #define SAME_TRANS -1           /* transition is the same as "default" entry for state */
 
-/* The following percentages are used to tune table compression:
-
- * The percentage the number of out-transitions a state must be of the
- * number of equivalence classes in order to be considered for table
- * compaction by using protos.
- */
-#define PROTO_SIZE_PERCENTAGE 15
-
-/* The percentage the number of homogeneous out-transitions of a state
- * must be of the number of total out-transitions of the state in order
- * that the state's transition table is first compared with a potential
- * template of the most common out-transition instead of with the first
- * proto in the proto queue.
- */
-#define CHECK_COM_PERCENTAGE 50
-
-/* The percentage the number of differences between a state's transition
- * table and the proto it was first compared with must be of the total
- * number of out-transitions of the state in order to keep the first
- * proto as a good match and not search any further.
- */
-#define FIRST_MATCH_DIFF_PERCENTAGE 10
-
-/* The percentage the number of differences between a state's transition
- * table and the most similar proto must be of the state's total number
- * of out-transitions to use the proto as an acceptable close match.
- */
-#define ACCEPTABLE_DIFF_PERCENTAGE 50
-
-/* The percentage the number of homogeneous out-transitions of a state
- * must be of the number of total out-transitions of the state in order
- * to consider making a template from the state.
- */
-#define TEMPLATE_SAME_PERCENTAGE 60
-
-/* The percentage the number of differences between a state's transition
- * table and the most similar proto must be of the state's total number
- * of out-transitions to create a new proto from the state.
- */
-#define NEW_PROTO_DIFF_PERCENTAGE 20
-
-/* The percentage the total number of out-transitions of a state must be
- * of the number of equivalence classes in order to consider trying to
- * fit the transition table into "holes" inside the nxt/chk table.
- */
-#define INTERIOR_FIT_PERCENTAGE 15
 
 /* Size of region set aside to cache the complete transition table of
  * protos on the proto queue to enable quick comparisons.
@@ -181,27 +135,6 @@
 #define PROT_SAVE_SIZE 2000
 
 #define MSP 50                  /* maximum number of saved protos (protos on the proto queue) */
-
-/* Maximum number of out-transitions a state can have that we'll rummage
- * around through the interior of the internal fast table looking for a
- * spot for it.
- */
-#define MAX_XTIONS_FULL_INTERIOR_FIT 4
-
-/* Maximum number of rules which will be reported as being associated
- * with a DFA state.
- */
-#define MAX_ASSOC_RULES 100
-
-/* Number that, if used to subscript an array, has a good chance of producing
- * an error; should be small enough to fit into a short.
- */
-#define BAD_SUBSCRIPT -32767
-
-/* Absolute value of largest number that can be stored in a short, with a
- * bit of slop thrown in for general paranoia.
- */
-#define MAX_SHORT 32700
 
 
 #endif /* FLEXDEF_H */

@@ -45,6 +45,12 @@
 #define ACTION_POSITION -2
 
 
+/* Absolute value of largest number that can be stored in a short, with a
+ * bit of slop thrown in for general paranoia.
+ */
+#define MAX_SHORT 32700
+
+
 static int indent_level = 0;    /* each level is 8 spaces */
 
 #define indent_up() (++indent_level)

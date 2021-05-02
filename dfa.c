@@ -41,6 +41,12 @@
 #define MAX_DFA_SIZE_INCREMENT 750
 
 
+/* Maximum number of rules which will be reported as being associated
+ * with a DFA state.
+ */
+#define MAX_ASSOC_RULES 100
+
+
 /* check_for_backing_up - check a DFA state for backing up
  *
  * synopsis

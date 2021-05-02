@@ -36,6 +36,60 @@
 #include <stddef.h>                    /* size_t */
 
 
+/* The following percentages are used to tune table compression:
+
+ * The percentage the number of out-transitions a state must be of the
+ * number of equivalence classes in order to be considered for table
+ * compaction by using protos.
+ */
+#define PROTO_SIZE_PERCENTAGE 15
+
+/* The percentage the number of homogeneous out-transitions of a state
+ * must be of the number of total out-transitions of the state in order
+ * that the state's transition table is first compared with a potential
+ * template of the most common out-transition instead of with the first
+ * proto in the proto queue.
+ */
+#define CHECK_COM_PERCENTAGE 50
+
+/* The percentage the number of differences between a state's transition
+ * table and the proto it was first compared with must be of the total
+ * number of out-transitions of the state in order to keep the first
+ * proto as a good match and not search any further.
+ */
+#define FIRST_MATCH_DIFF_PERCENTAGE 10
+
+/* The percentage the number of differences between a state's transition
+ * table and the most similar proto must be of the state's total number
+ * of out-transitions to use the proto as an acceptable close match.
+ */
+#define ACCEPTABLE_DIFF_PERCENTAGE 50
+
+/* The percentage the number of homogeneous out-transitions of a state
+ * must be of the number of total out-transitions of the state in order
+ * to consider making a template from the state.
+ */
+#define TEMPLATE_SAME_PERCENTAGE 60
+
+/* The percentage the number of differences between a state's transition
+ * table and the most similar proto must be of the state's total number
+ * of out-transitions to create a new proto from the state.
+ */
+#define NEW_PROTO_DIFF_PERCENTAGE 20
+
+/* The percentage the total number of out-transitions of a state must be
+ * of the number of equivalence classes in order to consider trying to
+ * fit the transition table into "holes" inside the nxt/chk table.
+ */
+#define INTERIOR_FIT_PERCENTAGE 15
+
+/* Maximum number of out-transitions a state can have that we'll rummage
+ * around through the interior of the internal fast table looking for a
+ * spot for it.
+ */
+#define MAX_XTIONS_FULL_INTERIOR_FIT 4
+
+
 /* bldtbl - build table entries for dfa state
  *
  * synopsis

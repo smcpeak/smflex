@@ -65,6 +65,12 @@ char copyright[] =
 #define INITIAL_MAX_DFA_SIZE 750
 
 
+/* Number that, if used to subscript an array, has a good chance of producing
+ * an error; should be small enough to fit into a short.
+ */
+#define BAD_SUBSCRIPT -32767
+
+
 static char flex_version[] = FLEX_VERSION;
 
 
