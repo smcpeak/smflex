@@ -52,24 +52,43 @@ char copyright[] =
 static char flex_version[] = FLEX_VERSION;
 
 
-/* these globals are all defined and commented in flexdef.h */
+/* ----------- BEGIN: big block of globals ---------------- */
+/* These globals are all declared and documented in main.h. */
+
 int printstats, syntaxerror, eofseen, ddebug, trace, nowarn, spprdflt;
 int interactive, caseins, lex_compat, do_yylineno, useecs, fulltbl, usemecs;
 int fullspd, gen_line_dirs, performance_report, backing_up_report;
 int C_plus_plus, long_align, use_read, yytext_is_array, do_yywrap, csize;
 int yymore_used, reject, real_reject, continued_action, in_rule;
 int yymore_really_used, reject_really_used;
+
 int datapos, dataline, linenum, out_linenum;
 FILE *skelfile = NULL;
+/* placeholder: scanner_skl_contents */
 int scanner_skl_ind = 0;
-char *action_array;
-int action_size, defs1_offset, prolog_offset, action_offset, action_index;
-FILE *scanner_c_file = NULL;
-int write_native_line_endings;
+/* placeholder: header_skl_contents */
+/* placeholder: yyin */
+FILE *backing_up_file;
 char *infilename = NULL, *outfilename = NULL;
 int did_outfilename;
 char *prefix, *yyclass;
 int do_stdinit;
+char **input_files;
+int num_input_files;
+
+/* Make sure program_name is initialized so we don't crash if writing
+ * out an error message before getting the program name from argv[0].
+ */
+char *program_name = "flex";
+
+char *action_array;
+int action_size;
+int defs1_offset, prolog_offset, action_offset, action_index;
+
+FILE *scanner_c_file = NULL;
+
+int write_native_line_endings;
+
 int onestate[ONE_STACK_SIZE], onesym[ONE_STACK_SIZE];
 int onenext[ONE_STACK_SIZE], onedef[ONE_STACK_SIZE], onesp;
 
@@ -112,14 +131,8 @@ int sectnum, nummt, hshcol, dfaeql, numeps, eps2, num_reallocs;
 int tmpuses, totnst, peakpairs, numuniq, numdup, hshsave;
 int num_backing_up, bol_needed;
 
-FILE *backing_up_file;
-char **input_files;
-int num_input_files;
+/* ----------- END: big block of globals ---------------- */
 
-/* Make sure program_name is initialized so we don't crash if writing
- * out an error message before getting the program name from argv[0].
- */
-char *program_name = "flex";
 
 #ifndef SHORT_FILE_NAMES
 static char *outfile_template = "lex.%s.%s";

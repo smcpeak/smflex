@@ -17,6 +17,133 @@ void set_up_initial_allocations(void);
 void usage(void);
 
 
+/* Declarations for global variables. */
+
+/* Variables for flags:
+ * printstats - if true (-v), dump statistics
+ * syntaxerror - true if a syntax error has been found
+ * eofseen - true if we've seen an eof in the input file
+ * ddebug - if true (-d), make a "debug" scanner
+ * trace - if true (-T), trace processing
+ * nowarn - if true (-w), do not generate warnings
+ * spprdflt - if true (-s), suppress the default rule
+ * interactive - if true (-I), generate an interactive scanner
+ * caseins - if true (-i), generate a case-insensitive scanner
+ * lex_compat - if true (-l), maximize compatibility with AT&T lex
+ * do_yylineno - if true, generate code to maintain yylineno
+ * useecs - if true (-Ce flag), use equivalence classes
+ * fulltbl - if true (-Cf flag), don't compress the DFA state table
+ * usemecs - if true (-Cm flag), use meta-equivalence classes
+ * fullspd - if true (-F flag), use Jacobson method of table representation
+ * gen_line_dirs - if true (i.e., no -L flag), generate #line directives
+ * performance_report - if > 0 (i.e., -p flag), generate a report relating
+ *   to scanner performance; if > 1 (-p -p), report on minor performance
+ *   problems, too
+ * backing_up_report - if true (i.e., -b flag), generate "lex.backup" file
+ *   listing backing-up states
+ * C_plus_plus - if true (i.e., -+ flag), generate a C++ scanner class;
+ *   otherwise, a standard C scanner
+ * long_align - if true (-Ca flag), favor long-word alignment.
+ * use_read - if true (-f, -F, or -Cr) then use read() for scanner input;
+ *   otherwise, use fread().
+ * yytext_is_array - if true (i.e., %array directive), then declare
+ *   yytext as a array instead of a character pointer.  Nice and inefficient.
+ * do_yywrap - do yywrap() processing on EOF.  If false, EOF treated as
+ *   "no more files".
+ * csize - size of character set for the scanner we're generating;
+ *   128 for 7-bit chars and 256 for 8-bit
+ * yymore_used - if true, yymore() is used in input rules
+ * reject - if true, generate back-up tables for REJECT macro
+ * real_reject - if true, scanner really uses REJECT (as opposed to just
+ *   having "reject" set for variable trailing context)
+ * continued_action - true if this rule's action is to "fall through" to
+ *   the next rule's action (i.e., the '|' action)
+ * in_rule - true if we're inside an individual rule, false if not.
+ * yymore_really_used - whether to treat yymore() as really used, regardless
+ *   of what we think based on references to it in the user's actions.
+ * reject_really_used - same for REJECT
+ */
+
+extern int printstats, syntaxerror, eofseen, ddebug, trace, nowarn, spprdflt;
+extern int interactive, caseins, lex_compat, do_yylineno;
+extern int useecs, fulltbl, usemecs, fullspd;
+extern int gen_line_dirs, performance_report, backing_up_report;
+extern int C_plus_plus, long_align, use_read, yytext_is_array, do_yywrap;
+extern int csize;
+extern int yymore_used, reject, real_reject, continued_action, in_rule;
+extern int yymore_really_used, reject_really_used;
+
+
+/* Variables used in the flex input routines:
+ * datapos - characters on current output line
+ * dataline - number of contiguous lines of data in current data
+ *      statement.  Used to generate readable -f output
+ * linenum - current input line number
+ * out_linenum - current output line number
+ * skelfile - the skeleton file
+ * scanner_skl_contents - compiled-in skeleton array
+ * scanner_skl_ind - index into "scanner_skl_contents" array, if skelfile is nil
+ * header_skl_contents - contents of the header to emit
+ * yyin - input file
+ * backing_up_file - file to summarize backing-up states to
+ * infilename - name of input file
+ * outfilename - name of output file
+ * did_outfilename - whether outfilename was explicitly set
+ * prefix - the prefix used for externally visible names ("yy" by default)
+ * yyclass - yyFlexLexer subclass to use for YY_DECL
+ * do_stdinit - whether to initialize yyin/yyout to stdin/stdout
+ * input_files - array holding names of input files
+ * num_input_files - size of input_files array
+ * program_name - name with which program was invoked
+ *
+ * action_array - array to hold the rule actions
+ * action_size - size of action_array
+ * defs1_offset - index where the user's section 1 definitions start
+ *      in action_array
+ * prolog_offset - index where the prolog starts in action_array
+ * action_offset - index where the non-prolog starts in action_array
+ * action_index - index where the next action should go, with respect
+ *      to "action_array"
+ */
+
+extern int datapos, dataline, linenum, out_linenum;
+extern FILE *skelfile;
+extern const char *scanner_skl_contents[];     /* TODO: move */
+extern int scanner_skl_ind;
+extern char const *header_skl_contents[];      /* TODO: move */
+extern FILE *yyin;                             /* TODO: move */
+extern FILE *backing_up_file;
+extern char *infilename, *outfilename;
+extern int did_outfilename;
+extern char *prefix, *yyclass;
+extern int do_stdinit;
+extern char **input_files;
+extern int num_input_files;
+extern char *program_name;
+extern char *action_array;
+extern int action_size;
+extern int defs1_offset, prolog_offset, action_offset, action_index;
+
+
+/* The file to which we are writing the C or C++ scanner implementation. */
+extern FILE *scanner_c_file;
+
+/* If true, use platform-native line endings; otherwise LF only. */
+extern int write_native_line_endings;
+
+
+/* Variables for stack of states having only one out-transition:
+ * onestate - state number
+ * onesym - transition symbol
+ * onenext - target state
+ * onedef - default base entry
+ * onesp - stack pointer
+ */
+
+extern int onestate[ONE_STACK_SIZE], onesym[ONE_STACK_SIZE];
+extern int onenext[ONE_STACK_SIZE], onedef[ONE_STACK_SIZE], onesp;
+
+
 /* Variables for nfa machine data:
  * current_mns - current maximum on number of NFA states
  * num_rules - number of the last accepting state; also is number of
