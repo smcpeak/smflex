@@ -899,6 +899,10 @@ void readin()
     out_str("\n#include \"%s\"  /* Lexer class */\n",
             basename(header_file_name));
   }
+  else if (use_read) {
+    /* If using 'read', we need its declaration. */
+    out("\n#include <unistd.h>          /* read, needed for -Cr or -f option */");
+  }
 
   skelout();
 
