@@ -137,6 +137,11 @@ header.c: FlexLexer.h mkskel.sh
 test: check
 check: $(FLEX)
 	@#
+	@# How do I keep ending up with "scan.tmp.c" in scan.c?
+	@#
+	if grep scan.tmp.c scan.c; then false; else true; fi
+	if grep scan.tmp.c initscan.c; then false; else true; fi
+	@#
 	@# Run the tests in test/.
 	@#
 	$(MAKE) -C test CC=$(CC)
