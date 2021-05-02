@@ -35,6 +35,8 @@
 
 #include "flexdef.h"
 
+#include <stddef.h>                    /* size_t */
+
 
 /* bldtbl - build table entries for dfa state
  *
