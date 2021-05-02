@@ -1275,37 +1275,37 @@ char *yytext;
 #include "flexdef.h"
 #include "parse.h"
 
-#define ACTION_ECHO add_action( yytext )
+#define ACTION_ECHO add_action(yytext)
 #define ACTION_IFDEF(def, should_define) \
-	{ \
-	if ( should_define ) \
-		action_define( def, 1 ); \
-	}
+  { \
+    if (should_define) \
+      action_define(def, 1); \
+  }
 
 #define MARK_END_OF_PROLOG mark_prolog();
 
 #define YY_DECL \
-	int flexscan()
+  int flexscan()
 
 #define RETURNCHAR \
-	yylval = (unsigned char) yytext[0]; \
-	return CHAR;
+  yylval = (unsigned char) yytext[0]; \
+  return CHAR;
 
 #define RETURNNAME \
-	strcpy( nmstr, yytext ); \
-	return NAME;
+  strcpy( nmstr, yytext ); \
+  return NAME;
 
 #define PUT_BACK_STRING(str, start) \
-	for ( i = strlen( str ) - 1; i >= start; --i ) \
-		unput((str)[i])
+  for (i = strlen(str) - 1; i >= start; --i) \
+    unput((str)[i])
 
 #define CHECK_REJECT(str) \
-	if ( all_upper( str ) ) \
-		reject = true;
+  if (all_upper(str)) \
+    reject = true;
 
 #define CHECK_YYMORE(str) \
-	if ( all_lower( str ) ) \
-		yymore_used = true;
+  if (all_lower(str)) \
+    yymore_used = true;
 #define YY_STACK_USED 1
 #define YY_NO_TOP_STATE 1
 #define SECT2 1
@@ -1472,13 +1472,13 @@ YY_DECL
 
 #line 95 "scan.l"
 
-	static int bracelevel, didadef, indented_code;
-	static int doing_rule_action = false;
-	static int option_sense;
+  static int bracelevel, didadef, indented_code;
+  static int doing_rule_action = false;
+  static int option_sense;
 
-	int doing_codeblock = false;
-	int i;
-	Char nmdef[MAXLINE], myesc();
+  int doing_codeblock = false;
+  int i;
+  Char nmdef[MAXLINE], myesc();
 
 
 #line 1088 "scan.c"
@@ -1595,11 +1595,11 @@ case 6:
 YY_RULE_SETUP
 #line 111 "scan.l"
 {
-			++linenum;
-			line_directive_out( (FILE *) 0, 1 );
-			indented_code = false;
-			BEGIN(CODEBLOCK);
-			}
+                          ++ linenum;
+                          line_directive_out((FILE *) 0, 1);
+                          indented_code = false;
+                          BEGIN(CODEBLOCK);
+                        }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
@@ -1610,13 +1610,13 @@ case 8:
 YY_RULE_SETUP
 #line 120 "scan.l"
 {
-			sectnum = 2;
-			bracelevel = 0;
-			mark_defs1();
-			line_directive_out( (FILE *) 0, 1 );
-			BEGIN(SECT2PROLOG);
-			return SECTEND;
-			}
+                          sectnum = 2;
+                          bracelevel = 0;
+                          mark_defs1();
+                          line_directive_out((FILE *) 0, 1);
+                          BEGIN(SECT2PROLOG);
+                          return SECTEND;
+                        }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
@@ -1641,7 +1641,7 @@ YY_RULE_SETUP
 case 13:
 YY_RULE_SETUP
 #line 135 "scan.l"
-++linenum;	/* ignore */
+++linenum;      /* ignore */
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
@@ -1652,10 +1652,10 @@ case 15:
 YY_RULE_SETUP
 #line 139 "scan.l"
 {
-			strcpy( nmstr, yytext );
-			didadef = false;
-			BEGIN(PICKUPDEF);
-			}
+                          strcpy(nmstr, yytext);
+                          didadef = false;
+                          BEGIN(PICKUPDEF);
+                        }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
@@ -1710,10 +1710,10 @@ case 25:
 YY_RULE_SETUP
 #line 162 "scan.l"
 {
-			flex_free( (void *) infilename );
-			infilename = copy_string( yytext + 1 );
-			infilename[strlen( infilename ) - 1] = '\0';
-			}
+                          flex_free((void *) infilename);
+                          infilename = copy_string(yytext + 1);
+                          infilename[strlen(infilename) - 1] = '\0';
+                        }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
@@ -1736,11 +1736,11 @@ case 29:
 YY_RULE_SETUP
 #line 175 "scan.l"
 {
-			++linenum;
-			ACTION_ECHO;
-			if ( indented_code )
-				BEGIN(INITIAL);
-			}
+                          ++linenum;
+                          ACTION_ECHO;
+                          if (indented_code)
+                            BEGIN(INITIAL);
+                        }
 	YY_BREAK
 
 
@@ -1753,377 +1753,373 @@ case 31:
 YY_RULE_SETUP
 #line 187 "scan.l"
 {
-			strcpy( (char *) nmdef, yytext );
+                          strcpy((char *) nmdef, yytext);
 
-			/* Skip trailing whitespace. */
-			for ( i = strlen( (char *) nmdef ) - 1;
-			      i >= 0 && (nmdef[i] == ' ' || nmdef[i] == '\t');
-			      --i )
-				;
+                          /* Skip trailing whitespace. */
+                          for (i = strlen((char *) nmdef) - 1;
+                               i >= 0 && (nmdef[i] == ' ' || nmdef[i] == '\t'); --i);
 
-			nmdef[i + 1] = '\0';
+                          nmdef[i + 1] = '\0';
 
-			ndinstal( nmstr, nmdef );
-			didadef = true;
-			}
+                          ndinstal(nmstr, nmdef);
+                          didadef = true;
+                        }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 202 "scan.l"
+#line 200 "scan.l"
 {
-			if ( ! didadef )
-				synerr( _( "incomplete name definition" ) );
-			BEGIN(INITIAL);
-			++linenum;
-			}
+                          if (!didadef)
+                            synerr(_("incomplete name definition"));
+                          BEGIN(INITIAL);
+                          ++linenum;
+                        }
 	YY_BREAK
 
 
 case 33:
 YY_RULE_SETUP
-#line 212 "scan.l"
+#line 210 "scan.l"
 ++linenum; BEGIN(INITIAL);
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 213 "scan.l"
+#line 211 "scan.l"
 option_sense = true;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 215 "scan.l"
+#line 213 "scan.l"
 return '=';
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 217 "scan.l"
+#line 215 "scan.l"
 option_sense = ! option_sense;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 219 "scan.l"
+#line 217 "scan.l"
 csize = option_sense ? 128 : 256;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 220 "scan.l"
+#line 218 "scan.l"
 csize = option_sense ? 256 : 128;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 222 "scan.l"
+#line 220 "scan.l"
 long_align = option_sense;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 223 "scan.l"
+#line 221 "scan.l"
 {
-			action_define( "YY_ALWAYS_INTERACTIVE", option_sense );
-			}
+                          action_define( "YY_ALWAYS_INTERACTIVE", option_sense );
+                        }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 226 "scan.l"
+#line 224 "scan.l"
 yytext_is_array = option_sense;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 227 "scan.l"
+#line 225 "scan.l"
 backing_up_report = option_sense;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 228 "scan.l"
+#line 226 "scan.l"
 interactive = ! option_sense;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 229 "scan.l"
+#line 227 "scan.l"
 C_plus_plus = option_sense;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 230 "scan.l"
+#line 228 "scan.l"
 caseins = ! option_sense;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 231 "scan.l"
+#line 229 "scan.l"
 caseins = option_sense;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 232 "scan.l"
+#line 230 "scan.l"
 ddebug = option_sense;
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 233 "scan.l"
+#line 231 "scan.l"
 spprdflt = ! option_sense;
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 234 "scan.l"
+#line 232 "scan.l"
 useecs = option_sense;
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 235 "scan.l"
+#line 233 "scan.l"
 {
-			useecs = usemecs = false;
-			use_read = fullspd = true;
-			}
+                          useecs = usemecs = false;
+                          use_read = fullspd = true;
+                        }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 239 "scan.l"
+#line 237 "scan.l"
 {
-			useecs = usemecs = false;
-			use_read = fulltbl = true;
-			}
+                          useecs = usemecs = false;
+                          use_read = fulltbl = true;
+                        }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 243 "scan.l"
+#line 241 "scan.l"
 ACTION_IFDEF("YY_NO_INPUT", ! option_sense);
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 244 "scan.l"
+#line 242 "scan.l"
 interactive = option_sense;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 245 "scan.l"
+#line 243 "scan.l"
 lex_compat = option_sense;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 246 "scan.l"
+#line 244 "scan.l"
 {
-			action_define( "YY_MAIN", option_sense );
-			}
+                          action_define("YY_MAIN", option_sense);
+                        }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 249 "scan.l"
+#line 247 "scan.l"
 usemecs = option_sense;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 250 "scan.l"
+#line 248 "scan.l"
 {
-			action_define( "YY_NEVER_INTERACTIVE", option_sense );
-			}
+                          action_define("YY_NEVER_INTERACTIVE", option_sense);
+                        }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 253 "scan.l"
+#line 251 "scan.l"
 performance_report += option_sense ? 1 : -1;
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 254 "scan.l"
+#line 252 "scan.l"
 yytext_is_array = ! option_sense;
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 255 "scan.l"
+#line 253 "scan.l"
 use_read = option_sense;
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 256 "scan.l"
+#line 254 "scan.l"
 reject_really_used = option_sense;
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 257 "scan.l"
+#line 255 "scan.l"
 action_define( "YY_STACK_USED", option_sense );
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 258 "scan.l"
+#line 256 "scan.l"
 do_stdinit = option_sense;
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 259 "scan.l"
+#line 257 "scan.l"
 ACTION_IFDEF("YY_NO_UNPUT", ! option_sense);
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 260 "scan.l"
+#line 258 "scan.l"
 printstats = option_sense;
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 261 "scan.l"
+#line 259 "scan.l"
 nowarn = ! option_sense;
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 262 "scan.l"
+#line 260 "scan.l"
 do_yylineno = option_sense;
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 263 "scan.l"
+#line 261 "scan.l"
 yymore_really_used = option_sense;
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 264 "scan.l"
+#line 262 "scan.l"
 do_yywrap = option_sense;
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 266 "scan.l"
-ACTION_IFDEF("YY_NO_PUSH_STATE", ! option_sense);
+#line 264 "scan.l"
+ACTION_IFDEF("YY_NO_PUSH_STATE", !option_sense);
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 267 "scan.l"
-ACTION_IFDEF("YY_NO_POP_STATE", ! option_sense);
+#line 265 "scan.l"
+ACTION_IFDEF("YY_NO_POP_STATE", !option_sense);
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 268 "scan.l"
-ACTION_IFDEF("YY_NO_TOP_STATE", ! option_sense);
+#line 266 "scan.l"
+ACTION_IFDEF("YY_NO_TOP_STATE", !option_sense);
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 270 "scan.l"
-ACTION_IFDEF("YY_NO_SCAN_BUFFER", ! option_sense);
+#line 268 "scan.l"
+ACTION_IFDEF("YY_NO_SCAN_BUFFER", !option_sense);
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 271 "scan.l"
-ACTION_IFDEF("YY_NO_SCAN_BYTES", ! option_sense);
+#line 269 "scan.l"
+ACTION_IFDEF("YY_NO_SCAN_BYTES", !option_sense);
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 272 "scan.l"
-ACTION_IFDEF("YY_NO_SCAN_STRING", ! option_sense);
+#line 270 "scan.l"
+ACTION_IFDEF("YY_NO_SCAN_STRING", !option_sense);
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 274 "scan.l"
+#line 272 "scan.l"
 return OPT_OUTFILE;
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 275 "scan.l"
+#line 273 "scan.l"
 return OPT_PREFIX;
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 276 "scan.l"
+#line 274 "scan.l"
 return OPT_YYCLASS;
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 278 "scan.l"
+#line 276 "scan.l"
 {
-			strcpy( nmstr, yytext + 1 );
-			nmstr[strlen( nmstr ) - 1] = '\0';
-			return NAME;
-			}
+                          strcpy(nmstr, yytext + 1);
+                          nmstr[strlen(nmstr) - 1] = '\0';
+                          return NAME;
+                        }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 284 "scan.l"
+#line 282 "scan.l"
 {
-			format_synerr( _( "unrecognized %%option: %s" ),
-				yytext );
-			BEGIN(RECOVER);
-			}
+                          format_synerr(_("unrecognized %%option: %s"), yytext);
+                          BEGIN(RECOVER);
+                        }
 	YY_BREAK
 
 case 81:
 YY_RULE_SETUP
-#line 291 "scan.l"
+#line 288 "scan.l"
 ++linenum; BEGIN(INITIAL);
 	YY_BREAK
 
 case 82:
 YY_RULE_SETUP
-#line 295 "scan.l"
-++bracelevel; yyless( 2 );	/* eat only %{ */
+#line 292 "scan.l"
+++bracelevel; yyless( 2 );      /* eat only %{ */
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 296 "scan.l"
---bracelevel; yyless( 2 );	/* eat only %} */
+#line 293 "scan.l"
+--bracelevel; yyless( 2 );      /* eat only %} */
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 298 "scan.l"
-ACTION_ECHO;	/* indented code in prolog */
+#line 295 "scan.l"
+ACTION_ECHO;    /* indented code in prolog */
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 300 "scan.l"
-{	/* non-indented code */
-			if ( bracelevel <= 0 )
-				{ /* not in %{ ... %} */
-				yyless( 0 );	/* put it all back */
-				yy_set_bol( 1 );
-				mark_prolog();
-				BEGIN(SECT2);
-				}
-			else
-				ACTION_ECHO;
-			}
+#line 297 "scan.l"
+{       /* non-indented code */
+                          if (bracelevel <= 0) {   /* not in %{ ... %} */
+                            yyless(0);             /* put it all back */
+                            yy_set_bol(1);
+                            mark_prolog();
+                            BEGIN(SECT2);
+                          }
+                          else
+                            ACTION_ECHO;
+                        }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 312 "scan.l"
+#line 308 "scan.l"
 ACTION_ECHO;
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 313 "scan.l"
+#line 309 "scan.l"
 ++linenum; ACTION_ECHO;
 	YY_BREAK
 case YY_STATE_EOF(SECT2PROLOG):
-#line 315 "scan.l"
+#line 311 "scan.l"
 {
-			mark_prolog();
-			sectnum = 0;
-			yyterminate(); /* to stop the parser */
-			}
+                          mark_prolog();
+                          sectnum = 0;
+                          yyterminate(); /* to stop the parser */
+                        }
 	YY_BREAK
 
 
 case 88:
 YY_RULE_SETUP
-#line 323 "scan.l"
+#line 319 "scan.l"
 ++linenum; /* allow blank lines in section 2 */
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 325 "scan.l"
+#line 321 "scan.l"
 {
-			indented_code = false;
-			doing_codeblock = true;
-			bracelevel = 1;
-			BEGIN(PERCENT_BRACE_ACTION);
-			}
+                          indented_code = false;
+                          doing_codeblock = true;
+                          bracelevel = 1;
+                          BEGIN(PERCENT_BRACE_ACTION);
+                        }
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 332 "scan.l"
+#line 328 "scan.l"
 BEGIN(SC); return '<';
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 333 "scan.l"
+#line 329 "scan.l"
 return '^';
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 334 "scan.l"
+#line 330 "scan.l"
 BEGIN(QUOTE); return '"';
 	YY_BREAK
 case 93:
@@ -2131,7 +2127,7 @@ case 93:
 yy_c_buf_p = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 335 "scan.l"
+#line 331 "scan.l"
 BEGIN(NUM); return '{';
 	YY_BREAK
 case 94:
@@ -2139,191 +2135,184 @@ case 94:
 yy_c_buf_p = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 336 "scan.l"
+#line 332 "scan.l"
 return '$';
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 338 "scan.l"
+#line 334 "scan.l"
 {
-			bracelevel = 1;
-			BEGIN(PERCENT_BRACE_ACTION);
+                          bracelevel = 1;
+                          BEGIN(PERCENT_BRACE_ACTION);
 
-			if ( in_rule )
-				{
-				doing_rule_action = true;
-				in_rule = false;
-				return '\n';
-				}
-			}
+                          if (in_rule) {
+                            doing_rule_action = true;
+                            in_rule = false;
+                            return '\n';
+                          }
+                        }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 349 "scan.l"
+#line 344 "scan.l"
 continued_action = true; ++linenum; return '\n';
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 351 "scan.l"
+#line 346 "scan.l"
 {
-			yyless( yyleng - 2 );	/* put back '/', '*' */
-			bracelevel = 0;
-			continued_action = false;
-			BEGIN(ACTION);
-			}
+                          yyless(yyleng - 2); /* put back '/', '*' */
+                          bracelevel = 0;
+                          continued_action = false;
+                          BEGIN(ACTION);
+                        }
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 358 "scan.l"
+#line 353 "scan.l"
 /* allow indented rules */
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 360 "scan.l"
+#line 355 "scan.l"
 {
-			/* This rule is separate from the one below because
-			 * otherwise we get variable trailing context, so
-			 * we can't build the scanner using -{f,F}.
-			 */
-			bracelevel = 0;
-			continued_action = false;
-			BEGIN(ACTION);
+                          /* This rule is separate from the one below because
+                           * otherwise we get variable trailing context, so
+                           * we can't build the scanner using -{f,F}.
+                           */
+                          bracelevel = 0;
+                          continued_action = false;
+                          BEGIN(ACTION);
 
-			if ( in_rule )
-				{
-				doing_rule_action = true;
-				in_rule = false;
-				return '\n';
-				}
-			}
+                          if (in_rule) {
+                            doing_rule_action = true;
+                            in_rule = false;
+                            return '\n';
+                          }
+                        }
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 377 "scan.l"
+#line 371 "scan.l"
 {
-			bracelevel = 0;
-			continued_action = false;
-			BEGIN(ACTION);
-			unput( '\n' );	/* so <ACTION> sees it */
+                          bracelevel = 0;
+                          continued_action = false;
+                          BEGIN(ACTION);
+                          unput('\n');      /* so <ACTION> sees it */
 
-			if ( in_rule )
-				{
-				doing_rule_action = true;
-				in_rule = false;
-				return '\n';
-				}
-			}
+                          if (in_rule) {
+                            doing_rule_action = true;
+                            in_rule = false;
+                            return '\n';
+                          }
+                        }
 	YY_BREAK
 case 101:
-#line 392 "scan.l"
+#line 385 "scan.l"
 case 102:
 YY_RULE_SETUP
-#line 392 "scan.l"
+#line 385 "scan.l"
 return EOF_OP;
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 394 "scan.l"
+#line 387 "scan.l"
 {
-			sectnum = 3;
-			BEGIN(SECT3);
-			yyterminate(); /* to stop the parser */
-			}
+                          sectnum = 3;
+                          BEGIN(SECT3);
+                          yyterminate(); /* to stop the parser */
+                        }
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 400 "scan.l"
+#line 393 "scan.l"
 {
-			int cclval;
+                          int cclval;
 
-			strcpy( nmstr, yytext );
+                          strcpy(nmstr, yytext);
 
-			/* Check to see if we've already encountered this
-			 * ccl.
-			 */
-			if ( (cclval = ccllookup( (Char *) nmstr )) != 0 )
-				{
-				if ( input() != ']' )
-					synerr( _( "bad character class" ) );
+                          /* Check to see if we've already encountered this
+                           * ccl.
+                           */
+                          if ((cclval = ccllookup((Char *) nmstr)) != 0) {
+                            if (input() != ']')
+                              synerr(_("bad character class"));
 
-				yylval = cclval;
-				++cclreuse;
-				return PREVCCL;
-				}
-			else
-				{
-				/* We fudge a bit.  We know that this ccl will
-				 * soon be numbered as lastccl + 1 by cclinit.
-				 */
-				cclinstal( (Char *) nmstr, lastccl + 1 );
+                            yylval = cclval;
+                            ++cclreuse;
+                            return PREVCCL;
+                          }
+                          else {
+                            /* We fudge a bit.  We know that this ccl will
+                             * soon be numbered as lastccl + 1 by cclinit.
+                             */
+                            cclinstal((Char *) nmstr, lastccl + 1);
 
-				/* Push back everything but the leading bracket
-				 * so the ccl can be rescanned.
-				 */
-				yyless( 1 );
+                            /* Push back everything but the leading bracket
+                             * so the ccl can be rescanned.
+                             */
+                            yyless(1);
 
-				BEGIN(FIRSTCCL);
-				return '[';
-				}
-			}
+                            BEGIN(FIRSTCCL);
+                            return '[';
+                          }
+                        }
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 434 "scan.l"
+#line 425 "scan.l"
 {
-			register Char *nmdefptr;
-			Char *ndlookup();
+                          register Char *nmdefptr;
+                          Char *ndlookup();
 
-			strcpy( nmstr, yytext + 1 );
-			nmstr[yyleng - 2] = '\0';  /* chop trailing brace */
+                          strcpy(nmstr, yytext + 1);
+                          nmstr[yyleng - 2] = '\0'; /* chop trailing brace */
 
-			if ( (nmdefptr = ndlookup( nmstr )) == 0 )
-				format_synerr(
-					_( "undefined definition {%s}" ),
-						nmstr );
+                          if ((nmdefptr = ndlookup(nmstr)) == 0)
+                            format_synerr(_("undefined definition {%s}"), nmstr);
 
-			else
-				{ /* push back name surrounded by ()'s */
-				int len = strlen( (char *) nmdefptr );
+                          else {
+                            /* push back name surrounded by ()'s */
+                            int len = strlen((char *) nmdefptr);
 
-				if ( lex_compat || nmdefptr[0] == '^' ||
-				     (len > 0 && nmdefptr[len - 1] == '$') )
-					{ /* don't use ()'s after all */
-					PUT_BACK_STRING((char *) nmdefptr, 0);
+                            /* don't use ()'s after all */
+                            if (lex_compat ||
+                                nmdefptr[0] == '^' ||
+                                (len > 0 && nmdefptr[len - 1] == '$')) {
+                              PUT_BACK_STRING((char *) nmdefptr, 0);
 
-					if ( nmdefptr[0] == '^' )
-						BEGIN(CARETISBOL);
-					}
+                              if (nmdefptr[0] == '^')
+                                BEGIN(CARETISBOL);
+                            }
 
-				else
-					{
-					unput(')');
-					PUT_BACK_STRING((char *) nmdefptr, 0);
-					unput('(');
-					}
-				}
-			}
+                            else {
+                              unput(')');
+                              PUT_BACK_STRING((char *) nmdefptr, 0);
+                              unput('(');
+                            }
+                          }
+                        }
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 468 "scan.l"
+#line 457 "scan.l"
 return (unsigned char) yytext[0];
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 469 "scan.l"
+#line 458 "scan.l"
 RETURNCHAR;
 	YY_BREAK
 
 
 case 108:
 YY_RULE_SETUP
-#line 474 "scan.l"
+#line 463 "scan.l"
 return (unsigned char) yytext[0];
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 475 "scan.l"
+#line 464 "scan.l"
 BEGIN(SECT2); return '>';
 	YY_BREAK
 case 110:
@@ -2331,48 +2320,47 @@ case 110:
 yy_c_buf_p = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 476 "scan.l"
+#line 465 "scan.l"
 BEGIN(CARETISBOL); return '>';
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-#line 477 "scan.l"
+#line 466 "scan.l"
 RETURNNAME;
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 478 "scan.l"
+#line 467 "scan.l"
 {
-			format_synerr( _( "bad <start condition>: %s" ),
-				yytext );
-			}
+                          format_synerr(_("bad <start condition>: %s"), yytext);
+                        }
 	YY_BREAK
 
 case 113:
 YY_RULE_SETUP
-#line 484 "scan.l"
+#line 472 "scan.l"
 BEGIN(SECT2); return '^';
 	YY_BREAK
 
 case 114:
 YY_RULE_SETUP
-#line 488 "scan.l"
+#line 476 "scan.l"
 RETURNCHAR;
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 489 "scan.l"
+#line 477 "scan.l"
 BEGIN(SECT2); return '"';
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 491 "scan.l"
+#line 479 "scan.l"
 {
-			synerr( _( "missing quote" ) );
-			BEGIN(SECT2);
-			++linenum;
-			return '"';
-			}
+                          synerr(_("missing quote"));
+                          BEGIN(SECT2);
+                          ++linenum;
+                          return '"';
+                        }
 	YY_BREAK
 
 
@@ -2381,7 +2369,7 @@ case 117:
 yy_c_buf_p = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 501 "scan.l"
+#line 489 "scan.l"
 BEGIN(CCL); return '^';
 	YY_BREAK
 case 118:
@@ -2389,12 +2377,12 @@ case 118:
 yy_c_buf_p = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 502 "scan.l"
+#line 490 "scan.l"
 return '^';
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 503 "scan.l"
+#line 491 "scan.l"
 BEGIN(CCL); RETURNCHAR;
 	YY_BREAK
 
@@ -2404,316 +2392,314 @@ case 120:
 yy_c_buf_p = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 507 "scan.l"
+#line 495 "scan.l"
 return '-';
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-#line 508 "scan.l"
+#line 496 "scan.l"
 RETURNCHAR;
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 509 "scan.l"
+#line 497 "scan.l"
 BEGIN(SECT2); return ']';
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 510 "scan.l"
+#line 498 "scan.l"
 {
-			synerr( _( "bad character class" ) );
-			BEGIN(SECT2);
-			return ']';
-			}
+                          synerr(_("bad character class"));
+                          BEGIN(SECT2);
+                          return ']';
+                        }
 	YY_BREAK
 
 
 case 124:
 YY_RULE_SETUP
-#line 518 "scan.l"
+#line 506 "scan.l"
 BEGIN(CCL); return CCE_ALNUM;
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-#line 519 "scan.l"
+#line 507 "scan.l"
 BEGIN(CCL); return CCE_ALPHA;
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 520 "scan.l"
+#line 508 "scan.l"
 BEGIN(CCL); return CCE_BLANK;
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 521 "scan.l"
+#line 509 "scan.l"
 BEGIN(CCL); return CCE_CNTRL;
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 522 "scan.l"
+#line 510 "scan.l"
 BEGIN(CCL); return CCE_DIGIT;
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
-#line 523 "scan.l"
+#line 511 "scan.l"
 BEGIN(CCL); return CCE_GRAPH;
 	YY_BREAK
 case 130:
 YY_RULE_SETUP
-#line 524 "scan.l"
+#line 512 "scan.l"
 BEGIN(CCL); return CCE_LOWER;
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
-#line 525 "scan.l"
+#line 513 "scan.l"
 BEGIN(CCL); return CCE_PRINT;
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
-#line 526 "scan.l"
+#line 514 "scan.l"
 BEGIN(CCL); return CCE_PUNCT;
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
-#line 527 "scan.l"
+#line 515 "scan.l"
 BEGIN(CCL); return CCE_SPACE;
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
-#line 528 "scan.l"
+#line 516 "scan.l"
 BEGIN(CCL); return CCE_UPPER;
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
-#line 529 "scan.l"
+#line 517 "scan.l"
 BEGIN(CCL); return CCE_XDIGIT;
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
-#line 530 "scan.l"
+#line 518 "scan.l"
 {
-			format_synerr(
-				_( "bad character class expression: %s" ),
-					yytext );
-			BEGIN(CCL); return CCE_ALNUM;
-			}
+                          format_synerr(_("bad character class expression: %s"),
+                                        yytext);
+                          BEGIN(CCL);
+                          return CCE_ALNUM;
+                        }
 	YY_BREAK
 
 
 case 137:
 YY_RULE_SETUP
-#line 539 "scan.l"
+#line 527 "scan.l"
 {
-			yylval = myctoi( yytext );
-			return NUMBER;
-			}
+                          yylval = myctoi(yytext);
+                          return NUMBER;
+                        }
 	YY_BREAK
 case 138:
 YY_RULE_SETUP
-#line 544 "scan.l"
+#line 532 "scan.l"
 return ',';
 	YY_BREAK
 case 139:
 YY_RULE_SETUP
-#line 545 "scan.l"
+#line 533 "scan.l"
 BEGIN(SECT2); return '}';
 	YY_BREAK
 case 140:
 YY_RULE_SETUP
-#line 547 "scan.l"
+#line 535 "scan.l"
 {
-			synerr( _( "bad character inside {}'s" ) );
-			BEGIN(SECT2);
-			return '}';
-			}
+                          synerr(_("bad character inside {}'s"));
+                          BEGIN(SECT2);
+                          return '}';
+                        }
 	YY_BREAK
 case 141:
 YY_RULE_SETUP
-#line 553 "scan.l"
+#line 541 "scan.l"
 {
-			synerr( _( "missing }" ) );
-			BEGIN(SECT2);
-			++linenum;
-			return '}';
-			}
+                          synerr(_("missing }"));
+                          BEGIN(SECT2);
+                          ++linenum;
+                          return '}';
+                        }
 	YY_BREAK
 
 
 case 142:
 YY_RULE_SETUP
-#line 563 "scan.l"
+#line 551 "scan.l"
 bracelevel = 0;
 	YY_BREAK
 case 143:
 YY_RULE_SETUP
-#line 565 "scan.l"
+#line 553 "scan.l"
 ACTION_ECHO; yy_push_state( COMMENT );
 	YY_BREAK
 
 case 144:
 YY_RULE_SETUP
-#line 568 "scan.l"
+#line 556 "scan.l"
 {
-			ACTION_ECHO;
-			CHECK_REJECT(yytext);
-			}
+                          ACTION_ECHO;
+                          CHECK_REJECT(yytext);
+                        }
 	YY_BREAK
 case 145:
 YY_RULE_SETUP
-#line 572 "scan.l"
+#line 560 "scan.l"
 {
-			ACTION_ECHO;
-			CHECK_YYMORE(yytext);
-			}
+                          ACTION_ECHO;
+                          CHECK_YYMORE(yytext);
+                        }
 	YY_BREAK
 
 case 146:
 YY_RULE_SETUP
-#line 578 "scan.l"
+#line 566 "scan.l"
 ACTION_ECHO;
 	YY_BREAK
 case 147:
 YY_RULE_SETUP
-#line 579 "scan.l"
+#line 567 "scan.l"
 {
-			++linenum;
-			ACTION_ECHO;
-			if ( bracelevel == 0 ||
-			     (doing_codeblock && indented_code) )
-				{
-				if ( doing_rule_action )
-					add_action( "\tYY_BREAK\n" );
+                          ++ linenum;
+                          ACTION_ECHO;
+                          if (bracelevel == 0 ||
+                              (doing_codeblock && indented_code)) {
+                            if (doing_rule_action)
+                              add_action("\tYY_BREAK\n");
 
-				doing_rule_action = doing_codeblock = false;
-				BEGIN(SECT2);
-				}
-			}
+                            doing_rule_action = doing_codeblock = false;
+                            BEGIN(SECT2);
+                          }
+                        }
 	YY_BREAK
 
 /* Reject and YYmore() are checked for above, in PERCENT_BRACE_ACTION */
 
 case 148:
 YY_RULE_SETUP
-#line 597 "scan.l"
+#line 584 "scan.l"
 ACTION_ECHO; ++bracelevel;
 	YY_BREAK
 case 149:
 YY_RULE_SETUP
-#line 598 "scan.l"
+#line 585 "scan.l"
 ACTION_ECHO; --bracelevel;
 	YY_BREAK
 case 150:
 YY_RULE_SETUP
-#line 599 "scan.l"
+#line 586 "scan.l"
 ACTION_ECHO;
 	YY_BREAK
 case 151:
 YY_RULE_SETUP
-#line 600 "scan.l"
+#line 587 "scan.l"
 ACTION_ECHO;
 	YY_BREAK
 case 152:
 YY_RULE_SETUP
-#line 601 "scan.l"
+#line 588 "scan.l"
 ACTION_ECHO; /* character constant */
 	YY_BREAK
 case 153:
 YY_RULE_SETUP
-#line 602 "scan.l"
+#line 589 "scan.l"
 ACTION_ECHO; BEGIN(ACTION_STRING);
 	YY_BREAK
 case 154:
 YY_RULE_SETUP
-#line 603 "scan.l"
+#line 590 "scan.l"
 {
-			++linenum;
-			ACTION_ECHO;
-			if ( bracelevel == 0 )
-				{
-				if ( doing_rule_action )
-					add_action( "\tYY_BREAK\n" );
+                          ++ linenum;
+                          ACTION_ECHO;
+                          if (bracelevel == 0) {
+                            if (doing_rule_action)
+                              add_action("\tYY_BREAK\n");
 
-				doing_rule_action = false;
-				BEGIN(SECT2);
-				}
-			}
+                            doing_rule_action = false;
+                            BEGIN(SECT2);
+                          }
+                        }
 	YY_BREAK
 case 155:
 YY_RULE_SETUP
-#line 615 "scan.l"
+#line 601 "scan.l"
 ACTION_ECHO;
 	YY_BREAK
 
 
 case 156:
 YY_RULE_SETUP
-#line 619 "scan.l"
+#line 605 "scan.l"
 ACTION_ECHO;
 	YY_BREAK
 case 157:
 YY_RULE_SETUP
-#line 620 "scan.l"
+#line 606 "scan.l"
 ACTION_ECHO;
 	YY_BREAK
 case 158:
 YY_RULE_SETUP
-#line 621 "scan.l"
+#line 607 "scan.l"
 ++linenum; ACTION_ECHO;
 	YY_BREAK
 case 159:
 YY_RULE_SETUP
-#line 622 "scan.l"
+#line 608 "scan.l"
 ACTION_ECHO; BEGIN(ACTION);
 	YY_BREAK
 case 160:
 YY_RULE_SETUP
-#line 623 "scan.l"
+#line 609 "scan.l"
 ACTION_ECHO;
 	YY_BREAK
 
 case YY_STATE_EOF(COMMENT):
 case YY_STATE_EOF(ACTION):
 case YY_STATE_EOF(ACTION_STRING):
-#line 626 "scan.l"
+#line 612 "scan.l"
 {
-			synerr( _( "EOF encountered inside an action" ) );
-			yyterminate();
-			}
+                          synerr(_("EOF encountered inside an action"));
+                          yyterminate();
+                        }
 	YY_BREAK
 case 161:
 YY_RULE_SETUP
-#line 632 "scan.l"
+#line 618 "scan.l"
 {
-			yylval = myesc( (Char *) yytext );
+                          yylval = myesc((Char *) yytext);
 
-			if ( YY_START == FIRSTCCL )
-				BEGIN(CCL);
+                          if (YY_START == FIRSTCCL)
+                            BEGIN(CCL);
 
-			return CHAR;
-			}
+                          return CHAR;
+                        }
 	YY_BREAK
 
 case 162:
 YY_RULE_SETUP
-#line 643 "scan.l"
-out( yytext );   /* Copy section 3 to output. */
+#line 629 "scan.l"
+out(yytext);   /* Copy section 3 to output. */
 	YY_BREAK
 case YY_STATE_EOF(SECT3):
-#line 644 "scan.l"
+#line 630 "scan.l"
 sectnum = 0; yyterminate();
 	YY_BREAK
 
 case 163:
 YY_RULE_SETUP
-#line 647 "scan.l"
-format_synerr( _( "bad character: %s" ), yytext );
+#line 633 "scan.l"
+format_synerr(_("bad character: %s"), yytext);
 	YY_BREAK
 case 164:
 YY_RULE_SETUP
-#line 649 "scan.l"
+#line 635 "scan.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 2272 "scan.c"
+#line 2258 "scan.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(SECT2):
 case YY_STATE_EOF(CODEBLOCK):
@@ -3617,65 +3603,55 @@ int main()
 	return 0;
 	}
 #endif
-#line 649 "scan.l"
+#line 635 "scan.l"
 
 
 
 int yywrap()
-	{
-	if ( --num_input_files > 0 )
-		{
-		set_input_file( *++input_files );
-		return 0;
-		}
+{
+  if (--num_input_files > 0) {
+    set_input_file(*++input_files);
+    return 0;
+  }
 
-	else
-		return 1;
-	}
+  else
+    return 1;
+}
 
 
 /* set_input_file - open the given file (if NULL, stdin) for scanning */
+void set_input_file(char *file)
+{
+  if (file && strcmp(file, "-")) {
+    infilename = copy_string(file);
+    yyin = fopen(infilename, "r");
 
-void set_input_file( file )
-char *file;
-	{
-	if ( file && strcmp( file, "-" ) )
-		{
-		infilename = copy_string( file );
-		yyin = fopen( infilename, "r" );
+    if (yyin == NULL)
+      lerrsf(_("can't open %s"), file);
+  }
 
-		if ( yyin == NULL )
-			lerrsf( _( "can't open %s" ), file );
-		}
+  else {
+    yyin = stdin;
+    infilename = copy_string("<stdin>");
+  }
 
-	else
-		{
-		yyin = stdin;
-		infilename = copy_string( "<stdin>" );
-		}
-
-	linenum = 1;
-	}
+  linenum = 1;
+}
 
 
 /* Wrapper routines for accessing the scanner's malloc routines. */
+void *flex_alloc(size_t size)
+{
+  return (void *) malloc(size);
+}
 
-void *flex_alloc( size )
-size_t size;
-	{
-	return (void *) malloc( size );
-	}
+void *flex_realloc(void *ptr, size_t size)
+{
+  return (void *) realloc(ptr, size);
+}
 
-void *flex_realloc( ptr, size )
-void *ptr;
-size_t size;
-	{
-	return (void *) realloc( ptr, size );
-	}
-
-void flex_free( ptr )
-void *ptr;
-	{
-	if ( ptr )
-		free( ptr );
-	}
+void flex_free(void *ptr)
+{
+  if (ptr)
+    free(ptr);
+}
