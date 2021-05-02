@@ -26,20 +26,15 @@
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* $Header$ */
+#include "gen.h"                       /* this module */
+
+#include "dfa.h"                       /* increase_max_dfas */
+#include "misc.h"                      /* outc, outn, etc. */
+#include "tblcmp.h"                    /* expand_nxt_chk */
 
 #include "flexdef.h"
 
-#include <stdio.h>              /* FILE, etc. */
-#include <string.h>             /* strerror, strcpy, strrchr */
-
-
-/* declare functions that have forward references */
-
-void gen_next_state PROTO((int));
-void genecs PROTO((void));
-void indent_put2s PROTO((char[], char[]));
-void indent_puts PROTO((char[]));
+#include <string.h>                    /* strerror, strcpy, strrchr */
 
 
 static int indent_level = 0;    /* each level is 8 spaces */
@@ -62,7 +57,6 @@ static char C_state_decl[] =
 
 
 /* Indent to the current level. */
-
 void do_indent()
 {
   register int i = indent_level * 8;
@@ -80,7 +74,6 @@ void do_indent()
 
 
 /* Generate the code to keep backing-up information. */
-
 void gen_backing_up()
 {
   if (reject || num_backing_up == 0)
@@ -101,7 +94,6 @@ void gen_backing_up()
 
 
 /* Generate the code to perform the backing up. */
-
 void gen_bu_action()
 {
   if (reject || num_backing_up == 0)
@@ -130,7 +122,6 @@ void gen_bu_action()
 
 
 /* genctbl - generates full speed compressed transition table */
-
 void genctbl()
 {
   register int i;
@@ -222,7 +213,6 @@ void genctbl()
 
 
 /* Generate equivalence-class tables. */
-
 void genecs()
 {
   register int i, j;
@@ -259,7 +249,6 @@ void genecs()
 
 
 /* Generate the code to find the action number. */
-
 void gen_find_action()
 {
   if (fullspd)
@@ -385,7 +374,6 @@ void gen_find_action()
 
 
 /* genftbl - generate full transition table */
-
 void genftbl()
 {
   register int i;
@@ -417,9 +405,7 @@ void genftbl()
 
 
 /* Generate the code to find the next compressed-table state. */
-
-void gen_next_compressed_state(char_map)
-     char *char_map;
+void gen_next_compressed_state(char *char_map)
 {
   indent_put2s("register YY_CHAR yy_c = %s;", char_map);
 
@@ -462,7 +448,6 @@ void gen_next_compressed_state(char_map)
 
 
 /* Generate the code to find the next match. */
-
 void gen_next_match()
 {
   /* NOTE - changes in here should be reflected in gen_next_state() and
@@ -559,9 +544,7 @@ void gen_next_match()
 
 
 /* Generate the code to find the next state. */
-
-void gen_next_state(worry_about_NULs)
-     int worry_about_NULs;
+void gen_next_state(int worry_about_NULs)
 {                               /* NOTE - changes in here should be reflected in gen_next_match() */
   char char_map[256];
 
@@ -617,7 +600,6 @@ void gen_next_state(worry_about_NULs)
 
 
 /* Generate the code to make a NUL transition. */
-
 void gen_NUL_trans()
 {                               /* NOTE - changes in here should be reflected in gen_next_match() */
   /* Only generate a definition for "yy_cp" if we'll generate code
@@ -693,7 +675,6 @@ void gen_NUL_trans()
 
 
 /* Generate the code to find the start state. */
-
 void gen_start_state()
 {
   if (fullspd) {
@@ -721,7 +702,6 @@ void gen_start_state()
 
 
 /* gentabs - generate data statements for the transition tables */
-
 void gentabs()
 {
   int i, j, k, *accset, nacc, *acc_array, total_states;
@@ -945,9 +925,7 @@ void gentabs()
 /* Write out a formatted string (with a secondary string argument) at the
  * current indentation level, adding a final newline.
  */
-
-void indent_put2s(fmt, arg)
-     char fmt[], arg[];
+void indent_put2s(char fmt[], char arg[])
 {
   do_indent();
   out_str(fmt, arg);
@@ -958,9 +936,7 @@ void indent_put2s(fmt, arg)
 /* Write out a string at the current indentation level, adding a final
  * newline.
  */
-
-void indent_puts(str)
-     char str[];
+void indent_puts(char str[])
 {
   do_indent();
   outn(str);
@@ -969,7 +945,6 @@ void indent_puts(str)
 
 /* make_tables - generate transition tables and finishes generating output file
  */
-
 void make_tables()
 {
   register int i;
@@ -1471,6 +1446,9 @@ void make_tables()
     (void) flexscan();          /* copy remainder of input to output */
 }
 
+
+/* Write 'line' and a newline to 'fp', except if it contains any
+ * occurrences of "yyFlexLexer", replace the "yy" part with 'prefix'. */
 void emit_with_class_name_substitution(FILE * fp, char const *line)
 {
   /* Look for the default class name so we can change it. */
@@ -1489,6 +1467,8 @@ void emit_with_class_name_substitution(FILE * fp, char const *line)
   fprintf(fp, "%s\n", line);
 }
 
+
+/* Write the header file containing the C++ lexer class definition. */
 void emit_header_file(char const *header_file_name)
 {
   FILE *header_file;

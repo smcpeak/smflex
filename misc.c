@@ -26,14 +26,16 @@
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* $Header$ */
+#include "misc.h"                      /* this module */
+
+#include "gen.h"                       /* emit_with_class_name_substitution */
+#include "main.h"                      /* flexend */
 
 #include "flexdef.h"
 
 
-void action_define(defname, value)
-     char *defname;
-     int value;
+/* Add a #define to the action file. */
+void action_define(char *defname, int value)
 {
   char buf[MAXLINE];
 
@@ -47,8 +49,8 @@ void action_define(defname, value)
 }
 
 
-void add_action(new_text)
-     char *new_text;
+/* Add the given text to the stored actions. */
+void add_action(char *new_text)
 {
   int len = strlen(new_text);
 
@@ -73,10 +75,7 @@ void add_action(new_text)
 
 
 /* allocate_array - allocate memory for an integer array of the given size */
-
-void *allocate_array(size, element_size)
-     int size;
-     size_t element_size;
+void *allocate_array(int size, size_t element_size)
 {
   register void *mem;
   size_t num_bytes = element_size * size;
@@ -90,9 +89,7 @@ void *allocate_array(size, element_size)
 
 
 /* all_lower - true if a string is all lower-case */
-
-int all_lower(str)
-     register char *str;
+int all_lower(char *str)
 {
   while (*str) {
     if (!isascii((Char) * str) || !islower(*str))
@@ -105,9 +102,7 @@ int all_lower(str)
 
 
 /* all_upper - true if a string is all upper-case */
-
-int all_upper(str)
-     register char *str;
+int all_upper(char *str)
 {
   while (*str) {
     if (!isascii((Char) * str) || !isupper(*str))
@@ -133,9 +128,7 @@ int all_upper(str)
  *   v - the array to be sorted
  *   n - the number of elements of 'v' to be sorted
  */
-
-void bubble(v, n)
-     int v[], n;
+void bubble(int v[], int n)
 {
   register int i, j, k;
 
@@ -153,9 +146,7 @@ void bubble(v, n)
  *		we're expecting.  If not, generates fatal error message
  *		and exits.
  */
-
-void check_char(c)
-     int c;
+void check_char(int c)
 {
   if (c >= CSIZE)
     lerrsf(_("bad character '%s' detected in check_char()"),
@@ -169,18 +160,14 @@ void check_char(c)
 
 
 /* clower - replace upper-case letter to lower-case */
-
-Char clower(c)
-     register int c;
+Char clower(int c)
 {
   return (Char) ((isascii(c) && isupper(c)) ? tolower(c) : c);
 }
 
 
 /* copy_string - returns a dynamically allocated copy of a string */
-
-char *copy_string(str)
-     register const char *str;
+char *copy_string(const char *str)
 {
   register const char *c1;
   register char *c2;
@@ -188,7 +175,8 @@ char *copy_string(str)
   unsigned int size;
 
   /* find length */
-  for (c1 = str; *c1; ++c1);
+  for (c1 = str; *c1; ++c1)
+    {}
 
   size = (c1 - str + 1) * sizeof(char);
   copy = (char *) flex_alloc(size);
@@ -196,7 +184,8 @@ char *copy_string(str)
   if (copy == NULL)
     flexfatal(_("dynamic memory failure in copy_string()"));
 
-  for (c2 = copy; (*c2++ = *str++) != 0;);
+  for (c2 = copy; (*c2++ = *str++) != 0;)
+    {}
 
   return copy;
 }
@@ -205,9 +194,7 @@ char *copy_string(str)
 /* copy_unsigned_string -
  *    returns a dynamically allocated copy of a (potentially) unsigned string
  */
-
-Char *copy_unsigned_string(str)
-     register Char *str;
+Char *copy_unsigned_string(Char *str)
 {
   register Char *c;
   Char *copy;
@@ -240,10 +227,7 @@ Char *copy_unsigned_string(str)
  *   v - array to be sorted
  *   n - number of elements of v to be sorted
  */
-
-void cshell(v, n, special_case_0)
-     Char v[];
-     int n, special_case_0;
+void cshell(Char v[], int n, int special_case_0)
 {
   int gap, i, j, jg;
   Char k;
@@ -272,7 +256,6 @@ void cshell(v, n, special_case_0)
 
 
 /* dataend - finish up a block of data declarations */
-
 void dataend()
 {
   if (datapos > 0)
@@ -287,7 +270,6 @@ void dataend()
 
 
 /* dataflush - flush generated data statements */
-
 void dataflush()
 {
   outc('\n');
@@ -306,9 +288,7 @@ void dataflush()
 
 
 /* flexerror - report an error message and terminate */
-
-void flexerror(msg)
-     const char msg[];
+void flexerror(const char msg[])
 {
   fprintf(stderr, "%s: %s\n", program_name, msg);
   flexend(1);
@@ -316,9 +296,7 @@ void flexerror(msg)
 
 
 /* flexfatal - report a fatal error message and terminate */
-
-void flexfatal(msg)
-     const char msg[];
+void flexfatal(const char msg[])
 {
   fprintf(stderr, _("%s: fatal internal error, %s\n"), program_name, msg);
   exit(1);
@@ -326,9 +304,7 @@ void flexfatal(msg)
 
 
 /* htoi - convert a hexadecimal digit string to an integer value */
-
-int htoi(str)
-     Char str[];
+int htoi(Char str[])
 {
   unsigned int result;
 
@@ -339,10 +315,7 @@ int htoi(str)
 
 
 /* lerrif - report an error message formatted with one integer argument */
-
-void lerrif(msg, arg)
-     const char msg[];
-     int arg;
+void lerrif(const char msg[], int arg)
 {
   char errmsg[MAXLINE];
   (void) sprintf(errmsg, msg, arg);
@@ -351,9 +324,7 @@ void lerrif(msg, arg)
 
 
 /* lerrsf - report an error message formatted with one string argument */
-
-void lerrsf(msg, arg)
-     const char msg[], arg[];
+void lerrsf(const char msg[], const char arg[])
 {
   char errmsg[MAXLINE];
 
@@ -363,10 +334,7 @@ void lerrsf(msg, arg)
 
 
 /* line_directive_out - spit out a "#line" statement */
-
-void line_directive_out(output_file, do_infile)
-     FILE *output_file;
-     int do_infile;
+void line_directive_out(FILE *output_file, int do_infile)
 {
   char directive[MAXLINE], filename[MAXLINE];
   char *s1, *s2, *s3;
@@ -442,8 +410,7 @@ void mark_prolog()
  *
  * Generates a data statement initializing the current 2-D array to "value".
  */
-void mk2data(value)
-     int value;
+void mk2data(int value)
 {
   if (datapos >= NUMDATAITEMS) {
     outc(',');
@@ -468,8 +435,7 @@ void mk2data(value)
  * Generates a data statement initializing the current array element to
  * "value".
  */
-void mkdata(value)
-     int value;
+void mkdata(int value)
 {
   if (datapos >= NUMDATAITEMS) {
     outc(',');
@@ -489,9 +455,7 @@ void mkdata(value)
 
 
 /* myctoi - return the integer represented by a string of digits */
-
-int myctoi(array)
-     char array[];
+int myctoi(char array[])
 {
   int val = 0;
 
@@ -502,9 +466,7 @@ int myctoi(array)
 
 
 /* myesc - return character corresponding to escape sequence */
-
-Char myesc(array)
-     Char array[];
+Char myesc(Char array[])
 {
   Char c, esc_char;
 
@@ -588,9 +550,7 @@ Char myesc(array)
 
 
 /* otoi - convert an octal digit string to an integer value */
-
-int otoi(str)
-     Char str[];
+int otoi(Char str[])
 {
   unsigned int result;
 
@@ -602,9 +562,7 @@ int otoi(str)
 /* out - various flavors of outputing a (possibly formatted) string for the
  *	 generated scanner, keeping track of the line count.
  */
-
-void out(str)
-     const char str[];
+void out(const char str[])
 {
   fputs(str, scanner_c_file);
   out_line_count(str);
@@ -614,35 +572,28 @@ void out(str)
  * which must contain exactly "%d" within it, and the given integer 'n'.
  * Also increment 'out_linenum' according to the number of newlines that
  * are printed. */
-void out_dec(fmt, n)
-     const char fmt[];
-     int n;
+void out_dec(const char fmt[], int n)
 {
   fprintf(scanner_c_file, fmt, n);
   out_line_count(fmt);
 }
 
 /* Like 'out_dec', but for two integers. */
-void out_dec2(fmt, n1, n2)
-     const char fmt[];
-     int n1, n2;
+void out_dec2(const char fmt[], int n1, int n2)
 {
   fprintf(scanner_c_file, fmt, n1, n2);
   out_line_count(fmt);
 }
 
 /* Like 'out_dec', but with hexadecimal formatting. */
-void out_hex(fmt, x)
-     const char fmt[];
-     unsigned int x;
+void out_hex(const char fmt[], unsigned int x)
 {
   fprintf(scanner_c_file, fmt, x);
   out_line_count(fmt);
 }
 
 /* Increment 'out_linenum' once for every newline in 'str'. */
-void out_line_count(str)
-     const char str[];
+void out_line_count(const char str[])
 {
   register int i;
 
@@ -652,8 +603,7 @@ void out_line_count(str)
 }
 
 /* Like 'out_dec', but for one string. */
-void out_str(fmt, str)
-     const char fmt[], str[];
+void out_str(const char fmt[], const char str[])
 {
   fprintf(scanner_c_file, fmt, str);
   out_line_count(fmt);
@@ -661,8 +611,8 @@ void out_str(fmt, str)
 }
 
 /* Like 'out_dec', but for three strings. */
-void out_str3(fmt, s1, s2, s3)
-     const char fmt[], s1[], s2[], s3[];
+void out_str3(const char fmt[], const char s1[],
+              const char s2[], const char s3[])
 {
   fprintf(scanner_c_file, fmt, s1, s2, s3);
   out_line_count(fmt);
@@ -672,17 +622,14 @@ void out_str3(fmt, s1, s2, s3)
 }
 
 /* Like 'out_dec', but for one string and one integer. */
-void out_str_dec(fmt, str, n)
-     const char fmt[], str[];
-     int n;
+void out_str_dec(const char fmt[], const char str[], int n)
 {
   fprintf(scanner_c_file, fmt, str, n);
   out_line_count(fmt);
   out_line_count(str);
 }
 
-void outc(c)
-     int c;
+void outc(int c)
 {
   fputc(c, scanner_c_file);
 
@@ -690,9 +637,8 @@ void outc(c)
     ++out_linenum;
 }
 
-/* Write 'std' to 'scanner_c_file', followed by a newline. */
-void outn(str)
-     const char str[];
+/* Write 'str' to 'scanner_c_file', followed by a newline. */
+void outn(const char str[])
 {
   fputs(str, scanner_c_file);
   fputc('\n', scanner_c_file);
@@ -701,13 +647,12 @@ void outn(str)
 }
 
 
-/* readable_form - return the the human-readable form of a character
+/* readable_form - return the the human-readable form of a character,
+ * which might be 8-bit.
  *
  * The returned string is in static storage.
  */
-
-char *readable_form(c)
-     register int c;
+char *readable_form(int c)
 {
   static char rform[10];
 
@@ -750,11 +695,7 @@ char *readable_form(c)
 
 
 /* reallocate_array - increase the size of a dynamic array */
-
-void *reallocate_array(array, size, element_size)
-     void *array;
-     int size;
-     size_t element_size;
+void *reallocate_array(void *array, int size, size_t element_size)
 {
   register void *new_array;
   size_t num_bytes = element_size * size;
@@ -820,9 +761,7 @@ void skelout()
  * outputs the yy_trans_info structure with the two elements, element_v and
  * element_n.  Formats the output with spaces and carriage returns.
  */
-
-void transition_struct_out(element_v, element_n)
-     int element_v, element_n;
+void transition_struct_out(int element_v, int element_n)
 {
   out_dec2(" {%4d,%4d },", element_v, element_n);
 
@@ -842,8 +781,7 @@ void transition_struct_out(element_v, element_n)
 /* The following is only needed when building flex's parser using certain
  * broken versions of bison.
  */
-void *yy_flex_xmalloc(size)
-     int size;
+void *yy_flex_xmalloc(int size)
 {
   void *result = flex_alloc((size_t) size);
 
@@ -858,10 +796,7 @@ void *yy_flex_xmalloc(size)
  *
  * Sets region_ptr[0] through region_ptr[size_in_bytes - 1] to zero.
  */
-
-void zero_out(region_ptr, size_in_bytes)
-     char *region_ptr;
-     size_t size_in_bytes;
+void zero_out(char *region_ptr, size_t size_in_bytes)
 {
   register char *rp, *rp_end;
 

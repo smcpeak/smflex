@@ -27,7 +27,8 @@
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* $Header$ */
+#include "misc.h"                      /* add_action, myctoi, etc. */
+#include "sym.h"                       /* ndinstal, ccllookup, cclinstal */
 
 #include "flexdef.h"
 #include "parse.h"

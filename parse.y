@@ -33,8 +33,13 @@
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* $Header$ */
 
+#include "ccl.h"                       /* cclinit, cclnegate, ccladd */
+#include "ecs.h"                       /* mkeccl */
+#include "main.h"                      /* check_options */
+#include "misc.h"                      /* add_action, copy_string, etc. */
+#include "nfa.h"                       /* mkstate, mkbranch, etc. */
+#include "sym.h"                       /* scinstal, sclookup */
 
 #include "flexdef.h"
 

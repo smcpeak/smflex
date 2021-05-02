@@ -26,11 +26,13 @@
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* $Header$ */
+#include "yylex.h"                     /* this module */
 
-#include <ctype.h>
+#include "parse.h"                     /* bison-generated token codes */
+
 #include "flexdef.h"
-#include "parse.h"
+
+#include <ctype.h>                     /* isprint, isascii */
 
 
 /* yylex - scan for a regular expression token */

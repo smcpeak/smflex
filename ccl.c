@@ -26,15 +26,14 @@
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* $Header$ */
+#include "ccl.h"                       /* this module */
+
+#include "misc.h"                      /* check_char, readable_form, etc. */
 
 #include "flexdef.h"
 
 /* ccladd - add a single character to a ccl */
-
-void ccladd(cclp, ch)
-     int cclp;
-     int ch;
+void ccladd(int cclp, int ch)
 {
   int ind, len, newpos, i;
 
@@ -65,7 +64,6 @@ void ccladd(cclp, ch)
 
 
 /* cclinit - return an empty ccl */
-
 int cclinit()
 {
   if (++lastccl >= current_maxccls) {
@@ -98,9 +96,7 @@ int cclinit()
 
 
 /* cclnegate - negate the given ccl */
-
-void cclnegate(cclp)
-     int cclp;
+void cclnegate(int cclp)
 {
   cclng[cclp] = 1;
 }
@@ -112,10 +108,7 @@ void cclnegate(cclp)
  * characters present in the given CCL.  A character is present if it
  * has a non-zero value in the cset array.
  */
-
-void list_character_set(file, cset)
-     FILE *file;
-     int cset[];
+void list_character_set(FILE *file, int cset[])
 {
   register int i;
 

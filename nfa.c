@@ -26,24 +26,19 @@
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* $Header$ */
+#include "nfa.h"                       /* this module */
+
+#include "ecs.h"                       /* mkechar */
+#include "misc.h"                      /* flexfatal, add_action, etc. */
 
 #include "flexdef.h"
-
-
-/* declare functions that have forward references */
-
-int dupmachine PROTO((int));
-void mkxtion PROTO((int, int));
 
 
 /* add_accept - add an accepting state to a machine
  *
  * accepting_number becomes mach's accepting number.
  */
-
-void add_accept(mach, accepting_number)
-     int mach, accepting_number;
+void add_accept(int mach, int accepting_number)
 {
   /* Hang the accepting number off an epsilon state.  if it is associated
    * with a state that has a non-epsilon out-transition, then the state
@@ -72,9 +67,7 @@ void add_accept(mach, accepting_number)
  *     singl  - a singleton machine
  *     num    - the number of copies of singl to be present in newsng
  */
-
-int copysingl(singl, num)
-     int singl, num;
+int copysingl(int singl, int num)
 {
   int copy, i;
 
@@ -88,10 +81,7 @@ int copysingl(singl, num)
 
 
 /* dumpnfa - debugging routine to write out an nfa */
-
-void dumpnfa(state1)
-     int state1;
-
+void dumpnfa(int state1)
 {
   int sym, tsp1, tsp2, anum, ns;
 
@@ -142,9 +132,7 @@ void dumpnfa(state1)
  * also note that the original MUST be contiguous, with its low and high
  * states accessible by the arrays firstst and lastst
  */
-
-int dupmachine(mach)
-     int mach;
+int dupmachine(int mach)
 {
   int i, init, state_offset;
   int state = 0;
@@ -188,9 +176,8 @@ int dupmachine(mach)
  * trailing context characters in the pattern, or zero if the trailing
  * context has variable length.
  */
-
-void finish_rule(mach, variable_trail_rule, headcnt, trailcnt)
-     int mach, variable_trail_rule, headcnt, trailcnt;
+void finish_rule(int mach, int variable_trail_rule,
+                 int headcnt, int trailcnt)
 {
   char action_text[MAXLINE];
 
@@ -276,9 +263,7 @@ void finish_rule(mach, variable_trail_rule, headcnt, trailcnt)
  *  and then last, and will fail if either of the sub-patterns fails.
  *  FIRST is set to new by the operation.  last is unmolested.
  */
-
-int link_machines(first, last)
-     int first, last;
+int link_machines(int first, int last)
 {
   if (first == NIL)
     return last;
@@ -299,13 +284,11 @@ int link_machines(first, last)
 
 /* mark_beginning_as_normal - mark each "beginning" state in a machine
  *                            as being a "normal" (i.e., not trailing context-
- *                            associated) states
+ *                            associated) state.
  *
  * The "beginning" states are the epsilon closure of the first state
  */
-
-void mark_beginning_as_normal(mach)
-     register int mach;
+void mark_beginning_as_normal(int mach)
 {
   switch (state_type[mach]) {
     case STATE_NORMAL:
@@ -344,9 +327,7 @@ void mark_beginning_as_normal(mach)
  * the resulting machine CANNOT be used with any other "mk" operation except
  * more mkbranch's.  Compare with mkor()
  */
-
-int mkbranch(first, second)
-     int first, second;
+int mkbranch(int first, int second)
 {
   int eps;
 
@@ -372,9 +353,7 @@ int mkbranch(first, second)
  *
  * new - a new state which matches the closure of "state"
  */
-
-int mkclos(state)
-     int state;
+int mkclos(int state)
 {
   return mkopt(mkposcl(state));
 }
@@ -393,9 +372,7 @@ int mkclos(state)
  *     1. mach must be the last machine created
  *     2. mach is destroyed by the call
  */
-
-int mkopt(mach)
-     int mach;
+int mkopt(int mach)
 {
   int eps;
 
@@ -430,9 +407,7 @@ int mkopt(mach)
  * the code is rather convoluted because an attempt is made to minimize
  * the number of epsilon states needed
  */
-
-int mkor(first, second)
-     int first, second;
+int mkor(int first, int second)
 {
   int eps, orend;
 
@@ -485,9 +460,7 @@ int mkor(first, second)
  *
  *    new - a machine matching the positive closure of "state"
  */
-
-int mkposcl(state)
-     int state;
+int mkposcl(int state)
 {
   int eps;
 
@@ -515,9 +488,7 @@ int mkposcl(state)
  * note
  *   if "ub" is INFINITY then "new" matches "lb" or more occurrences of "mach"
  */
-
-int mkrep(mach, lb, ub)
-     int mach, lb, ub;
+int mkrep(int mach, int lb, int ub)
 {
   int base_mach, tail, copy, i;
 
@@ -558,9 +529,7 @@ int mkrep(mach, lb, ub)
  * CONTIGUOUS.  Change it and you will have to rewrite DUPMACHINE (kludge
  * that it admittedly is)
  */
-
-int mkstate(sym)
-     int sym;
+int mkstate(int sym)
 {
   if (++lastnfa >= current_mns) {
     if ((current_mns += MNS_INCREMENT) >= MAXIMUM_MNS)
@@ -630,9 +599,7 @@ int mkstate(sym)
  *     statefrom - the state from which the transition is to be made
  *     stateto   - the state to which the transition is to be made
  */
-
-void mkxtion(statefrom, stateto)
-     int statefrom, stateto;
+void mkxtion(int statefrom, int stateto)
 {
   if (trans1[statefrom] == NO_TRANSITION)
     trans1[statefrom] = stateto;
@@ -648,7 +615,6 @@ void mkxtion(statefrom, stateto)
 }
 
 /* new_rule - initialize for a new rule */
-
 void new_rule()
 {
   if (++num_rules >= current_max_rules) {

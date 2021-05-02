@@ -32,22 +32,20 @@ char copyright[] =
  All rights reserved.\n";
 #endif /* not lint */
 
-/* $Header$ */
+#include "main.h"                      /* this module */
 
+#include "dfa.h"                       /* ntod */
+#include "ecs.h"                       /* cre8cs, ccl2ecl */
+#include "gen.h"                       /* make_tables, emit_header_file, etc. */
+#include "misc.h"                      /* flexerror, outn, etc. */
 
 #include "flexdef.h"
-#include "version.h"
+#include "version.h"                   /* FLEX_VERSION */
 
-#include <stdio.h>              /* remove */
+#include <stdio.h>                     /* remove */
+
 
 static char flex_version[] = FLEX_VERSION;
-
-
-/* declare functions that have forward references */
-
-void flexinit PROTO((int, char **));
-void readin PROTO((void));
-void set_up_initial_allocations PROTO((void));
 
 
 /* these globals are all defined and commented in flexdef.h */
@@ -133,9 +131,7 @@ static char *skelname = NULL;
 static char header_file_name[MAXLINE];
 
 
-int main(argc, argv)
-     int argc;
-     char **argv;
+int main(int argc, char **argv)
 {
   int i;
 
@@ -176,7 +172,6 @@ int main(argc, argv)
 
 
 /* check_options - check user-specified options */
-
 void check_options()
 {
   int i;
@@ -327,10 +322,7 @@ void check_options()
  * note
  *    This routine does not return.
  */
-
-void flexend(exit_status)
-     int exit_status;
-
+void flexend(int exit_status)
 {
   int tblsiz;
 
@@ -526,10 +518,7 @@ void flexend(exit_status)
 
 
 /* flexinit - initialize flex */
-
-void flexinit(argc, argv)
-     int argc;
-     char **argv;
+void flexinit(int argc, char **argv)
 {
   int i, sawcmpflag;
   char *arg;
@@ -807,7 +796,6 @@ static char *basename(char *fname)
 
 
 /* readin - read in the rules section of the input file(s) */
-
 void readin()
 {
   static char yy_stdinit[] = "FILE *yyin = stdin, *yyout = stdout;";
@@ -1014,7 +1002,6 @@ void readin()
 
 
 /* set_up_initial_allocations - allocate memory for internal tables */
-
 void set_up_initial_allocations()
 {
   current_mns = INITIAL_MNS;

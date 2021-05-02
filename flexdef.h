@@ -26,7 +26,10 @@
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* @(#) $Header$ (LBL) */
+#ifndef FLEXDEF_H
+#define FLEXDEF_H
+
+#include "flexchar.h"           /* Char */
 
 #include <stdio.h>              /* FILE, etc. */
 #include <ctype.h>
@@ -38,10 +41,6 @@
  * is maintained outside this distribution for copyright reasons.
  */
 #define _(String) (String)
-
-/* Always be prepared to generate an 8-bit scanner. */
-#define CSIZE 256
-#define Char unsigned char
 
 /* Size of input alphabet - should be size of ASCII set. */
 #ifndef DEFAULT_CSIZE
@@ -281,30 +280,6 @@
 
 
 /* Declarations for global variables. */
-
-/* Variables for symbol tables:
- * sctbl - start-condition symbol table
- * ndtbl - name-definition symbol table
- * ccltab - character class text symbol table
- */
-
-struct hash_entry {
-  struct hash_entry *prev, *next;
-  char *name;
-  char *str_val;
-  int int_val;
-};
-
-typedef struct hash_entry **hash_table;
-
-#define NAME_TABLE_HASH_SIZE 101
-#define START_COND_HASH_SIZE 101
-#define CCL_HASH_SIZE 101
-
-extern struct hash_entry *ndtbl[NAME_TABLE_HASH_SIZE];
-extern struct hash_entry *sctbl[START_COND_HASH_SIZE];
-extern struct hash_entry *ccltab[CCL_HASH_SIZE];
-
 
 /* Variables for flags:
  * printstats - if true (-v), dump statistics
@@ -677,265 +652,6 @@ void flex_free PROTO((void *));
 extern int yylval;
 
 
-/* External functions that are cross-referenced among the flex source files. */
-
-
-/* from file ccl.c */
-
-extern void ccladd PROTO((int, int));   /* add a single character to a ccl */
-extern int cclinit PROTO((void));       /* make an empty ccl */
-extern void cclnegate PROTO((int));     /* negate a ccl */
-
-/* List the members of a set of characters in CCL form. */
-extern void list_character_set PROTO((FILE *, int[]));
-
-
-/* from file dfa.c */
-
-/* Check a DFA state for backing up. */
-extern void check_for_backing_up PROTO((int, int[]));
-
-/* Check to see if NFA state set constitutes "dangerous" trailing context. */
-extern void check_trailing_context PROTO((int *, int, int *, int));
-
-/* Construct the epsilon closure of a set of ndfa states. */
-extern int *epsclosure PROTO((int *, int *, int[], int *, int *));
-
-/* Increase the maximum number of dfas. */
-extern void increase_max_dfas PROTO((void));
-
-extern void ntod PROTO((void)); /* convert a ndfa to a dfa */
-
-/* Converts a set of ndfa states into a dfa state. */
-extern int snstods PROTO((int[], int, int[], int, int, int *));
-
-
-/* from file ecs.c */
-
-/* Convert character classes to set of equivalence classes. */
-extern void ccl2ecl PROTO((void));
-
-/* Associate equivalence class numbers with class members. */
-extern int cre8ecs PROTO((int[], int[], int));
-
-/* Update equivalence classes based on character class transitions. */
-extern void mkeccl PROTO((Char[], int, int[], int[], int, int));
-
-/* Create equivalence class for single character. */
-extern void mkechar PROTO((int, int[], int[]));
-
-
-/* from file gen.c */
-
-extern void do_indent PROTO((void));    /* indent to the current level */
-
-/* Generate the code to keep backing-up information. */
-extern void gen_backing_up PROTO((void));
-
-/* Generate the code to perform the backing up. */
-extern void gen_bu_action PROTO((void));
-
-/* Generate full speed compressed transition table. */
-extern void genctbl PROTO((void));
-
-/* Generate the code to find the action number. */
-extern void gen_find_action PROTO((void));
-
-extern void genftbl PROTO((void));      /* generate full transition table */
-
-/* Generate the code to find the next compressed-table state. */
-extern void gen_next_compressed_state PROTO((char *));
-
-/* Generate the code to find the next match. */
-extern void gen_next_match PROTO((void));
-
-/* Generate the code to find the next state. */
-extern void gen_next_state PROTO((int));
-
-/* Generate the code to make a NUL transition. */
-extern void gen_NUL_trans PROTO((void));
-
-/* Generate the code to find the start state. */
-extern void gen_start_state PROTO((void));
-
-/* Generate data statements for the transition tables. */
-extern void gentabs PROTO((void));
-
-/* Write out a formatted string at the current indentation level. */
-extern void indent_put2s PROTO((char[], char[]));
-
-/* Write out a string + newline at the current indentation level. */
-extern void indent_puts PROTO((char[]));
-
-extern void make_tables PROTO((void));  /* generate transition tables */
-
-/* Write 'line' and a newline to 'fp', except if it contains any
- * occurrences of "yyFlexLexer", replace the "yy" part with 'prefix'. */
-extern void emit_with_class_name_substitution
-PROTO((FILE * fp, char const *line));
-
-/* Write the header file containing the C++ lexer class definition. */
-extern void emit_header_file PROTO((char const *header_file_name));
-
-
-/* from file main.c */
-
-extern void check_options PROTO((void));
-extern void flexend PROTO((int));
-extern void usage PROTO((void));
-
-
-/* from file misc.c */
-
-/* Add a #define to the action file. */
-extern void action_define PROTO((char *defname, int value));
-
-/* Add the given text to the stored actions. */
-extern void add_action PROTO((char *new_text));
-
-/* True if a string is all lower case. */
-extern int all_lower PROTO((register char *));
-
-/* True if a string is all upper case. */
-extern int all_upper PROTO((register char *));
-
-/* Bubble sort an integer array. */
-extern void bubble PROTO((int[], int));
-
-/* Check a character to make sure it's in the expected range. */
-extern void check_char PROTO((int c));
-
-/* Replace upper-case letter to lower-case. */
-extern Char clower PROTO((int));
-
-/* Returns a dynamically allocated copy of a string. */
-extern char *copy_string PROTO((register const char *));
-
-/* Returns a dynamically allocated copy of a (potentially) unsigned string. */
-extern Char *copy_unsigned_string PROTO((register Char *));
-
-/* Shell sort a character array. */
-extern void cshell PROTO((Char[], int, int));
-
-/* Finish up a block of data declarations. */
-extern void dataend PROTO((void));
-
-/* Flush generated data statements. */
-extern void dataflush PROTO((void));
-
-/* Report an error message and terminate. */
-extern void flexerror PROTO((const char[]));
-
-/* Report a fatal error message and terminate. */
-extern void flexfatal PROTO((const char[]));
-
-/* Convert a hexadecimal digit string to an integer value. */
-extern int htoi PROTO((Char[]));
-
-/* Report an error message formatted with one integer argument. */
-extern void lerrif PROTO((const char[], int));
-
-/* Report an error message formatted with one string argument. */
-extern void lerrsf PROTO((const char[], const char[]));
-
-/* Spit out a "#line" statement. */
-extern void line_directive_out PROTO((FILE *, int));
-
-/* Mark the current position in the action array as the end of the section 1
- * user defs.
- */
-extern void mark_defs1 PROTO((void));
-
-/* Mark the current position in the action array as the end of the prolog. */
-extern void mark_prolog PROTO((void));
-
-/* Generate a data statment for a two-dimensional array. */
-extern void mk2data PROTO((int));
-
-extern void mkdata PROTO((int));        /* generate a data statement */
-
-/* Return the integer represented by a string of digits. */
-extern int myctoi PROTO((char[]));
-
-/* Return character corresponding to escape sequence. */
-extern Char myesc PROTO((Char[]));
-
-/* Convert an octal digit string to an integer value. */
-extern int otoi PROTO((Char[]));
-
-/* Output a (possibly-formatted) string to the generated scanner. */
-extern void out PROTO((const char[]));
-extern void out_dec PROTO((const char[], int));
-extern void out_dec2 PROTO((const char[], int, int));
-extern void out_hex PROTO((const char[], unsigned int));
-extern void out_line_count PROTO((const char[]));
-extern void out_str PROTO((const char[], const char[]));
-extern void out_str3
-PROTO((const char[], const char[], const char[], const char[]));
-extern void out_str_dec PROTO((const char[], const char[], int));
-extern void outc PROTO((int));
-extern void outn PROTO((const char[]));
-
-/* Return a printable version of the given character, which might be
- * 8-bit.
- */
-extern char *readable_form PROTO((int));
-
-/* Write out one section of the skeleton file. */
-extern void skelout PROTO((void));
-
-/* Output a yy_trans_info structure. */
-extern void transition_struct_out PROTO((int, int));
-
-/* Only needed when using certain broken versions of bison to build parse.c. */
-extern void *yy_flex_xmalloc PROTO((int));
-
-/* Set a region of memory to 0. */
-extern void zero_out PROTO((char *, size_t));
-
-
-/* from file nfa.c */
-
-/* Add an accepting state to a machine. */
-extern void add_accept PROTO((int, int));
-
-/* Make a given number of copies of a singleton machine. */
-extern int copysingl PROTO((int, int));
-
-/* Debugging routine to write out an nfa. */
-extern void dumpnfa PROTO((int));
-
-/* Finish up the processing for a rule. */
-extern void finish_rule PROTO((int, int, int, int));
-
-/* Connect two machines together. */
-extern int link_machines PROTO((int, int));
-
-/* Mark each "beginning" state in a machine as being a "normal" (i.e.,
- * not trailing context associated) state.
- */
-extern void mark_beginning_as_normal PROTO((register int));
-
-/* Make a machine that branches to two machines. */
-extern int mkbranch PROTO((int, int));
-
-extern int mkclos PROTO((int)); /* convert a machine into a closure */
-extern int mkopt PROTO((int));  /* make a machine optional */
-
-/* Make a machine that matches either one of two machines. */
-extern int mkor PROTO((int, int));
-
-/* Convert a machine into a positive closure. */
-extern int mkposcl PROTO((int));
-
-extern int mkrep PROTO((int, int, int));        /* make a replicated machine */
-
-/* Create a state with a transition on a given symbol. */
-extern int mkstate PROTO((int));
-
-extern void new_rule PROTO((void));     /* initialize for a new rule */
-
-
 /* from file parse.y */
 
 /* Build the "<<EOF>>" action for the active start conditions. */
@@ -974,56 +690,8 @@ extern void set_input_file PROTO((char *));
 extern int yywrap PROTO((void));
 
 
-/* from file sym.c */
-
-/* Add symbol and definitions to symbol table. */
-extern int addsym PROTO((register char[], char *, int, hash_table, int));
-
-/* Save the text of a character class. */
-extern void cclinstal PROTO((Char[], int));
-
-/* Lookup the number associated with character class. */
-extern int ccllookup PROTO((Char[]));
-
-/* Find symbol in symbol table. */
-extern struct hash_entry *findsym PROTO((register char[], hash_table, int));
-
-extern void ndinstal PROTO((char[], Char[]));   /* install a name definition */
-extern Char *ndlookup PROTO((char[]));  /* lookup a name definition */
-
-/* Increase maximum number of SC's. */
-extern void scextend PROTO((void));
-extern void scinstal PROTO((char[], int));      /* make a start condition */
-
-/* Lookup the number associated with a start condition. */
-extern int sclookup PROTO((char[]));
-
-
-/* from file tblcmp.c */
-
-/* Build table entries for dfa state. */
-extern void bldtbl PROTO((int[], int, int, int, int));
-
-extern void cmptmps PROTO((void));      /* compress template table entries */
-extern void expand_nxt_chk PROTO((void));       /* increase nxt/chk arrays */
-/* Finds a space in the table for a state to be placed. */
-extern int find_table_space PROTO((int *, int));
-extern void inittbl PROTO((void));      /* initialize transition tables */
-/* Make the default, "jam" table entries. */
-extern void mkdeftbl PROTO((void));
-
-/* Create table entries for a state (or state fragment) which has
- * only one out-transition.
- */
-extern void mk1tbl PROTO((int, int, int, int));
-
-/* Place a state into full speed transition table. */
-extern void place_state PROTO((int *, int, int));
-
-/* Save states with only one out-transition to be processed later. */
-extern void stack1 PROTO((int, int, int, int));
-
-
 /* from file yylex.c */
 
 extern int yylex PROTO((void));
+
+#endif /* FLEXDEF_H */
