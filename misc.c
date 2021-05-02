@@ -38,6 +38,7 @@
 
 #include <ctype.h>                     /* islower, isupper, etc. */
 #include <string.h>                    /* strcpy, etc. */
+#include <stdlib.h>                    /* exit */
 
 
 /* Add a #define to the action file. */

@@ -36,6 +36,7 @@
 
 #include "flexdef.h"
 
+#include <stdlib.h>                    /* exit */
 #include <string.h>                    /* strerror, strcpy, strrchr */
 
 
