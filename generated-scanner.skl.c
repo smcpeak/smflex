@@ -1,4 +1,4 @@
-/* File created from scanner.skl via encode.sh */
+/* File created from generated-scanner.skl via encode.sh */
 
 /* NULL-terminated array of NUL-terminated lines, *without* line
  * terminators. */
@@ -413,7 +413,10 @@ const char *scanner_skl_contents[] = {
   "#endif",
   "",
   "/* Default declaration of generated scanner - a define so the user can",
-  " * easily add parameters.",
+  " * easily add parameters when using the C interface.  When using the",
+  " * C++ interface, parameters cannot be added to yylex, but the user",
+  " * can instead define a derived class and add members to that which",
+  " * will be accessible within yylex.",
   " */",
   "#ifndef YY_DECL",
   "%- Standard (non-C++) definition",
