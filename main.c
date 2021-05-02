@@ -57,7 +57,7 @@ int yymore_used, reject, real_reject, continued_action, in_rule;
 int yymore_really_used, reject_really_used;
 int datapos, dataline, linenum, out_linenum;
 FILE *skelfile = NULL;
-int skel_ind = 0;
+int scanner_skl_ind = 0;
 char *action_array;
 int action_size, defs1_offset, prolog_offset, action_offset, action_index;
 FILE *scanner_c_file = NULL;

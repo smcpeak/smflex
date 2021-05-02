@@ -725,7 +725,7 @@ void skelout()
    */
   while (skelfile ?
            (fgets(buf, MAXLINE, skelfile) != NULL) :
-           ((buf = (char*)scanner_skl_contents[skel_ind++]) != 0)) {
+           ((buf = (char*)scanner_skl_contents[scanner_skl_ind++]) != 0)) {
     if (buf[0] == '%') {        /* control line */
       switch (buf[1]) {
         case '%':
