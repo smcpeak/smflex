@@ -253,9 +253,6 @@ and reference sections:
     those error messages produced by flex (or scanners
     it generates) whose meanings might not be apparent
 
-<li><a href="#files">Files</a>:
-    files used by flex
-
 <li><a href="#deficiencies-n-bugs">Deficiencies / Bugs</a>:
     known problems with flex
 
@@ -3224,39 +3221,6 @@ have listed at least one of them twice).
 
 </dl>
 
-
-<h1 id="files">FILES</h1>
-
-<dl>
-
-<dt><code>-lfl</code>
-
-<dd><p>library with which scanners must be linked.
-
-<dt><code>lex.yy.c</code>
-
-<dd><p>generated scanner (called <code>lexyy.c</code> on some systems).
-
-<dt><code>lex.yy.cc</code>
-
-<dd><p>generated C++ scanner class, when using <code>-+</code>.
-
-<dt><code>&lt;FlexLexer.h&gt;</code>
-
-<dd><p>header file defining the C++ scanner base class,
-    <code>FlexLexer</code>, and its derived class, <code>yyFlexLexer</code>.
-
-<dt><code>flex.skl</code>
-
-<dd><p>skeleton scanner. This file is only used when building flex, not when
-    flex executes.
-
-<dt><code>lex.backup</code>
-
-<dd><p>backing-up information for <code>-b</code> flag (called
-    <code>lex.bck</code> on some systems).
-
-</dl>
 
 <h1 id="deficiencies-n-bugs">DEFICIENCIES / BUGS</h1>
 
