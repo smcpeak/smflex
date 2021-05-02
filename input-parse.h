@@ -29,4 +29,19 @@ extern void yyerror(char msg[]);
  * returns. */
 extern int yyparse(void);
 
+
+/* Used to communicate between scanner and parser.
+ *
+ * smcpeak: An existing comment says:
+ *
+ *   The type should really be YYSTYPE, but we can't easily get our
+ *   hands on it.
+ *
+ * This seems odd to me because input-parse.y.h declares yylval as
+ * YYSTYPE.  But there is also a comment in input-parse.y about
+ * YYSTYPE, and a definition of it, that leads me to beleve this
+ * might not be trivial to unravel. */
+extern int yylval;
+
+
 #endif /* INPUT_PARSE_H */
