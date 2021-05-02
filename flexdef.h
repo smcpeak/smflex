@@ -678,7 +678,7 @@ extern void yyerror PROTO((char[]));    /* report a parse error */
 extern int yyparse PROTO((void));       /* the YACC parser */
 
 
-/* from file scan.l */
+/* from file input-scan.lex */
 
 /* The Flex-generated scanner for flex. */
 extern int flexscan PROTO((void));

@@ -48,7 +48,7 @@ HEADERS = ccl.h dfa.h ecs.h flexchar.h flexdef.h header.skl gen.h \
 
 # Sources to include in the distribution, and also on which to run tags.
 SOURCES = ccl.c dfa.c ecs.c gen.c header.skl.c main.c misc.c nfa.c parse.y \
-          scan.l scanner.skl.c sym.c tblcmp.c yylex.c
+          input-scan.lex scanner.skl.c sym.c tblcmp.c yylex.c
 
 # Object files to compile and link into 'flex'.
 OBJECTS = ccl.o dfa.o ecs.o gen.o header.skl.o main.o misc.o nfa.o parse.tab.o \
@@ -115,7 +115,7 @@ check: $(FLEX)
 	@# Check to see if the current flex produces the same output
 	@# as it did before.
 	@#
-	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.tmp.c scan.l
+	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.tmp.c input-scan.lex
 	@#
 	@# Fix the file names in #line directives so they match.
 	@#
@@ -250,11 +250,11 @@ parse.tab.c: parse.y
 # 'parse.tab.h'.
 parse.tab.h: parse.tab.c
 
-# scan.c is the output of running flex on 'scan.l'.  It is used by
+# scan.c is the output of running flex on 'input-scan.lex'.  It is used by
 # flex to read it input file.  Hence, flex is partially written in
 # its own language.  See the .bootstrap target.
-scan.c: scan.l
-	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.c scan.l
+scan.c: input-scan.lex
+	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.c input-scan.lex
 
 # 'scanner.skl.c' contains the contents of 'scanner.skl' as a C string.
 scanner.skl.c: scanner.skl encode.sh
