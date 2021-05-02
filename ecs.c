@@ -30,6 +30,9 @@
 
 #include "flexdef.h"
 
+#include "main.h"                      /* lastccl, cclmap, etc. */
+
+
 /* ccl2ecl - convert character classes to set of equivalence classes */
 void ccl2ecl()
 {

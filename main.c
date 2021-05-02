@@ -87,6 +87,7 @@ int tecbck[CSIZE + 1];
 int lastsc, *scset, *scbol, *scxclu, *sceof;
 int current_max_scs;
 char **scname;
+
 int current_max_dfa_size, current_max_xpairs;
 int current_max_template_xpairs, current_max_dfas;
 int lastdfa, *nxt, *chk, *tnxt;
@@ -94,6 +95,8 @@ int *base, *def, *nultrans, NUL_ec, tblend, firstfree, **dss, *dfasiz;
 union dfaacc_union *dfaacc;
 int *accsiz, *dhash, numas;
 int numsnpairs, jambase, jamstate;
+int end_of_buffer_state;
+
 int lastccl, *cclmap, *ccllen, *cclng, cclreuse;
 int current_maxccls, current_max_ccl_tbl_size;
 Char *ccltbl;
@@ -104,7 +107,6 @@ int tmpuses, totnst, peakpairs, numuniq, numdup, hshsave;
 int num_backing_up, bol_needed;
 
 FILE *backing_up_file;
-int end_of_buffer_state;
 char **input_files;
 int num_input_files;
 
