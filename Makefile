@@ -116,7 +116,7 @@ check: $(FLEX)
 	rm scan.actual
 	@echo "Check successful, using COMPRESSION=\"$(COMPRESSION)\""
 
-# With various compression modes:
+# One step of 'bigcheck'.  COMPRESSION should be set.
 #
 #   1. Regenerate input-scan.lex.c with that compression mode.
 #   2. Recompile flex with the new input-scan.lex.c.
@@ -124,19 +124,27 @@ check: $(FLEX)
 #      mode.
 #   4. Check that the second output agrees with the first.
 #
+bigcheck1:
+	rm -f input-scan.lex.c
+	$(MAKE) input-scan.lex.c
+	$(MAKE) $(FLEX)
+	$(MAKE) check
+
+# Run 'bigcheck1' with various compression modes.
+#
 # Thus, we are checking at each stage that the existing flex (with
 # whatever previous compression mode was active) and the new flex have
 # the same output.
 #
 bigcheck:
-	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-C" check
-	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-Ce" check
-	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-Cm" check
-	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-f" check
-	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-Cfea" check
-	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-CFer" check
-	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-l" PERF_REPORT="" check
-	rm -f input-scan.lex.c ; $(MAKE)
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-C" bigcheck1
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-Ce" bigcheck1
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-Cm" bigcheck1
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-f" bigcheck1
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-Cfea" bigcheck1
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-CFer" bigcheck1
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-l" PERF_REPORT="" bigcheck1
+	rm -f input-scan.lex.c ; $(MAKE) bigcheck1
 	@echo "All checks successful"
 
 # Install to the chosen --prefix.
