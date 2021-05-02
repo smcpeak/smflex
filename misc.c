@@ -39,6 +39,18 @@
 #include <stdlib.h>                    /* exit */
 
 
+/* Number of data items per line for -f output. */
+#define NUMDATAITEMS 10
+
+/* Number of lines of data in -f output before inserting a blank line for
+ * readability.
+ */
+#define NUMDATALINES 10
+
+/* transition_struct_out() definitions. */
+#define TRANS_STRUCT_PRINT_LENGTH 14
+
+
 /* Add a #define to the action file. */
 void action_define(char *defname, int value)
 {

@@ -38,6 +38,13 @@
 #include <string.h>                    /* strerror, strcpy, strrchr */
 
 
+/* Special chk[] values marking the slots taking by end-of-buffer and action
+ * numbers.
+ */
+#define EOB_POSITION -1
+#define ACTION_POSITION -2
+
+
 static int indent_level = 0;    /* each level is 8 spaces */
 
 #define indent_up() (++indent_level)

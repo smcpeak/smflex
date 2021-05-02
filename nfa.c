@@ -33,6 +33,21 @@
 #include "misc.h"                      /* flexfatal, add_action, etc. */
 
 
+/* Returns true if an nfa state has an epsilon out-transition slot
+ * that can be used.  This definition is currently not used.
+ */
+#define FREE_EPSILON(state) \
+        (transchar[state] == SYM_EPSILON && \
+         trans2[state] == NO_TRANSITION && \
+         finalst[state] != state)
+
+/* Returns true if an nfa state has an epsilon out-transition character
+ * and both slots are free
+ */
+#define SUPER_FREE_EPSILON(state) \
+        (transchar[state] == SYM_EPSILON && \
+         trans1[state] == NO_TRANSITION) \
+
 
 /* add_accept - add an accepting state to a machine
  *

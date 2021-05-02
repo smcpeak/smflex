@@ -38,6 +38,8 @@
 #include "nfa.h"                       /* dumpnfa, mkbranch */
 
 
+#define MAX_DFA_SIZE_INCREMENT 750
+
 
 /* check_for_backing_up - check a DFA state for backing up
  *

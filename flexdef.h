@@ -35,20 +35,10 @@
  */
 #define _(String) (String)
 
-/* Size of input alphabet - should be size of ASCII set. */
-#ifndef DEFAULT_CSIZE
-#  define DEFAULT_CSIZE 128
-#endif
-
-#ifdef VMS
-#  ifndef __VMS_POSIX
-#    define SHORT_FILE_NAMES
-#  endif
-#endif
-
 
 /* Maximum line length we'll have to deal with. */
 #define MAXLINE 2048
+
 
 #ifndef MIN
 #  define MIN(x,y) ((x) < (y) ? (x) : (y))
@@ -64,46 +54,6 @@
 #define true 1
 #define false 0
 #define unspecified -1
-
-
-/* Special chk[] values marking the slots taking by end-of-buffer and action
- * numbers.
- */
-#define EOB_POSITION -1
-#define ACTION_POSITION -2
-
-/* Number of data items per line for -f output. */
-#define NUMDATAITEMS 10
-
-/* Number of lines of data in -f output before inserting a blank line for
- * readability.
- */
-#define NUMDATALINES 10
-
-/* transition_struct_out() definitions. */
-#define TRANS_STRUCT_PRINT_LENGTH 14
-
-/* Returns true if an nfa state has an epsilon out-transition slot
- * that can be used.  This definition is currently not used.
- */
-#define FREE_EPSILON(state) \
-        (transchar[state] == SYM_EPSILON && \
-         trans2[state] == NO_TRANSITION && \
-         finalst[state] != state)
-
-/* Returns true if an nfa state has an epsilon out-transition character
- * and both slots are free
- */
-#define SUPER_FREE_EPSILON(state) \
-        (transchar[state] == SYM_EPSILON && \
-         trans1[state] == NO_TRANSITION) \
-
-/* Maximum number of NFA states that can comprise a DFA state.  It's real
- * big because if there's a lot of rules, the initial state will have a
- * huge epsilon closure.
- */
-#define INITIAL_MAX_DFA_SIZE 750
-#define MAX_DFA_SIZE_INCREMENT 750
 
 
 /* A note on the following masks.  They are used to mark accepting numbers

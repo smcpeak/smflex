@@ -47,6 +47,24 @@ char copyright[] =
 #include <stdlib.h>                    /* exit */
 
 
+/* Size of input alphabet - should be size of ASCII set. */
+#ifndef DEFAULT_CSIZE
+#  define DEFAULT_CSIZE 128
+#endif
+
+#ifdef VMS
+#  ifndef __VMS_POSIX
+#    define SHORT_FILE_NAMES
+#  endif
+#endif
+
+/* Maximum number of NFA states that can comprise a DFA state.  It's real
+ * big because if there's a lot of rules, the initial state will have a
+ * huge epsilon closure.
+ */
+#define INITIAL_MAX_DFA_SIZE 750
+
+
 static char flex_version[] = FLEX_VERSION;
 
 
