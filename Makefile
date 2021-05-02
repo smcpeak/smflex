@@ -43,15 +43,15 @@ GENDEPS = -MMD
 include $(wildcard *.d)
 
 # Headers to include in the distribution.
-HEADERS = ccl.h dfa.h ecs.h flexchar.h flexdef.h FlexLexer.h gen.h \
+HEADERS = ccl.h dfa.h ecs.h flexchar.h flexdef.h header.skl gen.h \
           main.h misc.h nfa.h parse.h sym.h tblcmp.h version.h yylex.h
 
 # Sources to include in the distribution, and also on which to run tags.
-SOURCES = ccl.c dfa.c ecs.c gen.c header.c main.c misc.c nfa.c parse.y \
+SOURCES = ccl.c dfa.c ecs.c gen.c header.skl.c main.c misc.c nfa.c parse.y \
           scan.l scanner.skl.c sym.c tblcmp.c yylex.c
 
 # Object files to compile and link into 'flex'.
-OBJECTS = ccl.o dfa.o ecs.o gen.o header.o main.o misc.o nfa.o parse.o \
+OBJECTS = ccl.o dfa.o ecs.o gen.o header.skl.o main.o misc.o nfa.o parse.o \
           scan.o scanner.skl.o sym.o tblcmp.o yylex.o
 
 # Complete set of files and directories to be included in the
@@ -264,9 +264,9 @@ scan.c: scan.l
 scanner.skl.c: scanner.skl mkskel.sh
 	$(SHELL) mkskel.sh scanner.skl scanner.skl.c scanner_skl_contents
 
-# Similarly, 'header.c' contains the contents of 'FlexLexer.h'.
-header.c: FlexLexer.h mkskel.sh
-	$(SHELL) mkskel.sh FlexLexer.h header.c header_contents
+# Similarly, 'header.skl.c' contains the contents of 'header.skl'.
+header.skl.c: header.skl mkskel.sh
+	$(SHELL) mkskel.sh header.skl header.skl.c header_contents
 
 # For an explanation of the following Makefile rules, see node
 # `Automatic Remaking' in GNU Autoconf documentation.

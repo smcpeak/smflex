@@ -1,10 +1,10 @@
-/* File created from FlexLexer.h via mkskel.sh */
+/* File created from header.skl via mkskel.sh */
 
 /* NULL-terminated array of NUL-terminated lines, *without* line
  * terminators. */
 const char *header_contents[] = {
-  "// FlexLexer.h -- define interfaces for lexical analyzer classes generated",
-  "//                by flex",
+  "// header.skl -- define interface for lexical analyzer classes generated",
+  "//               by flex",
   "",
   "// Copyright (c) 1993 The Regents of the University of California.",
   "// All rights reserved.",
