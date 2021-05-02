@@ -47,14 +47,6 @@
 #  define DEFAULT_CSIZE 128
 #endif
 
-#ifndef PROTO
-#  if __STDC__
-#    define PROTO(proto) proto
-#  else
-#    define PROTO(proto) ()
-#  endif
-#endif
-
 #ifdef VMS
 #  ifndef __VMS_POSIX
 #    define SHORT_FILE_NAMES
@@ -596,12 +588,12 @@ extern int sectnum, nummt, hshcol, dfaeql, numeps, eps2, num_reallocs;
 extern int tmpuses, totnst, peakpairs, numuniq, numdup, hshsave;
 extern int num_backing_up, bol_needed;
 
-void *allocate_array PROTO((int, size_t));
-void *reallocate_array PROTO((void *, int, size_t));
+void *allocate_array(int, size_t);
+void *reallocate_array(void *, int, size_t);
 
-void *flex_alloc PROTO((size_t));
-void *flex_realloc PROTO((void *, size_t));
-void flex_free PROTO((void *));
+void *flex_alloc(size_t);
+void *flex_realloc(void *, size_t);
+void flex_free(void *);
 
 #define allocate_integer_array(size) \
         (int *) allocate_array( size, sizeof( int ) )
@@ -651,43 +643,43 @@ extern int yylval;
 /* from file input-parse.y */
 
 /* Build the "<<EOF>>" action for the active start conditions. */
-extern void build_eof_action PROTO((void));
+extern void build_eof_action(void);
 
 /* Write out a message formatted with one string, pinpointing its location. */
-extern void format_pinpoint_message PROTO((char[], char[]));
+extern void format_pinpoint_message(char[], char[]);
 
 /* Write out a message, pinpointing its location. */
-extern void pinpoint_message PROTO((char[]));
+extern void pinpoint_message(char[]);
 
 /* Write out a warning, pinpointing it at the given line. */
-extern void line_warning PROTO((char[], int));
+extern void line_warning(char[], int);
 
 /* Write out a message, pinpointing it at the given line. */
-extern void line_pinpoint PROTO((char[], int));
+extern void line_pinpoint(char[], int);
 
 /* Report a formatted syntax error. */
-extern void format_synerr PROTO((char[], char[]));
-extern void synerr PROTO((char[]));     /* report a syntax error */
-extern void format_warn PROTO((char[], char[]));
-extern void warn PROTO((char[]));       /* report a warning */
-extern void yyerror PROTO((char[]));    /* report a parse error */
-extern int yyparse PROTO((void));       /* the YACC parser */
+extern void format_synerr(char[], char[]);
+extern void synerr(char[]);     /* report a syntax error */
+extern void format_warn(char[], char[]);
+extern void warn(char[]);       /* report a warning */
+extern void yyerror(char[]);    /* report a parse error */
+extern int yyparse(void);       /* the YACC parser */
 
 
 /* from file input-scan.lex */
 
 /* The Flex-generated scanner for flex. */
-extern int flexscan PROTO((void));
+extern int flexscan(void);
 
 /* Open the given file (if NULL, stdin) for scanning. */
-extern void set_input_file PROTO((char *));
+extern void set_input_file(char *);
 
 /* Wrapup a file in the lexical analyzer. */
-extern int yywrap PROTO((void));
+extern int yywrap(void);
 
 
 /* from file yylex.c */
 
-extern int yylex PROTO((void));
+extern int yylex(void);
 
 #endif /* FLEXDEF_H */
