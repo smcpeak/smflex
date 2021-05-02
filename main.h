@@ -114,7 +114,6 @@ extern FILE *skelfile;
 extern const char *scanner_skl_contents[];     /* TODO: move */
 extern int scanner_skl_ind;
 extern char const *header_skl_contents[];      /* TODO: move */
-extern FILE *yyin;                             /* TODO: move */
 extern FILE *backing_up_file;
 extern char *infilename, *outfilename;
 extern int did_outfilename;

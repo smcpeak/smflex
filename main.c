@@ -89,7 +89,6 @@ FILE *skelfile = NULL;
 /* placeholder: scanner_skl_contents */
 int scanner_skl_ind = 0;
 /* placeholder: header_skl_contents */
-/* placeholder: yyin */
 FILE *backing_up_file;
 char *infilename = NULL, *outfilename = NULL;
 int did_outfilename;
