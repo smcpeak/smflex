@@ -423,7 +423,7 @@ LEXOPT          [aceknopr]
                         }
 
         "{"{NAME}"}"    {
-                          register Char *nmdefptr;
+                          Char *nmdefptr;
                           Char *ndlookup();
 
                           strcpy(nmstr, yytext + 1);

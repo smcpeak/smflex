@@ -77,7 +77,7 @@ void add_action(char *new_text)
 /* allocate_array - allocate memory for an integer array of the given size */
 void *allocate_array(int size, size_t element_size)
 {
-  register void *mem;
+  void *mem;
   size_t num_bytes = element_size * size;
 
   mem = flex_alloc(num_bytes);
@@ -130,7 +130,7 @@ int all_upper(char *str)
  */
 void bubble(int v[], int n)
 {
-  register int i, j, k;
+  int i, j, k;
 
   for (i = n; i > 1; --i)
     for (j = 1; j < i; ++j)
@@ -169,8 +169,8 @@ Char clower(int c)
 /* copy_string - returns a dynamically allocated copy of a string */
 char *copy_string(const char *str)
 {
-  register const char *c1;
-  register char *c2;
+  const char *c1;
+  char *c2;
   char *copy;
   unsigned int size;
 
@@ -196,7 +196,7 @@ char *copy_string(const char *str)
  */
 Char *copy_unsigned_string(Char *str)
 {
-  register Char *c;
+  Char *c;
   Char *copy;
 
   /* find length */
@@ -595,7 +595,7 @@ void out_hex(const char fmt[], unsigned int x)
 /* Increment 'out_linenum' once for every newline in 'str'. */
 void out_line_count(const char str[])
 {
-  register int i;
+  int i;
 
   for (i = 0; str[i]; ++i)
     if (str[i] == '\n')
@@ -697,7 +697,7 @@ char *readable_form(int c)
 /* reallocate_array - increase the size of a dynamic array */
 void *reallocate_array(void *array, int size, size_t element_size)
 {
-  register void *new_array;
+  void *new_array;
   size_t num_bytes = element_size * size;
 
   new_array = flex_realloc(array, num_bytes);
@@ -800,7 +800,7 @@ void *yy_flex_xmalloc(int size)
  */
 void zero_out(char *region_ptr, size_t size_in_bytes)
 {
-  register char *rp, *rp_end;
+  char *rp, *rp_end;
 
   rp = region_ptr;
   rp_end = region_ptr + size_in_bytes;

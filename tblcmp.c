@@ -203,7 +203,7 @@ void bldtbl(int state[], int statenum, int totaltrans,
 void cmptmps()
 {
   int tmpstorage[CSIZE + 1];
-  register int *tmp = tmpstorage, i, j;
+  int *tmp = tmpstorage, i, j;
   int totaltrans, trans;
 
   peakpairs = numtemps * numecs + tblend;
@@ -268,7 +268,7 @@ void cmptmps()
 /* expand_nxt_chk - expand the nxt/chk arrays */
 void expand_nxt_chk()
 {
-  register int old_max = current_max_xpairs;
+  int old_max = current_max_xpairs;
 
   current_max_xpairs += MAX_XPAIRS_INCREMENT;
 
@@ -305,9 +305,9 @@ int find_table_space(int *state, int numtrans)
   /* Firstfree is the position of the first possible occurrence of two
    * consecutive unused records in the chk and nxt arrays.
    */
-  register int i;
-  register int *state_ptr, *chk_ptr;
-  register int *ptr_to_last_entry_in_state;
+  int i;
+  int *state_ptr, *chk_ptr;
+  int *ptr_to_last_entry_in_state;
 
   /* If there are too many out-transitions, put the state at the end of
    * nxt and chk.
@@ -396,7 +396,7 @@ int find_table_space(int *state, int numtrans)
  */
 void inittbl()
 {
-  register int i;
+  int i;
 
   zero_out((char *) chk, (size_t) (current_max_xpairs * sizeof(int)));
 
@@ -474,7 +474,7 @@ void mkdeftbl()
 void mkentry(int *state, int numchars, int statenum,
              int deflink, int totaltrans)
 {
-  register int minec, maxec, i, baseaddr;
+  int minec, maxec, i, baseaddr;
   int tblbase, tbllast;
 
   if (totaltrans == 0) {        /* there are no out-transitions */
@@ -716,8 +716,8 @@ void mv2front(int qelm)
  */
 void place_state(int *state, int statenum, int transnum)
 {
-  register int i;
-  register int *state_ptr;
+  int i;
+  int *state_ptr;
   int position = find_table_space(state, transnum);
 
   /* "base" is the table of start positions. */
@@ -785,8 +785,8 @@ void stack1(int statenum, int sym, int nextstate, int deflink)
  */
 int tbldiff(int state[], int pr, int ext[])
 {
-  register int i, *sp = state, *ep = ext, *protp;
-  register int numdiff = 0;
+  int i, *sp = state, *ep = ext, *protp;
+  int numdiff = 0;
 
   protp = &protsave[numecs * (pr - 1)];
 

@@ -837,8 +837,8 @@ static yy_state_type yy_get_previous_state()
 yyFlexLexer::yy_state_type yyFlexLexer::yy_get_previous_state()
 %*
 {
-  register yy_state_type yy_current_state;
-  register char *yy_cp;
+  yy_state_type yy_current_state;
+  char *yy_cp;
 
 %% code to get the start state into yy_current_state goes here
 
@@ -861,7 +861,7 @@ static yy_state_type yy_try_NUL_trans(yy_state_type yy_current_state)
 yyFlexLexer::yy_state_type yyFlexLexer::yy_try_NUL_trans( yy_state_type yy_current_state )
 %*
 {
-  register int yy_is_jam;
+  int yy_is_jam;
 %% code to find the next state, and perhaps do backing up, goes here
 
   return yy_is_jam ? 0 : yy_current_state;
@@ -870,12 +870,12 @@ yyFlexLexer::yy_state_type yyFlexLexer::yy_try_NUL_trans( yy_state_type yy_curre
 
 %-
 #ifndef YY_NO_UNPUT
-static void yyunput(int c, register char *yy_bp)
+static void yyunput(int c, char *yy_bp)
 %+
-void yyFlexLexer::yyunput(int c, register char* yy_bp)
+void yyFlexLexer::yyunput(int c, char* yy_bp)
 %*
 {
-  register char *yy_cp = yy_c_buf_p;
+  char *yy_cp = yy_c_buf_p;
 
   /* undo effects of setting up yytext */
   *yy_cp = yy_hold_char;
@@ -883,10 +883,10 @@ void yyFlexLexer::yyunput(int c, register char* yy_bp)
   if ( yy_cp < yy_current_buffer->yy_ch_buf + 2 ) {
     /* need to shift things up to make room */
     /* +2 for EOB chars. */
-    register int number_to_move = yy_n_chars + 2;
-    register char *dest = &yy_current_buffer->yy_ch_buf[
+    int number_to_move = yy_n_chars + 2;
+    char *dest = &yy_current_buffer->yy_ch_buf[
       yy_current_buffer->yy_buf_size + 2];
-    register char *source =
+    char *source =
       &yy_current_buffer->yy_ch_buf[number_to_move];
 
     while ( source > yy_current_buffer->yy_ch_buf )
@@ -1338,7 +1338,7 @@ void yyFlexLexer::LexerError( const char msg[] )
 #ifndef yytext_ptr
 static void yy_flex_strncpy(char *s1, const char *s2, int n)
 {
-  register int i;
+  int i;
   for (i = 0; i < n; ++i)
     s1[i] = s2[i];
 }
@@ -1347,7 +1347,7 @@ static void yy_flex_strncpy(char *s1, const char *s2, int n)
 #ifdef YY_NEED_STRLEN
 static int yy_flex_strlen(const char *s)
 {
-  register int n;
+  int n;
   for (n = 0; s[n]; ++n)
     {}
 

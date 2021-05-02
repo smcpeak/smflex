@@ -110,13 +110,13 @@ void cclnegate(int cclp)
  */
 void list_character_set(FILE *file, int cset[])
 {
-  register int i;
+  int i;
 
   putc('[', file);
 
   for (i = 0; i < csize; ++i) {
     if (cset[i]) {
-      register int start_char = i;
+      int start_char = i;
 
       putc(' ', file);
 
