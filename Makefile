@@ -42,26 +42,20 @@ GENDEPS = -MMD
 # Pull in generated dependencies.
 include $(wildcard *.d)
 
-# Headers to include in the distribution.
-HEADERS = ccl.h dfa.h ecs.h flexchar.h flexdef.h header.skl gen.h \
-          main.h misc.h nfa.h input-parse.y.h sym.h tblcmp.h version.h yylex.h
-
-# Sources to include in the distribution.
-SOURCES = ccl.c dfa.c ecs.c gen.c header.skl.c main.c misc.c nfa.c input-parse.y \
-          input-scan.lex scanner.skl.c sym.c tblcmp.c yylex.c
+# C source code.
+SOURCES = $(wildcard *.c)
 
 # Object files to compile and link into 'flex'.
-OBJECTS = ccl.o dfa.o ecs.o gen.o header.skl.o main.o misc.o nfa.o input-parse.y.o \
-          input-scan.lex.o scanner.skl.o sym.o tblcmp.o yylex.o
+OBJECTS = $(SOURCES:.c=.o)
 
 # Complete set of files and directories to be included in the
 # distribution tarball, except that a few things in 'test' get removed.
-DISTFILES = README.md NEWS COPYING \
-            configure.in Makefile config.mk.in encode.sh scanner.skl \
-            $(HEADERS) $(SOURCES) \
-            flex.html input-scan.lex.c install.sh mkinstalldirs configure \
-            test \
-            input-parse.y.c input-parse.y.h
+DISTFILES = README.md NEWS COPYING flex.html \
+            configure config.mk.in Makefile \
+            $(wildcard *.h) $(SOURCES) $(wildcard *.skl) \
+            input-scan.lex input-parse.y \
+            configure.in encode.sh install.sh mkinstalldirs \
+            test
 
 # Name of the distribution, meaning what goes before ".tar.gz" in the
 # distribution tarball file name, and also the name of the directory
