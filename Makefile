@@ -266,7 +266,7 @@ scanner.skl.c: scanner.skl mkskel.sh
 
 # Similarly, 'header.skl.c' contains the contents of 'header.skl'.
 header.skl.c: header.skl mkskel.sh
-	$(SHELL) mkskel.sh header.skl header.skl.c header_contents
+	$(SHELL) mkskel.sh header.skl header.skl.c header_skl_contents
 
 # For an explanation of the following Makefile rules, see node
 # `Automatic Remaking' in GNU Autoconf documentation.

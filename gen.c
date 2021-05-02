@@ -1490,7 +1490,7 @@ void emit_header_file(char const *header_file_name)
   /* Copy the header contents into it. */
   {
     char const **line;
-    for (line = header_contents; *line != NULL; line++) {
+    for (line = header_skl_contents; *line != NULL; line++) {
       emit_with_class_name_substitution(header_file, *line);
     }
   }

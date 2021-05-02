@@ -391,7 +391,7 @@ extern FILE *scanner_c_file;
 extern int write_native_line_endings;
 
 /* Defined in header.c, this has the contents of the header to emit. */
-extern char const *header_contents[];
+extern char const *header_skl_contents[];
 
 /* Variables for stack of states having only one out-transition:
  * onestate - state number

@@ -2,7 +2,7 @@
 
 /* NULL-terminated array of NUL-terminated lines, *without* line
  * terminators. */
-const char *header_contents[] = {
+const char *header_skl_contents[] = {
   "// header.skl -- define interface for lexical analyzer classes generated",
   "//               by flex",
   "",
