@@ -223,10 +223,6 @@ dist-test-clean:
 config.mk: config.mk.in config.status
 	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
 
-# Tell versions [3.59,3.63) of GNU make not to export all variables.
-# Otherwise a system limit (for SysV at least) may be exceeded.
-.NOEXPORT:
-
 
 # ------------------------ Maintainer rules -------------------------
 # The rules in this section are meant for use when making changes to
