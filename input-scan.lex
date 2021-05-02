@@ -37,6 +37,9 @@
 
 #include "flexdef.h"
 
+#include <string.h>                    /* strcpy, strlen, etc. */
+
+
 #define ACTION_ECHO add_action(yytext)
 #define ACTION_IFDEF(def, should_define) \
   { \

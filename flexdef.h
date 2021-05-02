@@ -32,7 +32,6 @@
 #include "flexchar.h"           /* Char */
 
 #include <stdio.h>              /* FILE, etc. */
-#include <string.h>             /* strcpy, etc. */
 #include <stdlib.h>             /* malloc, etc. */
 
 /* As an aid for the internationalization patch to flex, which

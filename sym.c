@@ -36,6 +36,8 @@
 
 #include "flexdef.h"
 
+#include <string.h>                    /* strcmp */
+
 
 struct hash_entry *ndtbl[NAME_TABLE_HASH_SIZE];
 struct hash_entry *sctbl[START_COND_HASH_SIZE];

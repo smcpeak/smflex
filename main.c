@@ -45,6 +45,7 @@ char copyright[] =
 #include "version.h"                   /* FLEX_VERSION */
 
 #include <stdio.h>                     /* remove */
+#include <string.h>                    /* strcpy, etc. */
 
 
 static char flex_version[] = FLEX_VERSION;

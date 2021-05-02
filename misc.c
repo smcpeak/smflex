@@ -37,6 +37,7 @@
 #include "flexdef.h"
 
 #include <ctype.h>                     /* islower, isupper, etc. */
+#include <string.h>                    /* strcpy, etc. */
 
 
 /* Add a #define to the action file. */
