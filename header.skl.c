@@ -1,4 +1,4 @@
-/* File created from header.skl via mkskel.sh */
+/* File created from header.skl via encode.sh */
 
 /* NULL-terminated array of NUL-terminated lines, *without* line
  * terminators. */

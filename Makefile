@@ -59,7 +59,7 @@ OBJECTS = ccl.o dfa.o ecs.o gen.o header.skl.o main.o misc.o nfa.o parse.o \
 # 'initscan.c' during the packaging process, and a few things
 # in 'test' get removed.
 DISTFILES = README.md NEWS COPYING \
-            configure.in Makefile config.mk.in mkskel.sh scanner.skl \
+            configure.in Makefile config.mk.in encode.sh scanner.skl \
             $(HEADERS) $(SOURCES) \
             flex.html scan.c install.sh mkinstalldirs configure \
             test \
@@ -261,12 +261,12 @@ scan.c: scan.l
 	mv -f scan.tmp2.c scan.c
 
 # 'scanner.skl.c' contains the contents of 'scanner.skl' as a C string.
-scanner.skl.c: scanner.skl mkskel.sh
-	$(SHELL) mkskel.sh scanner.skl scanner.skl.c scanner_skl_contents
+scanner.skl.c: scanner.skl encode.sh
+	$(SHELL) encode.sh scanner.skl scanner.skl.c scanner_skl_contents
 
 # Similarly, 'header.skl.c' contains the contents of 'header.skl'.
-header.skl.c: header.skl mkskel.sh
-	$(SHELL) mkskel.sh header.skl header.skl.c header_skl_contents
+header.skl.c: header.skl encode.sh
+	$(SHELL) encode.sh header.skl header.skl.c header_skl_contents
 
 # For an explanation of the following Makefile rules, see node
 # `Automatic Remaking' in GNU Autoconf documentation.
