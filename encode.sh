@@ -17,13 +17,13 @@ array_name="$3"
 # File descriptor 3 is our output.
 exec 3>"$dest_file"
 
-cat >&3 <<!
+cat >&3 <<EOF
 /* File created from $contents_file via $0 */
 
 /* NULL-terminated array of NUL-terminated lines, *without* line
  * terminators. */
 const char *$array_name[] = {
-!
+EOF
 
 # Step 1: Escape backslashes.
 # Step 2: Escape double-quotes.
@@ -31,10 +31,10 @@ const char *$array_name[] = {
 sed 's/\\/&&/g' "$contents_file" | sed 's/"/\\"/g' | sed 's/.*/  "&",/' >&3
 
 # A single NULL pointer terminates the array.
-cat >&3 <<!
+cat >&3 <<EOF
   0
 };
-!
+EOF
 
 # Close fd 3.
 exec 3>&-
