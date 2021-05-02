@@ -115,10 +115,6 @@ static char *outfile_template = "lex%s.%s";
 static char *backing_name = "lex.bck";
 #endif
 
-#ifdef THINK_C
-#  include <console.h>
-#endif
-
 #ifdef MS_DOS
 extern unsigned _stklen = 16384;
 #endif
@@ -134,10 +130,6 @@ static char header_file_name[MAXLINE];
 int main(int argc, char **argv)
 {
   int i;
-
-#ifdef THINK_C
-  argc = ccommand(&argv);
-#endif
 
   flexinit(argc, argv);
 
