@@ -101,18 +101,19 @@ check: $(FLEX)
 	@# Check to see if the current flex produces the same output
 	@# as it did before.
 	@#
-	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.tmp.c input-scan.lex
+	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.tmp input-scan.lex
 	@#
 	@# Fix the file names in #line directives so they match.
 	@#
-	sed -e 's,"scan.tmp.c","input-scan.lex.c",' < scan.tmp.c > scan.actual.c
+	sed -e 's,"scan.tmp","input-scan.lex.c",' < scan.tmp > scan.actual
+	rm scan.tmp
 	@#
 	@# This comparison does not ignore whitespace since the
 	@# default is for flex to always use LF line endings, even
 	@# on Windows.
 	@#
-	diff input-scan.lex.c scan.actual.c
-	rm scan.actual.c scan.tmp.c
+	diff input-scan.lex.c scan.actual
+	rm scan.actual
 	@echo "Check successful, using COMPRESSION=\"$(COMPRESSION)\""
 
 # With various compression modes:
