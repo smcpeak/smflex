@@ -28,7 +28,7 @@
 
 #include "yylex.h"                     /* this module */
 
-#include "parse.tab.h"                 /* bison-generated token codes */
+#include "input-parse.tab.h"           /* bison-generated token codes */
 
 #include "flexdef.h"
 

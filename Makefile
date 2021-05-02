@@ -44,14 +44,14 @@ include $(wildcard *.d)
 
 # Headers to include in the distribution.
 HEADERS = ccl.h dfa.h ecs.h flexchar.h flexdef.h header.skl gen.h \
-          main.h misc.h nfa.h parse.tab.h sym.h tblcmp.h version.h yylex.h
+          main.h misc.h nfa.h input-parse.tab.h sym.h tblcmp.h version.h yylex.h
 
 # Sources to include in the distribution, and also on which to run tags.
 SOURCES = ccl.c dfa.c ecs.c gen.c header.skl.c main.c misc.c nfa.c input-parse.y \
           input-scan.lex scanner.skl.c sym.c tblcmp.c yylex.c
 
 # Object files to compile and link into 'flex'.
-OBJECTS = ccl.o dfa.o ecs.o gen.o header.skl.o main.o misc.o nfa.o parse.tab.o \
+OBJECTS = ccl.o dfa.o ecs.o gen.o header.skl.o main.o misc.o nfa.o input-parse.tab.o \
           scan.o scanner.skl.o sym.o tblcmp.o yylex.o
 
 # Complete set of files and directories to be included in the
@@ -63,7 +63,7 @@ DISTFILES = README.md NEWS COPYING \
             $(HEADERS) $(SOURCES) \
             flex.html scan.c install.sh mkinstalldirs configure \
             test \
-            parse.tab.c parse.tab.h
+            input-parse.tab.c input-parse.tab.h
 
 # Name of the distribution, meaning what goes before ".tar.gz" in the
 # distribution tarball file name, and also the name of the directory
@@ -177,7 +177,7 @@ distclean: clean
 	rm -f .bootstrap scan.c tags TAGS config.mk config.status
 
 # Create a source tarball for distribution.
-dist: $(FLEX) $(DISTFILES) parse.tab.c parse.tab.h
+dist: $(FLEX) $(DISTFILES) input-parse.tab.c input-parse.tab.h
 	$(MAKE) DIST_NAME=flex-`sed <version.h 's/[^"]*"//' | sed 's/"//'` dist2
 
 # Do the main work of making the tarball, given $(DIST_NAME).  Also
@@ -242,13 +242,13 @@ ifeq ($(MAINTAINER_MODE),1)
 
 
 # Bison-generated parser for flex's input language.
-parse.tab.c: input-parse.y
-	$(YACC) -d -b parse input-parse.y
+input-parse.tab.c: input-parse.y
+	$(YACC) -d -b input-parse input-parse.y
 
-# This rule tells 'make' that in order to create 'parse.tab.h' it must
-# first create 'parse.tab.c'.  The latter is what actually makes
-# 'parse.tab.h'.
-parse.tab.h: parse.tab.c
+# This rule tells 'make' that in order to create 'input-parse.tab.h' it
+# must first create 'input-parse.tab.c'.  The latter is what actually
+# makes 'input-parse.tab.h'.
+input-parse.tab.h: input-parse.tab.c
 
 # scan.c is the output of running flex on 'input-scan.lex'.  It is used by
 # flex to read it input file.  Hence, flex is partially written in
