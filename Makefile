@@ -17,8 +17,8 @@ FLEX = flex
 # Shell to use when running recipes.
 SHELL = /bin/sh
 
-# Bison, operating in yacc compatibility mode.
-YACC = bison -y
+# Bison parser generator.
+BISON = bison
 
 # Enable all GCC warnings.
 WARNINGS = -Wall
@@ -44,14 +44,14 @@ include $(wildcard *.d)
 
 # Headers to include in the distribution.
 HEADERS = ccl.h dfa.h ecs.h flexchar.h flexdef.h header.skl gen.h \
-          main.h misc.h nfa.h input-parse.tab.h sym.h tblcmp.h version.h yylex.h
+          main.h misc.h nfa.h input-parse.y.h sym.h tblcmp.h version.h yylex.h
 
 # Sources to include in the distribution, and also on which to run tags.
 SOURCES = ccl.c dfa.c ecs.c gen.c header.skl.c main.c misc.c nfa.c input-parse.y \
           input-scan.lex scanner.skl.c sym.c tblcmp.c yylex.c
 
 # Object files to compile and link into 'flex'.
-OBJECTS = ccl.o dfa.o ecs.o gen.o header.skl.o main.o misc.o nfa.o input-parse.tab.o \
+OBJECTS = ccl.o dfa.o ecs.o gen.o header.skl.o main.o misc.o nfa.o input-parse.y.o \
           input-scan.lex.o scanner.skl.o sym.o tblcmp.o yylex.o
 
 # Complete set of files and directories to be included in the
@@ -63,7 +63,7 @@ DISTFILES = README.md NEWS COPYING \
             $(HEADERS) $(SOURCES) \
             flex.html input-scan.lex.c install.sh mkinstalldirs configure \
             test \
-            input-parse.tab.c input-parse.tab.h
+            input-parse.y.c input-parse.y.h
 
 # Name of the distribution, meaning what goes before ".tar.gz" in the
 # distribution tarball file name, and also the name of the directory
@@ -177,7 +177,7 @@ distclean: clean
 	rm -f .bootstrap input-scan.lex.c tags TAGS config.mk config.status
 
 # Create a source tarball for distribution.
-dist: $(FLEX) $(DISTFILES) input-parse.tab.c input-parse.tab.h
+dist: $(FLEX) $(DISTFILES) input-parse.y.c input-parse.y.h
 	$(MAKE) DIST_NAME=flex-`sed <version.h 's/[^"]*"//' | sed 's/"//'` dist2
 
 # Do the main work of making the tarball, given $(DIST_NAME).  Also
@@ -242,13 +242,18 @@ ifeq ($(MAINTAINER_MODE),1)
 
 
 # Bison-generated parser for flex's input language.
-input-parse.tab.c: input-parse.y
-	$(YACC) -d -b input-parse input-parse.y
+#
+# For some reason, I need to pass "-y" (yacc mode) to get the
+# definitions of the token codes.
+#
+input-parse.y.c: input-parse.y
+	$(BISON) -y --defines=input-parse.y.h --output=input-parse.y.c \
+	  input-parse.y
 
-# This rule tells 'make' that in order to create 'input-parse.tab.h' it
-# must first create 'input-parse.tab.c'.  The latter is what actually
-# makes 'input-parse.tab.h'.
-input-parse.tab.h: input-parse.tab.c
+# This rule tells 'make' that in order to create 'input-parse.y.h' it
+# must first create 'input-parse.y.c'.  The latter is what actually
+# makes 'input-parse.y.h'.
+input-parse.y.h: input-parse.y.c
 
 # 'input-scan.lex.c' is the output of running flex on 'input-scan.lex'.
 # It is used by flex to read it input file.  Hence, flex is partially

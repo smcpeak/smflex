@@ -1250,7 +1250,7 @@ char *yytext;
 #include "sym.h"                       /* ndinstal, ccllookup, cclinstal */
 
 #include "flexdef.h"
-#include "input-parse.tab.h"
+#include "input-parse.y.h"
 
 #define ACTION_ECHO add_action(yytext)
 #define ACTION_IFDEF(def, should_define) \
