@@ -27,11 +27,12 @@
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "input-parse.h"               /* synerr, format_synerr */
+#include "input-parse.y.h"             /* token codes */
 #include "misc.h"                      /* add_action, myctoi, etc. */
 #include "sym.h"                       /* ndinstal, ccllookup, cclinstal */
 
 #include "flexdef.h"
-#include "input-parse.y.h"
 
 #define ACTION_ECHO add_action(yytext)
 #define ACTION_IFDEF(def, should_define) \

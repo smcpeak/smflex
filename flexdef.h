@@ -640,32 +640,6 @@ void flex_free(void *);
 extern int yylval;
 
 
-/* from file input-parse.y */
-
-/* Build the "<<EOF>>" action for the active start conditions. */
-extern void build_eof_action(void);
-
-/* Write out a message formatted with one string, pinpointing its location. */
-extern void format_pinpoint_message(char[], char[]);
-
-/* Write out a message, pinpointing its location. */
-extern void pinpoint_message(char[]);
-
-/* Write out a warning, pinpointing it at the given line. */
-extern void line_warning(char[], int);
-
-/* Write out a message, pinpointing it at the given line. */
-extern void line_pinpoint(char[], int);
-
-/* Report a formatted syntax error. */
-extern void format_synerr(char[], char[]);
-extern void synerr(char[]);     /* report a syntax error */
-extern void format_warn(char[], char[]);
-extern void warn(char[]);       /* report a warning */
-extern void yyerror(char[]);    /* report a parse error */
-extern int yyparse(void);       /* the YACC parser */
-
-
 /* from file input-scan.lex */
 
 /* The Flex-generated scanner for flex. */

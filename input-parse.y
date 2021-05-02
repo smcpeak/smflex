@@ -34,6 +34,8 @@
  */
 
 
+#include "input-parse.h"               /* this module */
+
 #include "ccl.h"                       /* cclinit, cclnegate, ccladd */
 #include "ecs.h"                       /* mkeccl */
 #include "main.h"                      /* check_options */

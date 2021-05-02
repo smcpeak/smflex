@@ -37,6 +37,7 @@ char copyright[] =
 #include "dfa.h"                       /* ntod */
 #include "ecs.h"                       /* cre8cs, ccl2ecl */
 #include "gen.h"                       /* make_tables, emit_header_file, etc. */
+#include "input-parse.h"               /* warn, yyparse, etc. */
 #include "misc.h"                      /* flexerror, outn, etc. */
 
 #include "flexdef.h"
