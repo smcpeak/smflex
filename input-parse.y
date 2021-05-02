@@ -45,8 +45,6 @@
 #include "sym.h"                       /* scinstal, sclookup */
 #include "yylex.h"                     /* yylex */
 
-#include "flexdef.h"
-
 #include <ctype.h>                     /* isalnum, isalpha, etc. */
 
 

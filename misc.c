@@ -34,8 +34,6 @@
 #include "input-scan.h"                /* flex_alloc, flex_realloc */
 #include "main.h"                      /* flexend */
 
-#include "flexdef.h"
-
 #include <ctype.h>                     /* islower, isupper, etc. */
 #include <string.h>                    /* strcpy, etc. */
 #include <stdlib.h>                    /* exit */

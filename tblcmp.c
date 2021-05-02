@@ -33,8 +33,6 @@
 #include "main.h"                      /* num_reallocs, peakpairs */
 #include "misc.h"                      /* zero_out */
 
-#include "flexdef.h"
-
 #include <stddef.h>                    /* size_t */
 
 

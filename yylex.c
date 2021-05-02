@@ -34,8 +34,6 @@
 #include "input-scan.h"                /* flexscan */
 #include "main.h"                      /* sectnum, nmstr */
 
-#include "flexdef.h"
-
 #include <ctype.h>                     /* isprint */
 
 

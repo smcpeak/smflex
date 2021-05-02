@@ -37,7 +37,6 @@
 #include "misc.h"                      /* bubble, flexfatal, etc. */
 #include "nfa.h"                       /* dumpnfa, mkbranch */
 
-#include "flexdef.h"
 
 
 /* check_for_backing_up - check a DFA state for backing up

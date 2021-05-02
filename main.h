@@ -6,8 +6,7 @@
 #define MAIN_H
 
 #include "flexchar.h"                  /* Char */
-
-#include "flexdef.h"                   /* MAXLINE */
+#include "flexdef.h"                   /* MAXLINE, ONE_STACK_SIZE, etc. */
 
 #include <stdio.h>                     /* FILE */
 

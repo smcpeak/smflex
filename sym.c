@@ -34,8 +34,6 @@
 #include "misc.h"                      /* flexfatal, action_define */
 #include "nfa.h"                       /* mkstate */
 
-#include "flexdef.h"
-
 #include <string.h>                    /* strcmp */
 
 

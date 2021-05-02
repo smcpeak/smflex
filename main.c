@@ -40,8 +40,6 @@ char copyright[] =
 #include "input-parse.h"               /* warn, yyparse, etc. */
 #include "input-scan.h"                /* set_input_file */
 #include "misc.h"                      /* flexerror, outn, etc. */
-
-#include "flexdef.h"
 #include "version.h"                   /* FLEX_VERSION */
 
 #include <stdio.h>                     /* remove */

@@ -28,8 +28,6 @@
 
 #include "ecs.h"                       /* this module */
 
-#include "flexdef.h"
-
 #include "main.h"                      /* lastccl, cclmap, etc. */
 
 

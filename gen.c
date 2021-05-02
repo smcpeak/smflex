@@ -34,8 +34,6 @@
 #include "misc.h"                      /* outc, outn, etc. */
 #include "tblcmp.h"                    /* expand_nxt_chk */
 
-#include "flexdef.h"
-
 #include <stdlib.h>                    /* exit */
 #include <string.h>                    /* strerror, strcpy, strrchr */
 

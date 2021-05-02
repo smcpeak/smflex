@@ -35,8 +35,6 @@
 #include "misc.h"                      /* add_action, myctoi, etc. */
 #include "sym.h"                       /* ndinstal, ccllookup, cclinstal */
 
-#include "flexdef.h"
-
 #include <string.h>                    /* strcpy, strlen, etc. */
 
 

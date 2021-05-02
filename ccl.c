@@ -31,7 +31,6 @@
 #include "main.h"                      /* num_reallocs */
 #include "misc.h"                      /* check_char, readable_form, etc. */
 
-#include "flexdef.h"
 
 /* ccladd - add a single character to a ccl */
 void ccladd(int cclp, int ch)
