@@ -115,10 +115,6 @@ static char *outfile_template = "lex%s.%s";
 static char *backing_name = "lex.bck";
 #endif
 
-#ifdef MS_DOS
-extern unsigned _stklen = 16384;
-#endif
-
 static char outfile_path[MAXLINE];
 static int outfile_created = 0;
 static char *skelname = NULL;

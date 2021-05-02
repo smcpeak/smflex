@@ -61,10 +61,6 @@
 #  endif
 #endif
 
-#ifdef MS_DOS
-#  define SHORT_FILE_NAMES
-#endif
-
 
 /* Maximum line length we'll have to deal with. */
 #define MAXLINE 2048
