@@ -589,8 +589,4 @@ extern int num_backing_up, bol_needed;
 extern int yylval;
 
 
-/* from file yylex.c */
-
-extern int yylex(void);
-
 #endif /* FLEXDEF_H */

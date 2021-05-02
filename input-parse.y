@@ -43,6 +43,7 @@
 #include "misc.h"                      /* add_action, copy_string, etc. */
 #include "nfa.h"                       /* mkstate, mkbranch, etc. */
 #include "sym.h"                       /* scinstal, sclookup */
+#include "yylex.h"                     /* yylex */
 
 #include "flexdef.h"
 
