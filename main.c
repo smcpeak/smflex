@@ -72,18 +72,24 @@ char *prefix, *yyclass;
 int do_stdinit;
 int onestate[ONE_STACK_SIZE], onesym[ONE_STACK_SIZE];
 int onenext[ONE_STACK_SIZE], onedef[ONE_STACK_SIZE], onesp;
+
 int current_mns, current_max_rules;
 int num_rules, num_eof_rules, default_rule, lastnfa;
 int *firstst, *lastst, *finalst, *transchar, *trans1, *trans2;
 int *accptnum, *assoc_rule, *state_type;
 int *rule_type, *rule_linenum, *rule_useful;
+
 int current_state_type;
+
 int variable_trailing_context_rules;
+
 int numtemps, numprots, protprev[MSP], protnext[MSP], prottbl[MSP];
 int protcomst[MSP], firstprot, lastprot, protsave[PROT_SAVE_SIZE];
-int numecs, nextecm[CSIZE + 1], ecgroup[CSIZE + 1], nummecs,
-  tecfwd[CSIZE + 1];
+
+int numecs, nextecm[CSIZE + 1], ecgroup[CSIZE + 1], nummecs;
+int tecfwd[CSIZE + 1];
 int tecbck[CSIZE + 1];
+
 int lastsc, *scset, *scbol, *scxclu, *sceof;
 int current_max_scs;
 char **scname;
