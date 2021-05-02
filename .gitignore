@@ -1,8 +1,7 @@
-*.d
 *.exe
-*.o
 config.cache
 config.log
 config.mk
 config.status
 personal.mk
+obj

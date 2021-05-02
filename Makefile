@@ -26,6 +26,10 @@ WARNINGS = -Wall
 # Flag to enable dependency generation to .d files.
 GENDEPS = -MMD
 
+# Directory in which to put .o and .d files.  Note, however, that
+# $(FLEX) still gets put into the current directory.
+OBJ = obj
+
 # Now optionally pull in local customizations via personal.mk.  Those
 # can override settings above or from config.mk.
 -include personal.mk
@@ -36,17 +40,18 @@ GENDEPS = -MMD
 .SUFFIXES:
 
 # Rule for compiling one C source file.
-%.o: %.c
-	$(CC) -c $(CPPFLAGS) $(CFLAGS) $(WARNINGS) $(GENDEPS) $<
+$(OBJ)/%.o: %.c
+	@mkdir -p $(OBJ)
+	$(CC) -o$@ -c $(CPPFLAGS) $(CFLAGS) $(WARNINGS) $(GENDEPS) $<
 
 # Pull in generated dependencies.
-include $(wildcard *.d)
+include $(wildcard $(OBJ)/*.d)
 
 # C source code.
 SOURCES = $(wildcard *.c)
 
 # Object files to compile and link into 'flex'.
-OBJECTS = $(SOURCES:.c=.o)
+OBJECTS = $(patsubst %.c,$(OBJ)/%.o,$(SOURCES))
 
 # Complete set of files and directories to be included in the
 # distribution tarball, except that a few things in 'test' get removed.
@@ -145,7 +150,8 @@ uninstall:
 	rm -f $(bindir)/$(FLEX)
 
 clean:
-	rm -f $(FLEX) *.d *.o config.log config.cache
+	rm -f $(FLEX) config.log config.cache
+	rm -r $(OBJ)
 	$(MAKE) -C test clean
 
 distclean: clean
