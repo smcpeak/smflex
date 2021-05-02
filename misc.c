@@ -28,6 +28,7 @@
 
 #include "misc.h"                      /* this module */
 
+#include "flexchar.h"                  /* isascii */
 #include "gen.h"                       /* emit_with_class_name_substitution */
 #include "input-parse.h"               /* format_pinpoint_message */
 #include "main.h"                      /* flexend */
