@@ -47,7 +47,7 @@ HEADERS = ccl.h dfa.h ecs.h flexchar.h flexdef.h header.skl gen.h \
           main.h misc.h nfa.h parse.tab.h sym.h tblcmp.h version.h yylex.h
 
 # Sources to include in the distribution, and also on which to run tags.
-SOURCES = ccl.c dfa.c ecs.c gen.c header.skl.c main.c misc.c nfa.c parse.y \
+SOURCES = ccl.c dfa.c ecs.c gen.c header.skl.c main.c misc.c nfa.c input-parse.y \
           input-scan.lex scanner.skl.c sym.c tblcmp.c yylex.c
 
 # Object files to compile and link into 'flex'.
@@ -242,8 +242,8 @@ ifeq ($(MAINTAINER_MODE),1)
 
 
 # Bison-generated parser for flex's input language.
-parse.tab.c: parse.y
-	$(YACC) -d -b parse parse.y
+parse.tab.c: input-parse.y
+	$(YACC) -d -b parse input-parse.y
 
 # This rule tells 'make' that in order to create 'parse.tab.h' it must
 # first create 'parse.tab.c'.  The latter is what actually makes

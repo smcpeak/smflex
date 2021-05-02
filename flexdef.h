@@ -652,7 +652,7 @@ void flex_free PROTO((void *));
 extern int yylval;
 
 
-/* from file parse.y */
+/* from file input-parse.y */
 
 /* Build the "<<EOF>>" action for the active start conditions. */
 extern void build_eof_action PROTO((void));

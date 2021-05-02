@@ -1,4 +1,4 @@
-/* parse.y - parser for flex input */
+/* input-parse.y - parser for flex input */
 
 %token CHAR NUMBER SECTEND SCDECL XSCDECL NAME PREVCCL EOF_OP
 %token OPTION_OP OPT_OUTFILE OPT_PREFIX OPT_YYCLASS
