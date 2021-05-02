@@ -204,8 +204,7 @@ TAGS: $(SOURCES)
 	etags $(SOURCES)
 
 clean:
-	rm -f $(FLEX) *.d *.o lex.yy.c lex.yy.cc \
-		config.log config.cache
+	rm -f $(FLEX) *.d *.o lex.yy.c lex.yy.cc config.log config.cache
 	$(MAKE) -C test clean
 
 distclean: clean
