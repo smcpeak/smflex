@@ -711,8 +711,8 @@ void *reallocate_array(void *array, int size, size_t element_size)
 /* skelout - write out one section of the skeleton file
  *
  * Description
- *    Copies skelfile or skel array to scanner_c_file until a line beginning with
- *    "%%" or EOF is found.
+ *    Copies skelfile or scanner_skl_contents array to scanner_c_file
+ *    until a line beginning with "%%" or EOF is found.
  */
 void skelout()
 {
@@ -721,9 +721,11 @@ void skelout()
   int do_copy = 1;
 
   /* Loop pulling lines either from the skelfile, if we're using
-   * one, or from the skel[] array.
+   * one, or from the scanner_skl_contents[] array.
    */
-  while (skelfile ? (fgets(buf, MAXLINE, skelfile) != NULL) : ((buf = (char *) skel[skel_ind++]) != 0)) {       /* copy from skel array */
+  while (skelfile ?
+           (fgets(buf, MAXLINE, skelfile) != NULL) :
+           ((buf = (char*)scanner_skl_contents[skel_ind++]) != 0)) {
     if (buf[0] == '%') {        /* control line */
       switch (buf[1]) {
         case '%':

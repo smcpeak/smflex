@@ -262,7 +262,7 @@ scan.c: scan.l
 
 # 'scanner.skl.c' contains the contents of 'scanner.skl' as a C string.
 scanner.skl.c: scanner.skl mkskel.sh
-	$(SHELL) mkskel.sh scanner.skl scanner.skl.c skel
+	$(SHELL) mkskel.sh scanner.skl scanner.skl.c scanner_skl_contents
 
 # Similarly, 'header.c' contains the contents of 'FlexLexer.h'.
 header.c: FlexLexer.h mkskel.sh

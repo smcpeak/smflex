@@ -344,8 +344,8 @@ extern int yymore_really_used, reject_really_used;
  * linenum - current input line number
  * out_linenum - current output line number
  * skelfile - the skeleton file
- * skel - compiled-in skeleton array
- * skel_ind - index into "skel" array, if skelfile is nil
+ * scanner_skl_contents - compiled-in skeleton array
+ * skel_ind - index into "scanner_skl_contents" array, if skelfile is nil
  * yyin - input file
  * backing_up_file - file to summarize backing-up states to
  * infilename - name of input file
@@ -370,7 +370,7 @@ extern int yymore_really_used, reject_really_used;
 
 extern int datapos, dataline, linenum, out_linenum;
 extern FILE *skelfile, *yyin, *backing_up_file;
-extern const char *skel[];
+extern const char *scanner_skl_contents[];
 extern int skel_ind;
 extern char *infilename, *outfilename;
 extern int did_outfilename;
