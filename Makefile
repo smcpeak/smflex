@@ -48,22 +48,22 @@ HEADERS = ccl.h dfa.h ecs.h flexchar.h flexdef.h FlexLexer.h gen.h \
 
 # Sources to include in the distribution, and also on which to run tags.
 SOURCES = ccl.c dfa.c ecs.c gen.c header.c main.c misc.c nfa.c parse.y \
-	scan.l skel.c sym.c tblcmp.c yylex.c
+          scan.l skel.c sym.c tblcmp.c yylex.c
 
 # Object files to compile and link into 'flex'.
 OBJECTS = ccl.o dfa.o ecs.o gen.o header.o main.o misc.o nfa.o parse.o \
-	scan.o skel.o sym.o tblcmp.o yylex.o
+          scan.o skel.o sym.o tblcmp.o yylex.o
 
 # Complete set of files and directories to be included in the
 # distribution tarball, except that 'scan.c' gets renamed to
 # 'initscan.c' during the packaging process, and a few things
 # in 'test' get removed.
 DISTFILES = README.md NEWS COPYING \
-	configure.in Makefile config.mk.in mkskel.sh flex.skl \
-	$(HEADERS) $(SOURCES) \
-	flex.html scan.c install.sh mkinstalldirs configure \
-	test \
-	parse.c parse.h
+            configure.in Makefile config.mk.in mkskel.sh flex.skl \
+            $(HEADERS) $(SOURCES) \
+            flex.html scan.c install.sh mkinstalldirs configure \
+            test \
+            parse.c parse.h
 
 # Name of the distribution, meaning what goes before ".tar.gz" in the
 # distribution tarball file name, and also the name of the directory
