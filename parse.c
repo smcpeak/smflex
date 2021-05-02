@@ -108,16 +108,16 @@ int *scon_stk;
 int scon_stk_ptr;
 
 static int madeany = false;  /* whether we've made the '.' character class */
-int previous_continued_action;	/* whether the previous rule's action was '|' */
+int previous_continued_action;  /* whether the previous rule's action was '|' */
 
 /* Expand a POSIX character class expression. */
 #define CCL_EXPR(func) \
-	{ \
-	int c; \
-	for ( c = 0; c < csize; ++c ) \
-		if ( isascii(c) && func(c) ) \
-			ccladd( currccl, c ); \
-	}
+  { \
+  int c; \
+  for ( c = 0; c < csize; ++c ) \
+    if ( isascii(c) && func(c) ) \
+      ccladd( currccl, c ); \
+  }
 
 /* While POSIX defines isblank(), it's not ANSI C. */
 #define IS_BLANK(c) ((c) == ' ' || (c) == '\t')
@@ -534,14 +534,14 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    79,    79,   109,   116,   117,   118,   119,   123,   131,
-     134,   138,   141,   144,   148,   151,   152,   157,   168,   170,
-     174,   176,   178,   182,   194,   230,   254,   277,   282,   285,
-     288,   306,   309,   311,   313,   317,   340,   395,   398,   441,
-     459,   465,   470,   497,   505,   509,   516,   522,   528,   556,
-     570,   589,   611,   629,   636,   639,   642,   653,   656,   663,
-     691,   702,   710,   717,   718,   719,   720,   721,   722,   723,
-     724,   725,   726,   727,   733,   736,   747
+       0,    79,    79,   108,   114,   115,   116,   117,   121,   129,
+     132,   136,   139,   142,   146,   149,   150,   155,   165,   167,
+     171,   173,   175,   179,   191,   218,   235,   256,   261,   264,
+     267,   284,   287,   289,   291,   295,   312,   363,   366,   403,
+     420,   426,   431,   458,   466,   470,   477,   483,   489,   511,
+     524,   541,   561,   578,   585,   588,   591,   602,   605,   612,
+     638,   649,   657,   664,   665,   666,   667,   668,   669,   670,
+     671,   672,   673,   674,   680,   683,   694
 };
 #endif
 
@@ -1393,858 +1393,805 @@ yyreduce:
         case 2:
 #line 80 "parse.y" /* yacc.c:1646  */
     { /* add default rule */
-			int def_rule;
+                          int def_rule;
 
-			pat = cclinit();
-			cclnegate( pat );
+                          pat = cclinit();
+                          cclnegate(pat);
 
-			def_rule = mkstate( -pat );
+                          def_rule = mkstate(-pat);
 
-			/* Remember the number of the default rule so we
-			 * don't generate "can't match" warnings for it.
-			 */
-			default_rule = num_rules;
+                          /* Remember the number of the default rule so we
+                           * don't generate "can't match" warnings for it.
+                           */
+                          default_rule = num_rules;
 
-			finish_rule( def_rule, false, 0, 0 );
+                          finish_rule(def_rule, false, 0, 0);
 
-			for ( i = 1; i <= lastsc; ++i )
-				scset[i] = mkbranch( scset[i], def_rule );
+                          for (i = 1; i <= lastsc; ++i)
+                            scset[i] = mkbranch(scset[i], def_rule);
 
-			if ( spprdflt )
-				add_action(
-				"YY_FATAL_ERROR( \"flex scanner jammed\" )" );
-			else
-				add_action( "ECHO" );
+                          if (spprdflt)
+                            add_action("YY_FATAL_ERROR( \"flex scanner jammed\" )");
+                          else
+                            add_action("ECHO");
 
-			add_action( ";\n\tYY_BREAK\n" );
-			}
-#line 1422 "y.tab.c" /* yacc.c:1646  */
+                          add_action(";\n\tYY_BREAK\n");
+                        }
+#line 1421 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 109 "parse.y" /* yacc.c:1646  */
+#line 108 "parse.y" /* yacc.c:1646  */
     { /* initialize for processing rules */
-
-			/* Create default DFA start condition. */
-			scinstal( "INITIAL", false );
-			}
-#line 1432 "y.tab.c" /* yacc.c:1646  */
+                          /* Create default DFA start condition. */
+                          scinstal("INITIAL", false);
+                        }
+#line 1430 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 120 "parse.y" /* yacc.c:1646  */
-    { synerr( "unknown error processing section 1" ); }
-#line 1438 "y.tab.c" /* yacc.c:1646  */
+#line 118 "parse.y" /* yacc.c:1646  */
+    { synerr("unknown error processing section 1"); }
+#line 1436 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 124 "parse.y" /* yacc.c:1646  */
+#line 122 "parse.y" /* yacc.c:1646  */
     {
-			check_options();
-			scon_stk = allocate_integer_array( lastsc + 1 );
-			scon_stk_ptr = 0;
-			}
-#line 1448 "y.tab.c" /* yacc.c:1646  */
+                          check_options();
+                          scon_stk = allocate_integer_array(lastsc + 1);
+                          scon_stk_ptr = 0;
+                        }
+#line 1446 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 132 "parse.y" /* yacc.c:1646  */
+#line 130 "parse.y" /* yacc.c:1646  */
     { xcluflg = false; }
-#line 1454 "y.tab.c" /* yacc.c:1646  */
+#line 1452 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 135 "parse.y" /* yacc.c:1646  */
+#line 133 "parse.y" /* yacc.c:1646  */
     { xcluflg = true; }
-#line 1460 "y.tab.c" /* yacc.c:1646  */
+#line 1458 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 139 "parse.y" /* yacc.c:1646  */
-    { scinstal( nmstr, xcluflg ); }
-#line 1466 "y.tab.c" /* yacc.c:1646  */
+#line 137 "parse.y" /* yacc.c:1646  */
+    { scinstal(nmstr, xcluflg); }
+#line 1464 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 142 "parse.y" /* yacc.c:1646  */
-    { scinstal( nmstr, xcluflg ); }
-#line 1472 "y.tab.c" /* yacc.c:1646  */
+#line 140 "parse.y" /* yacc.c:1646  */
+    { scinstal(nmstr, xcluflg); }
+#line 1470 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 145 "parse.y" /* yacc.c:1646  */
-    { synerr( "bad start condition list" ); }
-#line 1478 "y.tab.c" /* yacc.c:1646  */
+#line 143 "parse.y" /* yacc.c:1646  */
+    { synerr("bad start condition list"); }
+#line 1476 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 158 "parse.y" /* yacc.c:1646  */
+#line 156 "parse.y" /* yacc.c:1646  */
     {
-			/* Only record the specified file name if we
-			 * do not already have one.  This way, the -o
-			 * command line option takes precedence. */
-			if ( ! did_outfilename )
-				{
-				outfilename = copy_string( nmstr );
-				did_outfilename = 1;
-				}
-			}
-#line 1493 "y.tab.c" /* yacc.c:1646  */
+                          /* Only record the specified file name if we
+                           * do not already have one.  This way, the -o
+                           * command line option takes precedence. */
+                          if (!did_outfilename) {
+                            outfilename = copy_string(nmstr);
+                            did_outfilename = 1;
+                          }
+                        }
+#line 1490 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 169 "parse.y" /* yacc.c:1646  */
-    { prefix = copy_string( nmstr ); }
-#line 1499 "y.tab.c" /* yacc.c:1646  */
+#line 166 "parse.y" /* yacc.c:1646  */
+    { prefix = copy_string(nmstr); }
+#line 1496 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 171 "parse.y" /* yacc.c:1646  */
-    { yyclass = copy_string( nmstr ); }
-#line 1505 "y.tab.c" /* yacc.c:1646  */
+#line 168 "parse.y" /* yacc.c:1646  */
+    { yyclass = copy_string(nmstr); }
+#line 1502 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 175 "parse.y" /* yacc.c:1646  */
+#line 172 "parse.y" /* yacc.c:1646  */
     { scon_stk_ptr = (yyvsp[-3]); }
-#line 1511 "y.tab.c" /* yacc.c:1646  */
+#line 1508 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 177 "parse.y" /* yacc.c:1646  */
+#line 174 "parse.y" /* yacc.c:1646  */
     { scon_stk_ptr = (yyvsp[-3]); }
-#line 1517 "y.tab.c" /* yacc.c:1646  */
+#line 1514 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 182 "parse.y" /* yacc.c:1646  */
+#line 179 "parse.y" /* yacc.c:1646  */
     {
-			/* Initialize for a parse of one rule. */
-			trlcontxt = variable_trail_rule = varlength = false;
-			trailcnt = headcnt = rulelen = 0;
-			current_state_type = STATE_NORMAL;
-			previous_continued_action = continued_action;
-			in_rule = true;
+                          /* Initialize for a parse of one rule. */
+                          trlcontxt = variable_trail_rule = varlength = false;
+                          trailcnt = headcnt = rulelen = 0;
+                          current_state_type = STATE_NORMAL;
+                          previous_continued_action = continued_action;
+                          in_rule = true;
 
-			new_rule();
-			}
-#line 1532 "y.tab.c" /* yacc.c:1646  */
+                          new_rule();
+                        }
+#line 1529 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 195 "parse.y" /* yacc.c:1646  */
+#line 192 "parse.y" /* yacc.c:1646  */
     {
-			pat = (yyvsp[0]);
-			finish_rule( pat, variable_trail_rule,
-				headcnt, trailcnt );
+                          pat = (yyvsp[0]);
+                          finish_rule(pat, variable_trail_rule, headcnt, trailcnt);
 
-			if ( scon_stk_ptr > 0 )
-				{
-				for ( i = 1; i <= scon_stk_ptr; ++i )
-					scbol[scon_stk[i]] =
-						mkbranch( scbol[scon_stk[i]],
-								pat );
-				}
+                          if (scon_stk_ptr > 0) {
+                            for (i = 1; i <= scon_stk_ptr; ++i)
+                              scbol[scon_stk[i]] = mkbranch(scbol[scon_stk[i]], pat);
+                          }
 
-			else
-				{
-				/* Add to all non-exclusive start conditions,
-				 * including the default (0) start condition.
-				 */
+                          else {
+                            /* Add to all non-exclusive start conditions,
+                             * including the default (0) start condition.
+                             */
+                            for (i = 1; i <= lastsc; ++i)
+                              if (!scxclu[i])
+                                scbol[i] = mkbranch(scbol[i], pat);
+                          }
 
-				for ( i = 1; i <= lastsc; ++i )
-					if ( ! scxclu[i] )
-						scbol[i] = mkbranch( scbol[i],
-									pat );
-				}
+                          if (!bol_needed) {
+                            bol_needed = true;
 
-			if ( ! bol_needed )
-				{
-				bol_needed = true;
-
-				if ( performance_report > 1 )
-					pinpoint_message(
-			"'^' operator results in sub-optimal performance" );
-				}
-			}
-#line 1571 "y.tab.c" /* yacc.c:1646  */
+                            if (performance_report > 1)
+                              pinpoint_message("'^' operator results in sub-optimal performance");
+                          }
+                        }
+#line 1559 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 231 "parse.y" /* yacc.c:1646  */
+#line 219 "parse.y" /* yacc.c:1646  */
     {
-			pat = (yyvsp[0]);
-			finish_rule( pat, variable_trail_rule,
-				headcnt, trailcnt );
+                          pat = (yyvsp[0]);
+                          finish_rule(pat, variable_trail_rule, headcnt, trailcnt);
 
-			if ( scon_stk_ptr > 0 )
-				{
-				for ( i = 1; i <= scon_stk_ptr; ++i )
-					scset[scon_stk[i]] =
-						mkbranch( scset[scon_stk[i]],
-								pat );
-				}
+                          if (scon_stk_ptr > 0) {
+                            for (i = 1; i <= scon_stk_ptr; ++i)
+                              scset[scon_stk[i]] = mkbranch(scset[scon_stk[i]], pat);
+                          }
 
-			else
-				{
-				for ( i = 1; i <= lastsc; ++i )
-					if ( ! scxclu[i] )
-						scset[i] =
-							mkbranch( scset[i],
-								pat );
-				}
-			}
-#line 1598 "y.tab.c" /* yacc.c:1646  */
+                          else {
+                            for (i = 1; i <= lastsc; ++i)
+                              if (!scxclu[i])
+                                scset[i] = mkbranch(scset[i], pat);
+                          }
+                        }
+#line 1579 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 255 "parse.y" /* yacc.c:1646  */
+#line 236 "parse.y" /* yacc.c:1646  */
     {
-			if ( scon_stk_ptr > 0 )
-				build_eof_action();
-	
-			else
-				{
-				/* This EOF applies to all start conditions
-				 * which don't already have EOF actions.
-				 */
-				for ( i = 1; i <= lastsc; ++i )
-					if ( ! sceof[i] )
-						scon_stk[++scon_stk_ptr] = i;
+                          if (scon_stk_ptr > 0)
+                            build_eof_action();
 
-				if ( scon_stk_ptr == 0 )
-					warn(
-			"all start conditions already have <<EOF>> rules" );
+                          else {
+                            /* This EOF applies to all start conditions
+                             * which don't already have EOF actions.
+                             */
+                            for (i = 1; i <= lastsc; ++i)
+                              if (!sceof[i])
+                                scon_stk[++scon_stk_ptr] = i;
 
-				else
-					build_eof_action();
-				}
-			}
-#line 1624 "y.tab.c" /* yacc.c:1646  */
+                            if (scon_stk_ptr == 0)
+                              warn("all start conditions already have <<EOF>> rules");
+
+                            else
+                              build_eof_action();
+                          }
+                        }
+#line 1603 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 278 "parse.y" /* yacc.c:1646  */
-    { synerr( "unrecognized rule" ); }
-#line 1630 "y.tab.c" /* yacc.c:1646  */
+#line 257 "parse.y" /* yacc.c:1646  */
+    { synerr("unrecognized rule"); }
+#line 1609 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 282 "parse.y" /* yacc.c:1646  */
+#line 261 "parse.y" /* yacc.c:1646  */
     { (yyval) = scon_stk_ptr; }
-#line 1636 "y.tab.c" /* yacc.c:1646  */
+#line 1615 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 286 "parse.y" /* yacc.c:1646  */
+#line 265 "parse.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[-2]); }
-#line 1642 "y.tab.c" /* yacc.c:1646  */
+#line 1621 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 289 "parse.y" /* yacc.c:1646  */
+#line 268 "parse.y" /* yacc.c:1646  */
     {
-			(yyval) = scon_stk_ptr;
+                          (yyval) = scon_stk_ptr;
 
-			for ( i = 1; i <= lastsc; ++i )
-				{
-				int j;
+                          for (i = 1; i <= lastsc; ++i) {
+                            int j;
 
-				for ( j = 1; j <= scon_stk_ptr; ++j )
-					if ( scon_stk[j] == i )
-						break;
+                            for (j = 1; j <= scon_stk_ptr; ++j)
+                              if (scon_stk[j] == i)
+                                break;
 
-				if ( j > scon_stk_ptr )
-					scon_stk[++scon_stk_ptr] = i;
-				}
-			}
-#line 1662 "y.tab.c" /* yacc.c:1646  */
+                            if (j > scon_stk_ptr)
+                              scon_stk[++scon_stk_ptr] = i;
+                          }
+                        }
+#line 1640 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 306 "parse.y" /* yacc.c:1646  */
+#line 284 "parse.y" /* yacc.c:1646  */
     { (yyval) = scon_stk_ptr; }
-#line 1668 "y.tab.c" /* yacc.c:1646  */
+#line 1646 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 314 "parse.y" /* yacc.c:1646  */
-    { synerr( "bad start condition list" ); }
-#line 1674 "y.tab.c" /* yacc.c:1646  */
+#line 292 "parse.y" /* yacc.c:1646  */
+    { synerr("bad start condition list"); }
+#line 1652 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 318 "parse.y" /* yacc.c:1646  */
+#line 296 "parse.y" /* yacc.c:1646  */
     {
-			if ( (scnum = sclookup( nmstr )) == 0 )
-				format_pinpoint_message(
-					"undeclared start condition %s",
-					nmstr );
-			else
-				{
-				for ( i = 1; i <= scon_stk_ptr; ++i )
-					if ( scon_stk[i] == scnum )
-						{
-						format_warn(
-							"<%s> specified twice",
-							scname[scnum] );
-						break;
-						}
+                          if ((scnum = sclookup(nmstr)) == 0)
+                            format_pinpoint_message("undeclared start condition %s", nmstr);
+                          else {
+                            for (i = 1; i <= scon_stk_ptr; ++i)
+                              if (scon_stk[i] == scnum) {
+                                format_warn("<%s> specified twice", scname[scnum]);
+                                break;
+                              }
 
-				if ( i > scon_stk_ptr )
-					scon_stk[++scon_stk_ptr] = scnum;
-				}
-			}
-#line 1699 "y.tab.c" /* yacc.c:1646  */
+                            if (i > scon_stk_ptr)
+                              scon_stk[++scon_stk_ptr] = scnum;
+                          }
+                        }
+#line 1671 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 341 "parse.y" /* yacc.c:1646  */
+#line 313 "parse.y" /* yacc.c:1646  */
     {
-			if ( transchar[lastst[(yyvsp[0])]] != SYM_EPSILON )
-				/* Provide final transition \now/ so it
-				 * will be marked as a trailing context
-				 * state.
-				 */
-				(yyvsp[0]) = link_machines( (yyvsp[0]),
-						mkstate( SYM_EPSILON ) );
+                          if (transchar[lastst[(yyvsp[0])]] != SYM_EPSILON)
+                            /* Provide final transition \now/ so it
+                             * will be marked as a trailing context
+                             * state.
+                             */
+                            (yyvsp[0]) = link_machines((yyvsp[0]), mkstate(SYM_EPSILON));
 
-			mark_beginning_as_normal( (yyvsp[0]) );
-			current_state_type = STATE_NORMAL;
+                          mark_beginning_as_normal((yyvsp[0]));
+                          current_state_type = STATE_NORMAL;
 
-			if ( previous_continued_action )
-				{
-				/* We need to treat this as variable trailing
-				 * context so that the backup does not happen
-				 * in the action but before the action switch
-				 * statement.  If the backup happens in the
-				 * action, then the rules "falling into" this
-				 * one's action will *also* do the backup,
-				 * erroneously.
-				 */
-				if ( ! varlength || headcnt != 0 )
-					warn(
-		"trailing context made variable due to preceding '|' action" );
+                          if (previous_continued_action) {
+                            /* We need to treat this as variable trailing
+                             * context so that the backup does not happen
+                             * in the action but before the action switch
+                             * statement.  If the backup happens in the
+                             * action, then the rules "falling into" this
+                             * one's action will *also* do the backup,
+                             * erroneously.
+                             */
+                            if (!varlength || headcnt != 0)
+                              warn("trailing context made variable due to preceding '|' action");
 
-				/* Mark as variable. */
-				varlength = true;
-				headcnt = 0;
-				}
+                            /* Mark as variable. */
+                            varlength = true;
+                            headcnt = 0;
+                          }
 
-			if ( lex_compat || (varlength && headcnt == 0) )
-				{ /* variable trailing context rule */
-				/* Mark the first part of the rule as the
-				 * accepting "head" part of a trailing
-				 * context rule.
-				 *
-				 * By the way, we didn't do this at the
-				 * beginning of this production because back
-				 * then current_state_type was set up for a
-				 * trail rule, and add_accept() can create
-				 * a new state ...
-				 */
-				add_accept( (yyvsp[-1]),
-					num_rules | YY_TRAILING_HEAD_MASK );
-				variable_trail_rule = true;
-				}
-			
-			else
-				trailcnt = rulelen;
+                          /* variable trailing context rule */
+                          if (lex_compat || (varlength && headcnt == 0)) {
+                            /* Mark the first part of the rule as the
+                             * accepting "head" part of a trailing
+                             * context rule.
+                             *
+                             * By the way, we didn't do this at the
+                             * beginning of this production because back
+                             * then current_state_type was set up for a
+                             * trail rule, and add_accept() can create
+                             * a new state ...
+                             */
+                            add_accept((yyvsp[-1]), num_rules | YY_TRAILING_HEAD_MASK);
+                            variable_trail_rule = true;
+                          }
 
-			(yyval) = link_machines( (yyvsp[-1]), (yyvsp[0]) );
-			}
-#line 1757 "y.tab.c" /* yacc.c:1646  */
+                          else
+                            trailcnt = rulelen;
+
+                          (yyval) = link_machines((yyvsp[-1]), (yyvsp[0]));
+                        }
+#line 1725 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 396 "parse.y" /* yacc.c:1646  */
-    { synerr( "trailing context used twice" ); }
-#line 1763 "y.tab.c" /* yacc.c:1646  */
+#line 364 "parse.y" /* yacc.c:1646  */
+    { synerr("trailing context used twice"); }
+#line 1731 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 399 "parse.y" /* yacc.c:1646  */
+#line 367 "parse.y" /* yacc.c:1646  */
     {
-			headcnt = 0;
-			trailcnt = 1;
-			rulelen = 1;
-			varlength = false;
+                          headcnt = 0;
+                          trailcnt = 1;
+                          rulelen = 1;
+                          varlength = false;
 
-			current_state_type = STATE_TRAILING_CONTEXT;
+                          current_state_type = STATE_TRAILING_CONTEXT;
 
-			if ( trlcontxt )
-				{
-				synerr( "trailing context used twice" );
-				(yyval) = mkstate( SYM_EPSILON );
-				}
+                          if (trlcontxt) {
+                            synerr("trailing context used twice");
+                            (yyval) = mkstate(SYM_EPSILON);
+                          }
 
-			else if ( previous_continued_action )
-				{
-				/* See the comment in the rule for "re2 re"
-				 * above.
-				 */
-				warn(
-		"trailing context made variable due to preceding '|' action" );
+                          else if (previous_continued_action) {
+                            /* See the comment in the rule for "re2 re"
+                             * above.
+                             */
+                            warn("trailing context made variable due to preceding '|' action");
 
-				varlength = true;
-				}
+                            varlength = true;
+                          }
 
-			if ( lex_compat || varlength )
-				{
-				/* Again, see the comment in the rule for
-				 * "re2 re" above.
-				 */
-				add_accept( (yyvsp[-1]),
-					num_rules | YY_TRAILING_HEAD_MASK );
-				variable_trail_rule = true;
-				}
+                          if (lex_compat || varlength) {
+                            /* Again, see the comment in the rule for
+                             * "re2 re" above.
+                             */
+                            add_accept((yyvsp[-1]), num_rules | YY_TRAILING_HEAD_MASK);
+                            variable_trail_rule = true;
+                          }
 
-			trlcontxt = true;
+                          trlcontxt = true;
 
-			eps = mkstate( SYM_EPSILON );
-			(yyval) = link_machines( (yyvsp[-1]),
-				link_machines( eps, mkstate( '\n' ) ) );
-			}
-#line 1809 "y.tab.c" /* yacc.c:1646  */
+                          eps = mkstate(SYM_EPSILON);
+                          (yyval) = link_machines((yyvsp[-1]), link_machines(eps, mkstate('\n')));
+                        }
+#line 1771 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 442 "parse.y" /* yacc.c:1646  */
+#line 404 "parse.y" /* yacc.c:1646  */
     {
-			(yyval) = (yyvsp[0]);
+                          (yyval) = (yyvsp[0]);
 
-			if ( trlcontxt )
-				{
-				if ( lex_compat || (varlength && headcnt == 0) )
-					/* Both head and trail are
-					 * variable-length.
-					 */
-					variable_trail_rule = true;
-				else
-					trailcnt = rulelen;
-				}
-			}
-#line 1828 "y.tab.c" /* yacc.c:1646  */
+                          if (trlcontxt) {
+                            if (lex_compat || (varlength && headcnt == 0))
+                              /* Both head and trail are
+                               * variable-length.
+                               */
+                              variable_trail_rule = true;
+                            else
+                              trailcnt = rulelen;
+                          }
+                        }
+#line 1789 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 460 "parse.y" /* yacc.c:1646  */
+#line 421 "parse.y" /* yacc.c:1646  */
     {
-			varlength = true;
-			(yyval) = mkor( (yyvsp[-2]), (yyvsp[0]) );
-			}
-#line 1837 "y.tab.c" /* yacc.c:1646  */
+                          varlength = true;
+                          (yyval) = mkor((yyvsp[-2]), (yyvsp[0]));
+                        }
+#line 1798 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 466 "parse.y" /* yacc.c:1646  */
+#line 427 "parse.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[0]); }
-#line 1843 "y.tab.c" /* yacc.c:1646  */
+#line 1804 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 471 "parse.y" /* yacc.c:1646  */
+#line 432 "parse.y" /* yacc.c:1646  */
     {
-			/* This rule is written separately so the
-			 * reduction will occur before the trailing
-			 * series is parsed.
-			 */
+                          /* This rule is written separately so the
+                           * reduction will occur before the trailing
+                           * series is parsed.
+                           */
 
-			if ( trlcontxt )
-				synerr( "trailing context used twice" );
-			else
-				trlcontxt = true;
+                          if (trlcontxt)
+                            synerr("trailing context used twice");
+                          else
+                            trlcontxt = true;
 
-			if ( varlength )
-				/* We hope the trailing context is
-				 * fixed-length.
-				 */
-				varlength = false;
-			else
-				headcnt = rulelen;
+                          if (varlength)
+                            /* We hope the trailing context is
+                             * fixed-length.
+                             */
+                            varlength = false;
+                          else
+                            headcnt = rulelen;
 
-			rulelen = 0;
+                          rulelen = 0;
 
-			current_state_type = STATE_TRAILING_CONTEXT;
-			(yyval) = (yyvsp[-1]);
-			}
-#line 1872 "y.tab.c" /* yacc.c:1646  */
+                          current_state_type = STATE_TRAILING_CONTEXT;
+                          (yyval) = (yyvsp[-1]);
+                        }
+#line 1833 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 498 "parse.y" /* yacc.c:1646  */
+#line 459 "parse.y" /* yacc.c:1646  */
     {
-			/* This is where concatenation of adjacent patterns
-			 * gets done.
-			 */
-			(yyval) = link_machines( (yyvsp[-1]), (yyvsp[0]) );
-			}
-#line 1883 "y.tab.c" /* yacc.c:1646  */
+                          /* This is where concatenation of adjacent patterns
+                           * gets done.
+                           */
+                          (yyval) = link_machines((yyvsp[-1]), (yyvsp[0]));
+                        }
+#line 1844 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 506 "parse.y" /* yacc.c:1646  */
+#line 467 "parse.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[0]); }
-#line 1889 "y.tab.c" /* yacc.c:1646  */
+#line 1850 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 510 "parse.y" /* yacc.c:1646  */
+#line 471 "parse.y" /* yacc.c:1646  */
     {
-			varlength = true;
+                          varlength = true;
 
-			(yyval) = mkclos( (yyvsp[-1]) );
-			}
-#line 1899 "y.tab.c" /* yacc.c:1646  */
+                          (yyval) = mkclos((yyvsp[-1]));
+                        }
+#line 1860 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 517 "parse.y" /* yacc.c:1646  */
+#line 478 "parse.y" /* yacc.c:1646  */
     {
-			varlength = true;
-			(yyval) = mkposcl( (yyvsp[-1]) );
-			}
-#line 1908 "y.tab.c" /* yacc.c:1646  */
+                          varlength = true;
+                          (yyval) = mkposcl((yyvsp[-1]));
+                        }
+#line 1869 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 523 "parse.y" /* yacc.c:1646  */
+#line 484 "parse.y" /* yacc.c:1646  */
     {
-			varlength = true;
-			(yyval) = mkopt( (yyvsp[-1]) );
-			}
-#line 1917 "y.tab.c" /* yacc.c:1646  */
+                          varlength = true;
+                          (yyval) = mkopt((yyvsp[-1]));
+                        }
+#line 1878 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 529 "parse.y" /* yacc.c:1646  */
+#line 490 "parse.y" /* yacc.c:1646  */
     {
-			varlength = true;
+                          varlength = true;
 
-			if ( (yyvsp[-3]) > (yyvsp[-1]) || (yyvsp[-3]) < 0 )
-				{
-				synerr( "bad iteration values" );
-				(yyval) = (yyvsp[-5]);
-				}
-			else
-				{
-				if ( (yyvsp[-3]) == 0 )
-					{
-					if ( (yyvsp[-1]) <= 0 )
-						{
-						synerr(
-						"bad iteration values" );
-						(yyval) = (yyvsp[-5]);
-						}
-					else
-						(yyval) = mkopt(
-							mkrep( (yyvsp[-5]), 1, (yyvsp[-1]) ) );
-					}
-				else
-					(yyval) = mkrep( (yyvsp[-5]), (yyvsp[-3]), (yyvsp[-1]) );
-				}
-			}
-#line 1948 "y.tab.c" /* yacc.c:1646  */
+                          if ((yyvsp[-3]) > (yyvsp[-1]) || (yyvsp[-3]) < 0) {
+                            synerr("bad iteration values");
+                            (yyval) = (yyvsp[-5]);
+                          }
+                          else {
+                            if ((yyvsp[-3]) == 0) {
+                              if ((yyvsp[-1]) <= 0) {
+                                synerr("bad iteration values");
+                                (yyval) = (yyvsp[-5]);
+                              }
+                              else
+                                (yyval) = mkopt(mkrep((yyvsp[-5]), 1, (yyvsp[-1])));
+                            }
+                            else
+                              (yyval) = mkrep((yyvsp[-5]), (yyvsp[-3]), (yyvsp[-1]));
+                          }
+                        }
+#line 1903 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 557 "parse.y" /* yacc.c:1646  */
+#line 512 "parse.y" /* yacc.c:1646  */
     {
-			varlength = true;
+                          varlength = true;
 
-			if ( (yyvsp[-2]) <= 0 )
-				{
-				synerr( "iteration value must be positive" );
-				(yyval) = (yyvsp[-4]);
-				}
+                          if ((yyvsp[-2]) <= 0) {
+                            synerr("iteration value must be positive");
+                            (yyval) = (yyvsp[-4]);
+                          }
 
-			else
-				(yyval) = mkrep( (yyvsp[-4]), (yyvsp[-2]), INFINITY );
-			}
-#line 1965 "y.tab.c" /* yacc.c:1646  */
+                          else
+                            (yyval) = mkrep((yyvsp[-4]), (yyvsp[-2]), INFINITY);
+                        }
+#line 1919 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 571 "parse.y" /* yacc.c:1646  */
+#line 525 "parse.y" /* yacc.c:1646  */
     {
-			/* The singleton could be something like "(foo)",
-			 * in which case we have no idea what its length
-			 * is, so we punt here.
-			 */
-			varlength = true;
+                          /* The singleton could be something like "(foo)",
+                           * in which case we have no idea what its length
+                           * is, so we punt here.
+                           */
+                          varlength = true;
 
-			if ( (yyvsp[-1]) <= 0 )
-				{
-				synerr( "iteration value must be positive" );
-				(yyval) = (yyvsp[-3]);
-				}
+                          if ((yyvsp[-1]) <= 0) {
+                            synerr("iteration value must be positive");
+                            (yyval) = (yyvsp[-3]);
+                          }
 
-			else
-				(yyval) = link_machines( (yyvsp[-3]),
-						copysingl( (yyvsp[-3]), (yyvsp[-1]) - 1 ) );
-			}
-#line 1987 "y.tab.c" /* yacc.c:1646  */
+                          else
+                            (yyval) = link_machines((yyvsp[-3]), copysingl((yyvsp[-3]), (yyvsp[-1]) - 1));
+                        }
+#line 1939 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 590 "parse.y" /* yacc.c:1646  */
+#line 542 "parse.y" /* yacc.c:1646  */
     {
-			if ( ! madeany )
-				{
-				/* Create the '.' character class. */
-				anyccl = cclinit();
-				ccladd( anyccl, '\n' );
-				cclnegate( anyccl );
+                          if (!madeany) {
+                            /* Create the '.' character class. */
+                            anyccl = cclinit();
+                            ccladd(anyccl, '\n');
+                            cclnegate(anyccl);
 
-				if ( useecs )
-					mkeccl( ccltbl + cclmap[anyccl],
-						ccllen[anyccl], nextecm,
-						ecgroup, csize, csize );
+                            if (useecs)
+                              mkeccl(ccltbl + cclmap[anyccl],
+                                     ccllen[anyccl], nextecm, ecgroup, csize, csize);
 
-				madeany = true;
-				}
+                            madeany = true;
+                          }
 
-			++rulelen;
+                          ++rulelen;
 
-			(yyval) = mkstate( -anyccl );
-			}
-#line 2012 "y.tab.c" /* yacc.c:1646  */
+                          (yyval) = mkstate(-anyccl);
+                        }
+#line 1962 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 612 "parse.y" /* yacc.c:1646  */
+#line 562 "parse.y" /* yacc.c:1646  */
     {
-			if ( ! cclsorted )
-				/* Sort characters for fast searching.  We
-				 * use a shell sort since this list could
-				 * be large.
-				 */
-				cshell( ccltbl + cclmap[(yyvsp[0])], ccllen[(yyvsp[0])], true );
+                          if (!cclsorted)
+                            /* Sort characters for fast searching.  We
+                             * use a shell sort since this list could
+                             * be large.
+                             */
+                            cshell(ccltbl + cclmap[(yyvsp[0])], ccllen[(yyvsp[0])], true);
 
-			if ( useecs )
-				mkeccl( ccltbl + cclmap[(yyvsp[0])], ccllen[(yyvsp[0])],
-					nextecm, ecgroup, csize, csize );
+                          if (useecs)
+                            mkeccl(ccltbl + cclmap[(yyvsp[0])], ccllen[(yyvsp[0])], nextecm, ecgroup, csize, csize);
 
-			++rulelen;
+                          ++rulelen;
 
-			(yyval) = mkstate( -(yyvsp[0]) );
-			}
-#line 2033 "y.tab.c" /* yacc.c:1646  */
+                          (yyval) = mkstate(-(yyvsp[0]));
+                        }
+#line 1982 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 630 "parse.y" /* yacc.c:1646  */
+#line 579 "parse.y" /* yacc.c:1646  */
     {
-			++rulelen;
+                          ++ rulelen;
 
-			(yyval) = mkstate( -(yyvsp[0]) );
-			}
-#line 2043 "y.tab.c" /* yacc.c:1646  */
+                          (yyval) = mkstate(-(yyvsp[0]));
+                        }
+#line 1992 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 637 "parse.y" /* yacc.c:1646  */
+#line 586 "parse.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[-1]); }
-#line 2049 "y.tab.c" /* yacc.c:1646  */
+#line 1998 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 640 "parse.y" /* yacc.c:1646  */
+#line 589 "parse.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[-1]); }
-#line 2055 "y.tab.c" /* yacc.c:1646  */
+#line 2004 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 643 "parse.y" /* yacc.c:1646  */
+#line 592 "parse.y" /* yacc.c:1646  */
     {
-			++rulelen;
+                          ++rulelen;
 
-			if ( caseins && (yyvsp[0]) >= 'A' && (yyvsp[0]) <= 'Z' )
-				(yyvsp[0]) = clower( (yyvsp[0]) );
+                          if (caseins && (yyvsp[0]) >= 'A' && (yyvsp[0]) <= 'Z')
+                            (yyvsp[0]) = clower((yyvsp[0]));
 
-			(yyval) = mkstate( (yyvsp[0]) );
-			}
-#line 2068 "y.tab.c" /* yacc.c:1646  */
+                          (yyval) = mkstate((yyvsp[0]));
+                        }
+#line 2017 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 654 "parse.y" /* yacc.c:1646  */
+#line 603 "parse.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[-1]); }
-#line 2074 "y.tab.c" /* yacc.c:1646  */
+#line 2023 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 657 "parse.y" /* yacc.c:1646  */
+#line 606 "parse.y" /* yacc.c:1646  */
     {
-			cclnegate( (yyvsp[-1]) );
-			(yyval) = (yyvsp[-1]);
-			}
-#line 2083 "y.tab.c" /* yacc.c:1646  */
+                          cclnegate((yyvsp[-1]));
+                          (yyval) = (yyvsp[-1]);
+                        }
+#line 2032 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 664 "parse.y" /* yacc.c:1646  */
+#line 613 "parse.y" /* yacc.c:1646  */
     {
-			if ( caseins )
-				{
-				if ( (yyvsp[-2]) >= 'A' && (yyvsp[-2]) <= 'Z' )
-					(yyvsp[-2]) = clower( (yyvsp[-2]) );
-				if ( (yyvsp[0]) >= 'A' && (yyvsp[0]) <= 'Z' )
-					(yyvsp[0]) = clower( (yyvsp[0]) );
-				}
+                          if (caseins) {
+                            if ((yyvsp[-2]) >= 'A' && (yyvsp[-2]) <= 'Z')
+                              (yyvsp[-2]) = clower((yyvsp[-2]));
+                            if ((yyvsp[0]) >= 'A' && (yyvsp[0]) <= 'Z')
+                              (yyvsp[0]) = clower((yyvsp[0]));
+                          }
 
-			if ( (yyvsp[-2]) > (yyvsp[0]) )
-				synerr( "negative range in character class" );
+                          if ((yyvsp[-2]) > (yyvsp[0]))
+                            synerr("negative range in character class");
 
-			else
-				{
-				for ( i = (yyvsp[-2]); i <= (yyvsp[0]); ++i )
-					ccladd( (yyvsp[-3]), i );
+                          else {
+                            for (i = (yyvsp[-2]); i <= (yyvsp[0]); ++i)
+                              ccladd((yyvsp[-3]), i);
 
-				/* Keep track if this ccl is staying in
-				 * alphabetical order.
-				 */
-				cclsorted = cclsorted && ((yyvsp[-2]) > lastchar);
-				lastchar = (yyvsp[0]);
-				}
+                            /* Keep track if this ccl is staying in
+                             * alphabetical order.
+                             */
+                            cclsorted = cclsorted && ((yyvsp[-2]) > lastchar);
+                            lastchar = (yyvsp[0]);
+                          }
 
-			(yyval) = (yyvsp[-3]);
-			}
-#line 2114 "y.tab.c" /* yacc.c:1646  */
+                          (yyval) = (yyvsp[-3]);
+                        }
+#line 2061 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 692 "parse.y" /* yacc.c:1646  */
+#line 639 "parse.y" /* yacc.c:1646  */
     {
-			if ( caseins && (yyvsp[0]) >= 'A' && (yyvsp[0]) <= 'Z' )
-				(yyvsp[0]) = clower( (yyvsp[0]) );
+                          if (caseins && (yyvsp[0]) >= 'A' && (yyvsp[0]) <= 'Z')
+                            (yyvsp[0]) = clower((yyvsp[0]));
 
-			ccladd( (yyvsp[-1]), (yyvsp[0]) );
-			cclsorted = cclsorted && ((yyvsp[0]) > lastchar);
-			lastchar = (yyvsp[0]);
-			(yyval) = (yyvsp[-1]);
-			}
-#line 2128 "y.tab.c" /* yacc.c:1646  */
+                          ccladd((yyvsp[-1]), (yyvsp[0]));
+                          cclsorted = cclsorted && ((yyvsp[0]) > lastchar);
+                          lastchar = (yyvsp[0]);
+                          (yyval) = (yyvsp[-1]);
+                        }
+#line 2075 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 703 "parse.y" /* yacc.c:1646  */
+#line 650 "parse.y" /* yacc.c:1646  */
     {
-			/* Too hard to properly maintain cclsorted. */
-			cclsorted = false;
-			(yyval) = (yyvsp[-1]);
-			}
-#line 2138 "y.tab.c" /* yacc.c:1646  */
+                          /* Too hard to properly maintain cclsorted. */
+                          cclsorted = false;
+                          (yyval) = (yyvsp[-1]);
+                        }
+#line 2085 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 710 "parse.y" /* yacc.c:1646  */
+#line 657 "parse.y" /* yacc.c:1646  */
     {
-			cclsorted = true;
-			lastchar = 0;
-			currccl = (yyval) = cclinit();
-			}
-#line 2148 "y.tab.c" /* yacc.c:1646  */
+                          cclsorted = true;
+                          lastchar = 0;
+                          currccl = (yyval) = cclinit();
+                        }
+#line 2095 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 717 "parse.y" /* yacc.c:1646  */
+#line 664 "parse.y" /* yacc.c:1646  */
     { CCL_EXPR(isalnum) }
-#line 2154 "y.tab.c" /* yacc.c:1646  */
+#line 2101 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 718 "parse.y" /* yacc.c:1646  */
+#line 665 "parse.y" /* yacc.c:1646  */
     { CCL_EXPR(isalpha) }
-#line 2160 "y.tab.c" /* yacc.c:1646  */
+#line 2107 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 719 "parse.y" /* yacc.c:1646  */
+#line 666 "parse.y" /* yacc.c:1646  */
     { CCL_EXPR(IS_BLANK) }
-#line 2166 "y.tab.c" /* yacc.c:1646  */
+#line 2113 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 720 "parse.y" /* yacc.c:1646  */
+#line 667 "parse.y" /* yacc.c:1646  */
     { CCL_EXPR(iscntrl) }
-#line 2172 "y.tab.c" /* yacc.c:1646  */
+#line 2119 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 721 "parse.y" /* yacc.c:1646  */
+#line 668 "parse.y" /* yacc.c:1646  */
     { CCL_EXPR(isdigit) }
-#line 2178 "y.tab.c" /* yacc.c:1646  */
+#line 2125 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 722 "parse.y" /* yacc.c:1646  */
+#line 669 "parse.y" /* yacc.c:1646  */
     { CCL_EXPR(isgraph) }
-#line 2184 "y.tab.c" /* yacc.c:1646  */
+#line 2131 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 723 "parse.y" /* yacc.c:1646  */
+#line 670 "parse.y" /* yacc.c:1646  */
     { CCL_EXPR(islower) }
-#line 2190 "y.tab.c" /* yacc.c:1646  */
+#line 2137 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 724 "parse.y" /* yacc.c:1646  */
+#line 671 "parse.y" /* yacc.c:1646  */
     { CCL_EXPR(isprint) }
-#line 2196 "y.tab.c" /* yacc.c:1646  */
+#line 2143 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 725 "parse.y" /* yacc.c:1646  */
+#line 672 "parse.y" /* yacc.c:1646  */
     { CCL_EXPR(ispunct) }
-#line 2202 "y.tab.c" /* yacc.c:1646  */
+#line 2149 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 726 "parse.y" /* yacc.c:1646  */
+#line 673 "parse.y" /* yacc.c:1646  */
     { CCL_EXPR(isspace) }
-#line 2208 "y.tab.c" /* yacc.c:1646  */
+#line 2155 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 727 "parse.y" /* yacc.c:1646  */
+#line 674 "parse.y" /* yacc.c:1646  */
     {
-				if ( caseins )
-					CCL_EXPR(islower)
-				else
-					CCL_EXPR(isupper)
-				}
-#line 2219 "y.tab.c" /* yacc.c:1646  */
+                                  if (caseins)
+                                    CCL_EXPR(islower)
+                                  else
+                                    CCL_EXPR(isupper)
+                                }
+#line 2166 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 733 "parse.y" /* yacc.c:1646  */
+#line 680 "parse.y" /* yacc.c:1646  */
     { CCL_EXPR(isxdigit) }
-#line 2225 "y.tab.c" /* yacc.c:1646  */
+#line 2172 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 737 "parse.y" /* yacc.c:1646  */
+#line 684 "parse.y" /* yacc.c:1646  */
     {
-			if ( caseins && (yyvsp[0]) >= 'A' && (yyvsp[0]) <= 'Z' )
-				(yyvsp[0]) = clower( (yyvsp[0]) );
+                          if (caseins && (yyvsp[0]) >= 'A' && (yyvsp[0]) <= 'Z')
+                            (yyvsp[0]) = clower((yyvsp[0]));
 
-			++rulelen;
+                          ++rulelen;
 
-			(yyval) = link_machines( (yyvsp[-1]), mkstate( (yyvsp[0]) ) );
-			}
-#line 2238 "y.tab.c" /* yacc.c:1646  */
+                          (yyval) = link_machines((yyvsp[-1]), mkstate((yyvsp[0])));
+                        }
+#line 2185 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 747 "parse.y" /* yacc.c:1646  */
-    { (yyval) = mkstate( SYM_EPSILON ); }
-#line 2244 "y.tab.c" /* yacc.c:1646  */
+#line 694 "parse.y" /* yacc.c:1646  */
+    { (yyval) = mkstate(SYM_EPSILON); }
+#line 2191 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2248 "y.tab.c" /* yacc.c:1646  */
+#line 2195 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2472,143 +2419,117 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 750 "parse.y" /* yacc.c:1906  */
+#line 697 "parse.y" /* yacc.c:1906  */
 
 
 
 /* build_eof_action - build the "<<EOF>>" action for the active start
  *                    conditions
  */
-
 void build_eof_action()
-	{
-	register int i;
-	char action_text[MAXLINE];
+{
+  register int i;
+  char action_text[MAXLINE];
 
-	for ( i = 1; i <= scon_stk_ptr; ++i )
-		{
-		if ( sceof[scon_stk[i]] )
-			format_pinpoint_message(
-				"multiple <<EOF>> rules for start condition %s",
-				scname[scon_stk[i]] );
+  for (i = 1; i <= scon_stk_ptr; ++i) {
+    if (sceof[scon_stk[i]])
+      format_pinpoint_message("multiple <<EOF>> rules for start condition %s",
+                              scname[scon_stk[i]]);
 
-		else
-			{
-			sceof[scon_stk[i]] = true;
-			sprintf( action_text, "case YY_STATE_EOF(%s):\n",
-				scname[scon_stk[i]] );
-			add_action( action_text );
-			}
-		}
+    else {
+      sceof[scon_stk[i]] = true;
+      sprintf(action_text, "case YY_STATE_EOF(%s):\n", scname[scon_stk[i]]);
+      add_action(action_text);
+    }
+  }
 
-	line_directive_out( (FILE *) 0, 1 );
+  line_directive_out((FILE *) 0, 1);
 
-	/* This isn't a normal rule after all - don't count it as
-	 * such, so we don't have any holes in the rule numbering
-	 * (which make generating "rule can never match" warnings
-	 * more difficult.
-	 */
-	--num_rules;
-	++num_eof_rules;
-	}
+  /* This isn't a normal rule after all - don't count it as
+   * such, so we don't have any holes in the rule numbering
+   * (which make generating "rule can never match" warnings
+   * more difficult.
+   */
+  --num_rules;
+  ++num_eof_rules;
+}
 
 
 /* format_synerr - write out formatted syntax error */
+void format_synerr(char msg[], char arg[])
+{
+  char errmsg[MAXLINE];
 
-void format_synerr( msg, arg )
-char msg[], arg[];
-	{
-	char errmsg[MAXLINE];
-
-	(void) sprintf( errmsg, msg, arg );
-	synerr( errmsg );
-	}
+  (void) sprintf(errmsg, msg, arg);
+  synerr(errmsg);
+}
 
 
 /* synerr - report a syntax error */
-
-void synerr( str )
-char str[];
-	{
-	syntaxerror = true;
-	pinpoint_message( str );
-	}
+void synerr(char str[])
+{
+  syntaxerror = true;
+  pinpoint_message(str);
+}
 
 
 /* format_warn - write out formatted warning */
+void format_warn(char msg[], char arg[])
+{
+  char warn_msg[MAXLINE];
 
-void format_warn( msg, arg )
-char msg[], arg[];
-	{
-	char warn_msg[MAXLINE];
-
-	(void) sprintf( warn_msg, msg, arg );
-	warn( warn_msg );
-	}
+  (void) sprintf(warn_msg, msg, arg);
+  warn(warn_msg);
+}
 
 
 /* warn - report a warning, unless -w was given */
-
-void warn( str )
-char str[];
-	{
-	line_warning( str, linenum );
-	}
+void warn(char str[])
+{
+  line_warning(str, linenum);
+}
 
 /* format_pinpoint_message - write out a message formatted with one string,
- *			     pinpointing its location
+ *                           pinpointing its location
  */
+void format_pinpoint_message(char msg[], char arg[])
+{
+  char errmsg[MAXLINE];
 
-void format_pinpoint_message( msg, arg )
-char msg[], arg[];
-	{
-	char errmsg[MAXLINE];
-
-	(void) sprintf( errmsg, msg, arg );
-	pinpoint_message( errmsg );
-	}
+  (void) sprintf(errmsg, msg, arg);
+  pinpoint_message(errmsg);
+}
 
 
 /* pinpoint_message - write out a message, pinpointing its location */
-
-void pinpoint_message( str )
-char str[];
-	{
-	line_pinpoint( str, linenum );
-	}
+void pinpoint_message(char str[])
+{
+  line_pinpoint(str, linenum);
+}
 
 
 /* line_warning - report a warning at a given line, unless -w was given */
+void line_warning(char str[], int line)
+{
+  char warning[MAXLINE];
 
-void line_warning( str, line )
-char str[];
-int line;
-	{
-	char warning[MAXLINE];
-
-	if ( ! nowarn )
-		{
-		sprintf( warning, "warning, %s", str );
-		line_pinpoint( warning, line );
-		}
-	}
+  if (!nowarn) {
+    sprintf(warning, "warning, %s", str);
+    line_pinpoint(warning, line);
+  }
+}
 
 
 /* line_pinpoint - write out a message, pinpointing it at the given line */
-
-void line_pinpoint( str, line )
-char str[];
-int line;
-	{
-	fprintf( stderr, "\"%s\", line %d: %s\n", infilename, line, str );
-	}
+void line_pinpoint(char str[], int line)
+{
+  fprintf(stderr, "\"%s\", line %d: %s\n", infilename, line, str);
+}
 
 
 /* yyerror - eat up an error message from the parser;
- *	     currently, messages are ignore
+ *           currently, messages are ignore
  */
-
-void yyerror( msg )
-char msg[];
-	{
-	}
+void yyerror(char msg[])
+{
+}
