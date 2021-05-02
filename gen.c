@@ -1105,6 +1105,10 @@ void make_tables()
     }
 
     if (yytext_is_array) {
+      /* TODO: In this mode, we emit a definition of 'yy_flex_strlen',
+       * but ususally do not use it, provoking a compiler warning. I
+       * think we can just throw away 'yy_flex_strlen' and use 'strlen'
+       * instead.  Use the -l (lex compat) option to trigger this. */
       indent_puts
         ("#define yymore() (yy_more_offset = yy_flex_strlen( yytext ))");
       indent_puts("#define YY_NEED_STRLEN");
