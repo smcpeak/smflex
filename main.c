@@ -85,7 +85,6 @@ int yymore_used, reject, real_reject, continued_action, in_rule;
 int yymore_really_used, reject_really_used;
 
 int datapos, dataline, linenum, out_linenum;
-FILE *skelfile = NULL;
 int scanner_skl_ind = 0;
 FILE *backing_up_file;
 char *infilename = NULL, *outfilename = NULL;
@@ -163,7 +162,6 @@ static char *backing_name = "lex.bck";
 
 static char outfile_path[MAXLINE];
 static int outfile_created = 0;
-static char *skelname = NULL;
 
 /* Name of the C++ scanner header file. */
 static char header_file_name[MAXLINE];
@@ -317,9 +315,6 @@ void check_options()
     outfile_created = 1;
   }
 
-  if (skelname && (skelfile = fopen(skelname, "r")) == NULL)
-    lerrsf(_("can't open skeleton file %s"), skelname);
-
   if (strcmp(prefix, "yy")) {
 #define GEN_PREFIX(name) out_str3( "#define yy%s %s%s\n", name, prefix, name )
     if (!C_plus_plus) {
@@ -359,14 +354,6 @@ void check_options()
 void flexend(int exit_status)
 {
   int tblsiz;
-
-  if (skelfile != NULL) {
-    if (ferror(skelfile))
-      lerrsf(_("input error reading skeleton file %s"), skelname);
-
-    else if (fclose(skelfile))
-      lerrsf(_("error closing skeleton file %s"), skelname);
-  }
 
   if (exit_status != 0 && outfile_created) {
     if (ferror(scanner_c_file))
@@ -459,9 +446,6 @@ void flexend(int exit_status)
 
     if (did_outfilename)
       fprintf(stderr, " -o%s", outfilename);
-
-    if (skelname)
-      fprintf(stderr, " -S%s", skelname);
 
     if (strcmp(prefix, "yy"))
       fprintf(stderr, " -P%s", prefix);
@@ -720,13 +704,6 @@ void flexinit(int argc, char **argv)
         case 'p':
           ++performance_report;
           break;
-
-        case 'S':
-          if (i != 1)
-            flexerror(_("-S flag must be given separately"));
-
-          skelname = arg + i + 1;
-          goto get_next_arg;
 
         case 's':
           spprdflt = true;

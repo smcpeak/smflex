@@ -178,7 +178,7 @@ Scott McPeak's <code>flex</code>.
 <h1 id="synopsis">SYNOPSIS</h1>
 
 <p><code>flex</code>
-   <code>[-bcdfhilnpstvwBFILTV78+? -C[aefFmr] -ooutput -Pprefix -Sskeleton]</code>
+   <code>[-bcdfhilnpstvwBFILTV78+? -C[aefFmr] -ooutput -Pprefix]</code>
    <code>[--help --version]</code>
    <code>[filename ...]</code>
 
@@ -2233,12 +2233,6 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     <p>This option lets you easily link together multiple <code>flex</code>
     programs into the same executable.
 
-<dt><code>-Sskeleton_file</code>
-
-<dd><p>overrides the default skeleton file from which <code>flex</code>
-    constructs its scanners. You'll never need this option unless you are
-    doing <code>flex</code> maintenance or development.
-
 </dl>
 
 <p><code>flex</code> also provides a mechanism for controlling
@@ -3110,6 +3104,19 @@ to transition to my <code>flex</code>, and this list can help that.
     to files.
 
     <p>Replacement: Arrange to receive the output in files.
+
+<li><p><code>flex-2.5.4</code> accepted the <code>-S</code> option to
+    specify an alternate scanner implementation skeleton file.  That
+    option has been removed.
+
+    <p>Rationale: The documentation explained the option was only for
+    the use of maintainers, but as a maintainer, I never saw any need
+    for it.  Additionally, now that there are sometimes two output
+    files, I would have to add another option to keep the full
+    functionality.
+
+    <p>Replacement: Change <code>generated-scanner.skl</code> and
+    recompile.
 
 </ul>
 
