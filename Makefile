@@ -99,48 +99,14 @@ $(FLEX): .bootstrap $(OBJECTS)
 	touch .bootstrap
 
 
-# The bison rules are usually disabled because 'git' will check out
-# files with unpredictably-ordered timestamps and I do not want to
-# rebuild this needlessly.  Run 'make RUN_BISON=1' to activate the rule
-# and rebuild the parser if needed.
-ifeq ($(RUN_BISON),1)
-
-# Bison-generated parser for flex's input language.
-parse.c: parse.y
-	$(YACC) -d parse.y
-	mv -f y.tab.c parse.c
-	mv -f y.tab.h parse.h
-
-# This rule tells 'make' that in order to create 'parse.h' it must first
-# create 'parse.c'.  The latter is what actually makes 'parse.h'.
-parse.h: parse.c
-
-endif # RUN_BISON
-
-
-# scan.c is the output of running flex on 'scan.l'.  It is used by
-# flex to read it input file.  Hence, flex is partially written in
-# its own language.  See the .bootstrap target.
-scan.c: scan.l
-	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.tmp.c scan.l
-	mv -f scan.tmp.c scan.c
-
-# 'skel.c' contains the contents of 'flex.skl' as a C string.
-skel.c: flex.skl mkskel.sh
-	$(SHELL) mkskel.sh flex.skl skel.c skel
-
-# Similarly, 'header.c' contains the contents of 'FlexLexer.h'.
-header.c: FlexLexer.h mkskel.sh
-	$(SHELL) mkskel.sh FlexLexer.h header.c header_contents
-
 # Main set of automated tests.
 test: check
 check: $(FLEX)
 	@#
-	@# How do I keep ending up with "scan.tmp.c" in scan.c?
+	@# Make sure I do not have "scan.tmp" in scan.c.
 	@#
-	if grep scan.tmp.c scan.c; then false; else true; fi
-	if grep scan.tmp.c initscan.c; then false; else true; fi
+	if grep scan.tmp scan.c; then false; else true; fi
+	if grep scan.tmp initscan.c; then false; else true; fi
 	@#
 	@# Run the tests in test/.
 	@#
@@ -253,18 +219,65 @@ endif
 dist-test-clean:
 	$(MAKE) TEST_DIST=1 CLEAN_DIST=1 dist
 
-# For an explanation of the following Makefile rules, see node
-# `Automatic Remaking' in GNU Autoconf documentation.
+# If 'config.mk.in' has changed, regenerate 'config.mk'.
 config.mk: config.mk.in config.status
 	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
-config.status: configure
-	./config.status --recheck
-
-# This rule sometimes causes autoconf to run after a git checkout
-# because the timestamps in that case are unpredictable.
-#configure: configure.in
-#	autoconf
 
 # Tell versions [3.59,3.63) of GNU make not to export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
+
+
+# ------------------------ Maintainer rules -------------------------
+# The rules in this section are meant for use when making changes to
+# flex itself.  They are not normally enabled for two reasons:
+#
+# 1. The build from distribution source should not require any tools
+#    beyond a C compiler, but these rules rely on having other tools
+#    installed.
+#
+# 2. The build from a fresh git clone would otherwise needlessly
+#    rebuild some things because the file timestamps after a clone
+#    are semi-random.
+#
+# To enable maintainer mode, set MAINTAINER_MODE=1 in personal.mk.
+
+ifeq ($(MAINTAINER_MODE),1)
+
+
+# Bison-generated parser for flex's input language.
+parse.c: parse.y
+	$(YACC) -d parse.y
+	mv -f y.tab.c parse.c
+	mv -f y.tab.h parse.h
+
+# This rule tells 'make' that in order to create 'parse.h' it must first
+# create 'parse.c'.  The latter is what actually makes 'parse.h'.
+parse.h: parse.c
+
+# scan.c is the output of running flex on 'scan.l'.  It is used by
+# flex to read it input file.  Hence, flex is partially written in
+# its own language.  See the .bootstrap target.
+scan.c: scan.l
+	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.tmp1.c scan.l
+	sed -e 's,"scan.tmp1.c","scan.c",' < scan.tmp1.c > scan.tmp2.c
+	rm scan.tmp1.c
+	mv -f scan.tmp2.c scan.c
+
+# 'skel.c' contains the contents of 'flex.skl' as a C string.
+skel.c: flex.skl mkskel.sh
+	$(SHELL) mkskel.sh flex.skl skel.c skel
+
+# Similarly, 'header.c' contains the contents of 'FlexLexer.h'.
+header.c: FlexLexer.h mkskel.sh
+	$(SHELL) mkskel.sh FlexLexer.h header.c header_contents
+
+# For an explanation of the following Makefile rules, see node
+# `Automatic Remaking' in GNU Autoconf documentation.
+config.status: configure
+	./config.status --recheck
+configure: configure.in
+	autoconf
+
+
+endif # MAINTAINER_MODE
