@@ -84,9 +84,7 @@ extern int yymore_really_used, reject_really_used;
  * linenum - current input line number
  * out_linenum - current output line number
  * skelfile - the skeleton file
- * scanner_skl_contents - compiled-in skeleton array
  * scanner_skl_ind - index into "scanner_skl_contents" array, if skelfile is nil
- * header_skl_contents - contents of the header to emit
  * yyin - input file
  * backing_up_file - file to summarize backing-up states to
  * infilename - name of input file
@@ -111,9 +109,7 @@ extern int yymore_really_used, reject_really_used;
 
 extern int datapos, dataline, linenum, out_linenum;
 extern FILE *skelfile;
-extern const char *scanner_skl_contents[];     /* TODO: move */
 extern int scanner_skl_ind;
-extern char const *header_skl_contents[];      /* TODO: move */
 extern FILE *backing_up_file;
 extern char *infilename, *outfilename;
 extern int did_outfilename;
@@ -125,6 +121,16 @@ extern char *program_name;
 extern char *action_array;
 extern int action_size;
 extern int defs1_offset, prolog_offset, action_offset, action_index;
+
+
+/* This contains the skeleton of the scanner implementation to
+ * generate.  It is defined in generated-scanner.skl.c. */
+extern const char *scanner_skl_contents[];
+
+/* This contains the skeleton of the C++ header file to generate when
+ * generating a C++-interface scanner.  It is defined in
+ * generated-header.skl.c. */
+extern char const *header_skl_contents[];
 
 
 /* The file to which we are writing the C or C++ scanner implementation. */

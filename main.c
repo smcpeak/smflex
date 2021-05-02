@@ -86,9 +86,7 @@ int yymore_really_used, reject_really_used;
 
 int datapos, dataline, linenum, out_linenum;
 FILE *skelfile = NULL;
-/* placeholder: scanner_skl_contents */
 int scanner_skl_ind = 0;
-/* placeholder: header_skl_contents */
 FILE *backing_up_file;
 char *infilename = NULL, *outfilename = NULL;
 int did_outfilename;
