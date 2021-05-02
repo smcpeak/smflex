@@ -250,9 +250,9 @@ input-scan.lex.c: input-scan.lex
 generated-scanner.skl.c: generated-scanner.skl encode.sh
 	$(SHELL) encode.sh generated-scanner.skl generated-scanner.skl.c scanner_skl_contents
 
-# Similarly, 'header.skl.c' contains the contents of 'header.skl'.
-header.skl.c: header.skl encode.sh
-	$(SHELL) encode.sh header.skl header.skl.c header_skl_contents
+# Similarly, 'generated-header.skl.c' contains the contents of 'generated-header.skl'.
+generated-header.skl.c: generated-header.skl encode.sh
+	$(SHELL) encode.sh generated-header.skl generated-header.skl.c header_skl_contents
 
 # For an explanation of the following Makefile rules, see node
 # `Automatic Remaking' in GNU Autoconf documentation.
