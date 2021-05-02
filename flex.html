@@ -2151,8 +2151,11 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     scanner will miss whatever text your previous reads left in the stdio
     input buffer).
 
-    <p><code>-Cr</code> has no effect if you define <code>YY_INPUT</code>
+    <code>-Cr</code> has no effect if you define <code>YY_INPUT</code>
     (see The Generated Scanner above).
+
+    Using <code>-Cr</code> introduces a compile-time dependency on
+    <code>unistd.h</code> and a link-time dependency on <code>read</code>.
 
     <p>A lone <code>-C</code> specifies that the scanner tables should be
     compressed but neither equivalence classes nor meta-equivalence classes
