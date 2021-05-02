@@ -48,19 +48,6 @@ using std::cerr;
 #endif
 
 
-/* Use 'const' if the language supports it. */
-#if defined(__cplusplus) || defined(__STDC__)
-#define YY_USE_CONST
-#endif
-
-
-#ifdef YY_USE_CONST
-#define yyconst const
-#else
-#define yyconst
-#endif
-
-
 /* Returned upon end-of-file. */
 #define YY_NULL 0
 
@@ -250,8 +237,8 @@ void yy_flush_buffer(YY_BUFFER_STATE b);
 #define YY_FLUSH_BUFFER yy_flush_buffer( yy_current_buffer )
 
 YY_BUFFER_STATE yy_scan_buffer(char *base, yy_size_t size);
-YY_BUFFER_STATE yy_scan_string(yyconst char *yy_str);
-YY_BUFFER_STATE yy_scan_bytes(yyconst char *bytes, int len);
+YY_BUFFER_STATE yy_scan_string(const char *yy_str);
+YY_BUFFER_STATE yy_scan_bytes(const char *bytes, int len);
 %*
 
 static void *yy_flex_alloc(yy_size_t);
@@ -282,7 +269,7 @@ static void yy_flex_free(void *);
 static yy_state_type yy_get_previous_state(void);
 static yy_state_type yy_try_NUL_trans(yy_state_type current_state);
 static int yy_get_next_buffer(void);
-static void yy_fatal_error(yyconst char msg[]);
+static void yy_fatal_error(const char msg[]);
 %*
 
 /* Done after the current pattern has been matched and before the
@@ -331,11 +318,11 @@ static void yyunput(int c, char *buf_ptr);
 %*
 
 #ifndef yytext_ptr
-static void yy_flex_strncpy(char *, yyconst char *, int);
+static void yy_flex_strncpy(char *, const char *, int);
 #endif
 
 #ifdef YY_NEED_STRLEN
-static int yy_flex_strlen(yyconst char *);
+static int yy_flex_strlen(const char *);
 #endif
 
 #ifndef YY_NO_INPUT
@@ -1207,7 +1194,7 @@ YY_BUFFER_STATE yy_scan_buffer(char *base, yy_size_t size)
 
 #ifndef YY_NO_SCAN_STRING
 %-
-YY_BUFFER_STATE yy_scan_string(yyconst char *yy_str)
+YY_BUFFER_STATE yy_scan_string(const char *yy_str)
 {
   int len;
   for (len = 0; yy_str[len]; ++len)
@@ -1221,7 +1208,7 @@ YY_BUFFER_STATE yy_scan_string(yyconst char *yy_str)
 
 #ifndef YY_NO_SCAN_BYTES
 %-
-YY_BUFFER_STATE yy_scan_bytes(yyconst char *bytes, int len)
+YY_BUFFER_STATE yy_scan_bytes(const char *bytes, int len)
 {
   YY_BUFFER_STATE b;
   char *buf;
@@ -1316,7 +1303,7 @@ int yyFlexLexer::yy_top_state()
 #endif
 
 %-
-static void yy_fatal_error(yyconst char msg[])
+static void yy_fatal_error(const char msg[])
 {
   (void) fprintf(stderr, "%s\n", msg);
   exit(YY_EXIT_FAILURE);
@@ -1324,7 +1311,7 @@ static void yy_fatal_error(yyconst char msg[])
 
 %+
 
-void yyFlexLexer::LexerError( yyconst char msg[] )
+void yyFlexLexer::LexerError( const char msg[] )
 {
   cerr << msg << '\n';
   exit(YY_EXIT_FAILURE);
@@ -1349,7 +1336,7 @@ void yyFlexLexer::LexerError( yyconst char msg[] )
 /* Internal utility routines. */
 
 #ifndef yytext_ptr
-static void yy_flex_strncpy(char *s1, yyconst char *s2, int n)
+static void yy_flex_strncpy(char *s1, const char *s2, int n)
 {
   register int i;
   for (i = 0; i < n; ++i)
@@ -1358,7 +1345,7 @@ static void yy_flex_strncpy(char *s1, yyconst char *s2, int n)
 #endif
 
 #ifdef YY_NEED_STRLEN
-static int yy_flex_strlen(yyconst char *s)
+static int yy_flex_strlen(const char *s)
 {
   register int n;
   for (n = 0; s[n]; ++n)

@@ -38,19 +38,6 @@
 #endif
 
 
-/* Use 'const' if the language supports it. */
-#if defined(__cplusplus) || defined(__STDC__)
-#define YY_USE_CONST
-#endif
-
-
-#ifdef YY_USE_CONST
-#define yyconst const
-#else
-#define yyconst
-#endif
-
-
 /* Returned upon end-of-file. */
 #define YY_NULL 0
 
@@ -226,8 +213,8 @@ void yy_flush_buffer(YY_BUFFER_STATE b);
 #define YY_FLUSH_BUFFER yy_flush_buffer( yy_current_buffer )
 
 YY_BUFFER_STATE yy_scan_buffer(char *base, yy_size_t size);
-YY_BUFFER_STATE yy_scan_string(yyconst char *yy_str);
-YY_BUFFER_STATE yy_scan_bytes(yyconst char *bytes, int len);
+YY_BUFFER_STATE yy_scan_string(const char *yy_str);
+YY_BUFFER_STATE yy_scan_bytes(const char *bytes, int len);
 
 static void *yy_flex_alloc(yy_size_t);
 static void *yy_flex_realloc(void *, yy_size_t);
@@ -260,7 +247,7 @@ extern char *yytext;
 static yy_state_type yy_get_previous_state(void);
 static yy_state_type yy_try_NUL_trans(yy_state_type current_state);
 static int yy_get_next_buffer(void);
-static void yy_fatal_error(yyconst char msg[]);
+static void yy_fatal_error(const char msg[]);
 
 /* Done after the current pattern has been matched and before the
  * corresponding action - sets up yytext.
@@ -274,7 +261,7 @@ static void yy_fatal_error(yyconst char msg[]);
 
 #define YY_NUM_RULES 164
 #define YY_END_OF_BUFFER 165
-static yyconst short int yy_accept[766] =
+static const short int yy_accept[766] =
     {   0,
         0,    0,    0,    0,   86,   86,  162,  162,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -362,7 +349,7 @@ static yyconst short int yy_accept[766] =
        80,   80,   57,   40,    0
     } ;
 
-static yyconst int yy_ec[256] =
+static const int yy_ec[256] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
         1,    1,    4,    1,    1,    1,    1,    1,    1,    1,
@@ -394,7 +381,7 @@ static yyconst int yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst int yy_meta[59] =
+static const int yy_meta[59] =
     {   0,
         1,    1,    2,    1,    3,    1,    1,    1,    4,    1,
         5,    6,    1,    7,    4,    8,    8,    8,    8,    1,
@@ -404,7 +391,7 @@ static yyconst int yy_meta[59] =
        15,   15,   15,   15,   15,    4,    1,   16
     } ;
 
-static yyconst short int yy_base[855] =
+static const short int yy_base[855] =
     {   0,
         0,   58,  115,  172,  120,  129, 2709, 2708,  230, 2702,
       136,  141,  288,    0, 2680, 2679,  144,  151,  185,  191,
@@ -502,7 +489,7 @@ static yyconst short int yy_base[855] =
      2440, 2456, 2472, 2488
     } ;
 
-static yyconst short int yy_def[855] =
+static const short int yy_def[855] =
     {   0,
       765,  765,  766,  766,  767,  768,  769,  769,  765,    9,
       770,  770,  765,   13,  771,  771,  772,  772,  773,  773,
@@ -600,7 +587,7 @@ static yyconst short int yy_def[855] =
       765,  765,  765,  765
     } ;
 
-static yyconst short int yy_nxt[2772] =
+static const short int yy_nxt[2772] =
     {   0,
        40,   41,   42,   43,   40,   40,   40,   40,   40,   40,
        40,   40,   40,   40,   40,   40,   40,   40,   40,   40,
@@ -909,7 +896,7 @@ static yyconst short int yy_nxt[2772] =
       765
     } ;
 
-static yyconst short int yy_chk[2772] =
+static const short int yy_chk[2772] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -1340,11 +1327,11 @@ static void yyunput(int c, char *buf_ptr);
 #endif
 
 #ifndef yytext_ptr
-static void yy_flex_strncpy(char *, yyconst char *, int);
+static void yy_flex_strncpy(char *, const char *, int);
 #endif
 
 #ifdef YY_NEED_STRLEN
-static int yy_flex_strlen(yyconst char *);
+static int yy_flex_strlen(const char *);
 #endif
 
 #ifndef YY_NO_INPUT
@@ -3283,7 +3270,7 @@ YY_BUFFER_STATE yy_scan_buffer(char *base, yy_size_t size)
 
 
 #ifndef YY_NO_SCAN_STRING
-YY_BUFFER_STATE yy_scan_string(yyconst char *yy_str)
+YY_BUFFER_STATE yy_scan_string(const char *yy_str)
 {
   int len;
   for (len = 0; yy_str[len]; ++len)
@@ -3295,7 +3282,7 @@ YY_BUFFER_STATE yy_scan_string(yyconst char *yy_str)
 
 
 #ifndef YY_NO_SCAN_BYTES
-YY_BUFFER_STATE yy_scan_bytes(yyconst char *bytes, int len)
+YY_BUFFER_STATE yy_scan_bytes(const char *bytes, int len)
 {
   YY_BUFFER_STATE b;
   char *buf;
@@ -3376,7 +3363,7 @@ static int yy_top_state()
 #define YY_EXIT_FAILURE 2
 #endif
 
-static void yy_fatal_error(yyconst char msg[])
+static void yy_fatal_error(const char msg[])
 {
   (void) fprintf(stderr, "%s\n", msg);
   exit(YY_EXIT_FAILURE);
@@ -3401,7 +3388,7 @@ static void yy_fatal_error(yyconst char msg[])
 /* Internal utility routines. */
 
 #ifndef yytext_ptr
-static void yy_flex_strncpy(char *s1, yyconst char *s2, int n)
+static void yy_flex_strncpy(char *s1, const char *s2, int n)
 {
   register int i;
   for (i = 0; i < n; ++i)
@@ -3410,7 +3397,7 @@ static void yy_flex_strncpy(char *s1, yyconst char *s2, int n)
 #endif
 
 #ifdef YY_NEED_STRLEN
-static int yy_flex_strlen(yyconst char *s)
+static int yy_flex_strlen(const char *s)
 {
   register int n;
   for (n = 0; s[n]; ++n)

@@ -945,7 +945,7 @@ void readin()
   }
 
   if (fullspd)
-    outn("typedef yyconst struct yy_trans_info *yy_state_type;");
+    outn("typedef const struct yy_trans_info *yy_state_type;");
   else if (!C_plus_plus)
     outn("typedef int yy_state_type;");
 
