@@ -46,7 +46,7 @@ include $(wildcard *.d)
 HEADERS = ccl.h dfa.h ecs.h flexchar.h flexdef.h header.skl gen.h \
           main.h misc.h nfa.h input-parse.y.h sym.h tblcmp.h version.h yylex.h
 
-# Sources to include in the distribution, and also on which to run tags.
+# Sources to include in the distribution.
 SOURCES = ccl.c dfa.c ecs.c gen.c header.skl.c main.c misc.c nfa.c input-parse.y \
           input-scan.lex scanner.skl.c sym.c tblcmp.c yylex.c
 
@@ -150,18 +150,12 @@ installdirs:
 uninstall:
 	rm -f $(bindir)/$(FLEX)
 
-tags: $(SOURCES)
-	ctags $(SOURCES)
-
-TAGS: $(SOURCES)
-	etags $(SOURCES)
-
 clean:
 	rm -f $(FLEX) *.d *.o config.log config.cache
 	$(MAKE) -C test clean
 
 distclean: clean
-	rm -f tags TAGS config.mk config.status
+	rm -f config.mk config.status
 
 # Create a source tarball for distribution.
 dist: $(FLEX) $(DISTFILES) input-parse.y.c input-parse.y.h
