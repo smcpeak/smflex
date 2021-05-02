@@ -112,16 +112,16 @@
  * that can be used.  This definition is currently not used.
  */
 #define FREE_EPSILON(state) \
-	(transchar[state] == SYM_EPSILON && \
-	 trans2[state] == NO_TRANSITION && \
-	 finalst[state] != state)
+        (transchar[state] == SYM_EPSILON && \
+         trans2[state] == NO_TRANSITION && \
+         finalst[state] != state)
 
 /* Returns true if an nfa state has an epsilon out-transition character
  * and both slots are free
  */
 #define SUPER_FREE_EPSILON(state) \
-	(transchar[state] == SYM_EPSILON && \
-	 trans1[state] == NO_TRANSITION) \
+        (transchar[state] == SYM_EPSILON && \
+         trans1[state] == NO_TRANSITION) \
 
 /* Maximum number of NFA states that can comprise a DFA state.  It's real
  * big because if there's a lot of rules, the initial state will have a
@@ -340,7 +340,7 @@ extern int yymore_really_used, reject_really_used;
 /* Variables used in the flex input routines:
  * datapos - characters on current output line
  * dataline - number of contiguous lines of data in current data
- * 	statement.  Used to generate readable -f output
+ *      statement.  Used to generate readable -f output
  * linenum - current input line number
  * out_linenum - current output line number
  * skelfile - the skeleton file
@@ -361,11 +361,11 @@ extern int yymore_really_used, reject_really_used;
  * action_array - array to hold the rule actions
  * action_size - size of action_array
  * defs1_offset - index where the user's section 1 definitions start
- *	in action_array
+ *      in action_array
  * prolog_offset - index where the prolog starts in action_array
  * action_offset - index where the non-prolog starts in action_array
  * action_index - index where the next action should go, with respect
- * 	to "action_array"
+ *      to "action_array"
  */
 
 extern int datapos, dataline, linenum, out_linenum;
@@ -408,7 +408,7 @@ extern int onenext[ONE_STACK_SIZE], onedef[ONE_STACK_SIZE], onesp;
 /* Variables for nfa machine data:
  * current_mns - current maximum on number of NFA states
  * num_rules - number of the last accepting state; also is number of
- * 	rules created so far
+ *      rules created so far
  * num_eof_rules - number of <<EOF>> rules
  * default_rule - number of the default rule
  * current_max_rules - current maximum number of rules
@@ -422,14 +422,14 @@ extern int onenext[ONE_STACK_SIZE], onedef[ONE_STACK_SIZE], onesp;
  * accptnum - accepting number
  * assoc_rule - rule associated with this NFA state (or 0 if none)
  * state_type - a STATE_xxx type identifying whether the state is part
- * 	of a normal rule, the leading state in a trailing context
- * 	rule (i.e., the state which marks the transition from
- * 	recognizing the text-to-be-matched to the beginning of
- * 	the trailing context), or a subsequent state in a trailing
- * 	context rule
+ *      of a normal rule, the leading state in a trailing context
+ *      rule (i.e., the state which marks the transition from
+ *      recognizing the text-to-be-matched to the beginning of
+ *      the trailing context), or a subsequent state in a trailing
+ *      context rule
  * rule_type - a RULE_xxx type identifying whether this a ho-hum
- * 	normal rule or one which has variable head & trailing
- * 	context
+ *      normal rule or one which has variable head & trailing
+ *      context
  * rule_linenum - line number associated with rule
  * rule_useful - true if we've determined that the rule can be matched
  */
@@ -534,12 +534,12 @@ extern char **scname;
  * dss - nfa state set for each dfa
  * dfasiz - size of nfa state set for each dfa
  * dfaacc - accepting set for each dfa state (if using REJECT), or accepting
- *	number, if not
+ *      number, if not
  * accsiz - size of accepting set for each dfa state
  * dhash - dfa state hash value
  * numas - number of DFA accepting states created; note that this
- *	is not necessarily the same value as num_rules, which is the analogous
- *	value for the NFA
+ *      is not necessarily the same value as num_rules, which is the analogous
+ *      value for the NFA
  * numsnpairs - number of state/nextstate transition pairs
  * jambase - position in base/def where the default jam table starts
  * jamstate - state number corresponding to "jam" state
@@ -566,7 +566,7 @@ extern int end_of_buffer_state;
  * cclng - true for a given ccl if the ccl is negated
  * cclreuse - counts how many times a ccl is re-used
  * current_max_ccl_tbl_size - current limit on number of characters needed
- *	to represent the unique ccl's
+ *      to represent the unique ccl's
  * ccltbl - holds the characters in each ccl - indexed by cclmap
  */
 
@@ -584,7 +584,7 @@ extern Char *ccltbl;
  * numeps - number of epsilon NFA states created
  * eps2 - number of epsilon states which have 2 out-transitions
  * num_reallocs - number of times it was necessary to realloc() a group
- *	  of arrays
+ *        of arrays
  * tmpuses - number of DFA states that chain to templates
  * totnst - total number of NFA states used to make DFA states
  * peakpairs - peak number of transition pairs we had to store internally
@@ -608,42 +608,42 @@ void *flex_realloc PROTO((void *, size_t));
 void flex_free PROTO((void *));
 
 #define allocate_integer_array(size) \
-	(int *) allocate_array( size, sizeof( int ) )
+        (int *) allocate_array( size, sizeof( int ) )
 
 #define reallocate_integer_array(array,size) \
-	(int *) reallocate_array( (void *) array, size, sizeof( int ) )
+        (int *) reallocate_array( (void *) array, size, sizeof( int ) )
 
 #define allocate_int_ptr_array(size) \
-	(int **) allocate_array( size, sizeof( int * ) )
+        (int **) allocate_array( size, sizeof( int * ) )
 
 #define allocate_char_ptr_array(size) \
-	(char **) allocate_array( size, sizeof( char * ) )
+        (char **) allocate_array( size, sizeof( char * ) )
 
 #define allocate_dfaacc_union(size) \
-	(union dfaacc_union *) \
-		allocate_array( size, sizeof( union dfaacc_union ) )
+        (union dfaacc_union *) \
+                allocate_array( size, sizeof( union dfaacc_union ) )
 
 #define reallocate_int_ptr_array(array,size) \
-	(int **) reallocate_array( (void *) array, size, sizeof( int * ) )
+        (int **) reallocate_array( (void *) array, size, sizeof( int * ) )
 
 #define reallocate_char_ptr_array(array,size) \
-	(char **) reallocate_array( (void *) array, size, sizeof( char * ) )
+        (char **) reallocate_array( (void *) array, size, sizeof( char * ) )
 
 #define reallocate_dfaacc_union(array, size) \
-	(union dfaacc_union *) \
-	reallocate_array( (void *) array, size, sizeof( union dfaacc_union ) )
+        (union dfaacc_union *) \
+        reallocate_array( (void *) array, size, sizeof( union dfaacc_union ) )
 
 #define allocate_character_array(size) \
-	(char *) allocate_array( size, sizeof( char ) )
+        (char *) allocate_array( size, sizeof( char ) )
 
 #define reallocate_character_array(array,size) \
-	(char *) reallocate_array( (void *) array, size, sizeof( char ) )
+        (char *) reallocate_array( (void *) array, size, sizeof( char ) )
 
 #define allocate_Character_array(size) \
-	(Char *) allocate_array( size, sizeof( Char ) )
+        (Char *) allocate_array( size, sizeof( Char ) )
 
 #define reallocate_Character_array(array,size) \
-	(Char *) reallocate_array( (void *) array, size, sizeof( Char ) )
+        (Char *) reallocate_array( (void *) array, size, sizeof( Char ) )
 
 
 /* Used to communicate between scanner and parser.  The type should really
