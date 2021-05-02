@@ -582,47 +582,6 @@ extern int sectnum, nummt, hshcol, dfaeql, numeps, eps2, num_reallocs;
 extern int tmpuses, totnst, peakpairs, numuniq, numdup, hshsave;
 extern int num_backing_up, bol_needed;
 
-void *allocate_array(int, size_t);
-void *reallocate_array(void *, int, size_t);
-
-#define allocate_integer_array(size) \
-        (int *) allocate_array( size, sizeof( int ) )
-
-#define reallocate_integer_array(array,size) \
-        (int *) reallocate_array( (void *) array, size, sizeof( int ) )
-
-#define allocate_int_ptr_array(size) \
-        (int **) allocate_array( size, sizeof( int * ) )
-
-#define allocate_char_ptr_array(size) \
-        (char **) allocate_array( size, sizeof( char * ) )
-
-#define allocate_dfaacc_union(size) \
-        (union dfaacc_union *) \
-                allocate_array( size, sizeof( union dfaacc_union ) )
-
-#define reallocate_int_ptr_array(array,size) \
-        (int **) reallocate_array( (void *) array, size, sizeof( int * ) )
-
-#define reallocate_char_ptr_array(array,size) \
-        (char **) reallocate_array( (void *) array, size, sizeof( char * ) )
-
-#define reallocate_dfaacc_union(array, size) \
-        (union dfaacc_union *) \
-        reallocate_array( (void *) array, size, sizeof( union dfaacc_union ) )
-
-#define allocate_character_array(size) \
-        (char *) allocate_array( size, sizeof( char ) )
-
-#define reallocate_character_array(array,size) \
-        (char *) reallocate_array( (void *) array, size, sizeof( char ) )
-
-#define allocate_Character_array(size) \
-        (Char *) allocate_array( size, sizeof( Char ) )
-
-#define reallocate_Character_array(array,size) \
-        (Char *) reallocate_array( (void *) array, size, sizeof( Char ) )
-
 
 /* Used to communicate between scanner and parser.  The type should really
  * be YYSTYPE, but we can't easily get our hands on it.

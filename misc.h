@@ -55,4 +55,47 @@ void transition_struct_out(int element_v, int element_n);
 void *yy_flex_xmalloc(int size);
 void zero_out(char *region_ptr, size_t size_in_bytes);
 
+
+/* Next, we have a bunch of convenience wrappers around the
+ * allocation functions. */
+
+#define allocate_integer_array(size) \
+        (int *) allocate_array( size, sizeof( int ) )
+
+#define reallocate_integer_array(array,size) \
+        (int *) reallocate_array( (void *) array, size, sizeof( int ) )
+
+#define allocate_int_ptr_array(size) \
+        (int **) allocate_array( size, sizeof( int * ) )
+
+#define allocate_char_ptr_array(size) \
+        (char **) allocate_array( size, sizeof( char * ) )
+
+#define allocate_dfaacc_union(size) \
+        (union dfaacc_union *) \
+                allocate_array( size, sizeof( union dfaacc_union ) )
+
+#define reallocate_int_ptr_array(array,size) \
+        (int **) reallocate_array( (void *) array, size, sizeof( int * ) )
+
+#define reallocate_char_ptr_array(array,size) \
+        (char **) reallocate_array( (void *) array, size, sizeof( char * ) )
+
+#define reallocate_dfaacc_union(array, size) \
+        (union dfaacc_union *) \
+        reallocate_array( (void *) array, size, sizeof( union dfaacc_union ) )
+
+#define allocate_character_array(size) \
+        (char *) allocate_array( size, sizeof( char ) )
+
+#define reallocate_character_array(array,size) \
+        (char *) reallocate_array( (void *) array, size, sizeof( char ) )
+
+#define allocate_Character_array(size) \
+        (Char *) allocate_array( size, sizeof( Char ) )
+
+#define reallocate_Character_array(array,size) \
+        (Char *) reallocate_array( (void *) array, size, sizeof( Char ) )
+
+
 #endif /* MISC_H */
