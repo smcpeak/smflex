@@ -254,10 +254,7 @@ parse.tab.h: parse.tab.c
 # flex to read it input file.  Hence, flex is partially written in
 # its own language.  See the .bootstrap target.
 scan.c: scan.l
-	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.tmp1.c scan.l
-	sed -e 's,"scan.tmp1.c","scan.c",' < scan.tmp1.c > scan.tmp2.c
-	rm scan.tmp1.c
-	mv -f scan.tmp2.c scan.c
+	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.c scan.l
 
 # 'scanner.skl.c' contains the contents of 'scanner.skl' as a C string.
 scanner.skl.c: scanner.skl encode.sh
