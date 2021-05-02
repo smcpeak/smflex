@@ -27,6 +27,8 @@
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "input-scan.h"                /* this module */
+
 #include "input-parse.h"               /* synerr, format_synerr */
 #include "input-parse.y.h"             /* token codes */
 #include "misc.h"                      /* add_action, myctoi, etc. */
@@ -636,6 +638,8 @@ LEXOPT          [aceknopr]
 %%
 
 
+/* Wrapup a file in the lexical analyzer and possibly move on to
+ * the next file. */
 int yywrap()
 {
   if (--num_input_files > 0) {

@@ -31,6 +31,7 @@
 #include "ccl.h"                       /* list_character_set */
 #include "ecs.h"                       /* mkechar, mkeccl */
 #include "input-parse.h"               /* line_warning */
+#include "input-scan.h"                /* flex_free */
 #include "tblcmp.h"                    /* inittbl, place_state, etc. */
 #include "misc.h"                      /* bubble, flexfatal, etc. */
 #include "nfa.h"                       /* dumpnfa, mkbranch */

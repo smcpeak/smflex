@@ -22,8 +22,11 @@ extern void line_pinpoint(char str[], int line);
 extern void yyerror(char msg[]);
 
 /* This is the primary function that Bison emits into input-parse.y.c.
- * It parses the entire flex input file, invoking the actions in
- * input-parse.y as it goes. */
+ * It parses almost the entire flex input file, invoking the actions in
+ * input-parse.y as it goes.  However, it does not consume section 3
+ * of the input; the client is expected to directly invoke the input
+ * scanner via 'flexscan()' to process section 3 after 'yyparse()'
+ * returns. */
 extern int yyparse(void);
 
 #endif /* INPUT_PARSE_H */

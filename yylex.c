@@ -31,6 +31,7 @@
 #include "flexchar.h"                  /* isascii */
 #include "input-parse.h"               /* synerr */
 #include "input-parse.y.h"             /* bison-generated token codes */
+#include "input-scan.h"                /* flexscan */
 
 #include "flexdef.h"
 

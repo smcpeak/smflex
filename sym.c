@@ -29,6 +29,7 @@
 #include "sym.h"                       /* this module */
 
 #include "input-parse.h"               /* synerr, format_pinpoint_message */
+#include "input-scan.h"                /* flex_alloc */
 #include "misc.h"                      /* flexfatal, action_define */
 #include "nfa.h"                       /* mkstate */
 

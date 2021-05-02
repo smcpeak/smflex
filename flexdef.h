@@ -585,10 +585,6 @@ extern int num_backing_up, bol_needed;
 void *allocate_array(int, size_t);
 void *reallocate_array(void *, int, size_t);
 
-void *flex_alloc(size_t);
-void *flex_realloc(void *, size_t);
-void flex_free(void *);
-
 #define allocate_integer_array(size) \
         (int *) allocate_array( size, sizeof( int ) )
 
@@ -632,18 +628,6 @@ void flex_free(void *);
  * be YYSTYPE, but we can't easily get our hands on it.
  */
 extern int yylval;
-
-
-/* from file input-scan.lex */
-
-/* The Flex-generated scanner for flex. */
-extern int flexscan(void);
-
-/* Open the given file (if NULL, stdin) for scanning. */
-extern void set_input_file(char *);
-
-/* Wrapup a file in the lexical analyzer. */
-extern int yywrap(void);
 
 
 /* from file yylex.c */

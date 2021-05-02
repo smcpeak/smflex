@@ -31,6 +31,7 @@
 #include "flexchar.h"                  /* isascii */
 #include "gen.h"                       /* emit_with_class_name_substitution */
 #include "input-parse.h"               /* format_pinpoint_message */
+#include "input-scan.h"                /* flex_alloc, flex_realloc */
 #include "main.h"                      /* flexend */
 
 #include "flexdef.h"
