@@ -246,9 +246,9 @@ input-parse.y.h: input-parse.y.c
 input-scan.lex.c: input-scan.lex
 	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) input-scan.lex
 
-# 'scanner.skl.c' contains the contents of 'scanner.skl' as a C string.
-scanner.skl.c: scanner.skl encode.sh
-	$(SHELL) encode.sh scanner.skl scanner.skl.c scanner_skl_contents
+# 'generated-scanner.skl.c' contains the contents of 'generated-scanner.skl' as a C string.
+generated-scanner.skl.c: generated-scanner.skl encode.sh
+	$(SHELL) encode.sh generated-scanner.skl generated-scanner.skl.c scanner_skl_contents
 
 # Similarly, 'header.skl.c' contains the contents of 'header.skl'.
 header.skl.c: header.skl encode.sh
