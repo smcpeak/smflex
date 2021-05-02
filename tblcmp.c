@@ -30,6 +30,7 @@
 
 #include "dfa.h"                       /* increase_max_dfas */
 #include "ecs.h"                       /* cre8cs, mkeccl */
+#include "main.h"                      /* num_reallocs, peakpairs */
 #include "misc.h"                      /* zero_out */
 
 #include "flexdef.h"

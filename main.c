@@ -95,10 +95,12 @@ int numsnpairs, jambase, jamstate;
 int lastccl, *cclmap, *ccllen, *cclng, cclreuse;
 int current_maxccls, current_max_ccl_tbl_size;
 Char *ccltbl;
+
 char nmstr[MAXLINE];
 int sectnum, nummt, hshcol, dfaeql, numeps, eps2, num_reallocs;
 int tmpuses, totnst, peakpairs, numuniq, numdup, hshsave;
 int num_backing_up, bol_needed;
+
 FILE *backing_up_file;
 int end_of_buffer_state;
 char **input_files;

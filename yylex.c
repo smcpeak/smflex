@@ -32,6 +32,7 @@
 #include "input-parse.h"               /* synerr, yylval */
 #include "input-parse.y.h"             /* bison-generated token codes */
 #include "input-scan.h"                /* flexscan */
+#include "main.h"                      /* sectnum, nmstr */
 
 #include "flexdef.h"
 

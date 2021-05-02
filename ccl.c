@@ -28,6 +28,7 @@
 
 #include "ccl.h"                       /* this module */
 
+#include "main.h"                      /* num_reallocs */
 #include "misc.h"                      /* check_char, readable_form, etc. */
 
 #include "flexdef.h"

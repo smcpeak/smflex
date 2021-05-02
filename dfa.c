@@ -33,6 +33,7 @@
 #include "input-parse.h"               /* line_warning */
 #include "input-scan.h"                /* flex_free */
 #include "tblcmp.h"                    /* inittbl, place_state, etc. */
+#include "main.h"                      /* num_backing_up, etc. */
 #include "misc.h"                      /* bubble, flexfatal, etc. */
 #include "nfa.h"                       /* dumpnfa, mkbranch */
 

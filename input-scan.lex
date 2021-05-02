@@ -31,6 +31,7 @@
 
 #include "input-parse.h"               /* synerr, format_synerr, yylval */
 #include "input-parse.y.h"             /* token codes */
+#include "main.h"                      /* sectnum, nmstr */
 #include "misc.h"                      /* add_action, myctoi, etc. */
 #include "sym.h"                       /* ndinstal, ccllookup, cclinstal */
 

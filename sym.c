@@ -30,6 +30,7 @@
 
 #include "input-parse.h"               /* synerr, format_pinpoint_message */
 #include "input-scan.h"                /* flex_alloc */
+#include "main.h"                      /* num_reallocs */
 #include "misc.h"                      /* flexfatal, action_define */
 #include "nfa.h"                       /* mkstate */
 

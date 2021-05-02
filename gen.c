@@ -30,6 +30,7 @@
 
 #include "dfa.h"                       /* increase_max_dfas */
 #include "input-scan.h"                /* flexscan */
+#include "main.h"                      /* num_backing_up, etc. */
 #include "misc.h"                      /* outc, outn, etc. */
 #include "tblcmp.h"                    /* expand_nxt_chk */
 

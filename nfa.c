@@ -29,6 +29,7 @@
 #include "nfa.h"                       /* this module */
 
 #include "ecs.h"                       /* mkechar */
+#include "main.h"                      /* num_reallocs, numeps, eps2 */
 #include "misc.h"                      /* flexfatal, add_action, etc. */
 
 #include "flexdef.h"
