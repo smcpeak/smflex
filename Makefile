@@ -160,7 +160,7 @@ uninstall:
 
 clean:
 	rm -f $(FLEX) config.log config.cache
-	rm -r $(OBJ)
+	if test -d $(OBJ); then rm -r $(OBJ); fi
 	$(MAKE) -C test clean
 
 distclean: clean
