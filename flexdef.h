@@ -29,9 +29,6 @@
 #ifndef FLEXDEF_H
 #define FLEXDEF_H
 
-#include "flexchar.h"           /* Char */
-
-#include <stdio.h>              /* FILE, etc. */
 
 /* As an aid for the internationalization patch to flex, which
  * is maintained outside this distribution for copyright reasons.

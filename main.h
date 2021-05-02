@@ -5,7 +5,11 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include "flexchar.h"                  /* Char */
+
 #include "flexdef.h"                   /* MAXLINE */
+
+#include <stdio.h>                     /* FILE */
 
 
 /* See definitions for documentation. */
