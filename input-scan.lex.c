@@ -254,7 +254,7 @@ static void yy_fatal_error(const char msg[]);
  */
 #define YY_DO_BEFORE_ACTION \
   yytext_ptr = yy_bp; \
-        yyleng = (int) (yy_cp - yy_bp); \
+  yyleng = (int) (yy_cp - yy_bp); \
   yy_hold_char = *yy_cp; \
   *yy_cp = '\0'; \
   yy_c_buf_p = yy_cp;
@@ -1436,10 +1436,10 @@ static int yy_top_state(void);
 #endif
 
 #define YY_RULE_SETUP \
-        if ( yyleng > 0 ) \
-                yy_current_buffer->yy_at_bol = \
-                    (yytext[yyleng - 1] == '\n'); \
-        YY_USER_ACTION
+  if ( yyleng > 0 ) \
+    yy_current_buffer->yy_at_bol = \
+        (yytext[yyleng - 1] == '\n'); \
+  YY_USER_ACTION
 
 YY_DECL
 {
@@ -1494,36 +1494,36 @@ YY_DECL
      */
     yy_bp = yy_cp;
 
-                yy_current_state = yy_start;
-                yy_current_state += YY_AT_BOL();
+    yy_current_state = yy_start;
+    yy_current_state += YY_AT_BOL();
 yy_match:
-                do
-                        {
-                        register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
-                        if ( yy_accept[yy_current_state] )
-                                {
-                                yy_last_accepting_state = yy_current_state;
-                                yy_last_accepting_cpos = yy_cp;
-                                }
-                        while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
-                                {
-                                yy_current_state = (int) yy_def[yy_current_state];
-                                if ( yy_current_state >= 766 )
-                                        yy_c = yy_meta[(unsigned int) yy_c];
-                                }
-                        yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-                        ++yy_cp;
-                        }
-                while ( yy_base[yy_current_state] != 2713 );
+    do
+    {
+      register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
+      if ( yy_accept[yy_current_state] )
+      {
+        yy_last_accepting_state = yy_current_state;
+        yy_last_accepting_cpos = yy_cp;
+      }
+      while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
+      {
+        yy_current_state = (int) yy_def[yy_current_state];
+        if ( yy_current_state >= 766 )
+          yy_c = yy_meta[(unsigned int) yy_c];
+      }
+      yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
+      ++yy_cp;
+    }
+    while ( yy_base[yy_current_state] != 2713 );
 
 yy_find_action:
-                yy_act = yy_accept[yy_current_state];
-                if ( yy_act == 0 )
-                        { /* have to back up */
-                        yy_cp = yy_last_accepting_cpos;
-                        yy_current_state = yy_last_accepting_state;
-                        yy_act = yy_accept[yy_current_state];
-                        }
+    yy_act = yy_accept[yy_current_state];
+    if ( yy_act == 0 )
+      { /* have to back up */
+      yy_cp = yy_last_accepting_cpos;
+      yy_current_state = yy_last_accepting_state;
+      yy_act = yy_accept[yy_current_state];
+    }
 
     YY_DO_BEFORE_ACTION;
 
@@ -1532,12 +1532,12 @@ do_action:      /* This label is used only to access EOF actions. */
 
 
     switch (yy_act) { /* beginning of action switch */
-                        case 0: /* must back up */
-                        /* undo the effects of YY_DO_BEFORE_ACTION */
-                        *yy_cp = yy_hold_char;
-                        yy_cp = yy_last_accepting_cpos;
-                        yy_current_state = yy_last_accepting_state;
-                        goto yy_find_action;
+      case 0: /* must back up */
+      /* undo the effects of YY_DO_BEFORE_ACTION */
+      *yy_cp = yy_hold_char;
+      yy_cp = yy_last_accepting_cpos;
+      yy_current_state = yy_last_accepting_state;
+      goto yy_find_action;
 
 
 case 1:
@@ -2688,7 +2688,7 @@ case YY_STATE_EOF(RECOVER):
 case YY_STATE_EOF(PERCENT_BRACE_ACTION):
 case YY_STATE_EOF(OPTION):
 case YY_STATE_EOF(LINEDIR):
-        yyterminate();
+  yyterminate();
 
       case YY_END_OF_BUFFER: {
         /* Amount of text matched not including the EOB char. */
@@ -2749,7 +2749,7 @@ case YY_STATE_EOF(LINEDIR):
           }
 
           else {
-                                yy_cp = yy_c_buf_p;
+        yy_cp = yy_c_buf_p;
             goto yy_find_action;
           }
         }
@@ -2941,23 +2941,23 @@ static yy_state_type yy_get_previous_state()
   register yy_state_type yy_current_state;
   register char *yy_cp;
 
-        yy_current_state = yy_start;
-        yy_current_state += YY_AT_BOL();
+  yy_current_state = yy_start;
+  yy_current_state += YY_AT_BOL();
 
   for (yy_cp = yytext_ptr + YY_MORE_ADJ; yy_cp < yy_c_buf_p; ++yy_cp) {
-                register YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
-                if ( yy_accept[yy_current_state] )
-                        {
-                        yy_last_accepting_state = yy_current_state;
-                        yy_last_accepting_cpos = yy_cp;
-                        }
-                while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
-                        {
-                        yy_current_state = (int) yy_def[yy_current_state];
-                        if ( yy_current_state >= 766 )
-                                yy_c = yy_meta[(unsigned int) yy_c];
-                        }
-                yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
+    register YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
+    if ( yy_accept[yy_current_state] )
+    {
+      yy_last_accepting_state = yy_current_state;
+      yy_last_accepting_cpos = yy_cp;
+    }
+    while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
+    {
+      yy_current_state = (int) yy_def[yy_current_state];
+      if ( yy_current_state >= 766 )
+        yy_c = yy_meta[(unsigned int) yy_c];
+    }
+    yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
   }
 
   return yy_current_state;
@@ -2972,22 +2972,22 @@ static yy_state_type yy_get_previous_state()
 static yy_state_type yy_try_NUL_trans(yy_state_type yy_current_state)
 {
   register int yy_is_jam;
-        register char *yy_cp = yy_c_buf_p;
+  register char *yy_cp = yy_c_buf_p;
 
-        register YY_CHAR yy_c = 1;
-        if ( yy_accept[yy_current_state] )
-                {
-                yy_last_accepting_state = yy_current_state;
-                yy_last_accepting_cpos = yy_cp;
-                }
-        while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
-                {
-                yy_current_state = (int) yy_def[yy_current_state];
-                if ( yy_current_state >= 766 )
-                        yy_c = yy_meta[(unsigned int) yy_c];
-                }
-        yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-        yy_is_jam = (yy_current_state == 765);
+  register YY_CHAR yy_c = 1;
+  if ( yy_accept[yy_current_state] )
+  {
+    yy_last_accepting_state = yy_current_state;
+    yy_last_accepting_cpos = yy_cp;
+  }
+  while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
+  {
+    yy_current_state = (int) yy_def[yy_current_state];
+    if ( yy_current_state >= 766 )
+      yy_c = yy_meta[(unsigned int) yy_c];
+  }
+  yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
+  yy_is_jam = (yy_current_state == 765);
 
   return yy_is_jam ? 0 : yy_current_state;
 }
@@ -3097,7 +3097,7 @@ static int input()
   *yy_c_buf_p = '\0';     /* preserve yytext */
   yy_hold_char = *++yy_c_buf_p;
 
-        yy_current_buffer->yy_at_bol = (c == '\n');
+  yy_current_buffer->yy_at_bol = (c == '\n');
 
   return c;
 }
