@@ -1,10 +1,8 @@
 *.d
 *.exe
 *.o
-.bootstrap
 config.cache
 config.log
 config.mk
 config.status
 personal.mk
-input-scan.lex.c

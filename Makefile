@@ -55,9 +55,7 @@ OBJECTS = ccl.o dfa.o ecs.o gen.o header.skl.o main.o misc.o nfa.o input-parse.y
           input-scan.lex.o scanner.skl.o sym.o tblcmp.o yylex.o
 
 # Complete set of files and directories to be included in the
-# distribution tarball, except that 'input-scan.lex.c' gets renamed to
-# 'initscan.c' during the packaging process, and a few things
-# in 'test' get removed.
+# distribution tarball, except that a few things in 'test' get removed.
 DISTFILES = README.md NEWS COPYING \
             configure.in Makefile config.mk.in encode.sh scanner.skl \
             $(HEADERS) $(SOURCES) \
@@ -85,18 +83,8 @@ COMPRESSION =
 
 # Link the final flex executable.
 all: $(FLEX)
-$(FLEX): .bootstrap $(OBJECTS)
+$(FLEX): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $(FLEX) $(LDFLAGS) $(OBJECTS) $(LIBS)
-
-# This creates the initial input-scan.lex.c from initscan.c.  The latter is
-# checked in to the repo so one does not need to have flex already
-# in order to build it.  But once the bootstrap is done, indicated
-# by the presence of the .bootstrap file, we let input-scan.lex.c continue to
-# evolve as flex itself changes.
-.bootstrap: initscan.c
-	rm -f input-scan.lex.c
-	cp initscan.c input-scan.lex.c
-	touch .bootstrap
 
 
 # Main set of automated tests.
@@ -106,7 +94,6 @@ check: $(FLEX)
 	@# Make sure I do not have "scan.tmp" in input-scan.lex.c.
 	@#
 	if grep scan.tmp input-scan.lex.c; then false; else true; fi
-	if grep scan.tmp initscan.c; then false; else true; fi
 	@#
 	@# Run the tests in test/.
 	@#
@@ -170,11 +157,11 @@ TAGS: $(SOURCES)
 	etags $(SOURCES)
 
 clean:
-	rm -f $(FLEX) *.d *.o lex.yy.c lex.yy.cc config.log config.cache
+	rm -f $(FLEX) *.d *.o config.log config.cache
 	$(MAKE) -C test clean
 
 distclean: clean
-	rm -f .bootstrap input-scan.lex.c tags TAGS config.mk config.status
+	rm -f tags TAGS config.mk config.status
 
 # Create a source tarball for distribution.
 dist: $(FLEX) $(DISTFILES) input-parse.y.c input-parse.y.h
@@ -189,7 +176,6 @@ dist2:
 	tar cf - $(DISTFILES) | (cd $(DIST_NAME) && tar xfB -)
 	rm -r $(DIST_NAME)/test/out
 	rm $(DIST_NAME)/test/.gitignore
-	mv $(DIST_NAME)/input-scan.lex.c $(DIST_NAME)/initscan.c
 	tar chf $(DIST_NAME).tar $(DIST_NAME)
 	gzip <$(DIST_NAME).tar >$(DIST_NAME).tar.gz
 	rm $(DIST_NAME).tar
@@ -226,7 +212,7 @@ config.mk: config.mk.in config.status
 
 # ------------------------ Maintainer rules -------------------------
 # The rules in this section are meant for use when making changes to
-# flex itself.  They are not normally enabled for two reasons:
+# flex itself.  They are not normally enabled for these reasons:
 #
 # 1. The build from distribution source should not require any tools
 #    beyond a C compiler, but these rules rely on having other tools
@@ -235,6 +221,11 @@ config.mk: config.mk.in config.status
 # 2. The build from a fresh git clone would otherwise needlessly
 #    rebuild some things because the file timestamps after a clone
 #    are semi-random.
+#
+# 3. The rule for building input-scan.lex.c is effectively circular,
+#    with the dependency going through $(FLEX).  I do not declare
+#    that dependency so $(MAKE) remains happy, but it is there, and
+#    some care is required to deal with that.
 #
 # To enable maintainer mode, set MAINTAINER_MODE=1 in personal.mk.
 
@@ -257,7 +248,7 @@ input-parse.y.h: input-parse.y.c
 
 # 'input-scan.lex.c' is the output of running flex on 'input-scan.lex'.
 # It is used by flex to read it input file.  Hence, flex is partially
-# written in its own language.  See the .bootstrap target.
+# written in its own language.
 input-scan.lex.c: input-scan.lex
 	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) input-scan.lex
 

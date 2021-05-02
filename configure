@@ -581,7 +581,7 @@ PACKAGE_STRING=
 PACKAGE_BUGREPORT=
 PACKAGE_URL=
 
-ac_unique_file="initscan.c"
+ac_unique_file="input-scan.lex"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 INSTALL_DATA

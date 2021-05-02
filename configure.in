@@ -10,7 +10,7 @@ dnl# specifying a package version number, and I think it is inappropriate
 dnl# for that information to appear here.  So I am choosing to retain the
 dnl# "obsolete" usage.
 dnl#
-AC_INIT(initscan.c)
+AC_INIT(input-scan.lex)
 
 # Check that we are not using --srcdir, nor invoking 'configure' from
 # someplace other than the directory where it lives.
