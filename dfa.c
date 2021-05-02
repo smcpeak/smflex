@@ -72,7 +72,7 @@ void check_for_backing_up(int ds, int state[])
  *
  * synopsis
  *    void check_trailing_context( int nfa_states[num_states+1], int num_states,
- *				int accset[nacc+1], int nacc );
+ *                              int accset[nacc+1], int nacc );
  *
  * NOTES
  *  Trailing context is "dangerous" if both the head and the trailing
@@ -200,8 +200,8 @@ void dump_transitions(FILE *file, int state[])
  *
  * synopsis
  *    int *epsclosure( int t[num_states], int *numstates_addr,
- *			int accset[num_rules+1], int *nacc_addr,
- *			int *hashval_addr );
+ *                      int accset[num_rules+1], int *nacc_addr,
+ *                      int *hashval_addr );
  *
  * NOTES
  *  The epsilon closure is the set of all states reachable by an arbitrary
@@ -703,8 +703,8 @@ void ntod()
  *
  * synopsis
  *    is_new_state = snstods( int sns[numstates], int numstates,
- *				int accset[num_rules+1], int nacc,
- *				int hashval, int *newds_addr );
+ *                              int accset[num_rules+1], int nacc,
+ *                              int hashval, int *newds_addr );
  *
  * On return, the dfa state number is in newds.
  */
@@ -829,7 +829,7 @@ int snstods(int sns[], int numstates, int accset[], int nacc,
  *
  * synopsis
  *    numstates = symfollowset( int ds[current_max_dfa_size], int dsize,
- *				int transsym, int nset[current_max_dfa_size] );
+ *                              int transsym, int nset[current_max_dfa_size] );
  */
 int symfollowset(int ds[], int dsize, int transsym, int nset[])
 {
@@ -907,7 +907,7 @@ int symfollowset(int ds[], int dsize, int transsym, int nset[])
  *
  * synopsis
  *    sympartition( int ds[current_max_dfa_size], int numstates,
- *			int symlist[numecs], int duplist[numecs] );
+ *                      int symlist[numecs], int duplist[numecs] );
  */
 void sympartition(int ds[], int numstates, int symlist[], int duplist[])
 {

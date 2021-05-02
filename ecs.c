@@ -96,7 +96,7 @@ int cre8ecs(int fwd[], int bck[], int num)
  *    Char ccls[];
  *    int lenccl, fwd[llsiz], bck[llsiz], llsiz, NUL_mapping;
  *    void mkeccl( Char ccls[], int lenccl, int fwd[llsiz], int bck[llsiz],
- *			int llsiz, int NUL_mapping );
+ *                      int llsiz, int NUL_mapping );
  *
  * ccls contains the elements of the character class, lenccl is the
  * number of elements in the ccl, fwd is the forward link-list of equivalent

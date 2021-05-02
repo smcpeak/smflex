@@ -143,8 +143,8 @@ void bubble(int v[], int n)
 
 
 /* check_char - checks a character to make sure it's within the range
- *		we're expecting.  If not, generates fatal error message
- *		and exits.
+ *              we're expecting.  If not, generates fatal error message
+ *              and exits.
  */
 void check_char(int c)
 {
@@ -384,7 +384,7 @@ void line_directive_out(FILE *output_file, int do_infile)
 
 /* mark_defs1 - mark the current position in the action array as
  *               representing where the user's section 1 definitions end
- *		 and the prolog begins
+ *               and the prolog begins
  */
 void mark_defs1()
 {
@@ -560,7 +560,7 @@ int otoi(Char str[])
 
 
 /* out - various flavors of outputing a (possibly formatted) string for the
- *	 generated scanner, keeping track of the line count.
+ *       generated scanner, keeping track of the line count.
  */
 void out(const char str[])
 {
