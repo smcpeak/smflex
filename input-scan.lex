@@ -570,7 +570,7 @@ LEXOPT          [aceknopr]
                           if (bracelevel == 0 ||
                               (doing_codeblock && indented_code)) {
                             if (doing_rule_action)
-                              add_action("\tYY_BREAK\n");
+                              add_action("  YY_BREAK\n");
 
                             doing_rule_action = doing_codeblock = false;
                             BEGIN(SECT2);
@@ -592,7 +592,7 @@ LEXOPT          [aceknopr]
                           ACTION_ECHO;
                           if (bracelevel == 0) {
                             if (doing_rule_action)
-                              add_action("\tYY_BREAK\n");
+                              add_action("  YY_BREAK\n");
 
                             doing_rule_action = false;
                             BEGIN(SECT2);

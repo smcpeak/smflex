@@ -964,11 +964,11 @@ void readin()
     if (yyclass) {
       emit_with_class_name_substitution(scanner_c_file,
                                         "int yyFlexLexer::yylex()");
-      outn("\t{");
+      outn("{");
       emit_with_class_name_substitution(scanner_c_file,
-                                        "\tLexerError( \"yyFlexLexer::yylex invoked but %option yyclass used\" );");
-      outn("\treturn 0;");
-      outn("\t}");
+        "  LexerError(\"yyFlexLexer::yylex invoked but %option yyclass used\");");
+      outn("  return 0;");
+      outn("}");
 
       out_str("\n#define YY_DECL int %s::yylex()\n", yyclass);
     }

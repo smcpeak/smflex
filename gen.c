@@ -61,11 +61,6 @@ void do_indent()
 {
   register int i = indent_level * 8;
 
-  while (i >= 8) {
-    outc('\t');
-    i -= 8;
-  }
-
   while (i > 0) {
     outc(' ');
     --i;
@@ -1178,27 +1173,27 @@ void make_tables()
   if (!C_plus_plus) {
     if (use_read) {
       outn
-        ("\tif ( (result = read( fileno(yyin), (char *) buf, max_size )) < 0 ) \\");
-      outn("\t\tYY_FATAL_ERROR( \"input in flex scanner failed\" );");
+        ("  if ( (result = read( fileno(yyin), (char *) buf, max_size )) < 0 ) \\");
+      outn("    YY_FATAL_ERROR( \"input in flex scanner failed\" );");
     }
 
     else {
-      outn("\tif ( yy_current_buffer->yy_is_interactive ) \\");
-      outn("\t\t{ \\");
-      outn("\t\tint c = '*', n; \\");
-      outn("\t\tfor ( n = 0; n < max_size && \\");
-      outn("\t\t\t     (c = getc( yyin )) != EOF && c != '\\n'; ++n ) \\");
-      outn("\t\t\tbuf[n] = (char) c; \\");
-      outn("\t\tif ( c == '\\n' ) \\");
-      outn("\t\t\tbuf[n++] = (char) c; \\");
-      outn("\t\tif ( c == EOF && ferror( yyin ) ) \\");
-      outn("\t\t\tYY_FATAL_ERROR( \"input in flex scanner failed\" ); \\");
-      outn("\t\tresult = n; \\");
-      outn("\t\t} \\");
+      outn("  if ( yy_current_buffer->yy_is_interactive ) \\");
+      outn("    { \\");
+      outn("    int c = '*', n; \\");
+      outn("    for ( n = 0; n < max_size && \\");
+      outn("           (c = getc( yyin )) != EOF && c != '\\n'; ++n ) \\");
+      outn("      buf[n] = (char) c; \\");
+      outn("    if ( c == '\\n' ) \\");
+      outn("      buf[n++] = (char) c; \\");
+      outn("    if ( c == EOF && ferror( yyin ) ) \\");
+      outn("      YY_FATAL_ERROR( \"input in flex scanner failed\" ); \\");
+      outn("    result = n; \\");
+      outn("    } \\");
       outn
-        ("\telse if ( ((result = fread( buf, 1, max_size, yyin )) == 0) \\");
-      outn("\t\t  && ferror( yyin ) ) \\");
-      outn("\t\tYY_FATAL_ERROR( \"input in flex scanner failed\" );");
+        ("  else if ( ((result = fread( buf, 1, max_size, yyin )) == 0) \\");
+      outn("      && ferror( yyin ) ) \\");
+      outn("    YY_FATAL_ERROR( \"input in flex scanner failed\" );");
     }
   }
 
@@ -1210,7 +1205,7 @@ void make_tables()
     indent_puts("if ( yyleng > 0 ) \\");
     indent_up();
     indent_puts("yy_current_buffer->yy_at_bol = \\");
-    indent_puts("\t\t(yytext[yyleng - 1] == '\\n'); \\");
+    indent_puts("    (yytext[yyleng - 1] == '\\n'); \\");
     indent_down();
   }
   indent_puts("YY_USER_ACTION");

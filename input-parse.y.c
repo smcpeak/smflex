@@ -1415,7 +1415,7 @@ yyreduce:
                           else
                             add_action("ECHO");
 
-                          add_action(";\n\tYY_BREAK\n");
+                          add_action(";\n  YY_BREAK\n");
                         }
 #line 1421 "input-parse.y.c" /* yacc.c:1646  */
     break;
