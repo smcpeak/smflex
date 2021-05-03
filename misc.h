@@ -10,9 +10,20 @@
 #include <stddef.h>                    /* size_t */
 #include <stdio.h>                     /* FILE */
 
+
+/* This is a special line directive that gets inserted into the
+ * in-memory action text at a location where we want to substitute
+ * a #line directive pointing at the output file.
+ *
+ * The use of a marker like this is ugly, but it is difficult to do
+ * better given the current design of the code that accumulates the
+ * action text to emit. */
+extern char const yy_output_file_line_directive[];
+
+
 /* See definitions for documentation. */
 void action_define(char *defname, int value);
-void add_action(char *new_text);
+void add_action(char const *new_text);
 void *allocate_array(int size, size_t element_size);
 int all_lower(char *str);
 int all_upper(char *str);
@@ -48,6 +59,7 @@ void out_str3(const char fmt[], const char s1[],
 void out_str_dec(const char fmt[], const char str[], int n);
 void outc(int c);
 void outn(const char str[]);
+void out_with_limit(char const *str, size_t length);
 char *readable_form(int c);
 void *reallocate_array(void *array, int size, size_t element_size);
 void skelout(void);

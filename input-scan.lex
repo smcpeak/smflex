@@ -574,8 +574,10 @@ LEXOPT          [aceknopr]
                           ACTION_ECHO;
                           if (bracelevel == 0 ||
                               (doing_codeblock && indented_code)) {
-                            if (doing_rule_action)
+                            if (doing_rule_action) {
+                              add_action(yy_output_file_line_directive);
                               add_action("  YY_BREAK\n");
+                            }
 
                             doing_rule_action = doing_codeblock = false;
                             BEGIN(SECT2);
@@ -583,6 +585,12 @@ LEXOPT          [aceknopr]
                         }
 }
 
+
+        /* The ACTION state is where the lexer accumulates the text of
+         * an action in memory, via ACTION_ECHO.  During this process,
+         * nothing is reported to the parser.  Once the end of the
+         * action is found, we return to the SECT2 state, at which
+         * point we'll resume informing the parser of what we find. */
 
         /* Reject and YYmore() are checked for above, in PERCENT_BRACE_ACTION */
 <ACTION>{
@@ -596,8 +604,10 @@ LEXOPT          [aceknopr]
                           ++ linenum;
                           ACTION_ECHO;
                           if (bracelevel == 0) {
-                            if (doing_rule_action)
+                            if (doing_rule_action) {
+                              add_action(yy_output_file_line_directive);
                               add_action("  YY_BREAK\n");
+                            }
 
                             doing_rule_action = false;
                             BEGIN(SECT2);

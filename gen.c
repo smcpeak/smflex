@@ -933,6 +933,28 @@ void indent_puts(char str[])
 }
 
 
+/* Call 'out' with 'text', except wherever it contains the substring
+ * 'yy_output_file_line_directive', emit a #line directive that refers
+ * to the output file. */
+static void out_with_line_directive_substitution(char const *text)
+{
+  char const *marker;
+  while ((marker = strstr(text, yy_output_file_line_directive)) != NULL) {
+    /* Emit everything up to the marker. */
+    out_with_limit(text, marker-text);
+
+    /* Emit a real #line directive. */
+    line_directive_out(scanner_c_file, 0 /*do_infile*/);
+
+    /* Continue after the marker. */
+    text = marker + strlen(yy_output_file_line_directive);
+  }
+
+  /* Emit the remainder. */
+  out(text);
+}
+
+
 /* make_tables - generate transition tables and finishes generating output file
  */
 void make_tables()
@@ -1332,7 +1354,16 @@ void make_tables()
   skelout();
   indent_up();
   gen_bu_action();
-  out(&action_array[action_offset]);
+
+  /* Emit all user actions associated with rules.  Up to this point,
+   * they have all been accumulated in 'action_array', one after
+   * another as a big string, delimited only by the 'case' statements
+   * that "switch (yy_act)" uses to jump into them.
+   *
+   * The action string contains markers saying where we should
+   * substitute #line directives pointing at the output file, which are
+   * translated by 'out_with_line_directive_substitution'. */
+  out_with_line_directive_substitution(&action_array[action_offset]);
 
   line_directive_out(scanner_c_file, 0);
 

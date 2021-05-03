@@ -51,6 +51,14 @@
 #define TRANS_STRUCT_PRINT_LENGTH 14
 
 
+/* The particular string chosen for this marker is meant to be
+ * suggestive of its purpose and unlikely to appear in any action the
+ * user would write.  However, this string does not actually get
+ * emitted, and could basically be anything. */
+char const yy_output_file_line_directive[] =
+  "#line 1 \"YY_OUTPUT_FILE\"\n";
+
+
 /* Add a #define to the action file. */
 void action_define(char *defname, int value)
 {
@@ -67,7 +75,7 @@ void action_define(char *defname, int value)
 
 
 /* Add the given text to the stored actions. */
-void add_action(char *new_text)
+void add_action(char const *new_text)
 {
   int len = strlen(new_text);
 
@@ -661,6 +669,19 @@ void outn(const char str[])
   fputc('\n', scanner_c_file);
   out_line_count(str);
   ++out_linenum;
+}
+
+
+/* Write the text of 'str' to 'scanner_c_file', limited by 'length'. */
+void out_with_limit(char const *str, size_t length)
+{
+  size_t i;
+  for (i = 0; i < length; i++) {
+    /* This is certainly not the most efficient approach, and 'str'
+     * could be moderately long (10s of KB?), but I doubt the time
+     * do this will be noticeable. */
+    outc(str[i]);
+  }
 }
 
 

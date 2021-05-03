@@ -513,14 +513,14 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    83,    83,   111,   112,   113,   114,   118,   126,   129,
-     133,   136,   139,   143,   146,   147,   152,   162,   164,   168,
-     170,   172,   176,   188,   215,   232,   253,   258,   261,   264,
-     281,   284,   286,   288,   292,   309,   360,   363,   400,   417,
-     423,   428,   455,   463,   467,   474,   480,   486,   508,   521,
-     538,   558,   575,   582,   585,   588,   599,   602,   609,   635,
-     646,   654,   661,   662,   663,   664,   665,   666,   667,   668,
-     669,   670,   671,   677,   680,   691
+       0,    83,    83,   112,   113,   114,   115,   119,   127,   130,
+     134,   137,   140,   144,   147,   148,   153,   163,   165,   169,
+     171,   173,   177,   189,   216,   233,   254,   259,   262,   265,
+     282,   285,   287,   289,   293,   310,   361,   364,   401,   418,
+     424,   429,   456,   464,   468,   475,   481,   487,   509,   522,
+     539,   559,   576,   583,   586,   589,   600,   603,   610,   636,
+     647,   655,   662,   663,   664,   665,   666,   667,   668,   669,
+     670,   671,   672,   678,   681,   692
 };
 #endif
 
@@ -1386,6 +1386,7 @@ yyreduce:
                           for (i = 1; i <= lastsc; ++i)
                             scset[i] = mkbranch(scset[i], def_rule);
 
+                          add_action(yy_output_file_line_directive);
                           if (spprdflt)
                             add_action("YY_FATAL_ERROR( \"smflex scanner jammed\" )");
                           else
@@ -1393,57 +1394,57 @@ yyreduce:
 
                           add_action(";\n  YY_BREAK\n");
                         }
-#line 1397 "input-parse.y.c" /* yacc.c:1646  */
+#line 1398 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 115 "input-parse.y" /* yacc.c:1646  */
+#line 116 "input-parse.y" /* yacc.c:1646  */
     { synerr("unknown error processing section 1"); }
-#line 1403 "input-parse.y.c" /* yacc.c:1646  */
+#line 1404 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 119 "input-parse.y" /* yacc.c:1646  */
+#line 120 "input-parse.y" /* yacc.c:1646  */
     {
                           check_options();
                           scon_stk = allocate_integer_array(lastsc + 1);
                           scon_stk_ptr = 0;
                         }
-#line 1413 "input-parse.y.c" /* yacc.c:1646  */
+#line 1414 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 127 "input-parse.y" /* yacc.c:1646  */
+#line 128 "input-parse.y" /* yacc.c:1646  */
     { xcluflg = false; }
-#line 1419 "input-parse.y.c" /* yacc.c:1646  */
+#line 1420 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 130 "input-parse.y" /* yacc.c:1646  */
+#line 131 "input-parse.y" /* yacc.c:1646  */
     { xcluflg = true; }
-#line 1425 "input-parse.y.c" /* yacc.c:1646  */
+#line 1426 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 134 "input-parse.y" /* yacc.c:1646  */
+#line 135 "input-parse.y" /* yacc.c:1646  */
     { scinstal(nmstr, xcluflg); }
-#line 1431 "input-parse.y.c" /* yacc.c:1646  */
+#line 1432 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 137 "input-parse.y" /* yacc.c:1646  */
+#line 138 "input-parse.y" /* yacc.c:1646  */
     { scinstal(nmstr, xcluflg); }
-#line 1437 "input-parse.y.c" /* yacc.c:1646  */
+#line 1438 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 140 "input-parse.y" /* yacc.c:1646  */
+#line 141 "input-parse.y" /* yacc.c:1646  */
     { synerr("bad start condition list"); }
-#line 1443 "input-parse.y.c" /* yacc.c:1646  */
+#line 1444 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 153 "input-parse.y" /* yacc.c:1646  */
+#line 154 "input-parse.y" /* yacc.c:1646  */
     {
                           /* Only record the specified file name if we
                            * do not already have one.  This way, the -o
@@ -1453,35 +1454,35 @@ yyreduce:
                             did_outfilename = 1;
                           }
                         }
-#line 1457 "input-parse.y.c" /* yacc.c:1646  */
+#line 1458 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 163 "input-parse.y" /* yacc.c:1646  */
+#line 164 "input-parse.y" /* yacc.c:1646  */
     { prefix = copy_string(nmstr); }
-#line 1463 "input-parse.y.c" /* yacc.c:1646  */
+#line 1464 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 165 "input-parse.y" /* yacc.c:1646  */
+#line 166 "input-parse.y" /* yacc.c:1646  */
     { yyclass = copy_string(nmstr); }
-#line 1469 "input-parse.y.c" /* yacc.c:1646  */
+#line 1470 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 169 "input-parse.y" /* yacc.c:1646  */
+#line 170 "input-parse.y" /* yacc.c:1646  */
     { scon_stk_ptr = (yyvsp[-3]); }
-#line 1475 "input-parse.y.c" /* yacc.c:1646  */
+#line 1476 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 171 "input-parse.y" /* yacc.c:1646  */
+#line 172 "input-parse.y" /* yacc.c:1646  */
     { scon_stk_ptr = (yyvsp[-3]); }
-#line 1481 "input-parse.y.c" /* yacc.c:1646  */
+#line 1482 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 176 "input-parse.y" /* yacc.c:1646  */
+#line 177 "input-parse.y" /* yacc.c:1646  */
     {
                           /* Initialize for a parse of one rule. */
                           trlcontxt = variable_trail_rule = varlength = false;
@@ -1492,11 +1493,11 @@ yyreduce:
 
                           new_rule();
                         }
-#line 1496 "input-parse.y.c" /* yacc.c:1646  */
+#line 1497 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 189 "input-parse.y" /* yacc.c:1646  */
+#line 190 "input-parse.y" /* yacc.c:1646  */
     {
                           pat = (yyvsp[0]);
                           finish_rule(pat, variable_trail_rule, headcnt, trailcnt);
@@ -1522,11 +1523,11 @@ yyreduce:
                               pinpoint_message("'^' operator results in sub-optimal performance");
                           }
                         }
-#line 1526 "input-parse.y.c" /* yacc.c:1646  */
+#line 1527 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 216 "input-parse.y" /* yacc.c:1646  */
+#line 217 "input-parse.y" /* yacc.c:1646  */
     {
                           pat = (yyvsp[0]);
                           finish_rule(pat, variable_trail_rule, headcnt, trailcnt);
@@ -1542,11 +1543,11 @@ yyreduce:
                                 scset[i] = mkbranch(scset[i], pat);
                           }
                         }
-#line 1546 "input-parse.y.c" /* yacc.c:1646  */
+#line 1547 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 233 "input-parse.y" /* yacc.c:1646  */
+#line 234 "input-parse.y" /* yacc.c:1646  */
     {
                           if (scon_stk_ptr > 0)
                             build_eof_action();
@@ -1566,29 +1567,29 @@ yyreduce:
                               build_eof_action();
                           }
                         }
-#line 1570 "input-parse.y.c" /* yacc.c:1646  */
+#line 1571 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 254 "input-parse.y" /* yacc.c:1646  */
+#line 255 "input-parse.y" /* yacc.c:1646  */
     { synerr("unrecognized rule"); }
-#line 1576 "input-parse.y.c" /* yacc.c:1646  */
+#line 1577 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 258 "input-parse.y" /* yacc.c:1646  */
+#line 259 "input-parse.y" /* yacc.c:1646  */
     { (yyval) = scon_stk_ptr; }
-#line 1582 "input-parse.y.c" /* yacc.c:1646  */
+#line 1583 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 262 "input-parse.y" /* yacc.c:1646  */
+#line 263 "input-parse.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[-2]); }
-#line 1588 "input-parse.y.c" /* yacc.c:1646  */
+#line 1589 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 265 "input-parse.y" /* yacc.c:1646  */
+#line 266 "input-parse.y" /* yacc.c:1646  */
     {
                           (yyval) = scon_stk_ptr;
 
@@ -1603,23 +1604,23 @@ yyreduce:
                               scon_stk[++scon_stk_ptr] = i;
                           }
                         }
-#line 1607 "input-parse.y.c" /* yacc.c:1646  */
+#line 1608 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 281 "input-parse.y" /* yacc.c:1646  */
+#line 282 "input-parse.y" /* yacc.c:1646  */
     { (yyval) = scon_stk_ptr; }
-#line 1613 "input-parse.y.c" /* yacc.c:1646  */
+#line 1614 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 289 "input-parse.y" /* yacc.c:1646  */
+#line 290 "input-parse.y" /* yacc.c:1646  */
     { synerr("bad start condition list"); }
-#line 1619 "input-parse.y.c" /* yacc.c:1646  */
+#line 1620 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 293 "input-parse.y" /* yacc.c:1646  */
+#line 294 "input-parse.y" /* yacc.c:1646  */
     {
                           if ((scnum = sclookup(nmstr)) == 0)
                             format_pinpoint_message("undeclared start condition %s", nmstr);
@@ -1634,11 +1635,11 @@ yyreduce:
                               scon_stk[++scon_stk_ptr] = scnum;
                           }
                         }
-#line 1638 "input-parse.y.c" /* yacc.c:1646  */
+#line 1639 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 310 "input-parse.y" /* yacc.c:1646  */
+#line 311 "input-parse.y" /* yacc.c:1646  */
     {
                           if (transchar[lastst[(yyvsp[0])]] != SYM_EPSILON)
                             /* Provide final transition \now/ so it
@@ -1688,17 +1689,17 @@ yyreduce:
 
                           (yyval) = link_machines((yyvsp[-1]), (yyvsp[0]));
                         }
-#line 1692 "input-parse.y.c" /* yacc.c:1646  */
+#line 1693 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 361 "input-parse.y" /* yacc.c:1646  */
+#line 362 "input-parse.y" /* yacc.c:1646  */
     { synerr("trailing context used twice"); }
-#line 1698 "input-parse.y.c" /* yacc.c:1646  */
+#line 1699 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 364 "input-parse.y" /* yacc.c:1646  */
+#line 365 "input-parse.y" /* yacc.c:1646  */
     {
                           headcnt = 0;
                           trailcnt = 1;
@@ -1734,11 +1735,11 @@ yyreduce:
                           eps = mkstate(SYM_EPSILON);
                           (yyval) = link_machines((yyvsp[-1]), link_machines(eps, mkstate('\n')));
                         }
-#line 1738 "input-parse.y.c" /* yacc.c:1646  */
+#line 1739 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 401 "input-parse.y" /* yacc.c:1646  */
+#line 402 "input-parse.y" /* yacc.c:1646  */
     {
                           (yyval) = (yyvsp[0]);
 
@@ -1752,26 +1753,26 @@ yyreduce:
                               trailcnt = rulelen;
                           }
                         }
-#line 1756 "input-parse.y.c" /* yacc.c:1646  */
+#line 1757 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 418 "input-parse.y" /* yacc.c:1646  */
+#line 419 "input-parse.y" /* yacc.c:1646  */
     {
                           varlength = true;
                           (yyval) = mkor((yyvsp[-2]), (yyvsp[0]));
                         }
-#line 1765 "input-parse.y.c" /* yacc.c:1646  */
+#line 1766 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 424 "input-parse.y" /* yacc.c:1646  */
+#line 425 "input-parse.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[0]); }
-#line 1771 "input-parse.y.c" /* yacc.c:1646  */
+#line 1772 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 429 "input-parse.y" /* yacc.c:1646  */
+#line 430 "input-parse.y" /* yacc.c:1646  */
     {
                           /* This rule is written separately so the
                            * reduction will occur before the trailing
@@ -1796,56 +1797,56 @@ yyreduce:
                           current_state_type = STATE_TRAILING_CONTEXT;
                           (yyval) = (yyvsp[-1]);
                         }
-#line 1800 "input-parse.y.c" /* yacc.c:1646  */
+#line 1801 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 456 "input-parse.y" /* yacc.c:1646  */
+#line 457 "input-parse.y" /* yacc.c:1646  */
     {
                           /* This is where concatenation of adjacent patterns
                            * gets done.
                            */
                           (yyval) = link_machines((yyvsp[-1]), (yyvsp[0]));
                         }
-#line 1811 "input-parse.y.c" /* yacc.c:1646  */
+#line 1812 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 464 "input-parse.y" /* yacc.c:1646  */
+#line 465 "input-parse.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[0]); }
-#line 1817 "input-parse.y.c" /* yacc.c:1646  */
+#line 1818 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 468 "input-parse.y" /* yacc.c:1646  */
+#line 469 "input-parse.y" /* yacc.c:1646  */
     {
                           varlength = true;
 
                           (yyval) = mkclos((yyvsp[-1]));
                         }
-#line 1827 "input-parse.y.c" /* yacc.c:1646  */
+#line 1828 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 475 "input-parse.y" /* yacc.c:1646  */
+#line 476 "input-parse.y" /* yacc.c:1646  */
     {
                           varlength = true;
                           (yyval) = mkposcl((yyvsp[-1]));
                         }
-#line 1836 "input-parse.y.c" /* yacc.c:1646  */
+#line 1837 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 481 "input-parse.y" /* yacc.c:1646  */
+#line 482 "input-parse.y" /* yacc.c:1646  */
     {
                           varlength = true;
                           (yyval) = mkopt((yyvsp[-1]));
                         }
-#line 1845 "input-parse.y.c" /* yacc.c:1646  */
+#line 1846 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 487 "input-parse.y" /* yacc.c:1646  */
+#line 488 "input-parse.y" /* yacc.c:1646  */
     {
                           varlength = true;
 
@@ -1866,11 +1867,11 @@ yyreduce:
                               (yyval) = mkrep((yyvsp[-5]), (yyvsp[-3]), (yyvsp[-1]));
                           }
                         }
-#line 1870 "input-parse.y.c" /* yacc.c:1646  */
+#line 1871 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 509 "input-parse.y" /* yacc.c:1646  */
+#line 510 "input-parse.y" /* yacc.c:1646  */
     {
                           varlength = true;
 
@@ -1882,11 +1883,11 @@ yyreduce:
                           else
                             (yyval) = mkrep((yyvsp[-4]), (yyvsp[-2]), INFINITY);
                         }
-#line 1886 "input-parse.y.c" /* yacc.c:1646  */
+#line 1887 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 522 "input-parse.y" /* yacc.c:1646  */
+#line 523 "input-parse.y" /* yacc.c:1646  */
     {
                           /* The singleton could be something like "(foo)",
                            * in which case we have no idea what its length
@@ -1902,11 +1903,11 @@ yyreduce:
                           else
                             (yyval) = link_machines((yyvsp[-3]), copysingl((yyvsp[-3]), (yyvsp[-1]) - 1));
                         }
-#line 1906 "input-parse.y.c" /* yacc.c:1646  */
+#line 1907 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 539 "input-parse.y" /* yacc.c:1646  */
+#line 540 "input-parse.y" /* yacc.c:1646  */
     {
                           if (!madeany) {
                             /* Create the '.' character class. */
@@ -1925,11 +1926,11 @@ yyreduce:
 
                           (yyval) = mkstate(-anyccl);
                         }
-#line 1929 "input-parse.y.c" /* yacc.c:1646  */
+#line 1930 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 559 "input-parse.y" /* yacc.c:1646  */
+#line 560 "input-parse.y" /* yacc.c:1646  */
     {
                           if (!cclsorted)
                             /* Sort characters for fast searching.  We
@@ -1945,33 +1946,33 @@ yyreduce:
 
                           (yyval) = mkstate(-(yyvsp[0]));
                         }
-#line 1949 "input-parse.y.c" /* yacc.c:1646  */
+#line 1950 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 576 "input-parse.y" /* yacc.c:1646  */
+#line 577 "input-parse.y" /* yacc.c:1646  */
     {
                           ++ rulelen;
 
                           (yyval) = mkstate(-(yyvsp[0]));
                         }
-#line 1959 "input-parse.y.c" /* yacc.c:1646  */
+#line 1960 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 583 "input-parse.y" /* yacc.c:1646  */
+#line 584 "input-parse.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[-1]); }
-#line 1965 "input-parse.y.c" /* yacc.c:1646  */
+#line 1966 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 586 "input-parse.y" /* yacc.c:1646  */
+#line 587 "input-parse.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[-1]); }
-#line 1971 "input-parse.y.c" /* yacc.c:1646  */
+#line 1972 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 589 "input-parse.y" /* yacc.c:1646  */
+#line 590 "input-parse.y" /* yacc.c:1646  */
     {
                           ++rulelen;
 
@@ -1980,26 +1981,26 @@ yyreduce:
 
                           (yyval) = mkstate((yyvsp[0]));
                         }
-#line 1984 "input-parse.y.c" /* yacc.c:1646  */
+#line 1985 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 600 "input-parse.y" /* yacc.c:1646  */
+#line 601 "input-parse.y" /* yacc.c:1646  */
     { (yyval) = (yyvsp[-1]); }
-#line 1990 "input-parse.y.c" /* yacc.c:1646  */
+#line 1991 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 603 "input-parse.y" /* yacc.c:1646  */
+#line 604 "input-parse.y" /* yacc.c:1646  */
     {
                           cclnegate((yyvsp[-1]));
                           (yyval) = (yyvsp[-1]);
                         }
-#line 1999 "input-parse.y.c" /* yacc.c:1646  */
+#line 2000 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 610 "input-parse.y" /* yacc.c:1646  */
+#line 611 "input-parse.y" /* yacc.c:1646  */
     {
                           if (caseins) {
                             if ((yyvsp[-2]) >= 'A' && (yyvsp[-2]) <= 'Z')
@@ -2024,11 +2025,11 @@ yyreduce:
 
                           (yyval) = (yyvsp[-3]);
                         }
-#line 2028 "input-parse.y.c" /* yacc.c:1646  */
+#line 2029 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 636 "input-parse.y" /* yacc.c:1646  */
+#line 637 "input-parse.y" /* yacc.c:1646  */
     {
                           if (caseins && (yyvsp[0]) >= 'A' && (yyvsp[0]) <= 'Z')
                             (yyvsp[0]) = clower((yyvsp[0]));
@@ -2038,108 +2039,108 @@ yyreduce:
                           lastchar = (yyvsp[0]);
                           (yyval) = (yyvsp[-1]);
                         }
-#line 2042 "input-parse.y.c" /* yacc.c:1646  */
+#line 2043 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 647 "input-parse.y" /* yacc.c:1646  */
+#line 648 "input-parse.y" /* yacc.c:1646  */
     {
                           /* Too hard to properly maintain cclsorted. */
                           cclsorted = false;
                           (yyval) = (yyvsp[-1]);
                         }
-#line 2052 "input-parse.y.c" /* yacc.c:1646  */
+#line 2053 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 654 "input-parse.y" /* yacc.c:1646  */
+#line 655 "input-parse.y" /* yacc.c:1646  */
     {
                           cclsorted = true;
                           lastchar = 0;
                           currccl = (yyval) = cclinit();
                         }
-#line 2062 "input-parse.y.c" /* yacc.c:1646  */
+#line 2063 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 661 "input-parse.y" /* yacc.c:1646  */
+#line 662 "input-parse.y" /* yacc.c:1646  */
     { CCL_EXPR(isalnum) }
-#line 2068 "input-parse.y.c" /* yacc.c:1646  */
+#line 2069 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 662 "input-parse.y" /* yacc.c:1646  */
+#line 663 "input-parse.y" /* yacc.c:1646  */
     { CCL_EXPR(isalpha) }
-#line 2074 "input-parse.y.c" /* yacc.c:1646  */
+#line 2075 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 663 "input-parse.y" /* yacc.c:1646  */
+#line 664 "input-parse.y" /* yacc.c:1646  */
     { CCL_EXPR(IS_BLANK) }
-#line 2080 "input-parse.y.c" /* yacc.c:1646  */
+#line 2081 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 664 "input-parse.y" /* yacc.c:1646  */
+#line 665 "input-parse.y" /* yacc.c:1646  */
     { CCL_EXPR(iscntrl) }
-#line 2086 "input-parse.y.c" /* yacc.c:1646  */
+#line 2087 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 665 "input-parse.y" /* yacc.c:1646  */
+#line 666 "input-parse.y" /* yacc.c:1646  */
     { CCL_EXPR(isdigit) }
-#line 2092 "input-parse.y.c" /* yacc.c:1646  */
+#line 2093 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 666 "input-parse.y" /* yacc.c:1646  */
+#line 667 "input-parse.y" /* yacc.c:1646  */
     { CCL_EXPR(isgraph) }
-#line 2098 "input-parse.y.c" /* yacc.c:1646  */
+#line 2099 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 667 "input-parse.y" /* yacc.c:1646  */
+#line 668 "input-parse.y" /* yacc.c:1646  */
     { CCL_EXPR(islower) }
-#line 2104 "input-parse.y.c" /* yacc.c:1646  */
+#line 2105 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 668 "input-parse.y" /* yacc.c:1646  */
+#line 669 "input-parse.y" /* yacc.c:1646  */
     { CCL_EXPR(isprint) }
-#line 2110 "input-parse.y.c" /* yacc.c:1646  */
+#line 2111 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 669 "input-parse.y" /* yacc.c:1646  */
+#line 670 "input-parse.y" /* yacc.c:1646  */
     { CCL_EXPR(ispunct) }
-#line 2116 "input-parse.y.c" /* yacc.c:1646  */
+#line 2117 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 670 "input-parse.y" /* yacc.c:1646  */
+#line 671 "input-parse.y" /* yacc.c:1646  */
     { CCL_EXPR(isspace) }
-#line 2122 "input-parse.y.c" /* yacc.c:1646  */
+#line 2123 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 671 "input-parse.y" /* yacc.c:1646  */
+#line 672 "input-parse.y" /* yacc.c:1646  */
     {
                                   if (caseins)
                                     CCL_EXPR(islower)
                                   else
                                     CCL_EXPR(isupper)
                                 }
-#line 2133 "input-parse.y.c" /* yacc.c:1646  */
+#line 2134 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 677 "input-parse.y" /* yacc.c:1646  */
+#line 678 "input-parse.y" /* yacc.c:1646  */
     { CCL_EXPR(isxdigit) }
-#line 2139 "input-parse.y.c" /* yacc.c:1646  */
+#line 2140 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 681 "input-parse.y" /* yacc.c:1646  */
+#line 682 "input-parse.y" /* yacc.c:1646  */
     {
                           if (caseins && (yyvsp[0]) >= 'A' && (yyvsp[0]) <= 'Z')
                             (yyvsp[0]) = clower((yyvsp[0]));
@@ -2148,17 +2149,17 @@ yyreduce:
 
                           (yyval) = link_machines((yyvsp[-1]), mkstate((yyvsp[0])));
                         }
-#line 2152 "input-parse.y.c" /* yacc.c:1646  */
+#line 2153 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 691 "input-parse.y" /* yacc.c:1646  */
+#line 692 "input-parse.y" /* yacc.c:1646  */
     { (yyval) = mkstate(SYM_EPSILON); }
-#line 2158 "input-parse.y.c" /* yacc.c:1646  */
+#line 2159 "input-parse.y.c" /* yacc.c:1646  */
     break;
 
 
-#line 2162 "input-parse.y.c" /* yacc.c:1646  */
+#line 2163 "input-parse.y.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2386,7 +2387,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 694 "input-parse.y" /* yacc.c:1906  */
+#line 695 "input-parse.y" /* yacc.c:1906  */
 
 
 

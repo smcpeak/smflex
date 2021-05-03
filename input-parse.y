@@ -99,6 +99,7 @@ goal            :  sect1 sect1end sect2 initforrule
                           for (i = 1; i <= lastsc; ++i)
                             scset[i] = mkbranch(scset[i], def_rule);
 
+                          add_action(yy_output_file_line_directive);
                           if (spprdflt)
                             add_action("YY_FATAL_ERROR( \"smflex scanner jammed\" )");
                           else
