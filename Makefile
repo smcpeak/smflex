@@ -169,8 +169,7 @@ install: $(FLEX) installdirs
 	$(INSTALL_PROGRAM) $(FLEX) $(bindir)/$(FLEX)
 
 installdirs:
-	$(SHELL) mkinstalldirs \
-	  $(bindir) $(includedir)
+	$(SHELL) mkinstalldirs $(bindir)
 
 uninstall:
 	rm -f $(bindir)/$(FLEX)
