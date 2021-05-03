@@ -5,6 +5,7 @@
 # Default target.
 all:
 
+# --------------------- Configuration ---------------------
 # Pull in the configure-generated settings.
 ifeq ($(wildcard config.mk),)
   $(error config.mk does not exist.  Please run ./configure first.)
@@ -34,6 +35,7 @@ OBJ = obj
 # can override settings above or from config.mk.
 -include personal.mk
 
+# ----------------------- Build rules ---------------------
 # Turn off default rules.  (One reason this is important is there is
 # a default rule for running bison, but I want to ensure bison only
 # runs when specifically requested.)
@@ -174,11 +176,13 @@ installdirs:
 uninstall:
 	rm -f $(bindir)/$(FLEX)
 
+# Remove compilation output, but keep 'configure' output.
 clean:
 	rm -f $(FLEX) config.log config.cache
 	if test -d $(OBJ); then rm -r $(OBJ); fi
 	$(MAKE) -C test clean
 
+# Remove everything not in the source distribution tarball.
 distclean: clean
 	rm -f config.mk config.status
 
@@ -275,10 +279,11 @@ generated-scanner.skl.c: generated-scanner.skl encode.sh
 generated-header.skl.c: generated-header.skl encode.sh
 	$(SHELL) encode.sh generated-header.skl generated-header.skl.c header_skl_contents
 
-# For an explanation of the following Makefile rules, see node
-# `Automatic Remaking' in GNU Autoconf documentation.
+# If 'configure' has changed but its output script is older, run it.
 config.status: configure
 	./config.status --recheck
+
+# If 'configuire.in' has changed, run autoconf.
 configure: configure.in
 	autoconf
 
