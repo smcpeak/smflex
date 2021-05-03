@@ -40,7 +40,7 @@ char copyright[] =
 #include "input-parse.h"               /* warn, yyparse, etc. */
 #include "input-scan.h"                /* set_input_file */
 #include "misc.h"                      /* flexerror, outn, etc. */
-#include "version.h"                   /* FLEX_VERSION */
+#include "version.h"                   /* SMFLEX_VERSION */
 
 #include <stdio.h>                     /* remove */
 #include <string.h>                    /* strcpy, etc. */
@@ -71,7 +71,7 @@ char copyright[] =
 #define BAD_SUBSCRIPT -32767
 
 
-static char flex_version[] = FLEX_VERSION;
+static char smflex_version[] = SMFLEX_VERSION;
 
 
 /* ----------- BEGIN: big block of globals ---------------- */
@@ -384,7 +384,7 @@ void flexend(int exit_status)
 
   if (printstats) {
     fprintf(stderr, _("%s version %s usage statistics:\n"),
-            program_name, flex_version);
+            program_name, smflex_version);
 
     fprintf(stderr, _("  scanner options: -"));
 
@@ -718,7 +718,7 @@ void flexinit(int argc, char **argv)
           break;
 
         case 'V':
-          printf(_("%s version %s\n"), program_name, flex_version);
+          printf(_("%s version %s\n"), program_name, smflex_version);
           exit(0);
 
         case 'w':
@@ -928,7 +928,7 @@ void readin()
             yyclass);
 
   if (ddebug)
-    outn("\n#define FLEX_DEBUG");
+    outn("\n#define SMFLEX_DEBUG");
 
   if (csize == 256)
     outn("typedef unsigned char YY_CHAR;");
@@ -965,7 +965,7 @@ void readin()
     outn("typedef int yy_state_type;");
 
   if (ddebug)
-    outn("\n#define FLEX_DEBUG");
+    outn("\n#define SMFLEX_DEBUG");
 
   if (lex_compat)
     outn("#define YY_FLEX_LEX_COMPAT");

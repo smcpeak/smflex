@@ -2,8 +2,8 @@
 
 /* Scanner skeleton version. */
 #define SMFLEX_SCANNER
-#define YY_FLEX_MAJOR_VERSION 2
-#define YY_FLEX_MINOR_VERSION 5
+#define YY_SMFLEX_MAJOR_VERSION 1
+#define YY_SMFLEX_MINOR_VERSION 0
 
 
 /*
