@@ -235,14 +235,15 @@ for inputLineNumber, inputLine in enumerate(inputFileLines, start=1):
     pass
 
 
-# Print a final report of the statistics.
-print(textwrap.dedent(f"""\
-  ----------------
-  Scanning finished with {numErrors} errors and {numWarnings} warnings.
-  Input file: {inputFileName}
-  Number of lines: {numInputLines}
-  #lines with same file: {directivesWithSameFile}
-  #lines with different file: {directivesWithDifferentFile}"""))
+if numErrors > 0:
+  # Print a final report of the statistics.
+  print(textwrap.dedent(f"""\
+    ----------------
+    Scanning finished with {numErrors} errors and {numWarnings} warnings.
+    Input file: {inputFileName}
+    Number of lines: {numInputLines}
+    #lines with same file: {directivesWithSameFile}
+    #lines with different file: {directivesWithDifferentFile}"""))
 
 
 if numErrors > 0:
