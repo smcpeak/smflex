@@ -1186,33 +1186,36 @@ void make_tables()
 
   line_directive_out(scanner_c_file, 0);
 
+  /* Copy everything up to and including the beginning of the
+   * definition of the YY_INPUT macro. */
   skelout();
 
   if (!C_plus_plus) {
+    /* Provide the body of YY_INPUT. */
     if (use_read) {
-      outn
-        ("  if ( (result = read( fileno(yyin), (char *) buf, max_size )) < 0 ) \\");
+      outn("  if ( (result = read( fileno(yyin), (char *) buf, max_size )) < 0 ) \\");
       outn("    YY_FATAL_ERROR( \"input in smflex scanner failed\" );");
     }
 
     else {
-      outn("  if ( yy_current_buffer->yy_is_interactive ) \\");
-      outn("    { \\");
+      outn("  if ( yy_current_buffer->yy_is_interactive ) { \\");
       outn("    int c = '*', n; \\");
-      outn("    for ( n = 0; n < max_size && \\");
-      outn("           (c = getc( yyin )) != EOF && c != '\\n'; ++n ) \\");
+      outn("    for (n = 0; n < max_size && \\");
+      outn("          (c = getc( yyin )) != EOF && c != '\\n'; ++n ) \\");
       outn("      buf[n] = (char) c; \\");
       outn("    if ( c == '\\n' ) \\");
       outn("      buf[n++] = (char) c; \\");
       outn("    if ( c == EOF && ferror( yyin ) ) \\");
       outn("      YY_FATAL_ERROR( \"input in smflex scanner failed\" ); \\");
       outn("    result = n; \\");
-      outn("    } \\");
-      outn
-        ("  else if ( ((result = fread( buf, 1, max_size, yyin )) == 0) \\");
+      outn("  } \\");
+      outn("  else if ( ((result = fread( buf, 1, max_size, yyin )) == 0) \\");
       outn("      && ferror( yyin ) ) \\");
       outn("    YY_FATAL_ERROR( \"input in smflex scanner failed\" );");
     }
+  }
+  else {
+    /* For the C++ interface, the skeleton defines YY_INPUT. */
   }
 
   skelout();
