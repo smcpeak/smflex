@@ -3011,10 +3011,10 @@ to transition to my <code>smflex</code>, and this list can help that.
     not depend on anything except the standard C or C++ libraries.
 
     <p>Replacement: Set <code>%option main</code> to get an equivalent
-    <code>main()</code> emitted into the generated scanner.  Either set
-    <code>%option noyywrap</code> to cause the generated scanner to not
-    call <code>yywrap()</code>, or define your own <code>yywrap()</code>
-    function that returns 1.
+    <code>main()</code> emitted into the generated scanner.
+    <code>%option noyywrap</code> is now the default, so there should
+    be no issue with trying to link with <code>yywrap()</code>.  (If
+    there is, just define it yourself: <code>int yywrap() { return 1; }</code>.)
 
 <li><p>There are several changes to the C++ interface
     compared to <code>flex-2.5.4</code>:
