@@ -2778,7 +2778,7 @@ scanner over input:
     is specified, then this will be invoked before <code>yylex()</code>
     returns EOF.  If not using <code>%option yyclass</code>, then
     define this as a method of <code>yyFlexLexer</code>, using the
-    existing declaration in <code>FlexLexer.h</code>.  Otherwise,
+    existing declaration in the generated header file.  Otherwise,
     declare and define it as a method of your derived class.
 
 <dt><code>yy_switch_to_buffer()</code>,

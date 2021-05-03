@@ -48,7 +48,8 @@ public:      // types
   typedef std::istream istream;
   typedef std::ostream ostream;
 
-  // Details of the buffer state.  Defined in FlexLexer.h.
+  // Details of the buffer state.  Defined in the generated scanner
+  // code, where it is known as 'yy_buffer_state'.
   struct yy_buffer_state_impl;
 
   // smcpeak: I believe this type represents a "state" in the finite
