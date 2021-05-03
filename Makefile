@@ -253,12 +253,8 @@ ifeq ($(MAINTAINER_MODE),1)
 
 
 # Bison-generated parser for flex's input language.
-#
-# For some reason, I need to pass "-y" (yacc mode) to get the
-# definitions of the token codes.
-#
 input-parse.y.c: input-parse.y
-	$(BISON) -y --defines=input-parse.y.h --output=input-parse.y.c \
+	$(BISON) --defines=input-parse.y.h --output=input-parse.y.c \
 	  input-parse.y
 
 # This rule tells 'make' that in order to create 'input-parse.y.h' it
