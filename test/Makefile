@@ -84,9 +84,9 @@ out/%.ok: out/%.exe %.input %.expect
 	touch $@
 
 # Check that what is in the manual matches what is in the tests.
-out/%.matches: % ../flex.html
+out/%.matches: % ../smflex.html
 	@mkdir -p out
-	cat ../flex.html | \
+	cat ../smflex.html | \
 	  sed -n -e '/-- BEGIN example: $* --/,/-- END example --/p' | \
 	  grep -v -- '-- BEGIN example' | \
 	  grep -v -- '-- END example' | \

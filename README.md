@@ -32,7 +32,7 @@ Notable **non-goals** include:
 * Support for obsolete operating systems like MS-DOS.
 * Compatibility with AT&T or POSIX `lex`.
 * 100% compatibility with any version of `flex`.  See the section
-  [Incompatibilities with Flex](flex.html#incompatibilities-with-flex)
+  [Incompatibilities with Flex](smflex.html#incompatibilities-with-flex)
   in the manual for guidance on what will need to be changed.  In
   most cases, no changes to the `flex` input are required, but the
   way you invoke the tool and consume the output may need adjustments.
@@ -78,7 +78,7 @@ $ gcc -o smflex *.c
 
 # Usage
 
-See the manual at [flex.html](flex.html).  It is based on the
+See the manual at [smflex.html](smflex.html).  It is based on the
 `flex-2.5.4` manual, but I have kept it up to date with my
 changes.
 
