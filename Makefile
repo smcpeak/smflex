@@ -50,19 +50,24 @@ $(OBJ)/%.o: %.c
 include $(wildcard $(OBJ)/*.d)
 
 # C source code.
-SOURCES = $(wildcard *.c)
+SOURCES :=
+SOURCES += ccl.c
+SOURCES += dfa.c
+SOURCES += ecs.c
+SOURCES += gen.c
+SOURCES += generated-header.skl.c
+SOURCES += generated-scanner.skl.c
+SOURCES += input-parse.y.c
+SOURCES += input-scan.lex.c
+SOURCES += main.c
+SOURCES += misc.c
+SOURCES += nfa.c
+SOURCES += sym.c
+SOURCES += tblcmp.c
+SOURCES += yylex.c
 
 # Object files to compile and link into 'flex'.
 OBJECTS = $(patsubst %.c,$(OBJ)/%.o,$(SOURCES))
-
-# Complete set of files and directories to be included in the
-# distribution tarball, except that a few things in 'test' get removed.
-DISTFILES = README.md NEWS COPYING flex.html \
-            configure config.mk.in Makefile \
-            $(wildcard *.h) $(SOURCES) $(wildcard *.skl) \
-            input-scan.lex input-parse.y \
-            configure.in encode.sh install.sh mkinstalldirs \
-            test
 
 # Name of the distribution, meaning what goes before ".tar.gz" in the
 # distribution tarball file name, and also the name of the directory
@@ -185,6 +190,43 @@ clean:
 # Remove everything not in the source distribution tarball.
 distclean: clean
 	rm -f config.mk config.status
+
+# Complete set of files and directories to be included in the
+# distribution tarball, except that a few things in 'test' get removed.
+DISTFILES :=
+DISTFILES += $(SOURCES)
+DISTFILES += COPYING
+DISTFILES += Makefile
+DISTFILES += NEWS
+DISTFILES += README.md
+DISTFILES += ccl.h
+DISTFILES += config.mk.in
+DISTFILES += configure
+DISTFILES += configure.in
+DISTFILES += dfa.h
+DISTFILES += ecs.h
+DISTFILES += encode.sh
+DISTFILES += flex.html
+DISTFILES += flexchar.h
+DISTFILES += flexdef.h
+DISTFILES += gen.h
+DISTFILES += generated-header.skl
+DISTFILES += generated-scanner.skl
+DISTFILES += input-parse.h
+DISTFILES += input-parse.y
+DISTFILES += input-parse.y.h
+DISTFILES += input-scan.h
+DISTFILES += input-scan.lex
+DISTFILES += install.sh
+DISTFILES += main.h
+DISTFILES += misc.h
+DISTFILES += mkinstalldirs
+DISTFILES += nfa.h
+DISTFILES += sym.h
+DISTFILES += tblcmp.h
+DISTFILES += test
+DISTFILES += version.h
+DISTFILES += yylex.h
 
 # Create a source tarball for distribution.
 dist: $(FLEX) $(DISTFILES) input-parse.y.c input-parse.y.h
