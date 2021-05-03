@@ -170,21 +170,18 @@
 
 <h1 id="name">NAME</h1>
 
-<p>flex - fast lexical analyzer generator
-
-<p>TODO: Rename to <code>smflex</code>, which stands for
-Scott McPeak's <code>flex</code>.
+<p>smflex - Scott McPeak's fast lexical analyzer generator
 
 <h1 id="synopsis">SYNOPSIS</h1>
 
-<p><code>flex</code>
+<p><code>smflex</code>
    <code>[-bcdfhilnpstvwBFILTV78+? -C[aefFmr] -ooutput -Pprefix]</code>
    <code>[--help --version]</code>
    <code>[filename ...]</code>
 
 <h1 id="overview">OVERVIEW</h1>
 
-<p>This manual describes <code>flex</code>, a tool for generating programs
+<p>This manual describes <code>smflex</code>, a tool for generating programs
 that perform pattern-matching on text. The manual includes both tutorial
 and reference sections:
 
@@ -198,7 +195,7 @@ and reference sections:
 <li><a href="#format-of-the-input-file">Format Of The Input File</a>:
 
 <li><a href="#patterns">Patterns</a>:
-    the extended regular expressions used by flex
+    the extended regular expressions used by smflex
 
 <li><a href="#how-the-input-is-matched">How The Input Is Matched</a>:
     the rules for determining what has been matched
@@ -207,7 +204,7 @@ and reference sections:
     how to specify what to do when a pattern is matched
 
 <li><a href="#the-generated-scanner">The Generated Scanner</a>:
-    details regarding the scanner that flex produces;
+    details regarding the scanner that smflex produces;
     how to control the input source
 
 <li><a href="#start-conditions">Start Conditions</a>:
@@ -228,10 +225,10 @@ and reference sections:
     a summary of values available to the actions
 
 <li><a href="#interfacing-with-yacc">Interfacing With Yacc</a>:
-    connecting flex scanners together with yacc parsers
+    connecting smflex scanners together with yacc parsers
 
 <li><a href="#options">Options</a>:
-    flex command-line options, and the &quot;%option&quot;
+    smflex command-line options, and the &quot;%option&quot;
     directive
 
 <li><a href="#performance-considerations">Performance Considerations</a>:
@@ -242,19 +239,19 @@ and reference sections:
     scanner classes
 
 <li><a href="#incompatibilities-with-flex">Incompatibilities with Flex</a>:
-    how Scott McPeak's <code>flex</code> differs from
+    how Scott McPeak's <code>smflex</code> differs from
     Vern Paxson's <code>flex-2.5.4</code>
 
 <li><a href="#incompatibilities-with-lex-and-posix">Incompatibilities With Lex And POSIX</a>:
-    how flex differs from AT&amp;T lex and the POSIX lex
+    how smflex differs from AT&amp;T lex and the POSIX lex
     standard
 
 <li><a href="#diagnostics">Diagnostics</a>:
-    those error messages produced by flex (or scanners
+    those error messages produced by smflex (or scanners
     it generates) whose meanings might not be apparent
 
 <li><a href="#deficiencies-n-bugs">Deficiencies / Bugs</a>:
-    known problems with flex
+    known problems with smflex
 
 <li><a href="#see-also">See Also</a>:
     other documentation, related tools
@@ -266,11 +263,11 @@ and reference sections:
 
 <h1 id="description">DESCRIPTION</h1>
 
-<p><code>flex</code> is a tool for generating <em>scanners</em>: programs
-which recognized lexical patterns in text. <code>flex</code> reads the
+<p><code>smflex</code> is a tool for generating <em>scanners</em>: programs
+which recognized lexical patterns in text. <code>smflex</code> reads the
 given input files, or its standard input if no file names are given, for
 a description of a scanner to generate. The description is in the form
-of pairs of regular expressions and C code, called <em>rules</em>.  <code>flex</code>
+of pairs of regular expressions and C code, called <em>rules</em>.  <code>smflex</code>
 generates as output a C source file, <code>lex.yy.c</code>, which
 defines a routine <code>yylex()</code>. This file is compiled and linked
 with the <code>-lfl</code> library to produce an executable. When the
@@ -280,7 +277,7 @@ expressions. Whenever it finds one, it executes the corresponding C code.
 <h1 id="some-simple-examples">SOME SIMPLE EXAMPLES</h1>
 
 <p>First some simple examples to get the flavor of how one uses
-<code>flex</code>. The following <code>flex</code> input specifies a
+<code>smflex</code>. The following <code>smflex</code> input specifies a
 scanner which whenever it encounters the string "username" will replace
 it with the user's login name:
 
@@ -289,7 +286,7 @@ it with the user's login name:
     username    printf( &quot;%s&quot;, getlogin() );
 </code></pre>
 
-<p>By default, any text not matched by a <code>flex</code> scanner is
+<p>By default, any text not matched by a <code>smflex</code> scanner is
 copied to the output, so the net effect of this scanner is to copy its
 input file to its output with each occurrence of "username" expanded. In
 this input, there is just one rule. "username" is the <em>pattern</em>
@@ -387,7 +384,7 @@ sections.
 
 <h1 id="format-of-the-input-file">FORMAT OF THE INPUT FILE</h1>
 
-<p>The <code>flex</code> input file consists of three sections, separated
+<p>The <code>smflex</code> input file consists of three sections, separated
 by a line with just <code>%%</code> in it:
 
 <pre><code>
@@ -438,7 +435,7 @@ by zero-or-more letters-or-digits. A subsequent reference to
 <p>and matches one-or-more digits followed by a '.' followed by
 zero-or-more digits.
 
-<p>The <em>rules</em> section of the <code>flex</code> input contains
+<p>The <em>rules</em> section of the <code>smflex</code> input contains
 a series of rules of the form:
 
 <pre><code>
@@ -582,7 +579,7 @@ included when determining whether this rule is the "longest
 match", but is then returned to the input before the action is
 executed.  So the action only sees the text matched by <code>r</code>.  This type of
 pattern is called "trailing context".  (There are some combinations
-of <code>r/s</code> that flex cannot match correctly; see notes in the
+of <code>r/s</code> that smflex cannot match correctly; see notes in the
 <a href="#deficiencies-n-bugs">Deficiencies / Bugs</a> section below
 regarding "dangerous trailing context".)
 
@@ -595,8 +592,8 @@ just starting to scan, or right after a newline has been scanned).
 
 <dd>an <code>r</code>, but only at the end of a line (i.e., just
 before a newline).  Equivalent to "r/\n".
-Note that flex's notion of "newline" is exactly whatever the C
-compiler used to compile flex interprets '\n' as; in particular, on some
+Note that smflex's notion of "newline" is exactly whatever the C
+compiler used to compile smflex interprets '\n' as; in particular, on some
 DOS systems you must either filter out \r's in the input yourself, or
 explicitly use r/\r\n for "r$".
 
@@ -674,7 +671,7 @@ too). The valid expressions are:
 to the corresponding standard C <code>isXXX</code> function. For
 example, <code>[:alnum:]</code> designates those characters for
 which <code>isalnum()</code> returns true - i.e., any alphabetic or
-numeric. Some systems don't provide <code>isblank()</code>, so flex
+numeric. Some systems don't provide <code>isblank()</code>, so smflex
 defines <code>[:blank:]</code> as a blank or a tab.
 
 <p>For example, the following character classes are all equivalent:
@@ -748,7 +745,7 @@ strings which match any of its patterns. If it finds more than one match,
 it takes the one matching the most text (for trailing context rules,
 this includes the length of the trailing part, even though it will
 then be returned to the input). If it finds two or more matches of the
-same length, the rule listed first in the <code>flex</code> input file
+same length, the rule listed first in the <code>smflex</code> input file
 is chosen.
 
 <p>Once the match is determined, the text corresponding to the match
@@ -760,7 +757,7 @@ and then the remaining input is scanned for another match.
 
 <p>If no match is found, then the <em>default rule</em> is executed:
 the next character in the input is considered matched and copied to the
-standard output. Thus, the simplest legal <code>flex</code> input is:
+standard output. Thus, the simplest legal <code>smflex</code> input is:
 
 <pre><code>
     %%
@@ -771,10 +768,10 @@ at a time) to its output.
 
 <p>Note that <code>yytext</code> can be defined in two different
 ways: either as a character <em>pointer</em> or as a character
-<em>array</em>. You can control which definition <code>flex</code>
+<em>array</em>. You can control which definition <code>smflex</code>
 uses by including one of the special directives <code>%pointer</code>
 or <code>%array</code> in the first (definitions) section of
-your flex input. The default is <code>%pointer</code>, unless
+your smflex input. The default is <code>%pointer</code>, unless
 you use the <code>-l</code> lex compatibility option, in which
 case <code>yytext</code> will be an array. The advantage of using
 <code>%pointer</code> is substantially faster scanning and no buffer
@@ -799,7 +796,7 @@ but correct for <code>%array</code>.
 <p><code>%array</code> defines <code>yytext</code> to be an array
 of <code>YYLMAX</code> characters, which defaults to a fairly large
 value. You can change the size by simply #define'ing <code>YYLMAX</code>
-to a different value in the first section of your <code>flex</code>
+to a different value in the first section of your <code>smflex</code>
 input. As mentioned above, with <code>%pointer</code> yytext grows
 dynamically to accommodate large tokens. While this means your
 <code>%pointer</code> scanner can accommodate very large tokens (such
@@ -840,7 +837,7 @@ a single blank, and throws away whitespace found at the end of a line:
 </code></pre>
 
 <p>If the action contains a '{', then the action spans till the balancing
-'}' is found, and the action may cross multiple lines. <code>flex</code>
+'}' is found, and the action may cross multiple lines. <code>smflex</code>
 knows about C strings and comments and won't be fooled by braces found
 within them, but also allows actions to begin with <code>%{</code> and
 will consider the action to be all the text up to the next <code>%}</code>
@@ -882,7 +879,7 @@ an action:
     described above in "How the Input is Matched", and
     <code>yytext</code> and <code>yyleng</code> set up appropriately. It
     may either be one which matched as much text as the originally
-    chosen rule but came later in the <code>flex</code> input file, or
+    chosen rule but came later in the <code>smflex</code> input file, or
     one which matched less text. For example, the following will both
     count the words in the input and call the routine special() whenever
     "frob" is seen:
@@ -968,7 +965,7 @@ an action:
     example), this will result in an endless loop.
 
     <p>Note that <code>yyless</code> is a macro and can only be used in the
-    flex input file, not from other source files.
+    smflex input file, not from other source files.
 
 <li><p><code>unput(c)</code>
     puts the character <code>c</code> back onto the input stream. It
@@ -1062,7 +1059,7 @@ an action:
 
 <h1 id="the-generated-scanner">THE GENERATED SCANNER</h1>
 
-<p>The output of <code>flex</code> is the file <code>lex.yy.c</code>,
+<p>The output of <code>smflex</code> is the file <code>lex.yy.c</code>,
 which contains the scanning routine <code>yylex()</code>, a number of
 tables used by it for matching tokens, and a number of auxiliary routines
 and macros. By default, <code>yylex()</code> is declared as follows:
@@ -1161,7 +1158,7 @@ the user simply by assigning it to some other <code>FILE</code> pointer.
 
 <h1 id="start-conditions">START CONDITIONS</h1>
 
-<p><code>flex</code> provides a mechanism for conditionally activating
+<p><code>smflex</code> provides a mechanism for conditionally activating
 rules. Any rule whose pattern is prefixed with "&lt;sc&gt;" will only be
 active when the scanner is in the start condition named "sc". For example,
 
@@ -1195,7 +1192,7 @@ then rules with no start conditions at all will also be active. If
 it is <em>exclusive</em>, then <em>only</em> rules qualified with the
 start condition will be active. A set of rules contingent on the same
 exclusive start condition describe a scanner which is independent of
-any of the other rules in the <code>flex</code> input. Because of this,
+any of the other rules in the <code>smflex</code> input. Because of this,
 exclusive start conditions make it easy to specify "mini-scanners" which
 scan portions of the input that are syntactically different from the rest
 (e.g., comments).
@@ -1370,7 +1367,7 @@ assignments to <code>comment_caller</code> could instead be written
     comment_caller = YY_START;
 </code></pre>
 
-<p>Flex provides <code>YYSTATE</code> as an alias for
+<p>smflex provides <code>YYSTATE</code> as an alias for
 <code>YY_START</code> (since that is what's used by AT&amp;T
 <code>lex</code>).
 
@@ -1439,7 +1436,7 @@ using exclusive start conditions, including expanded escape sequences
 </code></pre>
 
 <p>Often, such as in some of the examples above, you wind up writing a
-whole bunch of rules all preceded by the same start condition(s). Flex
+whole bunch of rules all preceded by the same start condition(s). smflex
 makes this a little easier and cleaner by introducing a notion of start
 condition <em>scope</em>. A start condition scope is begun with:
 
@@ -1503,7 +1500,7 @@ size limitation. If memory is exhausted, program execution aborts.
 <h1 id="multiple-input-buffers">MULTIPLE INPUT BUFFERS</h1>
 
 <p>Some scanners (such as those which support "include" files) require
-reading from several input streams. As <code>flex</code> scanners do a
+reading from several input streams. As <code>smflex</code> scanners do a
 large amount of buffering, one cannot control where the next input will
 be read from by simply writing a <code>YY_INPUT</code> which is sensitive
 to the scanning context. <code>YY_INPUT</code> is only called when the
@@ -1511,7 +1508,7 @@ scanner reaches the end of its buffer, which may be a long time after
 scanning a statement such as an "include" which requires switching the
 input source.
 
-<p>To negotiate these sorts of problems, <code>flex</code> provides a
+<p>To negotiate these sorts of problems, <code>smflex</code> provides a
 mechanism for creating and switching between multiple input buffers. An
 input buffer is created by using:
 
@@ -1686,7 +1683,7 @@ by doing one of four things:
 <ul>
 
 <li><p>assigning <code>yyin</code>
-    to a new input file (in previous versions of flex, after doing the
+    to a new input file (in previous versions of smflex, after doing the
     assignment you had to call the special action
     <code>YY_NEW_FILE;</code> this is no longer necessary);
 
@@ -1818,10 +1815,10 @@ the rule actions.
     holds the length of the current token.
 
 <li><p><code>FILE *yyin</code>
-    is the file which by default <code>flex</code> reads from. It may be
+    is the file which by default <code>smflex</code> reads from. It may be
     redefined but doing so only makes sense before scanning begins or
     after an EOF has been encountered. Changing it in the midst of
-    scanning will have unexpected results since <code>flex</code>
+    scanning will have unexpected results since <code>smflex</code>
     buffers its input; use <code>yyrestart()</code> instead. Once
     scanning terminates because an end-of-file has been seen, you can
     assign <code>yyin</code> at the new input file and then call the
@@ -1851,16 +1848,16 @@ the rule actions.
 
 <h1 id="interfacing-with-yacc">INTERFACING WITH YACC</h1>
 
-<p>One of the main uses of <code>flex</code> is as a companion to
+<p>One of the main uses of <code>smflex</code> is as a companion to
 the <code>yacc</code> parser-generator. <code>yacc</code> parsers expect
 to call a routine named <code>yylex()</code> to find the next
 input token. The routine is supposed to return the type of the
 next token as well as putting any associated value in the global
-<code>yylval</code>. To use <code>flex</code> with <code>yacc</code>, one
+<code>yylval</code>. To use <code>smflex</code> with <code>yacc</code>, one
 specifies the <code>-d</code> option to <code>yacc</code> to instruct it to
 generate the file <code>y.tab.h</code> containing definitions of all
 the <code>%tokens</code> appearing in the <code>yacc</code> input. This
-file is then included in the <code>flex</code> scanner. For example,
+file is then included in the <code>smflex</code> scanner. For example,
 if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <pre><code>
@@ -1875,7 +1872,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <h1 id="options">OPTIONS</h1>
 
-<p><code>flex</code> has the following options:
+<p><code>smflex</code> has the following options:
 
 <dl>
 
@@ -1902,7 +1899,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 </code></pre>
 
     <p>The line number refers to the location of the rule in the file
-    defining the scanner (i.e., the file that was fed to flex). Messages
+    defining the scanner (i.e., the file that was fed to smflex). Messages
     are also generated when the scanner backs up, accepts the default rule,
     reaches the end of its input buffer (or encounters a NUL; at this point,
     the two look the same as far as the scanner's concerned), or reaches
@@ -1916,14 +1913,14 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dt><code>-h</code>
 
-<dd><p>generates a "help" summary of <code>flex</code>'s options to
+<dd><p>generates a "help" summary of <code>smflex</code>'s options to
     <code>stdout</code> and then exits. <code>-?</code> and <code>--help</code>
     are synonyms for <code>-h</code>.
 
 <dt><code>-i</code>
 
-<dd><p>instructs <code>flex</code> to generate a <em>case-insensitive</em>
-    scanner. The case of letters given in the <code>flex</code> input patterns
+<dd><p>instructs <code>smflex</code> to generate a <em>case-insensitive</em>
+    scanner. The case of letters given in the <code>smflex</code> input patterns
     will be ignored, and tokens in the input will be matched regardless
     of case. The matched text given in <code>yytext</code> will have the
     preserved case (i.e., it will not be folded).
@@ -1948,7 +1945,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dt><code>-p</code>
 
 <dd><p>generates a performance report to stderr. The report consists of
-    comments regarding features of the <code>flex</code> input file which
+    comments regarding features of the <code>smflex</code> input file which
     will cause a serious loss of performance in the resulting scanner. If
     you give the flag twice, you will also get comments regarding features
     that lead to minor performance losses.
@@ -1969,10 +1966,10 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dt><code>-v</code>
 
-<dd><p>specifies that <code>flex</code> should write to <code>stderr</code>
+<dd><p>specifies that <code>smflex</code> should write to <code>stderr</code>
     a summary of statistics regarding the scanner it generates. Most of
-    the statistics are meaningless to the casual <code>flex</code> user,
-    but the first line identifies the version of <code>flex</code> (same
+    the statistics are meaningless to the casual <code>smflex</code> user,
+    but the first line identifies the version of <code>smflex</code> (same
     as reported by <code>-V</code>), and the next line the flags used when
     generating the scanner, including those that are on by default.
 
@@ -1982,7 +1979,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dt><code>-B</code>
 
-<dd><p>instructs <code>flex</code> to generate a <em>batch</em> scanner, the
+<dd><p>instructs <code>smflex</code> to generate a <em>batch</em> scanner, the
     opposite of <em>interactive</em> scanners generated by <code>-I</code>
     (see below). In general, you use <code>-B</code> when you are
     <em>certain</em> that your scanner will never be used interactively,
@@ -2017,7 +2014,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dt><code>-I</code>
 
-<dd><p>instructs <code>flex</code> to generate an <em>interactive</em>
+<dd><p>instructs <code>smflex</code> to generate an <em>interactive</em>
     scanner. An interactive scanner is one that only looks ahead to decide
     what token has been matched if it absolutely must. It turns out that
     always looking one extra character ahead, even if the scanner has already
@@ -2027,11 +2024,11 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     a newline, it is not recognized as a newline token until they enter
     <em>another</em> token, which often means typing in another whole line.
 
-    <p><code>flex</code> scanners default to <em>interactive</em> unless you
+    <p><code>smflex</code> scanners default to <em>interactive</em> unless you
     use the <code>-Cf</code> or <code>-CF</code> table-compression options
     (see below). That's because if you're looking for high-performance
     you should be using one of these options, so if you didn't,
-    <code>flex</code> assumes you'd rather trade off a bit of run-time
+    <code>smflex</code> assumes you'd rather trade off a bit of run-time
     performance for intuitive interactive behavior. Note also that you
     <em>cannot</em> use <code>-I</code> in conjunction with <code>-Cf</code>
     or <code>-CF</code>. Thus, this option is not really needed; it is on
@@ -2042,20 +2039,20 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dt><code>-L</code>
 
-<dd><p>instructs <code>flex</code> not to generate <code>#line</code>
-    directives. Without this option, <code>flex</code> peppers the generated
+<dd><p>instructs <code>smflex</code> not to generate <code>#line</code>
+    directives. Without this option, <code>smflex</code> peppers the generated
     scanner with #line directives so error messages in the actions will be
-    correctly located with respect to either the original <code>flex</code>
+    correctly located with respect to either the original <code>smflex</code>
     input file (if the errors are due to code in the input file), or
-    <code>lex.yy.c</code> (if the errors are <code>flex</code>'s fault --
+    <code>lex.yy.c</code> (if the errors are <code>smflex</code>'s fault --
     you should report these sorts of errors to the email address given below).
 
 <dt><code>-T</code>
 
-<dd><p>makes <code>flex</code> run in <em>trace</em> mode. It will generate a
+<dd><p>makes <code>smflex</code> run in <em>trace</em> mode. It will generate a
     lot of messages to <code>stderr</code> concerning the form of the input and
     the resultant non-deterministic and deterministic finite automata. This
-    option is mostly for use in maintaining <code>flex</code>.
+    option is mostly for use in maintaining <code>smflex</code>.
 
 <dt><code>-V</code>
 
@@ -2064,7 +2061,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dt><code>-7</code>
 
-<dd><p>instructs <code>flex</code> to generate a 7-bit scanner, i.e., one
+<dd><p>instructs <code>smflex</code> to generate a 7-bit scanner, i.e., one
     which can only recognized 7-bit characters in its input. The advantage of
     using <code>-7</code> is that the scanner's tables can be up to half the
     size of those generated using the <code>-8</code> option (see below). The
@@ -2074,33 +2071,33 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     <p>Note, however, that unless you generate your scanner using the
     <code>-Cf</code> or <code>-CF</code> table compression options, use of
     <code>-7</code> will save only a small amount of table space, and make
-    your scanner considerably less portable. <code>flex</code>'s default behavior
+    your scanner considerably less portable. <code>smflex</code>'s default behavior
     is to generate an 8-bit scanner unless you use the <code>-Cf</code> or
-    <code>-CF</code>, in which case <code>flex</code> defaults to generating
+    <code>-CF</code>, in which case <code>smflex</code> defaults to generating
     7-bit scanners unless your site was always configured to generate 8-bit
     scanners (as will often be the case with non-USA sites). You can tell
-    whether flex generated a 7-bit or an 8-bit scanner by inspecting the
+    whether smflex generated a 7-bit or an 8-bit scanner by inspecting the
     flag summary in the <code>-v</code> output as described above.
 
     <p>Note that if you use <code>-Cfe</code> or <code>-CFe</code> (those
     table compression options, but also using equivalence classes as discussed
-    see below), flex still defaults to generating an 8-bit scanner, since
+    see below), smflex still defaults to generating an 8-bit scanner, since
     usually with these compression options full 8-bit tables are not much
     more expensive than 7-bit tables.
 
 <dt><code>-8</code>
 
-<dd><p>instructs <code>flex</code> to generate an 8-bit scanner, i.e.,
+<dd><p>instructs <code>smflex</code> to generate an 8-bit scanner, i.e.,
     one which can recognize 8-bit characters. This flag is only needed
     for scanners generated using <code>-Cf</code> or <code>-CF</code>,
-    as otherwise flex defaults to generating an 8-bit scanner anyway.
+    as otherwise smflex defaults to generating an 8-bit scanner anyway.
 
-    <p>See the discussion of <code>-7</code> above for flex's default behavior
+    <p>See the discussion of <code>-7</code> above for smflex's default behavior
     and the tradeoffs between 7-bit and 8-bit scanners.
 
 <dt><code>-+</code>
 
-<dd><p>specifies that you want flex to generate a C++ scanner class. See
+<dd><p>specifies that you want smflex to generate a C++ scanner class. See
     <a href="#generating-cpp-scanners">Generating C++ Scanners</a>
     for details.
 
@@ -2109,31 +2106,31 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dd><p>controls the degree of table compression and, more generally,
     trade-offs between small scanners and fast scanners.
 
-    <p><code>-Ca</code> ("align") instructs flex to trade off larger tables
+    <p><code>-Ca</code> ("align") instructs smflex to trade off larger tables
     in the generated scanner for faster performance because the elements
     of the tables are better aligned for memory access and computation. On
     some RISC architectures, fetching and manipulating longwords is more
     efficient than with smaller-sized units such as shortwords. This option
     can double the size of the tables used by your scanner.
 
-    <p><code>-Ce</code> directs <code>flex</code> to construct <em>equivalence
+    <p><code>-Ce</code> directs <code>smflex</code> to construct <em>equivalence
     classes</em>, i.e., sets of characters which have identical lexical
     properties (for example, if the only appearance of digits in the
-    <code>flex</code> input is in the character class "[0-9]" then the
+    <code>smflex</code> input is in the character class "[0-9]" then the
     digits '0', '1', ..., '9' will all be put in the same equivalence
     class). Equivalence classes usually give dramatic reductions in the final
     table/object file sizes (typically a factor of 2-5) and are pretty cheap
     performance-wise (one array look-up per character scanned).
 
     <p><code>-Cf</code> specifies that the <em>full</em> scanner tables
-    should be generated - <code>flex</code> should not compress the tables
+    should be generated - <code>smflex</code> should not compress the tables
     by taking advantages of similar transition functions for different states.
 
     <p><code>-CF</code> specifies that the alternate fast scanner
     representation (described above under the <code>-F</code> flag) should
     be used. This option cannot be used with <code>-+</code>.
 
-    <p><code>-Cm</code> directs <code>flex</code> to construct
+    <p><code>-Cm</code> directs <code>smflex</code> to construct
     <em>meta-equivalence classes</em>, which are sets of equivalence classes
     (or characters, if equivalence classes are not being used) that are
     commonly used together. Meta-equivalence classes are often a big win
@@ -2167,7 +2164,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     be freely mixed, and are cumulative.
 
     <p>The default setting is <code>-Cem</code>, which specifies
-    that <code>flex</code> should generate equivalence classes and
+    that <code>smflex</code> should generate equivalence classes and
     meta-equivalence classes. This setting provides the highest degree of
     table compression. You can trade off faster-executing scanners at the
     cost of larger tables with the following generally being true:
@@ -2193,12 +2190,12 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dt><code>-ooutput</code>
 
-<dd><p>directs flex to write the scanner to the file <code>output</code>
+<dd><p>directs smflex to write the scanner to the file <code>output</code>
     instead of <code>lex.yy.c</code>.
 
 <dt id="prefix-option"><code>-Pprefix</code>
 
-<dd><p>changes the default <code>yy</code> prefix used by <code>flex</code>
+<dd><p>changes the default <code>yy</code> prefix used by <code>smflex</code>
     for all globally-visible variable and function names to instead be
     <code>prefix</code>. For example, <code>-Pfoo</code> changes the name
     of <code>yytext</code> to <code>footext</code>. It also changes
@@ -2230,20 +2227,20 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     you can still refer to the global variables and functions using either
     version of their name; but externally, they have the modified name.
 
-    <p>This option lets you easily link together multiple <code>flex</code>
+    <p>This option lets you easily link together multiple <code>smflex</code>
     programs into the same executable.
 
 </dl>
 
-<p><code>flex</code> also provides a mechanism for controlling
+<p><code>smflex</code> also provides a mechanism for controlling
 options within the scanner specification itself, rather than from
-the flex command-line. This is done by including <code>%option</code>
+the smflex command-line. This is done by including <code>%option</code>
 directives in the first section of the scanner specification. You can
 specify multiple options with a single <code>%option</code> directive,
-and multiple directives in the first section of your flex input file.
+and multiple directives in the first section of your smflex input file.
 
 <p><strong>Warning</strong>: Unlike most other programs, in
-<code>flex</code>, options specified within the input file take
+<code>smflex</code>, options specified within the input file take
 precedence over those specified on the command line.  The only
 exception is the output file name, where the
 command line option <code>-o</code> takes precedence over the input
@@ -2252,7 +2249,7 @@ take precedence.
 
 <p>Most options are given simply as names, optionally preceded by the
 word "no" (with no intervening whitespace) to negate their meaning. A
-number are equivalent to flex flags or their negation:
+number are equivalent to smflex flags or their negation:
 
 <pre><code>
     7bit            -7 option
@@ -2292,7 +2289,7 @@ number are equivalent to flex flags or their negation:
 
 <dt><code>always-interactive</code>
 
-<dd><p>instructs flex to generate a scanner which always considers its
+<dd><p>instructs smflex to generate a scanner which always considers its
     input "interactive". Normally, on each new input file the scanner calls
     <code>isatty()</code> in an attempt to determine whether the scanner's
     input source is interactive and thus should be read a character at a
@@ -2300,7 +2297,7 @@ number are equivalent to flex flags or their negation:
 
 <dt id="option-main"><code>main</code>
 
-<dd><p>directs flex to provide a default <code>main()</code> program for the
+<dd><p>directs smflex to provide a default <code>main()</code> program for the
     scanner.  Its definition is:
 
     <pre><code>
@@ -2315,7 +2312,7 @@ number are equivalent to flex flags or their negation:
 
 <dt><code>never-interactive</code>
 
-<dd><p>instructs flex to generate a scanner which never considers its input
+<dd><p>instructs smflex to generate a scanner which never considers its input
     "interactive" (again, no call made to <code>isatty()</code>). This is
     the opposite of <code>always-interactive</code>.
 
@@ -2335,7 +2332,7 @@ number are equivalent to flex flags or their negation:
 
 <dt><code>yylineno</code>
 
-<dd><p>directs <code>flex</code> to generate a scanner that maintains
+<dd><p>directs <code>smflex</code> to generate a scanner that maintains
     the number of the current line read from its input in the global
     variable <code>yylineno</code>. This option is implied by <code>%option
     lex-compat</code>.
@@ -2363,7 +2360,7 @@ number are equivalent to flex flags or their negation:
 
 </dl>
 
-<p><code>flex</code> scans your rule actions to determine whether you
+<p><code>smflex</code> scans your rule actions to determine whether you
 use the <code>REJECT</code> or <code>yymore()</code> features. The
 <code>reject</code> and <code>yymore</code> options are available
 to override its decision as to whether you use the options, either by
@@ -2390,9 +2387,9 @@ is indeed used, or unsetting them to indicate it actually is not used
 </code></pre>
 
 <p>only applies when generating a C++ scanner ( <code>-+</code>
-option). It informs <code>flex</code> that you have derived
+option). It informs <code>smflex</code> that you have derived
 <code>foo</code> as a subclass of <code>yyFlexLexer</code>, so
-<code>flex</code> will place your actions in the member function
+<code>smflex</code> will place your actions in the member function
 <code>foo::yylex()</code> instead of <code>yyFlexLexer::yylex()</code>. It
 also generates a <code>yyFlexLexer::yylex()</code>
 member function that emits a run-time error (by invoking
@@ -2415,7 +2412,7 @@ unless you use <code>%option stack</code>).
 
 <h1 id="performance-considerations">PERFORMANCE CONSIDERATIONS</h1>
 
-<p>The main design goal of <code>flex</code> is that it generate
+<p>The main design goal of <code>smflex</code> is that it generate
 high-performance scanners. It has been optimized for dealing well with
 large sets of rules. Aside from the effects on scanner speed of the
 table compression <code>-C</code> options outlined above, there are a
@@ -2533,7 +2530,7 @@ using a "catch-all" rule:
 it's not uncommon to get hundreds of messages. If one can decipher
 them, though, it often only takes a dozen or so rules to eliminate the
 backing up (though it's easy to make a mistake and have an error rule
-accidentally match a valid token. A possible future <code>flex</code>
+accidentally match a valid token. A possible future <code>smflex</code>
 feature will be to automatically add rules to eliminate backing up).
 
 <p>It's important to keep in mind that you gain the benefits of
@@ -2665,7 +2662,7 @@ recognition of newlines with that of the other tokens:
 <p>One has to be careful here, as we have now reintroduced backing up into
 the scanner. In particular, while <em>we</em> know that there will never
 be any characters in the input stream other than letters or newlines,
-<code>flex</code> can't figure this out, and it will plan for possibly
+<code>smflex</code> can't figure this out, and it will plan for possibly
 needing to back up when it has scanned a token like "auto" and then the
 next character is something other than a newline or a letter. Previously
 it would then just match the "auto" rule and be done, but now it has no
@@ -2690,9 +2687,9 @@ which doesn't include a newline:
 </code></pre>
 
 <p>Compiled with <code>-Cf</code>, this is about as fast as one can get
-a <code>flex</code> scanner to go for this particular problem.
+a <code>smflex</code> scanner to go for this particular problem.
 
-<p>A final note: <code>flex</code> is slow when matching NUL's,
+<p>A final note: <code>smflex</code> is slow when matching NUL's,
 particularly when a token contains multiple NUL's. It's best to write
 rules which match <em>short</em> amounts of text if it's anticipated
 that the text will often include NUL's.
@@ -2710,9 +2707,9 @@ about 8K characters per token.
 <!-- ======================================================= -->
 <h1 id="generating-cpp-scanners">GENERATING C++ SCANNERS</h1>
 
-<p><code>flex</code> provides two different ways to generate scanners
+<p><code>smflex</code> provides two different ways to generate scanners
 for use with C++. The first way is to simply compile a C-interface scanner generated
-by <code>flex</code> using a C++ compiler instead of a C compiler. You
+by <code>smflex</code> using a C++ compiler instead of a C compiler. You
 should not encounter any compilations errors (please report any you
 find). You can
 then use C++ code in your rule actions instead of C code.  However,
@@ -2723,10 +2720,10 @@ the default input and output objects, <code>yyin</code> and
 <code>yyout</code>, remain <code>FILE *</code> variables and not C++
 <code>iostream</code>s.
 
-<p>Alternatively, you can use <code>flex</code> to generate a
+<p>Alternatively, you can use <code>smflex</code> to generate a
 C++-interface scanner class by using the <code>-+</code> option (or,
 equivalently, <code>%option c++</code>).  When using this option,
-<code>flex</code> generates <em>two</em> output files, by default called
+<code>smflex</code> generates <em>two</em> output files, by default called
 <code>lex.yy.h</code> and <code>lex.yy.cc</code>.  You can use
 <code>-o</code> or <code>%option outfile</code> to change the name of
 the <code>.cc</code> file; the <code>.h</code> file name then is computed
@@ -2762,7 +2759,7 @@ scanner over input:
 
 <dt><code>int yylex()</code>
 
-<dd><p>performs the same role as <code>yylex()</code> does for ordinary flex
+<dd><p>performs the same role as <code>yylex()</code> does for ordinary smflex
     scanners: it scans the input stream, consuming tokens, until a rule's
     action returns a value.
 
@@ -2771,7 +2768,7 @@ scanner over input:
 <dd><p>reassigns <code>yyin</code> to <code>new_in</code> (if not NULL)
     and <code>yyout</code> to <code>new_out</code> (ditto), deleting the
     previous input buffer if <code>yyin</code> is reassigned.  However,
-    while <code>flex</code> manages allocation and deallocation its own
+    while <code>smflex</code> manages allocation and deallocation its own
     buffer objects, it does <em>not</em> deallocate any stream objects,
     so you have to arrange for that yourself.
 
@@ -2879,7 +2876,7 @@ to C++ scanner classes; you must use <code>%pointer</code> (the default).
 <p>Here is an example of a simple C++ scanner:
 
 <pre><code><!-- BEGIN example: cpp-manual-example.lexpp -->
-        // An example of using the flex C++ scanner class.
+        // An example of using the smflex C++ scanner class.
 
     %option c++
     %option prefix="Example"
@@ -2961,7 +2958,7 @@ things later.
 a number of changes that introduce incompatibilities with
 <code>flex-2.5.4</code>, listed below.  Although compatibility with
 <code>flex-2.5.4</code> is not among my goals, I want to enable users
-to transition to my <code>flex</code>, and this list can help that.
+to transition to my <code>smflex</code>, and this list can help that.
 
 <ul>
 
@@ -3097,7 +3094,7 @@ to transition to my <code>flex</code>, and this list can help that.
     that output be written to stdout instead of a file.  These options
     are no longer accepted.
 
-    <p>Rationale: I want to have <code>flex</code> write <em>two</em>
+    <p>Rationale: I want to have <code>smflex</code> write <em>two</em>
     files, a C or C++ implementation file and an accompanying header
     file.  It would then be weird to continue allowing one of those
     files to be written to stdout; I prefer the uniformity of both going
@@ -3128,7 +3125,7 @@ to transition to my <code>flex</code>, and this list can help that.
 POSIX is not among my goals, so I have made no attempt at that, nor
 to catalogue the ways in which it is incompatible.
 Therefore, from a user's perspective,
-you should regard my <code>flex</code> as
+you should regard my <code>smflex</code> as
 <strong>100% incompatible</strong> with <code>lex</code> and POSIX.
 That's perhaps too extreme a statement now, but will only become more
 true over time.
@@ -3168,12 +3165,12 @@ was given, presumably this is not intended.
 
 <dd>These errors can occur
 at compile time. They indicate that the scanner uses <code>REJECT</code>
-or <code>yymore()</code> but that <code>flex</code> failed to notice the
-fact, meaning that <code>flex</code> scanned the first two sections
+or <code>yymore()</code> but that <code>smflex</code> failed to notice the
+fact, meaning that <code>smflex</code> scanned the first two sections
 looking for occurrences of these actions and failed to find any,
 but somehow you snuck some in (via a #include file, for example). Use
 <code>%option reject</code> or <code>%option yymore</code> to indicate
-to flex that you really do use these features.
+to smflex that you really do use these features.
 
 <dt><p><code>flex scanner jammed</code>
 
@@ -3187,7 +3184,7 @@ rules. This error can also occur due to internal problems.
 <code>%array</code> and one of its rules matched a string longer than
 the <code>YYLMAX</code> constant (8K bytes by default). You can increase
 the value by #define'ing <code>YYLMAX</code> in the definitions section
-of your <code>flex</code> input.
+of your <code>smflex</code> input.
 
 <dt><p><code>scanner requires -8 flag to use the character 'x'</code>
 
@@ -3267,7 +3264,7 @@ all the text matched so far by the current (generally huge) token.
 
 <p>Due to both buffering of input and read-ahead, you cannot
 intermix calls to &lt;stdio.h&gt; routines, such as, for example,
-<code>getchar()</code>, with <code>flex</code> rules and expect it to
+<code>getchar()</code>, with <code>smflex</code> rules and expect it to
 work. Call <code>input()</code> instead.
 
 <p>The total table entries listed by the <code>-v</code> flag excludes
@@ -3279,7 +3276,7 @@ the number of states if it does.
 <p><code>REJECT</code> cannot be used with the <code>-f</code> or
 <code>-F</code> options.
 
-<p>The <code>flex</code> internal algorithms need documentation.
+<p>The <code>smflex</code> internal algorithms need documentation.
 
 <h1 id="see-also">SEE ALSO</h1>
 
@@ -3292,7 +3289,7 @@ O'Reilly and Associates. Be sure to get the 2nd edition.
 
 <p>Alfred Aho, Ravi Sethi and Jeffrey Ullman, <em>Compilers: Principles,
 Techniques and Tools</em>, Addison-Wesley (1986). Describes the
-pattern-matching techniques used by <code>flex</code> (deterministic
+pattern-matching techniques used by <code>smflex</code> (deterministic
 finite automata).
 
 <h1 id="author">AUTHOR</h1>

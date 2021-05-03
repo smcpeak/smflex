@@ -1,4 +1,4 @@
-# flex/Makefile
+# smflex/Makefile
 
 # NOTE: This Makefile requires GNU make.
 
@@ -13,7 +13,7 @@ endif
 include config.mk
 
 # Name of the scanner generator executable.
-FLEX = flex
+SMFLEX = smflex
 
 # Shell to use when running recipes.
 SHELL = /bin/sh
@@ -28,7 +28,7 @@ WARNINGS = -Wall
 GENDEPS = -MMD
 
 # Directory in which to put .o and .d files.  Note, however, that
-# $(FLEX) still gets put into the current directory.
+# $(SMFLEX) still gets put into the current directory.
 OBJ = obj
 
 # Now optionally pull in local customizations via personal.mk.  Those
@@ -66,36 +66,36 @@ SOURCES += sym.c
 SOURCES += tblcmp.c
 SOURCES += yylex.c
 
-# Object files to compile and link into 'flex'.
+# Object files to compile and link into 'smflex'.
 OBJECTS = $(patsubst %.c,$(OBJ)/%.o,$(SOURCES))
 
 # Name of the distribution, meaning what goes before ".tar.gz" in the
 # distribution tarball file name, and also the name of the directory
 # that tarball expands to.  The value here is not normally used.
 # Instead, the 'dist' target sets it when invoking 'dist2'.
-DIST_NAME = flex
+DIST_NAME = smflex
 
-# How to invoke the 'flex' built here.
-FLEX_EXEC = ./$(FLEX)
+# How to invoke the 'smflex' built here.
+SMFLEX_EXEC = ./$(SMFLEX)
 
-# Flags to pass to $(FLEX_EXEC).
+# Flags to pass to $(SMFLEX_EXEC).
 PERF_REPORT = -p
-FLEX_FLAGS = $(PERF_REPORT)
+SMFLEX_FLAGS = $(PERF_REPORT)
 
 # Default compression to use when generating input-scan.lex.c.  This is overridden
 # by the 'bigcheck' target.  Empty means none.
 COMPRESSION =
 
 
-# Link the final flex executable.
-all: $(FLEX)
-$(FLEX): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $(FLEX) $(LDFLAGS) $(OBJECTS) $(LIBS)
+# Link the final smflex executable.
+all: $(SMFLEX)
+$(SMFLEX): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $(SMFLEX) $(LDFLAGS) $(OBJECTS) $(LIBS)
 
 
 # Main set of automated tests.
 test: check
-check: $(FLEX)
+check: $(SMFLEX)
 	@#
 	@# Make sure I do not have "scan.tmp" in input-scan.lex.c.
 	@#
@@ -122,10 +122,10 @@ check: $(FLEX)
 	@#
 	$(MAKE) -C test CC=$(CC)
 	@#
-	@# Check to see if the current flex produces the same output
+	@# Check to see if the current smflex produces the same output
 	@# as it did before.
 	@#
-	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) -oscan.tmp input-scan.lex
+	$(SMFLEX_EXEC) $(SMFLEX_FLAGS) $(COMPRESSION) -oscan.tmp input-scan.lex
 	@#
 	@# Fix the file names in #line directives so they match.
 	@#
@@ -133,7 +133,7 @@ check: $(FLEX)
 	rm scan.tmp
 	@#
 	@# This comparison does not ignore whitespace since the
-	@# default is for flex to always use LF line endings, even
+	@# default is for smflex to always use LF line endings, even
 	@# on Windows.
 	@#
 	diff input-scan.lex.c scan.actual
@@ -143,21 +143,21 @@ check: $(FLEX)
 # One step of 'bigcheck'.  COMPRESSION should be set.
 #
 #   1. Regenerate input-scan.lex.c with that compression mode.
-#   2. Recompile flex with the new input-scan.lex.c.
-#   3. Run the new flex to make input-scan.lex.c again, with the same compression
+#   2. Recompile smflex with the new input-scan.lex.c.
+#   3. Run the new smflex to make input-scan.lex.c again, with the same compression
 #      mode.
 #   4. Check that the second output agrees with the first.
 #
 bigcheck1:
 	rm -f input-scan.lex.c
 	$(MAKE) input-scan.lex.c
-	$(MAKE) $(FLEX)
+	$(MAKE) $(SMFLEX)
 	$(MAKE) check
 
 # Run 'bigcheck1' with various compression modes.
 #
-# Thus, we are checking at each stage that the existing flex (with
-# whatever previous compression mode was active) and the new flex have
+# Thus, we are checking at each stage that the existing smflex (with
+# whatever previous compression mode was active) and the new smflex have
 # the same output.
 #
 bigcheck:
@@ -172,18 +172,18 @@ bigcheck:
 	@echo "All checks successful"
 
 # Install to the chosen --prefix.
-install: $(FLEX) installdirs
-	$(INSTALL_PROGRAM) $(FLEX) $(bindir)/$(FLEX)
+install: $(SMFLEX) installdirs
+	$(INSTALL_PROGRAM) $(SMFLEX) $(bindir)/$(SMFLEX)
 
 installdirs:
 	$(SHELL) mkinstalldirs $(bindir)
 
 uninstall:
-	rm -f $(bindir)/$(FLEX)
+	rm -f $(bindir)/$(SMFLEX)
 
 # Remove compilation output, but keep 'configure' output.
 clean:
-	rm -f $(FLEX) config.log config.cache
+	rm -f $(SMFLEX) config.log config.cache
 	if test -d $(OBJ); then rm -r $(OBJ); fi
 	$(MAKE) -C test clean
 
@@ -229,8 +229,8 @@ DISTFILES += version.h
 DISTFILES += yylex.h
 
 # Create a source tarball for distribution.
-dist: $(FLEX) $(DISTFILES) input-parse.y.c input-parse.y.h
-	$(MAKE) DIST_NAME=flex-`sed <version.h 's/[^"]*"//' | sed 's/"//'` dist2
+dist: $(SMFLEX) $(DISTFILES) input-parse.y.c input-parse.y.h
+	$(MAKE) DIST_NAME=smflex-`sed <version.h 's/[^"]*"//' | sed 's/"//'` dist2
 
 # Do the main work of making the tarball, given $(DIST_NAME).  Also
 # optionally run tests and remove it afterward.
@@ -277,7 +277,7 @@ config.mk: config.mk.in config.status
 
 # ------------------------ Maintainer rules -------------------------
 # The rules in this section are meant for use when making changes to
-# flex itself.  They are not normally enabled for these reasons:
+# smflex itself.  They are not normally enabled for these reasons:
 #
 # 1. The build from distribution source should not require any tools
 #    beyond a C compiler, but these rules rely on having other tools
@@ -288,7 +288,7 @@ config.mk: config.mk.in config.status
 #    are semi-random.
 #
 # 3. The rule for building input-scan.lex.c is effectively circular,
-#    with the dependency going through $(FLEX).  I do not declare
+#    with the dependency going through $(SMFLEX).  I do not declare
 #    that dependency so $(MAKE) remains happy, but it is there, and
 #    some care is required to deal with that.
 #
@@ -297,7 +297,7 @@ config.mk: config.mk.in config.status
 ifeq ($(MAINTAINER_MODE),1)
 
 
-# Bison-generated parser for flex's input language.
+# Bison-generated parser for smflex's input language.
 input-parse.y.c: input-parse.y
 	$(BISON) --defines=input-parse.y.h --output=input-parse.y.c \
 	  input-parse.y
@@ -307,11 +307,11 @@ input-parse.y.c: input-parse.y
 # makes 'input-parse.y.h'.
 input-parse.y.h: input-parse.y.c
 
-# 'input-scan.lex.c' is the output of running flex on 'input-scan.lex'.
-# It is used by flex to read it input file.  Hence, flex is partially
+# 'input-scan.lex.c' is the output of running smflex on 'input-scan.lex'.
+# It is used by smflex to read it input file.  Hence, smflex is partially
 # written in its own language.
 input-scan.lex.c: input-scan.lex
-	$(FLEX_EXEC) $(FLEX_FLAGS) $(COMPRESSION) input-scan.lex
+	$(SMFLEX_EXEC) $(SMFLEX_FLAGS) $(COMPRESSION) input-scan.lex
 
 # 'generated-scanner.skl.c' contains the contents of 'generated-scanner.skl' as a C string.
 generated-scanner.skl.c: generated-scanner.skl encode.sh

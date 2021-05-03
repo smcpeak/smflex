@@ -16,23 +16,23 @@ CXX := g++
 # C compilation options.
 CFLAGS := -g -Wall
 
-# Flex produces scanners that define 'yyunput' and 'input' even when
+# smflex produces scanners that define 'yyunput' and 'input' even when
 # they are not used.
 CFLAGS += -Wno-unused-function
 
 # C++ compilation options.
 CXXFLAGS := $(CFLAGS)
 
-# Run flex on one file.
+# Run smflex on one file.
 .PRECIOUS: out/%.yy.c
 out/%.yy.c: %.lex
 	@mkdir -p out
-	../flex -o$@ $<
+	../smflex -o$@ $<
 
-# Run flex on outfile.lex, avoiding use of -o option.
+# Run smflex on outfile.lex, avoiding use of -o option.
 out/outfile-specified.yy.c: outfile.lex
 	@mkdir -p out
-	../flex $<
+	../smflex $<
 
 # Compile a C file in out/.
 .PRECIOUS: out/%.o
@@ -49,11 +49,11 @@ out/%.o: %.c
 	@mkdir -p out
 	$(CC) -o$@ -c $(CFLAGS) $<
 
-# Run flex on one file that generates a C++-interface scanner.
+# Run smflex on one file that generates a C++-interface scanner.
 .PRECIOUS: out/%.yy.cc
 out/%.yy.cc: %.lexpp
 	@mkdir -p out
-	../flex -o$@ $<
+	../smflex -o$@ $<
 
 # Compile C++ file in out/.
 .PRECIOUS: out/%.oo
