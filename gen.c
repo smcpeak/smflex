@@ -34,6 +34,7 @@
 #include "misc.h"                      /* outc, outn, etc. */
 #include "tblcmp.h"                    /* expand_nxt_chk */
 
+#include <errno.h>                     /* errno */
 #include <stdlib.h>                    /* exit */
 #include <string.h>                    /* strerror, strcpy, strrchr */
 
