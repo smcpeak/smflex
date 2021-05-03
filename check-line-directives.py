@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# See COPYING for license terms.
 
 """check-line-directives.py
 
