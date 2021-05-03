@@ -6,6 +6,7 @@
 
 %%
 username           printf("USERNAME");
+exit               printf("exiting...\n"); exit(0);
 
 %%
 /* EOF */
