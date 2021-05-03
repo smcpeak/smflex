@@ -784,7 +784,6 @@ void skelout()
 
     else if (do_copy) {
       emit_with_class_name_substitution(scanner_c_file, buf);
-      ++out_linenum;
     }
   }
 }
