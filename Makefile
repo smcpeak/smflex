@@ -228,9 +228,13 @@ DISTFILES += test
 DISTFILES += version.h
 DISTFILES += yylex.h
 
+# Extract the version number from version.h.
+VERSION_NUMBER = $(shell grep '#define SMFLEX_VERSION' version.h | \
+                         sed -e 's/[^"]*"//' -e 's/"//')
+
 # Create a source tarball for distribution.
 dist: $(SMFLEX) $(DISTFILES) input-parse.y.c input-parse.y.h
-	$(MAKE) DIST_NAME=smflex-`sed <version.h 's/[^"]*"//' | sed 's/"//'` dist2
+	$(MAKE) DIST_NAME=smflex-$(VERSION_NUMBER) dist2
 
 # Do the main work of making the tarball, given $(DIST_NAME).  Also
 # optionally run tests and remove it afterward.
