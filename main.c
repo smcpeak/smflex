@@ -40,6 +40,7 @@ char copyright[] =
 #include "input-parse.h"               /* warn, yyparse, etc. */
 #include "input-scan.h"                /* set_input_file */
 #include "misc.h"                      /* flexerror, outn, etc. */
+#include "sym.h"                       /* scinstal */
 #include "version.h"                   /* SMFLEX_VERSION */
 
 #include <stdio.h>                     /* remove */
@@ -813,7 +814,13 @@ void readin()
   static char yy_nostdinit[] =
     "FILE *yyin = (FILE *) 0, *yyout = (FILE *) 0;";
 
-  line_directive_out((FILE *) 0, 1);
+  /* Create default DFA start condition. */
+  scinstal("INITIAL", false);
+
+  /* This prepares the first #line directive referring to the source
+   * file to be emitted.  But because the output file is NULL, the
+   * directive is put in 'action_array' for the moment. */
+  line_directive_out((FILE *)NULL, 1);
 
   if (yyparse()) {
     pinpoint_message(_("fatal parse error"));

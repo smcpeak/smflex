@@ -1216,8 +1216,8 @@ static char *yy_last_accepting_cpos;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "input-scan.lex"
 #define INITIAL 0
+#line 1 "input-scan.lex"
 /* input-scan.lex - scanner for smflex input */
 #line 4 "input-scan.lex"
 /*-

@@ -80,7 +80,7 @@ int previous_continued_action;  /* whether the previous rule's action was '|' */
 %}
 
 %%
-goal            :  initlex sect1 sect1end sect2 initforrule
+goal            :  sect1 sect1end sect2 initforrule
                         { /* add default rule */
                           int def_rule;
 
@@ -105,13 +105,6 @@ goal            :  initlex sect1 sect1end sect2 initforrule
                             add_action("ECHO");
 
                           add_action(";\n  YY_BREAK\n");
-                        }
-                ;
-
-initlex         :
-                        { /* initialize for processing rules */
-                          /* Create default DFA start condition. */
-                          scinstal("INITIAL", false);
                         }
                 ;
 
