@@ -167,7 +167,7 @@ for inputLineNumber, inputLine in enumerate(inputFileLines, start=1):
           n += 1
 
         # Found one?
-        if n < len(inputFileLines):
+        if n <= len(inputFileLines):
           inputFileLine = chomp(inputFileLines[n - 1])
 
           # If the found line is itself a #line directive, then ignore
