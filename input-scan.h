@@ -7,7 +7,7 @@
 
 #include <stddef.h>                    /* size_t */
 
-/* The Flex-generated scanner for flex.  Usually, this is called
+/* The smflex-generated scanner for smflex.  Usually, this is called
  * 'yylex', but input-scan.lex uses YY_DECL to change that.  Then,
  * the file yylex.c defines 'yylex()' as a wrapper around
  * 'flexscan()' for debug purposes. */

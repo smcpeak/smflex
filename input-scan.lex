@@ -1,4 +1,4 @@
-/* input-scan.lex - scanner for flex input */
+/* input-scan.lex - scanner for smflex input */
 
 %{
 /*-

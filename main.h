@@ -77,7 +77,7 @@ extern int yymore_used, reject, real_reject, continued_action, in_rule;
 extern int yymore_really_used, reject_really_used;
 
 
-/* Variables used in the flex input routines:
+/* Variables used in the smflex input routines:
  * datapos - characters on current output line
  * dataline - number of contiguous lines of data in current data
  *      statement.  Used to generate readable -f output

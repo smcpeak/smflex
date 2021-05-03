@@ -1390,7 +1390,7 @@ yyreduce:
                             scset[i] = mkbranch(scset[i], def_rule);
 
                           if (spprdflt)
-                            add_action("YY_FATAL_ERROR( \"flex scanner jammed\" )");
+                            add_action("YY_FATAL_ERROR( \"smflex scanner jammed\" )");
                           else
                             add_action("ECHO");
 

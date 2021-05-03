@@ -46,7 +46,7 @@ dnl# useless wall of text that has nothing to do with my software.
 m4_divert_push([HELP_BEGIN])dnl
 if test "$ac_init_help" = "long"; then
   cat <<_ACEOF
-This is the configure script for flex.
+This is the configure script for smflex.
 
 Usage:
 

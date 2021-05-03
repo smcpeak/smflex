@@ -1,4 +1,4 @@
-/* yylex - scanner front-end for flex */
+/* yylex - scanner front-end for smflex */
 
 /*-
  * Copyright (c) 1990 The Regents of the University of California.

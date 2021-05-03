@@ -1,4 +1,4 @@
-/* flex - tool to generate fast lexical analyzers */
+/* smflex - tool to generate fast lexical analyzers */
 
 /*-
  * Copyright (c) 1990 The Regents of the University of California.
@@ -97,7 +97,7 @@ int num_input_files;
 /* Make sure program_name is initialized so we don't crash if writing
  * out an error message before getting the program name from argv[0].
  */
-char *program_name = "flex";
+char *program_name = "smflex";
 
 char *action_array;
 int action_size;
@@ -346,7 +346,7 @@ void check_options()
 }
 
 
-/* flexend - terminate flex
+/* flexend - terminate smflex
  *
  * note
  *    This routine does not return.
@@ -535,7 +535,7 @@ void flexend(int exit_status)
 }
 
 
-/* flexinit - initialize flex */
+/* flexinit - initialize smflex */
 void flexinit(int argc, char **argv)
 {
   int i, sawcmpflag;

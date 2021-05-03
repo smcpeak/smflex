@@ -1,4 +1,4 @@
-/* flexdef - definitions file for flex */
+/* flexdef - definitions file for smflex */
 
 /*-
  * Copyright (c) 1990 The Regents of the University of California.
@@ -30,7 +30,7 @@
 #define FLEXDEF_H
 
 
-/* As an aid for the internationalization patch to flex, which
+/* As an aid for the internationalization patch to smflex, which
  * is maintained outside this distribution for copyright reasons.
  */
 #define _(String) (String)

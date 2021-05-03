@@ -1,4 +1,4 @@
-/* misc - miscellaneous flex routines */
+/* misc - miscellaneous smflex routines */
 
 /*-
  * Copyright (c) 1990 The Regents of the University of California.
@@ -791,7 +791,7 @@ void transition_struct_out(int element_v, int element_n)
 }
 
 
-/* The following is only needed when building flex's parser using certain
+/* The following is only needed when building smflex's parser using certain
  * broken versions of bison.
  */
 void *yy_flex_xmalloc(int size)

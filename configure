@@ -1189,7 +1189,7 @@ for ac_var in $ac_precious_vars; do
 done
 if test "$ac_init_help" = "long"; then
   cat <<_ACEOF
-This is the configure script for flex.
+This is the configure script for smflex.
 
 Usage:
 

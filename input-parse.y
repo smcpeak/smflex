@@ -1,4 +1,4 @@
-/* input-parse.y - parser for flex input */
+/* input-parse.y - parser for smflex input */
 
 %token CHAR NUMBER SECTEND SCDECL XSCDECL NAME PREVCCL EOF_OP
 %token OPTION_OP OPT_OUTFILE OPT_PREFIX OPT_YYCLASS
@@ -100,7 +100,7 @@ goal            :  initlex sect1 sect1end sect2 initforrule
                             scset[i] = mkbranch(scset[i], def_rule);
 
                           if (spprdflt)
-                            add_action("YY_FATAL_ERROR( \"flex scanner jammed\" )");
+                            add_action("YY_FATAL_ERROR( \"smflex scanner jammed\" )");
                           else
                             add_action("ECHO");
 
