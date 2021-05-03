@@ -3117,6 +3117,24 @@ to transition to my <code>smflex</code>, and this list can help that.
 
 </ul>
 
+<p>
+I have also found and fixed a few pre-existing bugs:
+
+<ul>
+
+<li><p>
+    <code>flex-2.5.4</code> did not emit <code>#line</code> directives
+    very accurately.  In particular, the user's action code is
+    interspersed with <code>flex</code> bookkeeping, but the latter
+    had no <code>#line</code> directives, misattributing it as if it
+    came from the user.  Now, all lines are properly attributed.  This
+    property is automatically checked for all of my tests using
+    <a href="check-line-directives.py">check-line-directives.py</a>.
+    The commits with the fixes are <code>1fb0feabe6</code>,
+    <code>b0de9b4f2b</code>, and <code>be4e9bfcab</code>.
+
+</ul>
+
 
 <h1 id="incompatibilities-with-lex-and-posix">INCOMPATIBILITIES WITH LEX AND POSIX</h1>
 
