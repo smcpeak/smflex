@@ -122,7 +122,7 @@ directivesWithDifferentFile = 0
 
 
 # Pattern for recognizing #line directives.
-linePattern = re.compile(r'^\s*#line\s+([0-9]+)\s+"(.*)"\s*$')
+lineDirectivePattern = re.compile(r'^\s*#line\s+([0-9]+)\s+"(.*)"\s*$')
 
 # Pattern for recognizing blank lines.
 blankPattern = re.compile(r'^\s*$')
@@ -132,7 +132,7 @@ blankPattern = re.compile(r'^\s*$')
 for inputLineNumber, inputLine in enumerate(inputFileLines, start=1):
   inputLine = chomp(inputLine)
 
-  m = linePattern.match(inputLine)
+  m = lineDirectivePattern.match(inputLine)
   if m:
     namedLineNumber = int(m.group(1))
     namedFile = m.group(2)
@@ -168,6 +168,11 @@ for inputLineNumber, inputLine in enumerate(inputFileLines, start=1):
         # Found one?
         if n < len(inputFileLines):
           inputFileLine = chomp(inputFileLines[n - 1])
+
+          # If the found line is itself a #line directive, then ignore
+          # the previous one.
+          if lineDirectivePattern.match(inputFileLine):
+            continue
 
           # Get the corresponding source file line number.
           sourceLineNumber = namedLineNumber + (n-1 - inputLineNumber)
