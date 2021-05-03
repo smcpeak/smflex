@@ -205,10 +205,13 @@ void finish_rule(int mach, int variable_trail_rule,
 
   /* If this is a continued action, then the line-number has already
    * been updated, giving us the wrong number.
-   */
-  if (continued_action)
+   *
+   * A "continued action" is where the action is '|'. */
+  if (continued_action) {
     --rule_linenum[num_rules];
+  }
 
+  /* This is the beginning of the code to emit to implement an action. */
   sprintf(action_text, "case %d:\n", num_rules);
   add_action(action_text);
 
@@ -256,10 +259,18 @@ void finish_rule(int mach, int variable_trail_rule,
    * to do any user action.  But don't do it for continued actions,
    * as that'll result in multiple YY_RULE_SETUP's.
    */
-  if (!continued_action)
+  if (!continued_action) {
     add_action("YY_RULE_SETUP\n");
 
-  line_directive_out((FILE *) 0, 1);
+    /* We finish the action code with a line directive pointing at the
+     * corresponding location in the source file.  This will be followed
+     * by the text of the action from that file, which input-scan.lex
+     * accumulates on its own, without the help of input-parse.y.
+     *
+     * This is suppressed for continued actions because there is no
+     * actual text from the source file here. */
+    line_directive_out((FILE *)NULL, 1 /*do_infile*/);
+  }
 }
 
 
