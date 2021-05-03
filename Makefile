@@ -187,6 +187,7 @@ DISTFILES += Makefile
 DISTFILES += NEWS
 DISTFILES += README.md
 DISTFILES += ccl.h
+DISTFILES += check-line-directives.py
 DISTFILES += config.mk.in
 DISTFILES += configure
 DISTFILES += configure.in
