@@ -28,7 +28,7 @@
 
 #include "yylex.h"                     /* this module */
 
-#include "flexchar.h"                  /* isascii */
+#include "flexchar.h"                  /* smflex_isascii */
 #include "input-parse.h"               /* synerr, yylval */
 #include "input-parse.y.h"             /* bison-generated token codes */
 #include "input-scan.h"                /* flexscan */
@@ -151,7 +151,7 @@ int yylex()
             break;
 
           default:
-            if (!isascii(yylval) || !isprint(yylval))
+            if (!smflex_isascii(yylval) || !isprint(yylval))
               fprintf(stderr, "\\%.3o", (unsigned int) yylval);
             else
               (void) putc(yylval, stderr);

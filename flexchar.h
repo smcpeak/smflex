@@ -9,8 +9,8 @@
 #define Char unsigned char
 
 /* This is a POSIX function, not standard C. */
-#ifndef isascii
-#  define isascii(c) ((c) <= 0177)
+#ifndef smflex_isascii
+#  define smflex_isascii(c) ((c) <= 0177)
 #endif
 
 #endif /* FLEXCHAR_H */

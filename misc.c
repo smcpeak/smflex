@@ -28,7 +28,7 @@
 
 #include "misc.h"                      /* this module */
 
-#include "flexchar.h"                  /* isascii */
+#include "flexchar.h"                  /* smflex_isascii */
 #include "gen.h"                       /* emit_with_class_name_substitution */
 #include "input-parse.h"               /* format_pinpoint_message */
 #include "input-scan.h"                /* flex_alloc, flex_realloc */
@@ -117,7 +117,7 @@ void *allocate_array(int size, size_t element_size)
 int all_lower(char *str)
 {
   while (*str) {
-    if (!isascii((Char) * str) || !islower(*str))
+    if (!smflex_isascii((Char) * str) || !islower(*str))
       return 0;
     ++str;
   }
@@ -130,7 +130,7 @@ int all_lower(char *str)
 int all_upper(char *str)
 {
   while (*str) {
-    if (!isascii((Char) * str) || !isupper(*str))
+    if (!smflex_isascii((Char) * str) || !isupper(*str))
       return 0;
     ++str;
   }
@@ -187,7 +187,7 @@ void check_char(int c)
 /* clower - replace upper-case letter to lower-case */
 Char clower(int c)
 {
-  return (Char) ((isascii(c) && isupper(c)) ? tolower(c) : c);
+  return (Char) ((smflex_isascii(c) && isupper(c)) ? tolower(c) : c);
 }
 
 
@@ -530,7 +530,7 @@ Char myesc(Char array[])
       {                         /* \<octal> */
         int sptr = 1;
 
-        while (isascii(array[sptr]) && isdigit(array[sptr]))
+        while (smflex_isascii(array[sptr]) && isdigit(array[sptr]))
           /* Don't increment inside loop control
            * because if isdigit() is a macro it might
            * expand into multiple increments ...
@@ -551,7 +551,7 @@ Char myesc(Char array[])
       {                         /* \x<hex> */
         int sptr = 2;
 
-        while (isascii(array[sptr]) && isxdigit((char) array[sptr]))
+        while (smflex_isascii(array[sptr]) && isxdigit((char) array[sptr]))
           /* Don't increment inside loop control
            * because if isdigit() is a macro it might
            * expand into multiple increments ...

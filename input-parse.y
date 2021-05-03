@@ -38,7 +38,7 @@
 
 #include "ccl.h"                       /* cclinit, cclnegate, ccladd */
 #include "ecs.h"                       /* mkeccl */
-#include "flexchar.h"                  /* isascii */
+#include "flexchar.h"                  /* smflex_isascii */
 #include "main.h"                      /* check_options */
 #include "misc.h"                      /* add_action, copy_string, etc. */
 #include "nfa.h"                       /* mkstate, mkbranch, etc. */
@@ -62,7 +62,7 @@ int previous_continued_action;  /* whether the previous rule's action was '|' */
   { \
   int c; \
   for ( c = 0; c < csize; ++c ) \
-    if ( isascii(c) && func(c) ) \
+    if ( smflex_isascii(c) && func(c) ) \
       ccladd( currccl, c ); \
   }
 
