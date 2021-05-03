@@ -37,6 +37,11 @@ import textwrap                        # dedent
 programName = sys.argv[0]
 
 
+# Number of errors and warnings encountered.
+numErrors = 0
+numWarnings = 0
+
+
 def die(msg):
   """Print 'msg' and exit with code 2.
 
@@ -44,6 +49,28 @@ def die(msg):
 
   print(textwrap.dedent(msg), file=sys.stderr)
   sys.exit(2)
+
+
+def complain(msg):
+  """Print 'msg' as an error, but keep going."""
+
+  print("----------------------")
+  print(textwrap.dedent(msg))
+  print("")
+
+  global numErrors
+  numErrors += 1
+
+
+def warn(msg):
+  """Print 'msg' as a warning."""
+
+  print("----------------------")
+  print(textwrap.dedent(msg));
+  print("")
+
+  global numWarnings
+  numWarnings += 1
 
 
 def chomp(x):
@@ -115,7 +142,7 @@ for inputLineNumber, inputLine in enumerate(inputFileLines, start=1):
 
       # Check that the line number is right.
       if namedLineNumber != inputLineNumber+1:
-        die(f"""\
+        complain(f"""\
           Line {inputLineNumber} of {inputFileName} is:
 
             {inputLine}
@@ -145,7 +172,7 @@ for inputLineNumber, inputLine in enumerate(inputFileLines, start=1):
           # Get the corresponding source file line number.
           sourceLineNumber = namedLineNumber + (n-1 - inputLineNumber)
           if sourceLineNumber > len(sourceFileLines):
-            die(f"""\
+            complain(f"""\
               Line {inputLineNumber} of {inputFileName} is:
 
                 {inputLine}
@@ -163,7 +190,7 @@ for inputLineNumber, inputLine in enumerate(inputFileLines, start=1):
           # Check that line 'n' in the input file is a substring of
           # 'sourceLine'.
           if inputFileLine not in sourceLine:
-            die(f"""\
+            complain(f"""\
               Line {inputLineNumber} of {inputFileName} is:
 
                 {inputLine}
@@ -180,16 +207,16 @@ for inputLineNumber, inputLine in enumerate(inputFileLines, start=1):
               these do not match.""")
 
         else:
-          print(textwrap.dedent(f"""\
+          warn(f"""\
             Warning: Line {inputLineNumber} of {inputFileName} is:
 
               {inputLine}
 
             It not followed by any non-blank lines.
-            """))
+            """)
 
       else:
-        die(f"""\
+        complain(f"""\
           Line {inputLineNumber} of {inputFileName} is:
 
             {inputLine}
@@ -204,11 +231,16 @@ for inputLineNumber, inputLine in enumerate(inputFileLines, start=1):
 
 # Print a final report of the statistics.
 print(textwrap.dedent(f"""\
-  Scanning finished, no problems found.
+  ----------------
+  Scanning finished with {numErrors} errors and {numWarnings} warnings.
   Input file: {inputFileName}
   Number of lines: {numInputLines}
   #lines with same file: {directivesWithSameFile}
   #lines with different file: {directivesWithDifferentFile}"""))
+
+
+if numErrors > 0:
+  sys.exit(2)
 
 
 # EOF
