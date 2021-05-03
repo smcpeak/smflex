@@ -28,6 +28,7 @@ CXXFLAGS := $(CFLAGS)
 out/%.yy.c: %.lex
 	@mkdir -p out
 	../smflex -o$@ $<
+	python3 ../check-line-directives.py $@
 
 # Run smflex on outfile.lex, avoiding use of -o option.
 out/outfile-specified.yy.c: outfile.lex
@@ -54,6 +55,7 @@ out/%.o: %.c
 out/%.yy.cc: %.lexpp
 	@mkdir -p out
 	../smflex -o$@ $<
+	python3 ../check-line-directives.py $@
 
 # Compile C++ file in out/.
 .PRECIOUS: out/%.oo
