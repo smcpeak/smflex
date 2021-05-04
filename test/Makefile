@@ -129,6 +129,7 @@ all: out/c-int-batch-never.ok
 all: out/c-int-default.ok
 all: out/c-int-interactive.ok
 all: out/c-int-never.ok
+all: out/c-int-set-int.ok
 all: out/cpp-int-always.ok
 all: out/cpp-int-batch.ok
 all: out/cpp-int-default.ok
