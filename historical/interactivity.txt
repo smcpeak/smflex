@@ -1,0 +1,200 @@
+historical/interactivity.txt
+----------------------------
+
+This document explains how 'flex-2.5.4' handled the various options
+related to interactivity.  It uses the present tense, but everything
+here describes the old behavior, not what 'smflex' does presently.
+
+The "interactivity" feature has two orthogonal aspects:
+
+  1. How the input is read, from among:
+    - one character at a time, or
+    - one line at a time, or
+    - in buffer-sized blocks.
+
+  2. When scanner rule actions are performed, from among:
+    - eager, or
+    - lazy.
+
+The first aspect is mostly straightforward.  When flex needs more input,
+it either reads from the input source one character at a time or in
+blocks.  Line-at-a-time behavior is achieved by reading one character at
+a time, accumulating the characters until a newline (or EOF) is seen,
+and only then handing the data to the scanning engine.
+
+However, there are complications to the first aspect.  First, depending
+on what options were used at scanner generation time, the choice between
+character at a time and block at a time is delayed to run-time,
+dependent on whether 'isatty()' thinks the input is a TTY.  Second, the
+scanner author user can insert a call to 'yy_set_interactive()' to
+switch between the modes explicitly (example below).  But even this is
+just the beginning of the complexity involved in specifying the read
+behavior; more below.
+
+The second aspect is more subtle.  Consider a scanner description
+containing the rule:
+
+  "command\n"    printf("command invoked!\n");
+
+The "command" is terminated by a newline.  With eager actions, as soon
+as flex sees the newline, it executes the associated action, except when
+there is some other rule that also matches "command\n" as a proper
+prefix, and hence another character must be seen to resolve the
+ambiguity.  With lazy actions, even when there is no ambiguity, flex
+waits to see what character comes after the newline (the lookahead
+character) before executing the action.  The rationale for lazy actions
+is it is faster to always wait to see the lookahead character than to
+sometimes run the action early.
+
+In a batch processing context, lazy actions are fine.  But for
+interactive use, lazy actions cause problems because they delay the user
+being able to see the effect of their actions: to see the effect of one
+command, the user would have to type at least one more character after
+the newline, and when using a terminal in the usual "cooked" mode, they
+would have to type another complete line with a newline.
+
+Given the preceding, there are two sensible modes of operation:
+
+  1. Interactive: read the input one character or line at a time, and
+     execute actions eagerly.
+
+  2. Batch: read the input one block at a time, and execute actions
+     lazily.
+
+Aside: Even in "Interactive" mode as described here, there remains the
+problem of input that requires lookahead to disambiguate.  As far as I
+know, 'flex' does not provide any diagnostics to help discover such
+situations, so there is still some risk of getting poor interactive
+behavior.  The scanner author simply has to know about and design their
+rules to avoid such a hazard.
+
+
+So, now that we understand what behavior is sensible, how do we go
+about requesting particular behavior from 'flex'?
+
+
+C-interface scanner behavior
+----------------------------
+
+When using a C-interface scanner, the first aspect, how input is read,
+is controlled by a variable in the generated scanner called
+'yy_is_interactive'.  When the scanner begins reading a file,
+'yy_is_interactive' is set to:
+
+  - if %option always-interactive,         1;  otherwise,
+  - if %option never-interactive,          0;  otherwise,
+  - if 'isatty()' says the input is a TTY, 1;  otherwise,
+  -                                        0
+
+Subsequently, calling 'yy_set_interactive(i)' will set
+'yy_is_interactive' to 'i'.
+
+Meanwhile, calling 'yy_scan_buffer()' sets up a new input source coming
+from memory.  Initially, 'yy_is_interactive' to 0 in that case, but that
+can again be overridden by calling 'yy_set_interactive()'.
+
+Aside: I am not sure exactly where one is intended to call
+'yy_set_interactive()'.  The best spot I found is in YY_USER_INIT, but
+at that location, 'yyin' is still NULL, so that has to be set too, as
+shown in this excerpt of test/c-int-set-int.lex:
+
+  #define YY_USER_INIT         \
+    yyin = stdin;              \
+    yy_set_interactive(1);
+
+The default implementation of YY_INPUT reads the input one line at a
+time if 'yy_is_interactive' is 1, otherwise one block at a time.
+
+However, the user can provide their own definition of YY_INPUT, at which
+point 'yy_is_interactive' is irrelevant (unless that definition checks
+'yy_is_interactive'), although the call to 'isatty()' may still happen.
+
+
+The second aspect, eager versus lazy actions, is controlled by the
+'interactive' variable inside 'flex' at scanner generation time.
+'interactive' is set to:
+
+  - if %option interactive or command line -I,     1;  otherwise,
+  - if %option batch or command line -B,           0;  otherwise,
+  - if command line -Cf or -CF,                    0;  otherwise,
+  - if %option full or command line -f,            0;  otherwise,
+  - if %option fast or command line -F,            0;  otherwise,
+  -                                                1
+
+Interface quirks: The -I and -B options are opposites, but both can be
+present on the command line; the last one wins.  Their corresponding
+%options can also both be present in the input file; again, last one
+wins.  And if they are on both the command line and the input file, the
+*input file* wins (unlike most programs, where the command line would
+take precedence).
+
+Then, as the scanner tables are generated, if 'interactive' is set to 1
+then actions will be eager, otherwise lazy.
+
+
+Thus, to get a sensible C-interface interactive scanner, do both of:
+
+  1. Specify "%option always-interactive", or
+     ensure the input is a TTY, or
+     call 'yy_set_interactive(1)'.
+
+  2. Specify "%option interactive", or
+     do not specify any of '-Cf', '-CF', '-f', or '-F'.
+
+And to get a sensible C-interface batch scanner, do both of:
+
+  1. Specify "%option never-interactive", or
+     ensure the input is not a TTY, or
+     call 'yy_set_interactive(0)'.
+
+  2. Specify "%option batch", or
+     specify any of '-Cf' or '-CF' or '-f' or '-F'.
+
+Finally, to get a scanner that can sensibly be switched between
+interactive and batch mode at run time, do both of:
+
+  1. Call 'yy_set_interactive()' to choose how to read.
+
+  2. Specify "%option interactive", or
+     do not specify any of '-Cf', '-CF', '-f', or '-F'.
+
+
+C++-interface scanner behavior
+------------------------------
+
+When generating a C++-interface scanner, how input is read is controlled
+entirely by the 'interactive' flag at scanner generation time.  That is,
+the "first aspect" (read behavior) is controlled by the specification of
+the "second aspect" (action eagerness).  This seems pretty clearly to be
+a bug, which I will fix in 'smflex', but this document merely describes
+the historical behavior of 'flex-2.5.4'.
+
+Therefore, to get a sensible C++-interface interactive scanner, do:
+
+  1. (Nothing.  Aspect 1 is not independently controllable.)
+
+  2. Specify "%option interactive", or
+     do not specify any of '-Cf', '-CF', '-f', or '-F'.
+
+And to get a sensible C++-interface batch scanner, do:
+
+  1. (Nothing.  Aspect 1 is not independently controllable.)
+
+  2. Specify "%option batch", or
+     specify any of '-Cf' or '-CF' or '-f' or '-F'.
+
+However, note that it is possible to create a derived class using
+%option yyclass, and in that case you can override the 'LexerInput'
+method.  That will let you directly control aspect 1, regardless of
+how aspect 2 is configured.
+
+So, for instance to get a C++-interface scanner that can sensibly be
+switched between interactive and batch mode at run time, do both of:
+
+  1. Override 'LexerInput' to read input as appropriate.
+
+  2. Specify "%option interactive", or
+     do not specify any of '-Cf', '-CF', '-f', or '-F'.
+
+
+EOF
