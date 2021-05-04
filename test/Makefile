@@ -122,30 +122,30 @@ out/%.matches: % ../smflex.html
 	diff -u $* out/$*.manual
 	touch $@
 
-# Tests to run.
+# Tests to run, in sorted ("env LANG=C sort") order.
 all: out/c-int-always.ok
-all: out/c-int-interactive.ok
-all: out/c-int-default.ok
 all: out/c-int-batch.ok
+all: out/c-int-default.ok
+all: out/c-int-interactive.ok
 all: out/c-int-never.ok
 all: out/cpp-int-always.ok
-all: out/cpp-int-interactive.ok
-all: out/cpp-int-default.ok
 all: out/cpp-int-batch.ok
+all: out/cpp-int-default.ok
+all: out/cpp-int-interactive.ok
 all: out/cpp-int-never.ok
-all: out/username.ok
-all: out/username-yywrap.ok
-all: out/username-main.ok
-all: out/username-main.c_as_cc.ok
-all: out/cpp-manual-example.ok
 all: out/cpp-manual-example.lexpp.matches
-all: out/cppscan.ok
-all: out/cppscan-yywrap.ok
-all: out/cppscan-main.ok
-all: out/cpp-prefix.ok
-all: out/cpp-prefix-yywrap.ok
+all: out/cpp-manual-example.ok
 all: out/cpp-prefix-yywrap-yyclass.ok
+all: out/cpp-prefix-yywrap.ok
+all: out/cpp-prefix.ok
+all: out/cppscan-main.ok
+all: out/cppscan-yywrap.ok
+all: out/cppscan.ok
 all: out/outfile-specified.ok
+all: out/username-main.c_as_cc.ok
+all: out/username-main.ok
+all: out/username-yywrap.ok
+all: out/username.ok
 all: out/vert-bar-action.ok
 
 # These tests read a second file.
