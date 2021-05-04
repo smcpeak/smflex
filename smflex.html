@@ -3129,13 +3129,21 @@ I have also found and fixed a few pre-existing bugs:
     <code>b0de9b4f2b</code>, and <code>be4e9bfcab</code>.
 
 <li><p>
-    In <code>flex-2.5.4</code> C++-interface scanners
+    In <code>flex-2.5.4</code>, C++-interface scanners
     based their decision on whether to read the <em>input</em>
     interactively on whether the <em>scanner actions</em> were
     specified as interactive.  This was contrary to the behavior of
     C-interface scanners.  Commit <code>57c3f75272</code> has the
     fix.  However, later changes have rendered this fix moot, since I
     unified all the interactivity aspects under one flag.
+
+<li><p>
+    In <code>flex-2.5.4</code>, using a C++-interface scanner, it might
+    misclassify an input error reported by <code>yyin->fail()</code> as
+    EOF, thus silently swallowing the error.  Now, the error will be
+    reported like other input errors.  (Currently, that means exiting
+    with a fatal error message, which isn't great, but is better than
+    silence.)  Commit <code>6908f0604c</code> has the fix.
 
 </ul>
 
