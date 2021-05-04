@@ -701,7 +701,7 @@ const char *scanner_skl_contents[] = {
   "",
   "  if (yyin->fail()) {",
   "    YY_DEBUG_LOG_CALL(\"istream::fail()\", 1);",
-  "    return 0;",
+  "    return -1;",
   "  }",
   "",
   "  if (yy_current_buffer->yy_is_interactive) {",
