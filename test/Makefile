@@ -36,9 +36,19 @@ out/outfile-specified.yy.c: outfile.lex
 	../smflex $<
 
 # Compile a C file in out/.
+#
+# If the file name contains "c-int-", then add -DYY_ENABLE_DEBUG_LOG_CALL
+# to the compilation line to enable relevant diagnostic prinouts.
+#
 .PRECIOUS: out/%.o
 out/%.o: out/%.c
-	$(CC) -o$@ -c $(CFLAGS) $<
+	@if echo "$*" | grep --quiet "c-int-"; then \
+	  echo $(CC) -o$@ -c $(CFLAGS) -DYY_ENABLE_DEBUG_LOG_CALL $<; \
+	  $(CC) -o$@ -c $(CFLAGS) -DYY_ENABLE_DEBUG_LOG_CALL $<; \
+	else \
+	  echo $(CC) -o$@ -c $(CFLAGS) $<; \
+	  $(CC) -o$@ -c $(CFLAGS) $<; \
+	fi
 
 # Compile a C file in out/ as if it were C++.
 .PRECIOUS: out/%.c_as_cc.o
@@ -60,7 +70,13 @@ out/%.yy.cc: %.lexpp
 # Compile C++ file in out/.
 .PRECIOUS: out/%.oo
 out/%.oo: out/%.cc
-	$(CXX) -o$@ -c $(CXXFLAGS) $<
+	@if echo "$*" | grep --quiet "cpp-int-"; then \
+	  echo $(CXX) -o$@ -c $(CXXFLAGS) -DYY_ENABLE_DEBUG_LOG_CALL $<; \
+	  $(CXX) -o$@ -c $(CXXFLAGS) -DYY_ENABLE_DEBUG_LOG_CALL $<; \
+	else \
+	  echo $(CXX) -o$@ -c $(CXXFLAGS) $<; \
+	  $(CXX) -o$@ -c $(CXXFLAGS) $<; \
+	fi
 
 # Link C object files in out/ to make an executable.
 .PRECIOUS: out/%.exe
@@ -82,7 +98,14 @@ out/%.exe: out/%.yy.oo
 # Run one test, producing an "ok" file to mark success.
 out/%.ok: out/%.exe %.input %.expect
 	out/$*.exe < $*.input > out/$*.actual
-	diff -b -u $*.expect out/$*.actual
+	@echo diff -b -u $*.expect out/$*.actual
+	@if diff -b -u $*.expect out/$*.actual; then true; else \
+	  echo ""; \
+	  echo "The actual output is different from the expected output."; \
+	  echo "If the actual is correct, update expected by running:"; \
+	  echo "  $ ./update-expect.sh $*"; \
+	  exit 2; \
+	fi
 	touch $@
 
 # Check that what is in the manual matches what is in the tests.

@@ -1,3 +1,9 @@
+[isatty(): 0]
+[due to isatty(), yy_is_interactive is: 0]
+[fread(): 33]
 hi USERNAME there
 blah
-USERNAME!
+USERNAME![fread(): 0]
+
+[isatty(): 0]
+[due to isatty(), yy_is_interactive is: 0]

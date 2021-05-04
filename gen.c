@@ -1192,27 +1192,49 @@ void make_tables()
   skelout();
 
   if (!C_plus_plus) {
-    /* Provide the body of YY_INPUT. */
+    /* Provide the body of YY_INPUT.
+     *
+     * TODO: It would be nice to put this into the skeleton since
+     * editing these strings here is a pain. */
     if (use_read) {
-      outn("  if ( (result = read( fileno(yyin), (char *) buf, max_size )) < 0 ) \\");
-      outn("    YY_FATAL_ERROR( \"input in smflex scanner failed\" );");
+      outn("  if (0) {} else { \\");
+      outn("    result = read(fileno(yyin), (char*)buf, max_size); \\");
+      outn("    YY_DEBUG_LOG_CALL(\"read()\", result); \\");
+      outn("    if (result < 0) { \\");
+      outn("      YY_FATAL_ERROR(\"input in smflex scanner failed\"); \\");
+      outn("    } \\");
+      outn("  }");
     }
 
     else {
-      outn("  if ( yy_current_buffer->yy_is_interactive ) { \\");
+      outn("  if (yy_current_buffer->yy_is_interactive) { \\");
       outn("    int c = '*', n; \\");
-      outn("    for (n = 0; n < max_size && \\");
-      outn("          (c = getc( yyin )) != EOF && c != '\\n'; ++n ) \\");
+      outn("    for (n = 0; \\");
+      outn("         n < max_size && (c = getc(yyin)) != EOF && c != '\\n'; \\");
+      outn("         ++n) { \\");
+      outn("      YY_DEBUG_LOG_CALL(\"getc()\", c); \\");
       outn("      buf[n] = (char) c; \\");
-      outn("    if ( c == '\\n' ) \\");
+      outn("    } \\");
+      outn("    /* Either we hit 'size_max' or we read a special character. */ \\");
+      outn("    if (c == '\\n') { \\");
+      outn("      YY_DEBUG_LOG_CALL(\"getc()\", c); \\");
       outn("      buf[n++] = (char) c; \\");
-      outn("    if ( c == EOF && ferror( yyin ) ) \\");
-      outn("      YY_FATAL_ERROR( \"input in smflex scanner failed\" ); \\");
+      outn("    } \\");
+      outn("    if (c == EOF) { \\");
+      outn("      YY_DEBUG_LOG_CALL(\"getc()\", c); \\");
+      outn("      if (ferror(yyin)) { \\");
+      outn("        YY_FATAL_ERROR(\"input in smflex scanner failed\"); \\");
+      outn("      } \\");
+      outn("    } \\");
       outn("    result = n; \\");
       outn("  } \\");
-      outn("  else if ( ((result = fread( buf, 1, max_size, yyin )) == 0) \\");
-      outn("      && ferror( yyin ) ) \\");
-      outn("    YY_FATAL_ERROR( \"input in smflex scanner failed\" );");
+      outn("  else { \\");
+      outn("    result = fread(buf, 1, max_size, yyin); \\");
+      outn("    YY_DEBUG_LOG_CALL(\"fread()\", result); \\");
+      outn("    if (result == 0 && ferror(yyin)) { \\");
+      outn("      YY_FATAL_ERROR(\"input in smflex scanner failed\"); \\");
+      outn("    } \\");
+      outn("  }");
     }
   }
   else {
