@@ -942,11 +942,11 @@ void readin()
   else
     outn("typedef char YY_CHAR;");
 
+  if (interactive)
+    outn("#define YY_INTERACTIVE");
+
   if (C_plus_plus) {
     outn("#define yytext_ptr yytext");
-
-    if (interactive)
-      outn("#define YY_INTERACTIVE");
   }
 
   else {

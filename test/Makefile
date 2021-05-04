@@ -122,6 +122,7 @@ else
 	  echo "The actual output is different from the expected output."; \
 	  echo "If the actual is correct, update expected by running:"; \
 	  echo "  $ ./update-expect.sh $*"; \
+	  echo "Or, re-run tests with UPDATE_EXPECT=1 to update them all."; \
 	  exit 2; \
 	fi
 endif
@@ -142,19 +143,15 @@ out/%.matches: % ../smflex.html
 	touch $@
 
 # Tests to run, in sorted ("env LANG=C sort") order.
-all: out/c-int-always.ok
 all: out/c-int-batch.ok
-all: out/c-int-batch-never.ok
 all: out/c-int-default.ok
 all: out/c-int-interactive.ok
-all: out/c-int-never.ok
-all: out/c-int-set-int.ok
-all: out/c-int-set-isatty.ok
-all: out/cpp-int-always.ok
+all: out/c-int-set-int-0.ok
+all: out/c-int-set-int-1.ok
+all: out/c-int-set-int-isatty.ok
 all: out/cpp-int-batch.ok
 all: out/cpp-int-default.ok
 all: out/cpp-int-interactive.ok
-all: out/cpp-int-never.ok
 all: out/cpp-manual-example.lexpp.matches
 all: out/cpp-manual-example.ok
 all: out/cpp-prefix-yywrap-yyclass.ok

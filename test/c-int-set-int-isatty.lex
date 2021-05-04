@@ -1,6 +1,6 @@
-/* c-int-set-isatty.lex */
+/* c-int-set-int-isatty.lex */
 /* C-interface scanner that calls 'yy_set_interactive()' based on
- * what 'isatty()' says.. */
+ * what 'isatty()' says. */
 
 %option main
 

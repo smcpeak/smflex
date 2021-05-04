@@ -1756,16 +1756,14 @@ action which is always executed before the first scan (and before the
 scanner's internal initializations are done). For example, it could be
 used to call a routine to read in a data table or open a logging file.
 
-<p>The macro <code>yy_set_interactive(is_interactive)</code>
+<p>The macro <code id="yy_set_interactive">yy_set_interactive(is_interactive)</code>
 can be used to control whether the current buffer is considered
 <em>interactive</em>. An interactive buffer is processed more
 slowly, but must be used when the scanner's input source is indeed
 interactive to avoid problems due to waiting to fill buffers (see the
 discussion of the <code>-I</code> flag below). A non-zero value in
 the macro invocation marks the buffer as interactive, a zero value as
-non-interactive. Note that use of this macro overrides
-<code>%option always-interactive</code> or <code>%option never-interactive</code>
-(see <a href="#options">Options</a> below).
+non-interactive.
 
 <p>
 <code>yy_set_interactive()</code> must be invoked
@@ -2027,11 +2025,14 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dt><code>-I</code>
 
 <dd><p>instructs <code>smflex</code> to generate an <em>interactive</em>
-    scanner. An interactive scanner is one that executes actions
+    scanner.  An interactive scanner is one that executes actions
     eagerly, only looking ahead to decide
-    what token has been matched if it absolutely must.
+    what token has been matched if it absolutely must.  Furthermore,
+    an interactive scanner by default reads its input source one
+    character at a time, although you can override that by calling
+    <a href="#yy_set_interactive"><code>yy_set_interactive()</code></a>.
 
-    <p>It turns out that lazy action execution, where the scanner always
+    <p>Rationale: It turns out that lazy action execution, where the scanner always
     looks one extra character ahead, even if the scanner has already
     seen enough text to disambiguate the current token, is a bit faster than
     only looking ahead when necessary. But scanners that always look ahead
@@ -2051,26 +2052,6 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
     <p>You can force a scanner to <em>not</em> be interactive by using
     <code>-B</code> (see above).
-
-    <p><strong>Warning</strong>: There are two completely different
-    concepts described in this manual as "interactive":
-
-    <ol>
-
-    <li><p>Whether the <em>input</em> is read one character at a time,
-        which is influenced by the <code>always-interactive</code> and
-        <code>never-interactive</code> options.
-
-    <li><p>Whether the <em>scanner actions</em> are performed eagerly or
-        lazily, which is influenced by the <code>-I/interactive</code>
-        and <code>-B/batch</code> options.
-
-    </ol>
-
-    <p>
-    Although one typically wants each aspect to match the other
-    (i.e., character at a time + eager, or else block at a time + lazy),
-    the options are specified and interpreted orthogonally.
 
 <dt><code>-L</code>
 
@@ -2322,13 +2303,6 @@ number are equivalent to <code>smflex</code> flags or their negation:
 
 <dl>
 
-<dt><code>always-interactive</code>
-
-<dd><p>instructs <code>smflex</code> to generate a scanner which
-    considers its input "interactive".  Otherwise, the default behavior
-    is to treat the input as <em>not</em> interactive, and
-    <code>always-interactive</code> reverses that.
-
 <dt id="option-main"><code>main</code>
 
 <dd><p>directs <code>smflex</code> to provide a default <code>main()</code> program for the
@@ -2343,12 +2317,6 @@ number are equivalent to <code>smflex</code> flags or their negation:
         return 0;
       }
 </code></pre>
-
-<dt><code>never-interactive</code>
-
-<dd><p>instructs <code>smflex</code> to generate a scanner which
-    does not consider its input "interactive", which is the default
-    behavior, and the opposite of <code>always-interactive</code>.
 
 <dt><code>stack</code>
 
@@ -2461,7 +2429,6 @@ most expensive to least:
     pattern sets that require backing up
     %array
     %option interactive
-    %option always-interactive
 
     &#39;^&#39; beginning-of-line operator
     yymore()
@@ -2996,31 +2963,37 @@ to transition to my <code>smflex</code>, and this list can help that.
 
 <ul>
 
-<li><p>In <code>flex-2.5.4</code>, when using a C++-interface, the
-    input source was read one character at a time if the <em>scanner
-    actions</em> were configured for interactive behavior.  In
-    <code>smflex</code>, the C++-interface scanner behaves like the
-    C-interface scanner, reading one character at a time if the
-    <em>input</em> is configured for interactive behavior, for
-    example with <code>%option always-interactive</code>.
+<li><p><code>flex-2.5.4</code> accepts
+    <code>%option always-interactive</code> and
+    <code>%option never-interactive</code>, which influenced whether
+    input was read one character at a time.  These options have been
+    removed.  In <code>smflex</code>, there is only one switch
+    that controls interactivity preferences, namely <code>-I</code>
+    (<code>%option interactive</code>), and it controls both aspects
+    of interactivity, namely <em>scanner action eagerness</em> and
+    <em>default input read behavior</em>.
 
-    <p>Rationale: The old behavior was most likely a bug.  See
-    <a href="historical/interactivity.txt">historical/interactivity.txt</a>
-    for more details.
+    <p>Rationale: The effect of these switches was (IMO) surprising and
+    inconsistent, as well as buggy in the case of C++, and the multitude
+    of options and effects made it
+    difficult for users to know what to select.  See <a
+    href="historical/interactivity.txt">historical/interactivity.txt</a>
+    for more details.  Now, there is one switch, and it behaves sensibly
+    for both C-interface and C++-interface scanners.
 
-    <p>Replacement: Use <code>%option always-interactive</code>,
-    <code>%option never-interactive</code>, or
-    <code>yy_set_interactive()</code> to control whether the input
-    is read one character at a time.  Or, use
-    <code>%option yyclass</code> and then override the
-    <code>LexerInput</code> method.
+    <p>Replacement: To change the input read behavior separately from
+    the scanner action eagerness (although this is not advised, since the
+    resulting scanner will still work poorly when used interactively, as
+    both aspects are needed), call
+    <a href="#yy_set_interactive"><code>yy_set_interactive</code></a>.
 
 <li><p>In <code>flex-2.5.4</code>, if neither
     <code>always-interactive</code> nor <code>never-interactive</code>
     were specified, then the C-interface scanner input file was read
     one character at a time if <code>isatty</code> said the input was
     a TTY, and one block at a time otherwise.  Now, the default behavior
-    is to read a block at a time, and <code>isatty</code> is not called.
+    is determined by the <code>-I</code> flag, and <code>isatty</code>
+    is not called.
 
     <p>Rationale: The call to <code>isatty</code> was a portability
     concern since it is not part of the standard C library (it is part
@@ -3031,7 +3004,7 @@ to transition to my <code>smflex</code>, and this list can help that.
     <p>Replacement: If the old behavior is desirable, then call
     <code>yy_set_interactive(isatty)</code> from
     <code>YY_USER_INIT</code>, like in this excerpt of
-    <a href="test/c-int-set-isatty.lex"><code>test/c-int-set-isatty.lex</code></a>:
+    <a href="test/c-int-set-int-isatty.lex"><code>test/c-int-set-int-isatty.lex</code></a>:
 
     <pre><code>
         #define YY_USER_INIT         \
@@ -3211,11 +3184,13 @@ I have also found and fixed a few pre-existing bugs:
     <code>b0de9b4f2b</code>, and <code>be4e9bfcab</code>.
 
 <li><p>
-    As explained above, <code>flex-2.5.4</code> C++-interface scanners
+    In <code>flex-2.5.4</code> C++-interface scanners
     based their decision on whether to read the <em>input</em>
     interactively on whether the <em>scanner actions</em> were
-    specified as interactive.  Commit <code>57c3f75272</code> has the
-    fix.
+    specified as interactive.  This was contrary to the behavior of
+    C-interface scanners.  Commit <code>57c3f75272</code> has the
+    fix.  However, later changes have rendered this fix moot, since I
+    unified all the interactivity aspects under one flag.
 
 </ul>
 

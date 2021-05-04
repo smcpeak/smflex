@@ -223,9 +223,6 @@ LEXOPT          [aceknopr]
         8bit            csize = option_sense ? 256 : 128;
 
         align           long_align = option_sense;
-        always-interactive      {
-                          action_define( "YY_ALWAYS_INTERACTIVE", option_sense );
-                        }
         array           yytext_is_array = option_sense;
         backup          backing_up_report = option_sense;
         batch           interactive = ! option_sense;
@@ -250,9 +247,6 @@ LEXOPT          [aceknopr]
                           action_define("YY_MAIN", option_sense);
                         }
         meta-ecs        usemecs = option_sense;
-        never-interactive       {
-                          action_define("YY_NEVER_INTERACTIVE", option_sense);
-                        }
         perf-report     performance_report += option_sense ? 1 : -1;
         pointer         yytext_is_array = ! option_sense;
         read            use_read = option_sense;
