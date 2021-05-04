@@ -104,10 +104,12 @@ check: $(SMFLEX)
 	@# Check the #line directives.
 	@#
 	python3 ./check-line-directives.py input-scan.lex.c
+ifneq ($(SKIP_TEST_DIR),1)
 	@#
 	@# Run the tests in test/.
 	@#
 	$(MAKE) -C test CC=$(CC)
+endif
 	@#
 	@# Check to see if the current smflex produces the same output
 	@# as it did before.
