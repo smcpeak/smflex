@@ -2958,7 +2958,7 @@ case YY_STATE_EOF(LINEDIR):
           }
 
           else {
-        yy_cp = yy_c_buf_p;
+            yy_cp = yy_c_buf_p;
             goto yy_find_action;
           }
         }

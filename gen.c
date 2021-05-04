@@ -1414,7 +1414,7 @@ void make_tables()
    * finds that it should JAM on the NUL.
    */
   skelout();
-  set_indent(4);
+  set_indent(6);
 
   if (fullspd || fulltbl)
     indent_puts("yy_cp = yy_c_buf_p;");
