@@ -2968,11 +2968,11 @@ to transition to my <code>smflex</code>, and this list can help that.
     called <code>yylex()</code> just once.  Now it calls
     <code>yylex()</code> in a loop until it returns 0.
 
-    <p>Rationale: I do not see how the old behavior could ever have been
-    useful since it would only process the first token.  Additionally,
-    the new behavior matches what the old <code>libfl.a</code>
-    contained, allowing me to eliminate <code>libfl.a</code> without
-    losing functionality.
+    <p>Rationale: The old behavior was useful only in the case of a
+    scanner that never returned any token codes, instead only executing
+    actions and continuing to scan.  Additionally, the new behavior
+    matches what the old <code>libfl.a</code> contained, allowing me to
+    eliminate <code>libfl.a</code> without losing functionality.
 
     <p>Replacement: Remove <code>%option main</code> and provide an
     explicit definition.
