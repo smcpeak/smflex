@@ -238,7 +238,6 @@ LEXOPT          [aceknopr]
                         }
         input           ACTION_IFDEF("YY_NO_INPUT", ! option_sense);
         interactive     interactive = option_sense;
-        lex-compat      lex_compat = option_sense;
         main            {
                           action_define("YY_MAIN", option_sense);
                         }
@@ -431,8 +430,7 @@ LEXOPT          [aceknopr]
                             int len = strlen((char *) nmdefptr);
 
                             /* don't use ()'s after all */
-                            if (lex_compat ||
-                                nmdefptr[0] == '^' ||
+                            if (nmdefptr[0] == '^' ||
                                 (len > 0 && nmdefptr[len - 1] == '$')) {
                               PUT_BACK_STRING((char *) nmdefptr, 0);
 

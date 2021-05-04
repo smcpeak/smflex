@@ -175,7 +175,7 @@
 <h1 id="synopsis">SYNOPSIS</h1>
 
 <p><code>smflex</code>
-   <code>[-bdfhilnpstvwBFILTV78+?] [-C[aefFmr]] [-ooutput] [-Pprefix]</code>
+   <code>[-bdfhinpstvwBFILTV78+?] [-C[aefFmr]] [-ooutput] [-Pprefix]</code>
    <code>[--help] [--version]</code>
    <code>[filename ...]</code>
 
@@ -1874,18 +1874,6 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     of case. The matched text given in <code>yytext</code> will have the
     preserved case (i.e., it will not be folded).
 
-<dt><code>-l</code>
-
-<dd><p>turns on maximum compatibility with the original AT&amp;T
-    <code>lex</code> implementation. Note that this does not mean
-    <em>full</em> compatibility. Use of this option costs a considerable
-    amount of performance, and it cannot be used with the
-    <code>-+, -f, -F, -Cf</code>, or <code>-CF</code> options. For details on the
-    compatibilities it provides, see
-    <a href="#incompatibilities-with-lex-and-posix">Incompatibilities
-    With Lex And POSIX</a>. This option also results in the name
-    <code>YY_FLEX_LEX_COMPAT</code> being #define'd in the generated scanner.
-
 <dt><code>-n</code>
 
 <dd><p>Write output files using platform native line endings.  The
@@ -2226,7 +2214,6 @@ number are equivalent to <code>smflex</code> flags or their negation:
     fast            -F option
     full            -f option
     interactive     -I option
-    lex-compat      -l option
     meta-ecs        -Cm option
     perf-report     -p option
     read            -Cr option
@@ -2958,6 +2945,17 @@ to transition to my <code>smflex</code>, and this list can help that.
     <p>Replacement: None in <code>smflex</code>.  If this feature is
     essential to your scanner, you will have to stick with
     <code>flex</code>.
+
+<li><p><code>flex-2.5.4</code> accepts <code>-l</code> and
+    <code>lex-compat</code>, both meaning to enable compatibility
+    with <code>lex</code>. These have been removed.
+
+    <p>Rationale: Again, I do not care about <code>lex</code>
+    compatibility, and want to shed unneeded code.  Moreover,
+    I already broke it by removing <code>%option array</code>;
+    this just finishes the job.
+
+    <p>Replacement: None.
 
 <li><p>In <code>flex-2.5.4</code>, the <code>main()</code>
     function generated with

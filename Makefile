@@ -156,7 +156,6 @@ bigcheck:
 	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-f" bigcheck1
 	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-Cfea" bigcheck1
 	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-CFer" bigcheck1
-	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-l" PERF_REPORT="" bigcheck1
 	rm -f input-scan.lex.c ; $(MAKE) bigcheck1
 	@echo "All checks successful"
 

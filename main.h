@@ -32,7 +32,6 @@ void usage(void);
  * spprdflt - if true (-s), suppress the default rule
  * interactive - if true (-I), generate an interactive scanner
  * caseins - if true (-i), generate a case-insensitive scanner
- * lex_compat - if true (-l), maximize compatibility with AT&T lex
  * do_yylineno - if true, generate code to maintain yylineno
  * useecs - if true (-Ce flag), use equivalence classes
  * fulltbl - if true (-Cf flag), don't compress the DFA state table
@@ -66,7 +65,7 @@ void usage(void);
  */
 
 extern int printstats, syntaxerror, eofseen, ddebug, trace, nowarn, spprdflt;
-extern int interactive, caseins, lex_compat, do_yylineno;
+extern int interactive, caseins, do_yylineno;
 extern int useecs, fulltbl, usemecs, fullspd;
 extern int gen_line_dirs, performance_report, backing_up_report;
 extern int C_plus_plus, long_align, use_read, do_yywrap;

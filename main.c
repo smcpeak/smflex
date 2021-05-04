@@ -79,7 +79,7 @@ static char smflex_version[] = SMFLEX_VERSION;
 /* These globals are all declared and documented in main.h. */
 
 int printstats, syntaxerror, eofseen, ddebug, trace, nowarn, spprdflt;
-int interactive, caseins, lex_compat, do_yylineno, useecs, fulltbl, usemecs;
+int interactive, caseins, do_yylineno, useecs, fulltbl, usemecs;
 int fullspd, gen_line_dirs, performance_report, backing_up_report;
 int C_plus_plus, long_align, use_read, do_yywrap, csize;
 int yymore_used, reject, real_reject, continued_action, in_rule;
@@ -209,22 +209,6 @@ void check_options()
 {
   int i;
 
-  if (lex_compat) {
-    if (C_plus_plus)
-      flexerror(_("Can't use -+ with -l option"));
-
-    if (fulltbl || fullspd)
-      flexerror(_("Can't use -f or -F with -l option"));
-
-    /* Don't rely on detecting use of yymore() and REJECT,
-     * just assume they'll be used.
-     */
-    yymore_really_used = reject_really_used = true;
-
-    do_yylineno = true;
-    use_read = false;
-  }
-
   if (do_yylineno)
     /* This should really be "maintain_backup_tables = true" */
     reject_really_used = true;
@@ -249,9 +233,6 @@ void check_options()
 
     if (interactive)
       flexerror(_("-Cf/-CF and -I are incompatible"));
-
-    if (lex_compat)
-      flexerror(_("-Cf/-CF are incompatible with lex-compatibility mode"));
 
     if (do_yylineno)
       flexerror(_("-Cf/-CF and %option yylineno are incompatible"));
@@ -391,8 +372,6 @@ void flexend(int exit_status)
       putc('d', stderr);
     if (caseins)
       putc('i', stderr);
-    if (lex_compat)
-      putc('l', stderr);
     if (performance_report > 0)
       putc('p', stderr);
     if (performance_report > 1)
@@ -537,7 +516,7 @@ void flexinit(int argc, char **argv)
   char *arg;
 
   printstats = syntaxerror = trace = spprdflt = caseins = false;
-  lex_compat = C_plus_plus = backing_up_report = ddebug = fulltbl = false;
+  C_plus_plus = backing_up_report = ddebug = fulltbl = false;
   fullspd = long_align = nowarn = yymore_used = continued_action = false;
   do_yylineno = in_rule = reject = do_stdinit = false;
   yymore_really_used = reject_really_used = unspecified;
@@ -667,10 +646,6 @@ void flexinit(int argc, char **argv)
 
         case 'i':
           caseins = true;
-          break;
-
-        case 'l':
-          lex_compat = true;
           break;
 
         case 'L':
@@ -844,16 +819,7 @@ void readin()
     reject = false;
 
   if (performance_report > 0) {
-    if (lex_compat) {
-      fprintf(stderr,
-              _
-              ("-l AT&T lex compatibility option entails a large performance penalty\n"));
-      fprintf(stderr,
-              _
-              (" and may be the actual source of other reported performance penalties\n"));
-    }
-
-    else if (do_yylineno) {
+    if (do_yylineno) {
       fprintf(stderr,
               _("%%option yylineno entails a large performance penalty\n"));
     }
@@ -967,9 +933,6 @@ void readin()
 
   if (ddebug)
     outn("\n#define SMFLEX_DEBUG");
-
-  if (lex_compat)
-    outn("#define YY_FLEX_LEX_COMPAT");
 
   if (do_yylineno && !C_plus_plus) {
     outn("extern int yylineno;");

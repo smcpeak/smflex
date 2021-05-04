@@ -1669,7 +1669,7 @@ yyreduce:
                           }
 
                           /* variable trailing context rule */
-                          if (lex_compat || (varlength && headcnt == 0)) {
+                          if (varlength && headcnt == 0) {
                             /* Mark the first part of the rule as the
                              * accepting "head" part of a trailing
                              * context rule.
@@ -1722,7 +1722,7 @@ yyreduce:
                             varlength = true;
                           }
 
-                          if (lex_compat || varlength) {
+                          if (varlength) {
                             /* Again, see the comment in the rule for
                              * "re2 re" above.
                              */
@@ -1744,7 +1744,7 @@ yyreduce:
                           (yyval) = (yyvsp[0]);
 
                           if (trlcontxt) {
-                            if (lex_compat || (varlength && headcnt == 0))
+                            if (varlength && headcnt == 0)
                               /* Both head and trail are
                                * variable-length.
                                */
