@@ -1,7 +1,7 @@
-/* c-always-interactive.lex */
-/* Exercise %option always-interactive. */
+/* c-int-never.lex */
+/* Exercise %option never-interactive for a C-interface scanner. */
 
-%option always-interactive
+%option never-interactive
 %option main
 
 %{

@@ -1,0 +1,17 @@
+/* cpp-int-interactive.lexpp */
+/* %option interactive for a C++-interface scanner. */
+
+%option main
+%option c++
+%option interactive
+
+%{
+#include <stdlib.h>        /* exit */
+%}
+
+%%
+username           printf("USERNAME");
+exit               printf("exiting...\n"); exit(0);
+
+%%
+/* EOF */

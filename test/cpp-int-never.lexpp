@@ -1,8 +1,9 @@
-/* c-interactive.lex */
-/* Exercise %option interactive. */
+/* cpp-int-never.lexpp */
+/* %option never-interactive for a C++-interface scanner. */
 
-%option interactive
 %option main
+%option c++
+%option never-interactive
 
 %{
 #include <stdlib.h>        /* exit */

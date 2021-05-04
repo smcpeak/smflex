@@ -100,9 +100,16 @@ out/%.matches: % ../smflex.html
 	touch $@
 
 # Tests to run.
-all: out/c-always-interactive.ok
-all: out/c-batch.ok
-all: out/c-interactive.ok
+all: out/c-int-always.ok
+all: out/c-int-interactive.ok
+all: out/c-int-default.ok
+all: out/c-int-batch.ok
+all: out/c-int-never.ok
+all: out/cpp-int-always.ok
+all: out/cpp-int-interactive.ok
+all: out/cpp-int-default.ok
+all: out/cpp-int-batch.ok
+all: out/cpp-int-never.ok
 all: out/username.ok
 all: out/username-yywrap.ok
 all: out/username-main.ok

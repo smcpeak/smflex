@@ -1,4 +1,4 @@
-/* c-batch.lex */
+/* c-int-batch.lex */
 /* Exercise %option batch. */
 
 %option batch
