@@ -23,17 +23,20 @@ CFLAGS += -Wno-unused-function
 # C++ compilation options.
 CXXFLAGS := $(CFLAGS)
 
+# smflex executable.
+SMFLEX := ../smflex
+
 # Run smflex on one file.
 .PRECIOUS: out/%.yy.c
 out/%.yy.c: %.lex
 	@mkdir -p out
-	../smflex -o$@ $<
+	$(SMFLEX) -o$@ $<
 	python3 ../check-line-directives.py $@
 
 # Run smflex on outfile.lex, avoiding use of -o option.
-out/outfile-specified.yy.c: outfile.lex
+out/outfile-specified.yy.c: outfile.lex $(SMFLEX)
 	@mkdir -p out
-	../smflex $<
+	$(SMFLEX) $<
 
 # Compile a C file in out/.
 #
@@ -62,9 +65,9 @@ out/%.o: %.c
 
 # Run smflex on one file that generates a C++-interface scanner.
 .PRECIOUS: out/%.yy.cc
-out/%.yy.cc: %.lexpp
+out/%.yy.cc: %.lexpp $(SMFLEX)
 	@mkdir -p out
-	../smflex -o$@ $<
+	$(SMFLEX) -o$@ $<
 	python3 ../check-line-directives.py $@
 
 # Compile C++ file in out/.
@@ -97,6 +100,7 @@ out/%.exe: out/%.yy.oo
 
 # Run one test, producing an "ok" file to mark success.
 out/%.ok: out/%.exe %.input %.expect
+	rm -f $@
 	out/$*.exe < $*.input > out/$*.actual
 	@echo diff -b -u $*.expect out/$*.actual
 	@if diff -b -u $*.expect out/$*.actual; then true; else \
