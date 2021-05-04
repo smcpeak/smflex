@@ -970,7 +970,7 @@ void make_tables()
    */
   set_indent(1);
 
-  if (yymore_used && !yytext_is_array) {
+  if (yymore_used) {
     indent_puts("yytext_ptr -= yy_more_len; \\");
     indent_puts("yyleng = (int) (yy_cp - yytext_ptr); \\");
   }
@@ -980,27 +980,6 @@ void make_tables()
 
   /* Now also deal with copying yytext_ptr to yytext if needed. */
   skelout();
-  if (yytext_is_array) {
-    if (yymore_used)
-      indent_puts("if ( yyleng + yy_more_offset >= YYLMAX ) \\");
-    else
-      indent_puts("if ( yyleng >= YYLMAX ) \\");
-
-    indent_up();
-    indent_puts("YY_FATAL_ERROR( \"token too large, exceeds YYLMAX\" ); \\");
-    indent_down();
-
-    if (yymore_used) {
-      indent_puts
-        ("yy_flex_strncpy( &yytext[yy_more_offset], yytext_ptr, yyleng + 1 ); \\");
-      indent_puts("yyleng += yy_more_offset; \\");
-      indent_puts("yy_prev_more_offset = yy_more_offset; \\");
-      indent_puts("yy_more_offset = 0; \\");
-    }
-    else {
-      indent_puts("yy_flex_strncpy( yytext, yytext_ptr, yyleng + 1 ); \\");
-    }
-  }
 
   set_indent(0);
 
@@ -1131,37 +1110,13 @@ void make_tables()
 
   if (yymore_used) {
     if (!C_plus_plus) {
-      if (yytext_is_array) {
-        indent_puts("static int yy_more_offset = 0;");
-        indent_puts("static int yy_prev_more_offset = 0;");
-      }
-      else {
-        indent_puts("static int yy_more_flag = 0;");
-        indent_puts("static int yy_more_len = 0;");
-      }
+      indent_puts("static int yy_more_flag = 0;");
+      indent_puts("static int yy_more_len = 0;");
     }
 
-    if (yytext_is_array) {
-      /* TODO: In this mode, we emit a definition of 'yy_flex_strlen',
-       * but ususally do not use it, provoking a compiler warning. I
-       * think we can just throw away 'yy_flex_strlen' and use 'strlen'
-       * instead.  Use the -l (lex compat) option to trigger this. */
-      indent_puts
-        ("#define yymore() (yy_more_offset = yy_flex_strlen( yytext ))");
-      indent_puts("#define YY_NEED_STRLEN");
-      indent_puts("#define YY_MORE_ADJ 0");
-      indent_puts("#define YY_RESTORE_YY_MORE_OFFSET \\");
-      indent_up();
-      indent_puts("{ \\");
-      indent_puts("yy_more_offset = yy_prev_more_offset; \\");
-      indent_puts("yyleng -= yy_more_offset; \\");
-      indent_rbrace();
-    }
-    else {
-      indent_puts("#define yymore() (yy_more_flag = 1)");
-      indent_puts("#define YY_MORE_ADJ yy_more_len");
-      indent_puts("#define YY_RESTORE_YY_MORE_OFFSET");
-    }
+    indent_puts("#define yymore() (yy_more_flag = 1)");
+    indent_puts("#define YY_MORE_ADJ yy_more_len");
+    indent_puts("#define YY_RESTORE_YY_MORE_OFFSET");
   }
 
   else {
@@ -1171,16 +1126,7 @@ void make_tables()
   }
 
   if (!C_plus_plus) {
-    if (yytext_is_array) {
-      outn("#ifndef YYLMAX");
-      outn("#define YYLMAX 8192");
-      outn("#endif\n");
-      outn("char yytext[YYLMAX];");
-      outn("char *yytext_ptr;");
-    }
-
-    else
-      outn("char *yytext;");
+    outn("char *yytext;");
   }
 
   out(&action_array[defs1_offset]);
@@ -1266,7 +1212,7 @@ void make_tables()
 
   set_indent(2);
 
-  if (yymore_used && !yytext_is_array) {
+  if (yymore_used) {
     indent_puts("yy_more_len = 0;");
     indent_puts("if ( yy_more_flag )");
     indent_lbrace();

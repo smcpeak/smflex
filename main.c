@@ -81,7 +81,7 @@ static char smflex_version[] = SMFLEX_VERSION;
 int printstats, syntaxerror, eofseen, ddebug, trace, nowarn, spprdflt;
 int interactive, caseins, lex_compat, do_yylineno, useecs, fulltbl, usemecs;
 int fullspd, gen_line_dirs, performance_report, backing_up_report;
-int C_plus_plus, long_align, use_read, yytext_is_array, do_yywrap, csize;
+int C_plus_plus, long_align, use_read, do_yywrap, csize;
 int yymore_used, reject, real_reject, continued_action, in_rule;
 int yymore_really_used, reject_really_used;
 
@@ -221,7 +221,6 @@ void check_options()
      */
     yymore_really_used = reject_really_used = true;
 
-    yytext_is_array = true;
     do_yylineno = true;
     use_read = false;
   }
@@ -263,11 +262,6 @@ void check_options()
 
   if (C_plus_plus && fullspd)
     flexerror(_("Can't use -+ with -CF option"));
-
-  if (C_plus_plus && yytext_is_array) {
-    warn(_("%array incompatible with -+ option"));
-    yytext_is_array = false;
-  }
 
   if (useecs) {                 /* Set up doubly-linked equivalence classes. */
 
@@ -545,7 +539,7 @@ void flexinit(int argc, char **argv)
   printstats = syntaxerror = trace = spprdflt = caseins = false;
   lex_compat = C_plus_plus = backing_up_report = ddebug = fulltbl = false;
   fullspd = long_align = nowarn = yymore_used = continued_action = false;
-  do_yylineno = yytext_is_array = in_rule = reject = do_stdinit = false;
+  do_yylineno = in_rule = reject = do_stdinit = false;
   yymore_really_used = reject_really_used = unspecified;
   interactive = csize = unspecified;
   gen_line_dirs = usemecs = useecs = true;
@@ -997,13 +991,8 @@ void readin()
   }
 
   else {
-    if (yytext_is_array)
-      outn("extern char yytext[];\n");
-
-    else {
-      outn("extern char *yytext;");
-      outn("#define yytext_ptr yytext");
-    }
+    outn("extern char *yytext;");
+    outn("#define yytext_ptr yytext");
 
     if (yyclass)
       flexerror(_("%option yyclass only meaningful for C++ scanners"));

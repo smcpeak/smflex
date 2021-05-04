@@ -49,8 +49,6 @@ void usage(void);
  * long_align - if true (-Ca flag), favor long-word alignment.
  * use_read - if true (-f, -F, or -Cr) then use read() for scanner input;
  *   otherwise, use fread().
- * yytext_is_array - if true (i.e., %array directive), then declare
- *   yytext as a array instead of a character pointer.  Nice and inefficient.
  * do_yywrap - do yywrap() processing on EOF.  If false, EOF treated as
  *   "no more files".
  * csize - size of character set for the scanner we're generating;
@@ -71,7 +69,7 @@ extern int printstats, syntaxerror, eofseen, ddebug, trace, nowarn, spprdflt;
 extern int interactive, caseins, lex_compat, do_yylineno;
 extern int useecs, fulltbl, usemecs, fullspd;
 extern int gen_line_dirs, performance_report, backing_up_report;
-extern int C_plus_plus, long_align, use_read, yytext_is_array, do_yywrap;
+extern int C_plus_plus, long_align, use_read, do_yywrap;
 extern int csize;
 extern int yymore_used, reject, real_reject, continued_action, in_rule;
 extern int yymore_really_used, reject_really_used;

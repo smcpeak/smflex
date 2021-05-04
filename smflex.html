@@ -766,50 +766,6 @@ standard output. Thus, the simplest legal <code>smflex</code> input is:
 <p>which generates a scanner that simply copies its input (one character
 at a time) to its output.
 
-<p>Note that <code>yytext</code> can be defined in two different
-ways: either as a character <em>pointer</em> or as a character
-<em>array</em>. You can control which definition <code>smflex</code>
-uses by including one of the special directives <code>%pointer</code>
-or <code>%array</code> in the first (definitions) section of
-your <code>smflex</code> input. The default is <code>%pointer</code>, unless
-you use the <code>-l</code> lex compatibility option, in which
-case <code>yytext</code> will be an array. The advantage of using
-<code>%pointer</code> is substantially faster scanning and no buffer
-overflow when matching very large tokens (unless you run out of dynamic
-memory). The disadvantage is that you are restricted in how your actions
-can modify <code>yytext</code> (see <a href="#actions">Actions</a>), and calls to
-the <code>unput()</code> function destroys the present contents of
-<code>yytext</code>, which can be a considerable porting headache when
-moving between different <code>lex</code> versions.
-
-<p>The advantage of <code>%array</code> is that you can then
-modify <code>yytext</code> to your heart's content, and calls
-to <code>unput()</code> do not destroy <code>yytext</code> (see
-below). Furthermore, existing <code>lex</code> programs sometimes access
-<code>yytext</code> externally using declarations of the form:
-
-<pre><code>    extern char yytext[];</code></pre>
-
-<p>This definition is erroneous when used with <code>%pointer</code>,
-but correct for <code>%array</code>.
-
-<p><code>%array</code> defines <code>yytext</code> to be an array
-of <code>YYLMAX</code> characters, which defaults to a fairly large
-value. You can change the size by simply #define'ing <code>YYLMAX</code>
-to a different value in the first section of your <code>smflex</code>
-input. As mentioned above, with <code>%pointer</code> yytext grows
-dynamically to accommodate large tokens. While this means your
-<code>%pointer</code> scanner can accommodate very large tokens (such
-as matching entire blocks of comments), bear in mind that each time
-the scanner must resize <code>yytext</code> it also must rescan the
-entire token from the beginning, so matching such tokens can prove
-slow. <code>yytext</code> presently does <em>not</em> dynamically grow
-if a call to <code>unput()</code> results in too much text being pushed
-back; instead, a run-time error results.
-
-<p>Also note that you cannot use <code>%array</code> with C++ scanner
-classes (the <code>c++</code> option; see below).
-
 <h1 id="actions">ACTIONS</h1>
 
 <p>Each pattern in a rule has a corresponding action, which can be
@@ -854,9 +810,7 @@ reaches the end of the file or executes a return.
 
 <p>Actions are free to modify <code>yytext</code> except for
 lengthening it (adding characters to its end--these will overwrite
-later characters in the input stream). This however does not apply when
-using <code>%array</code> (see above); in that case, <code>yytext</code>
-may be freely modified in any way.
+later characters in the input stream).
 
 <p>Actions are free to modify <code>yyleng</code> except they should
 not do so if the action also includes use of <code>yymore()</code>
@@ -991,13 +945,12 @@ an action:
     must be done back-to-front.
 
     <p>An important potential problem when using <code>unput()</code>
-    is that if you are using <code>%pointer</code> (the default),
+    is that
     a call to <code>unput()</code> <em>destroys</em> the contents of
     <code>yytext</code>, starting with its rightmost character and devouring
     one character to the left with each call. If you need the value of yytext
     preserved after a call to <code>unput()</code> (as in the above example),
-    you must either first copy it elsewhere, or build your scanner using
-    <code>%array</code> instead (see How The Input Is Matched).
+    you must first copy it elsewhere.
 
     <p>Finally, note that you cannot put back <code>EOF</code> to attempt
     to mark the input stream with an end-of-file.
@@ -1807,20 +1760,6 @@ the rule actions.
 <li><p><code>char *yytext</code> holds the text of the current token. It may
     be modified but not lengthened (you cannot append characters to the end).
 
-    <p>If the special directive <code>%array</code> appears in the first
-    section of the scanner description, then <code>yytext</code> is instead
-    declared <code>char yytext[YYLMAX]</code>, where <code>YYLMAX</code>
-    is a macro definition that you can redefine in the first section if you
-    don't like the default value (generally 8KB). Using <code>%array</code>
-    results in somewhat slower scanners, but the value of <code>yytext</code>
-    becomes immune to calls to <code>input()</code> and <code>unput()</code>, which
-    potentially destroy its value when <code>yytext</code> is a character
-    pointer. The opposite of <code>%array</code> is <code>%pointer</code>,
-    which is the default.
-
-    <p>You cannot use <code>%array</code> when generating C++ scanner
-    classes (the <code>-+</code> flag).
-
 <li><p><code>int yyleng</code>
     holds the length of the current token.
 
@@ -2294,9 +2233,6 @@ number are equivalent to <code>smflex</code> flags or their negation:
     verbose         -v option
     warn            opposite of -w option
                     (use &quot;%option nowarn&quot; for -w)
-
-    array           equivalent to &quot;%array&quot;
-    pointer         equivalent to &quot;%pointer&quot; (default)
 </code></pre>
 
 <p>Some <code>%option</code>s provide features otherwise not available:
@@ -2427,7 +2363,6 @@ most expensive to least:
     arbitrary trailing context
 
     pattern sets that require backing up
-    %array
     %option interactive
 
     &#39;^&#39; beginning-of-line operator
@@ -2871,9 +2806,6 @@ reentrant scanners. You can instantiate multiple instances of the same
 scanner classes together in the same program using the <code>-P</code>
 option discussed above.
 
-<p>Finally, note that the <code>%array</code> feature is not available
-to C++ scanner classes; you must use <code>%pointer</code> (the default).
-
 <p>Here is an example of a simple C++ scanner:
 
 <pre><code><!-- BEGIN example: cpp-manual-example.lexpp -->
@@ -3011,6 +2943,21 @@ to transition to my <code>smflex</code>, and this list can help that.
           yyin = stdin;              \
           yy_set_interactive(isatty(fileno(yyin)) &gt; 0);
     </code></pre>
+
+<li><p><code>flex-2.5.4</code> accepts <code>%option array</code>,
+    which tells it to declare <code>yytext</code> as a static array
+    and copy scanned tokens into it, rather than it being a pointer
+    into the read buffer.  This option has been removed, along with
+    <code>%option pointer</code>, which was its opposite (and the
+    default).
+
+    <p>Rationale: Its primary purposes was compatibility with
+    <code>lex</code>, which is not among my goals; it was just
+    dead weight to me.
+
+    <p>Replacement: None in <code>smflex</code>.  If this feature is
+    essential to your scanner, you will have to stick with
+    <code>flex</code>.
 
 <li><p>In <code>flex-2.5.4</code>, the <code>main()</code>
     function generated with
@@ -3255,14 +3202,6 @@ to <code>smflex</code> that you really do use these features.
 has encountered an input string which wasn't matched by any of its
 rules. This error can also occur due to internal problems.
 
-<dt><p><code>token too large, exceeds YYLMAX</code>
-
-<dd>your scanner uses
-<code>%array</code> and one of its rules matched a string longer than
-the <code>YYLMAX</code> constant (8K bytes by default). You can increase
-the value by #define'ing <code>YYLMAX</code> in the definitions section
-of your <code>smflex</code> input.
-
 <dt><p><code>scanner requires -8 flag to use the character 'x'</code>
 
 <dd>Your scanner specification includes recognizing the 8-bit
@@ -3330,8 +3269,7 @@ in <em>fixed</em> trailing context being turned into the more expensive
     xyz/def
 </code></pre>
 
-<p>Use of <code>unput()</code> invalidates yytext and yyleng, unless the
-<code>%array</code> directive or the <code>-l</code> option has been used.
+<p>Use of <code>unput()</code> invalidates yytext and yyleng.
 
 <p>Pattern-matching of NUL's is substantially slower than matching
 other characters.

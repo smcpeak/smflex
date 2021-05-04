@@ -131,9 +131,6 @@ LEXOPT          [aceknopr]
                           return SECTEND;
                         }
 
-        ^"%pointer".*{NL}       yytext_is_array = false; ++linenum;
-        ^"%array".*{NL}         yytext_is_array = true; ++linenum;
-
         ^"%option"      BEGIN(OPTION); return OPTION_OP;
 
         ^"%"{LEXOPT}{OPTWS}[[:digit:]]*{OPTWS}{NL}      ++linenum; /* ignore */
@@ -223,7 +220,6 @@ LEXOPT          [aceknopr]
         8bit            csize = option_sense ? 256 : 128;
 
         align           long_align = option_sense;
-        array           yytext_is_array = option_sense;
         backup          backing_up_report = option_sense;
         batch           interactive = ! option_sense;
         "c++"           C_plus_plus = option_sense;
@@ -248,7 +244,6 @@ LEXOPT          [aceknopr]
                         }
         meta-ecs        usemecs = option_sense;
         perf-report     performance_report += option_sense ? 1 : -1;
-        pointer         yytext_is_array = ! option_sense;
         read            use_read = option_sense;
         reject          reject_really_used = option_sense;
         stack           action_define( "YY_STACK_USED", option_sense );

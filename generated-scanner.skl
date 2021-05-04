@@ -340,10 +340,6 @@ static void yyunput(int c, char *buf_ptr);
 static void yy_flex_strncpy(char *, const char *, int);
 #endif
 
-#ifdef YY_NEED_STRLEN
-static int yy_flex_strlen(const char *);
-#endif
-
 #ifndef YY_NO_INPUT
 %- Standard (non-C++) definition
 #  ifdef __cplusplus
@@ -1364,18 +1360,6 @@ static void yy_flex_strncpy(char *s1, const char *s2, int n)
     s1[i] = s2[i];
 }
 #endif
-
-#ifdef YY_NEED_STRLEN
-static int yy_flex_strlen(const char *s)
-{
-  int n;
-  for (n = 0; s[n]; ++n)
-    {}
-
-  return n;
-}
-#endif
-
 
 static void *yy_flex_alloc(yy_size_t size)
 {
