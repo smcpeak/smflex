@@ -125,6 +125,7 @@ out/%.matches: % ../smflex.html
 # Tests to run, in sorted ("env LANG=C sort") order.
 all: out/c-int-always.ok
 all: out/c-int-batch.ok
+all: out/c-int-batch-never.ok
 all: out/c-int-default.ok
 all: out/c-int-interactive.ok
 all: out/c-int-never.ok
