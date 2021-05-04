@@ -3395,14 +3395,6 @@ void yy_delete_buffer(YY_BUFFER_STATE b)
 }
 
 
-#if !defined(YY_ALWAYS_INTERACTIVE) && !defined(YY_NEVER_INTERACTIVE)
-#  ifdef __cplusplus
-extern "C" int isatty(int);
-#  else
-extern int isatty(int);
-#  endif
-#endif
-
 void yy_init_buffer(YY_BUFFER_STATE b, FILE *file)
 {
   yy_flush_buffer(b);
@@ -3417,16 +3409,8 @@ void yy_init_buffer(YY_BUFFER_STATE b, FILE *file)
   b->yy_is_interactive = 0;
   YY_DEBUG_LOG_CALL("due to YY_NEVER_INTERACTIVE, yy_is_interactive is", b->yy_is_interactive);
 #else
-  if (file) {
-    int res = isatty(fileno(file));
-    YY_DEBUG_LOG_CALL("isatty()", res);
-    b->yy_is_interactive = res > 0;
-    YY_DEBUG_LOG_CALL("due to isatty(), yy_is_interactive is", b->yy_is_interactive);
-  }
-  else {
-    b->yy_is_interactive = 0;
-    YY_DEBUG_LOG_CALL("file is NULL, so yy_is_interactive is", b->yy_is_interactive);
-  }
+  b->yy_is_interactive = 0;
+  YY_DEBUG_LOG_CALL("default case, so yy_is_interactive is", b->yy_is_interactive);
 #endif
 }
 

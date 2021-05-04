@@ -1,9 +1,7 @@
-[isatty(): 0]
-[due to isatty(), yy_is_interactive is: 0]
+[default case, so yy_is_interactive is: 0]
 [fread(): 33]
 hi USERNAME there
 blah
 USERNAME![fread(): 0]
 
-[isatty(): 0]
-[due to isatty(), yy_is_interactive is: 0]
+[default case, so yy_is_interactive is: 0]

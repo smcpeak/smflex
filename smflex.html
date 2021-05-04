@@ -2324,16 +2324,10 @@ number are equivalent to <code>smflex</code> flags or their negation:
 
 <dt><code>always-interactive</code>
 
-<dd><p>instructs <code>smflex</code> to generate a scanner which always considers its
-    input "interactive". Normally, for a C-interface scanner, on each new input file the scanner calls
-    <code>isatty()</code> in an attempt to determine whether the scanner's
-    input source is interactive and thus should be read a character at a
-    time. When this option is used, however, then no such call is made.
-
-    <p>
-    For a C++-interface scanner, <code>isatty()</code> is never called.
-    Instead, the default behavior is to treat the input as <em>not</em>
-    interactive, and <code>always-interactive</code> reverses that.
+<dd><p>instructs <code>smflex</code> to generate a scanner which
+    considers its input "interactive".  Otherwise, the default behavior
+    is to treat the input as <em>not</em> interactive, and
+    <code>always-interactive</code> reverses that.
 
 <dt id="option-main"><code>main</code>
 
@@ -2352,9 +2346,9 @@ number are equivalent to <code>smflex</code> flags or their negation:
 
 <dt><code>never-interactive</code>
 
-<dd><p>instructs <code>smflex</code> to generate a scanner which never considers its input
-    "interactive" (again, no call made to <code>isatty()</code>). This is
-    the opposite of <code>always-interactive</code>.
+<dd><p>instructs <code>smflex</code> to generate a scanner which
+    does not consider its input "interactive", which is the default
+    behavior, and the opposite of <code>always-interactive</code>.
 
 <dt><code>stack</code>
 
@@ -3020,6 +3014,30 @@ to transition to my <code>smflex</code>, and this list can help that.
     is read one character at a time.  Or, use
     <code>%option yyclass</code> and then override the
     <code>LexerInput</code> method.
+
+<li><p>In <code>flex-2.5.4</code>, if neither
+    <code>always-interactive</code> nor <code>never-interactive</code>
+    were specified, then the C-interface scanner input file was read
+    one character at a time if <code>isatty</code> said the input was
+    a TTY, and one block at a time otherwise.  Now, the default behavior
+    is to read a block at a time, and <code>isatty</code> is not called.
+
+    <p>Rationale: The call to <code>isatty</code> was a portability
+    concern since it is not part of the standard C library (it is part
+    of POSIX).  Furthermore, I think it is inappropriate for a text
+    scanning engine to be in the business of making user interface
+    decisions by querying interprocess communication mechanisms.
+
+    <p>Replacement: If the old behavior is desirable, then call
+    <code>yy_set_interactive(isatty)</code> from
+    <code>YY_USER_INIT</code>, like in this excerpt of
+    <a href="test/c-int-set-isatty.lex"><code>test/c-int-set-isatty.lex</code></a>:
+
+    <pre><code>
+        #define YY_USER_INIT         \
+          yyin = stdin;              \
+          yy_set_interactive(isatty(fileno(yyin)) &gt; 0);
+    </code></pre>
 
 <li><p>In <code>flex-2.5.4</code>, the <code>main()</code>
     function generated with

@@ -1,5 +1,4 @@
-[isatty(): 0]
-[due to isatty(), yy_is_interactive is: 0]
+[default case, so yy_is_interactive is: 0]
 [setting yy_is_interactive due to yy_set_interactive: 1]
 [getc(): 104]
 [getc(): 105]
@@ -38,5 +37,4 @@ blah
 [getc(): 10]
 USERNAME!
 [getc(): -1]
-[isatty(): 0]
-[due to isatty(), yy_is_interactive is: 0]
+[default case, so yy_is_interactive is: 0]

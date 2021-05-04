@@ -1,7 +1,8 @@
 [default case, so yy_is_interactive is: 0]
-[istream::gcount(): 33]
+[setting yy_is_interactive due to yy_set_interactive: 0]
+[fread(): 33]
 hi USERNAME there
 blah
-USERNAME![first istream::eof(): 1]
-
+USERNAME!
+[fread(): 0]
 [default case, so yy_is_interactive is: 0]
