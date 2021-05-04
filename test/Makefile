@@ -99,10 +99,24 @@ out/%.exe: out/%.yy.oo
 	$(CXX) -o$@ $(CXXFLAGS) $^
 
 # Run one test, producing an "ok" file to mark success.
+#
+# If UPDATE_EXPECT=1, then automatically update the expected output
+# to match the actual output.  Be sure to review the changes with
+# 'git diff' before checking in!
+#
 out/%.ok: out/%.exe %.input %.expect
 	rm -f $@
 	out/$*.exe < $*.input > out/$*.actual
 	@echo diff -b -u $*.expect out/$*.actual
+ifeq ($(UPDATE_EXPECT),1)
+	@if diff -b -u $*.expect out/$*.actual; then true; else \
+	  echo ""; \
+	  echo "The actual output is different from the expected output."; \
+	  echo "Fixing it automatically due to UPDATE_EXPECT=1."; \
+	  echo "./update-expect.sh $*"; \
+	  ./update-expect.sh $*; \
+	fi
+else
 	@if diff -b -u $*.expect out/$*.actual; then true; else \
 	  echo ""; \
 	  echo "The actual output is different from the expected output."; \
@@ -110,6 +124,7 @@ out/%.ok: out/%.exe %.input %.expect
 	  echo "  $ ./update-expect.sh $*"; \
 	  exit 2; \
 	fi
+endif
 	touch $@
 
 # Check that what is in the manual matches what is in the tests.
