@@ -3413,8 +3413,7 @@ void yy_init_buffer(YY_BUFFER_STATE b, FILE *file)
 #if YY_ALWAYS_INTERACTIVE
   b->yy_is_interactive = 1;
   YY_DEBUG_LOG_CALL("due to YY_ALWAYS_INTERACTIVE, yy_is_interactive is", b->yy_is_interactive);
-#else
-#if YY_NEVER_INTERACTIVE
+#elif YY_NEVER_INTERACTIVE
   b->yy_is_interactive = 0;
   YY_DEBUG_LOG_CALL("due to YY_NEVER_INTERACTIVE, yy_is_interactive is", b->yy_is_interactive);
 #else
@@ -3428,7 +3427,6 @@ void yy_init_buffer(YY_BUFFER_STATE b, FILE *file)
     b->yy_is_interactive = 0;
     YY_DEBUG_LOG_CALL("file is NULL, so yy_is_interactive is", b->yy_is_interactive);
   }
-#endif
 #endif
 }
 

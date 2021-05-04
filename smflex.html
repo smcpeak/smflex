@@ -149,7 +149,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
   <script>
-    // Ugly hack to remove the leading blank line from <pre><code> blocks, from:
+    // Ugly hack to remove the leading and trailing blank line from <pre><code> blocks, from:
     // https://stackoverflow.com/questions/14946908/how-can-i-ignore-leading-and-trailing-linebreaks-within-an-html-code-block-usi
     window.onload = function (){
       // remove leading linebreaks from code blocks.
@@ -1765,9 +1765,21 @@ discussion of the <code>-I</code> flag below). A non-zero value in
 the macro invocation marks the buffer as interactive, a zero value as
 non-interactive. Note that use of this macro overrides
 <code>%option always-interactive</code> or <code>%option never-interactive</code>
-(see <a href="#options">Options</a> below). <code>yy_set_interactive()</code> must be invoked
+(see <a href="#options">Options</a> below).
+
+<p>
+<code>yy_set_interactive()</code> must be invoked
 prior to beginning to scan the buffer that is (or is not) to be considered
-interactive.
+interactive.  One way to do this is in <code>YY_USER_INIT</code>, as
+demonstrated in
+<a href="test/c-int-set-int.lex"><code>test/c-int-set-int.lex</code></a>,
+like this:
+
+<pre><code>
+    #define YY_USER_INIT         \
+      yyin = stdin;              \
+      yy_set_interactive(1);
+</code></pre>
 
 <p>The macro <code>yy_set_bol(at_bol)</code> can be used to control
 whether the current buffer's scanning context for the next token match
@@ -2015,9 +2027,12 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dt><code>-I</code>
 
 <dd><p>instructs <code>smflex</code> to generate an <em>interactive</em>
-    scanner. An interactive scanner is one that only looks ahead to decide
-    what token has been matched if it absolutely must. It turns out that
-    always looking one extra character ahead, even if the scanner has already
+    scanner. An interactive scanner is one that executes actions
+    eagerly, only looking ahead to decide
+    what token has been matched if it absolutely must.
+
+    <p>It turns out that lazy action execution, where the scanner always
+    looks one extra character ahead, even if the scanner has already
     seen enough text to disambiguate the current token, is a bit faster than
     only looking ahead when necessary. But scanners that always look ahead
     give dreadful interactive performance; for example, when a user types
@@ -2036,6 +2051,26 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
     <p>You can force a scanner to <em>not</em> be interactive by using
     <code>-B</code> (see above).
+
+    <p><strong>Warning</strong>: There are two completely different
+    concepts described in this manual as "interactive":
+
+    <ol>
+
+    <li><p>Whether the <em>input</em> is read one character at a time,
+        which is influenced by the <code>always-interactive</code> and
+        <code>never-interactive</code> options.
+
+    <li><p>Whether the <em>scanner actions</em> are performed eagerly or
+        lazily, which is influenced by the <code>-I/interactive</code>
+        and <code>-B/batch</code> options.
+
+    </ol>
+
+    <p>
+    Although one typically wants each aspect to match the other
+    (i.e., character at a time + eager, or else block at a time + lazy),
+    the options are specified and interpreted orthogonally.
 
 <dt><code>-L</code>
 
@@ -2290,10 +2325,15 @@ number are equivalent to <code>smflex</code> flags or their negation:
 <dt><code>always-interactive</code>
 
 <dd><p>instructs <code>smflex</code> to generate a scanner which always considers its
-    input "interactive". Normally, on each new input file the scanner calls
+    input "interactive". Normally, for a C-interface scanner, on each new input file the scanner calls
     <code>isatty()</code> in an attempt to determine whether the scanner's
     input source is interactive and thus should be read a character at a
     time. When this option is used, however, then no such call is made.
+
+    <p>
+    For a C++-interface scanner, <code>isatty()</code> is never called.
+    Instead, the default behavior is to treat the input as <em>not</em>
+    interactive, and <code>always-interactive</code> reverses that.
 
 <dt id="option-main"><code>main</code>
 
@@ -2843,12 +2883,12 @@ how the scanner gets access to its input.  By overriding these,
 
 <dd><p>reads up to <code>max_size</code> characters into <code>buf</code> and
     returns the number of characters read. To indicate end-of-input, return 0
-    characters. Note that "interactive" scanners (see the <code>-B</code> and
-    <code>-I</code> flags) define the macro <code>YY_INTERACTIVE</code>. If
-    you redefine <code>LexerInput()</code> and need to take different
-    actions depending on whether or not the scanner might be scanning an
-    interactive input source, you can test for the presence of this name
-    via <code>#ifdef</code>.
+    characters.
+
+    <p>The base class implementation tests
+    <code>yy_current_buffer-&gt;yy_is_interactive</code>
+    to decide whether to read input one character at a time.  If you
+    override this method, you may wish to do likewise.
 
 <dt><code>virtual void LexerOutput(const char *buf, int size)</code>
 
@@ -2961,6 +3001,25 @@ a number of changes that introduce incompatibilities with
 to transition to my <code>smflex</code>, and this list can help that.
 
 <ul>
+
+<li><p>In <code>flex-2.5.4</code>, when using a C++-interface, the
+    input source was read one character at a time if the <em>scanner
+    actions</em> were configured for interactive behavior.  In
+    <code>smflex</code>, the C++-interface scanner behaves like the
+    C-interface scanner, reading one character at a time if the
+    <em>input</em> is configured for interactive behavior, for
+    example with <code>%option always-interactive</code>.
+
+    <p>Rationale: The old behavior was most likely a bug.  See
+    <a href="historical/interactivity.txt">historical/interactivity.txt</a>
+    for more details.
+
+    <p>Replacement: Use <code>%option always-interactive</code>,
+    <code>%option never-interactive</code>, or
+    <code>yy_set_interactive()</code> to control whether the input
+    is read one character at a time.  Or, use
+    <code>%option yyclass</code> and then override the
+    <code>LexerInput</code> method.
 
 <li><p>In <code>flex-2.5.4</code>, the <code>main()</code>
     function generated with

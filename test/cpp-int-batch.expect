@@ -1,7 +1,7 @@
-[due to %option c++, yy_is_interactive is: 0]
+[C++ default case, so yy_is_interactive is: 0]
 [istream::gcount(): 33]
 hi USERNAME there
 blah
 USERNAME![first istream::eof(): 1]
 
-[due to %option c++, yy_is_interactive is: 0]
+[C++ default case, so yy_is_interactive is: 0]

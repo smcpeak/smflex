@@ -1,4 +1,4 @@
-[due to %option c++, yy_is_interactive is: 0]
+[due to YY_ALWAYS_INTERACTIVE, yy_is_interactive is: 1]
 [istream::get(): 104]
 h[istream::get(): 105]
 i[istream::get(): 32]
@@ -36,4 +36,4 @@ USERNAME[istream::get(): 33]
 ![istream::get(): 10]
 
 [second istream::eof(): 1]
-[due to %option c++, yy_is_interactive is: 0]
+[due to YY_ALWAYS_INTERACTIVE, yy_is_interactive is: 1]
