@@ -1046,8 +1046,8 @@ statement.
 <p>If the scanner reaches an end-of-file, subsequent calls are undefined
 unless either <code>yyin</code> is pointed at a new input file (in which
 case scanning continues from that file), or <code>yyrestart()</code>
-is called. <code>yyrestart()</code> takes one argument, a <code>FILE
-*</code> pointer (which can be nil, if you've set up <code>YY_INPUT</code>
+is called. <code>yyrestart()</code> takes one argument, a <code>FILE *</code>
+pointer (which can be nil, if you've set up <code>YY_INPUT</code>
 to scan from a source other than <code>yyin</code>), and initializes
 <code>yyin</code> for scanning from that file. Essentially there is no
 difference between just assigning <code>yyin</code> to a new input file
