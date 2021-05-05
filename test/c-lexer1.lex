@@ -323,44 +323,64 @@ static void collector_append(char const *text, int len)
 }
 
 
-int main(int argc, char **argv)
+static void scanFile(char const *fname)
 {
-  /* Set if we open a named file. */
-  FILE *fp = NULL;
-
-  if (argc >= 2) {
-    char const *inputFname = argv[1];
-
-    /* Open a named file, which is how I expect a real scanner would
-     * usually operate. */
-    FILE *fp = fopen(inputFname, "rb");
-    if (!fp) {
-      printf("failed to open file \"%s\"\n", inputFname);
-      return 2;
-    }
-
-    yyin = fp;
+  /* Open a named file, which is how I expect a real scanner would
+   * usually operate. */
+  FILE *fp = fopen(fname, "rb");
+  if (!fp) {
+    printf("failed to open file \"%s\"\n", fname);
+    exit(2);
   }
-  else {
-    /* Read from stdin.  By allowing both, I can see if this makes
-     * any speed difference. */
-   }
+
+  yyrestart(fp);
 
   while (yylex())
     {}
 
-  if (fp) {
-    fclose(fp);
+  fclose(fp);
+}
+
+
+int main(int argc, char **argv)
+{
+  int iters = 1;
+
+  if (argc >= 2) {
+    /* Read a named file. */
+    char const *inputFname = argv[1];
+
+    if (argc >= 3) {
+      /* Specify number of iterations. */
+      iters = atoi(argv[2]);
+      printf("iters: %d\n", iters);
+    }
+
+    for (int i=0; i < iters; i++) {
+      scanFile(inputFname);
+    }
+  }
+  else {
+    /* Read from stdin.  By allowing both, I can see if this makes
+     * any speed difference. */
+    while (yylex())
+      {}
   }
 
-  /* Print these globals, again to prevent them from being optimized
-   * away. */
-  printf("last token text: \"%.*s\"\n", lastTokenLen, lastTokenText);
-  printf("last collected text: \"%.*s\"\n", lastCollectedLen, lastCollectedText);
+  if (iters > 1) {
+    /* Abbreviated stats, to reduce clutter. */
+    printf("identifiers: %d\n", tokenCount[0]);
+  }
+  else {
+    /* Print these globals, again to prevent them from being optimized
+     * away. */
+    printf("last token text: \"%.*s\"\n", lastTokenLen, lastTokenText);
+    printf("last collected text: \"%.*s\"\n", lastCollectedLen, lastCollectedText);
 
-  /* Print token count stats. */
-  for (int i=0; i < NUM_L1_TOKENS; i++) {
-    printf("type=%d count=%d\n", i, tokenCount[i]);
+    /* Print token count stats. */
+    for (int i=0; i < NUM_L1_TOKENS; i++) {
+      printf("type=%d count=%d\n", i, tokenCount[i]);
+    }
   }
 
   return 0;
