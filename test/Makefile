@@ -176,12 +176,104 @@ cppscan-yywrap.ok: cppscan-yywrap.input2
 all:
 	@echo 'All tests in test/ passed.  (Use "make clean" there to reset.)'
 
-# Performance testing corpus.
-out/corpus.c:
-	cat ../*.c ../*.h > $@
-
 # Remove all test outputs.
 clean:
 	rm -rf out
+
+# --------------------- Performance Testing ---------------------
+# Performance testing corpus.
+out/perf/corpus.c:
+	@mkdir -p out/perf
+	cat ../*.c ../*.h > $@
+
+# Names for various flex/smflex option combinations.
+default_OPS       :=
+align_OPS         := -Ca
+equiv_meta_OPS    := -Cem
+meta_OPS          := -Cm
+equiv_OPS         := -Ce
+compr_OPS         := -C
+full_equiv_OPS    := -Cfe
+Fast_equiv_OPS    := -CFe
+Cfull_OPS         := -Cf
+CFast_OPS         := -CF
+full_OPS          := -f
+Fast_OPS          := -F
+full_align_OPS    := -Cfa
+Fast_align_OPS    := -CFa
+
+# List of named configurations, in the order I want them to appear in
+# the summary.txt file.
+PERF_CONFIGS :=
+PERF_CONFIGS += default
+PERF_CONFIGS += align
+PERF_CONFIGS += equiv_meta
+PERF_CONFIGS += meta
+PERF_CONFIGS += equiv
+PERF_CONFIGS += compr
+PERF_CONFIGS += full_equiv
+PERF_CONFIGS += Fast_equiv
+PERF_CONFIGS += Cfull
+PERF_CONFIGS += CFast
+PERF_CONFIGS += full
+PERF_CONFIGS += Fast
+PERF_CONFIGS += full_align
+PERF_CONFIGS += Fast_align
+
+# Rule to build a performance-test executable.
+#
+# At least for now, I'm not making this depend on $(SMFLEX) because
+# I won't want to have to redo everything after each change.
+.PRECIOUS: out/perf/c-lexer1-%.exe
+out/perf/c-lexer1-%.exe: c-lexer1.lex
+	@mkdir -p out/perf
+	$(SMFLEX) -oout/perf/c-lexer1-$*.yy.c $($*_OPS) $<
+	$(CC) -O2 -o$@ out/perf/c-lexer1-$*.yy.c
+
+
+# How many times to run a program being measured.  More runs obviously
+# takes more time but produces more reliable measurement.
+NUM_RUNS := 3
+
+# How to run a program and measure its execution time.
+MEASURE_TIME := perl median-of-5.pl -iters $(NUM_RUNS)
+
+# Within the test program, how many times should it scan its input?
+# More scans takes more time but gives a higher signal to noise ratio
+# and discounts startup overhead.
+NUM_SCANS := 100
+
+
+# Rule to run an executable and measure its size and speed.
+.PRECIOUS: out/perf/c-lexer1-%.log
+out/perf/c-lexer1-%.log: out/perf/c-lexer1-%.exe out/perf/corpus.c
+	size $< > $@
+	$(MEASURE_TIME) $< out/perf/corpus.c $(NUM_SCANS) >> $@
+
+
+# The summary file depends on each measurement.
+$(foreach config,$(PERF_CONFIGS),$(eval out/perf/summary.txt: out/perf/c-lexer1-$(config).log))
+
+# Single file with all results.
+out/perf/summary.txt:
+	echo "configuration size_bytes    time_ms" > $@
+	echo "------------- ---------- ----------" >> $@
+	for config in $(PERF_CONFIGS); do \
+	  printf "%-13s " "$$config" >> $@ || exit; \
+	  head -2 out/perf/c-lexer1-$$config.log | tail -1 | \
+	    awk '{ printf "%10s ", $$4 }' >> $@ || exit; \
+	  grep '^median:' out/perf/c-lexer1-$$config.log | \
+	    awk '{ printf "%10s\n", $$2 }' >> $@ || exit; \
+	done
+	cat $@
+
+# Convenience alias.
+.PHONY: perftest
+perftest: out/perf/summary.txt
+
+.PHONY: perfclean
+perfclean:
+	rm -rf out/perf
+
 
 # EOF
