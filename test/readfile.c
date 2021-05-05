@@ -17,6 +17,7 @@
 #endif
 
 #ifdef __cplusplus
+#include <iostream>                    /* cin */
 #include <fstream>                     /* ifstream */
 using namespace std;
 #endif
@@ -66,7 +67,7 @@ static void readFile(char const *method, unsigned char *buffer,
 
     do {
       size_t n = fread(buffer, 1, bufsize, fp);
-      if (n < bufsize && ferror(fp)) {
+      if (n < (size_t)bufsize && ferror(fp)) {
         printf("error while reading \"%s\"\n", inputFname);
         exit(2);
       }
@@ -116,8 +117,46 @@ static void readFile(char const *method, unsigned char *buffer,
 #   endif
   }
 
+  else if (0==strcmp(method, "iostream")) {
+#   ifdef __cplusplus
+      istream *inStream = &cin;
+      ifstream inFile;
+
+      if (inputFname) {
+        inFile.open(inputFname, binmode?
+                                  ios_base::in | ios_base::binary :
+                                  ios_base::in);
+        if (!inFile) {
+          printf("failed to open file: \"%s\"\n", inputFname);
+          exit(2);
+        }
+        inStream = &inFile;
+      }
+
+      do {
+        inStream->read((char*)buffer, bufsize);
+        if (inStream->bad()) {
+          printf("error while reading \"%s\"\n", inputFname);
+          exit(2);
+        }
+
+        std::streamsize n = inStream->gcount();
+        processData(buffer, n);
+      } while (!inStream->eof());
+
+      if (inputFname) {
+        inFile.close();
+      }
+
+#   else
+      printf("__cplusplus not defined, cannot use \"iostream\" method\n");
+      exit(2);
+#   endif
+  }
+
   else {
-    printf("unknown read method: \"%s\n", method);
+    printf("unknown read method: \"%s\"\n", method);
+    exit(2);
   }
 }
 
@@ -166,7 +205,7 @@ int main(int argc, char **argv)
 
   /* We do the buffer allocation once, outside the loop, to ensure
    * best case allocator traffic and locality. */
-  unsigned char *buffer = malloc(bufsize);
+  unsigned char *buffer = (unsigned char *)malloc(bufsize);
 
   int iters = 1;
 
