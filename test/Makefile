@@ -162,6 +162,7 @@ all: out/cpp-prefix.ok
 all: out/cppscan-main.ok
 all: out/cppscan-yywrap.ok
 all: out/cppscan.ok
+all: out/elsa-lexer.ok
 all: out/outfile-specified.ok
 all: out/username-main.c_as_cc.ok
 all: out/username-main.ok
