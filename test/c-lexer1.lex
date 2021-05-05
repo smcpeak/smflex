@@ -369,7 +369,7 @@ int main(int argc, char **argv)
 
   if (iters > 1) {
     /* Abbreviated stats, to reduce clutter. */
-    printf("identifiers: %d\n", tokenCount[0]);
+    printf("identifiers: %d\n", tokenCount[L1_IDENTIFIER]);
   }
   else {
     /* Print these globals, again to prevent them from being optimized
