@@ -230,7 +230,8 @@ out/perf/readfile-summary.txt: out/perf/readfile-c.exe out/perf/readfile-cpp.exe
 	$(MEASURE_TIME) -oneline out/perf/readfile-c.exe   fread    0x2000 out/perf/corpus.c 1000 t >>$@
 	$(MEASURE_TIME) -oneline out/perf/readfile-c.exe   read     0x2000 out/perf/corpus.c 1000 b >>$@
 	$(MEASURE_TIME) -oneline out/perf/readfile-cpp.exe iostream 0x2000 out/perf/corpus.c 1000 b >>$@
-	$(MEASURE_TIME) -oneline out/perf/readfile-c.exe   fread    0x2001 out/perf/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) -oneline out/perf/readfile-c.exe   fread    0x2010 out/perf/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) -oneline out/perf/readfile-c.exe   fread   0x10000 out/perf/corpus.c 1000 b >>$@
 	cat $@
 
 
