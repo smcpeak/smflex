@@ -16,6 +16,7 @@ options:
   -setup 'command': specify untimed command to run before program
   -iters n        : number of iterations to run (default: 5)
   -hide           : hide program console output
+  -oneline        : only print a single output summary line
 
 EOF
 }
@@ -31,6 +32,9 @@ my $iters = 5;
 # true if we will show the console output of the program
 my $showOutput = 1;
 
+# True to show just one line of output.
+my $oneline = 0;
+
 while (@ARGV && $ARGV[0] =~ m/^-/) {
   my $opt = shift @ARGV;
 
@@ -45,6 +49,10 @@ while (@ARGV && $ARGV[0] =~ m/^-/) {
   }
   elsif ($opt eq "-hide") {
     $showOutput = 0;
+  }
+  elsif ($opt eq "-oneline") {
+    $showOutput = 0;
+    $oneline = 1;
   }
   else {
     usage();
@@ -93,39 +101,53 @@ for (my $i = 1; $i <= $iters; $i++) {
   my $diff = ($after[0] - $before[0]) * 1000 +
              int(($after[1] - $before[1]) / 1000);
 
-  print("median-of-5 run $i: $diff ms\n");
+  if (!$oneline) {
+    print("median-of-5 run $i: $diff ms\n");
+  }
   push @results, ($diff);
 }
 
 
-if ($iters > 1) {
+if (!$oneline && $iters > 1) {
   # summarize all runs on one line at the end
   print("all   : @results\n");
+}
 
-  # sort the results in increasing numeric order
-  @results = sort {$a <=> $b} @results;
-  #print("sorted results: @results\n");
 
-  # select middle element
-  my $mid = $results[int(scalar(@results) / 2)];
+# sort the results in increasing numeric order
+@results = sort {$a <=> $b} @results;
+#print("sorted results: @results\n");
+
+# select middle element
+my $mid = $results[int(scalar(@results) / 2)];
+
+# mean average
+my $sum = 0;
+foreach my $r (@results) {
+  $sum += $r;
+}
+my $mean = $sum / scalar(@results);   # yields floating-point
+
+# variance
+my $distsqsum = 0;
+foreach my $r (@results) {
+  $distsqsum += ($mean - $r) * ($mean - $r);
+}
+my $variance = $distsqsum / scalar(@results);
+
+my $stddev = sqrt($variance);
+
+
+if ($oneline) {
+  printf("%10d +- %3d ms: %s\n",
+         int($mid),
+         int($stddev * 2),
+         join(' ', @ARGV));
+}
+
+elsif ($iters > 1) {
   print("median: $mid ms\n");
-
-  # mean average
-  my $sum = 0;
-  foreach my $r (@results) {
-    $sum += $r;
-  }
-  my $mean = $sum / scalar(@results);   # yields floating-point
   printf("mean  : %.2f ms\n", $mean);
-
-  # variance
-  my $distsqsum = 0;
-  foreach my $r (@results) {
-    $distsqsum += ($mean - $r) * ($mean - $r);
-  }
-  my $variance = $distsqsum / scalar(@results);
-
-  my $stddev = sqrt($variance);
   printf("stddev: %.2f ms\n", $stddev);
 }
 
