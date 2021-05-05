@@ -334,7 +334,24 @@ LEXOPT          [aceknopr]
                             return '\n';
                           }
                         }
-        {WS}"|".*{NL}   continued_action = true; ++linenum; return '\n';
+        {WS}"|".*{NL}   {
+                          /* There is a problem with #line numbers and
+                           * continued actions, at least when the
+                           * pattern is <<EOF>>, because we emit a line
+                           * directive pointing at the source file
+                           * before we realize the action is continued,
+                           * and hence will not have any action code.
+                           * So, emit another #line directive pointing
+                           * back at the output file to cancel the
+                           * effect of the first one.
+                           *
+                           * Test case: test/continued-action2.lex */
+                          add_action(yy_output_file_line_directive);
+
+                          continued_action = true;
+                          ++linenum;
+                          return '\n';
+                        }
 
         ^{WS}"/*"       {
                           yyless(yyleng - 2); /* put back '/', '*' */

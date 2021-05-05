@@ -150,6 +150,7 @@ all: out/c-int-set-int-0.ok
 all: out/c-int-set-int-1.ok
 all: out/c-int-set-int-isatty.ok
 all: out/c-lexer1.ok
+all: out/continued-action2.ok
 all: out/cpp-int-batch.ok
 all: out/cpp-int-default.ok
 all: out/cpp-int-interactive.ok
