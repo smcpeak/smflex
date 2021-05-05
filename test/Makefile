@@ -176,6 +176,10 @@ cppscan-yywrap.ok: cppscan-yywrap.input2
 all:
 	@echo 'All tests in test/ passed.  (Use "make clean" there to reset.)'
 
+# Performance testing corpus.
+out/corpus.c:
+	cat ../*.c ../*.h > $@
+
 # Remove all test outputs.
 clean:
 	rm -rf out
