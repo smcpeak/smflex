@@ -127,6 +127,9 @@
     td {
       padding: 0.125em 0.5em 0.25em 0.5em;
     }
+    td.numeric {
+      text-align: right;
+    }
     header {
       margin-bottom: 4em;
       text-align: center;
@@ -2369,11 +2372,150 @@ in the corresponding routine not appearing in the generated scanner:
 <p>(though <code>yy_push_state()</code> and friends won't appear anyway
 unless you use <code>%option stack</code>).
 
+
 <h1 id="performance-considerations">PERFORMANCE CONSIDERATIONS</h1>
 
 <p>The main design goal of <code>smflex</code> is that it generate
-high-performance scanners. It has been optimized for dealing well with
-large sets of rules. Aside from the effects on scanner speed of the
+high-performance scanners.  It has been optimized for dealing well with
+large sets of rules.  This section has guidance on how to best use its
+features to get high performance.
+
+
+<h2>Input read method</h2>
+
+<p>
+Before diving into the scanner guts, make sure the method being used
+to read the input is efficient.  In particular:
+
+<ul>
+
+<li><p>Be sure you are using the <code>-B</code> /
+    <code>%option batch</code> option.  Reading input one character at
+    a time is around <em>10 times</em> slower than reading a block at a time.
+
+<li><p>Ensure that input is being read in <em>binary</em> mode, not
+    text mode, if the distinction is relevant for your platform(s)
+    (mainly Windows).  Text mode reading, even when the line endings
+    do not need translation, is almost twice as slow as binary reading.
+    Toward that end, explicitly open all input files rather than
+    reading from standard input so you can set the read mode.
+
+<li><p>Some systems can be sensitive to the size of the
+    read buffer.  The default value of <code>YY_READ_BUF_SIZE</code>,
+    0x2000 (8 KiB), works reasonably well on all systems tested.  But consider this anecdote:
+    on MinGW using <code>fread</code>, any size that is not a multiple of
+    0x800 entails a 10-20% performance loss.
+
+<li><p>Meanwhile, substantially increasing the buffer size can lead to
+    significant gains.  For example, a size of 0x10000 (64 KiB) gains
+    about 20% over the default (with returns diminishing rapidly after
+    that).  To use that size, add
+    <code>#define YY_READ_BUF_SIZE 0x10000</code> to the top of the
+    <code>smflex</code> input file.
+
+<li><p>There are three methods <code>smflex</code> can use to read the
+    input: <code>fread</code>, <code>read</code>, and <code>iostream</code>.
+    On MinGW at least, they all perform about the same (with the
+    default buffer size), but other platforms may be different.
+
+</ul>
+
+<p>
+In the <code>smflex</code> sources, the program
+<a href="test/readfile.c"><code>test/readfile.c</code></a> can be
+used to experiment with your target platforms.  When I ran this program
+on MinGW (Windows 10, gcc-5.4.0) against a corpus consisting of all of the
+<code>smflex</code> source files concatenated together (about 470KB),
+using an iteration count of 1000 and 5 runs,
+I observed these key data points (the first is the baseline, the
+rest vary one aspect, shown in <strong>bold</strong>;
+&sigma; is standard deviation):
+
+<table>
+  <tr>
+    <th>Time (ms)
+    <th>2&sigma; (ms)
+    <th>RelTime
+    <th>Compiler
+    <th>Method
+    <th>Bufsize (bytes)
+    <th>Mode
+
+  <tr>
+    <td class="numeric">655
+    <td class="numeric">&plusmn; 20
+    <td class="numeric">
+    <td>C
+    <td>fread
+    <td class="numeric">0x2000
+    <td>binary
+
+  <tr>
+    <td class="numeric">658
+    <td class="numeric">&plusmn; 37
+    <td class="numeric">0
+    <td><strong>C++</strong>
+    <td>fread
+    <td class="numeric">0x2000
+    <td>binary
+
+  <tr>
+    <td class="numeric">1110
+    <td class="numeric">&plusmn; 13
+    <td class="numeric">+69%
+    <td>C
+    <td>fread
+    <td class="numeric">0x2000
+    <td><strong>text</strong>
+
+  <tr>
+    <td class="numeric">661
+    <td class="numeric">&plusmn; 11
+    <td class="numeric">0
+    <td>C
+    <td><strong>read</strong>
+    <td class="numeric">0x2000
+    <td>binary
+
+  <tr>
+    <td class="numeric">661
+    <td class="numeric">&plusmn; 21
+    <td class="numeric">0
+    <td>C++
+    <td><strong>iostream</strong>
+    <td class="numeric">0x2000
+    <td>binary
+
+  <tr>
+    <td class="numeric">791
+    <td class="numeric">&plusmn; 32
+    <td class="numeric">+20%
+    <td>C
+    <td>fread
+    <td class="numeric"><strong>0x2010</strong>
+    <td>binary
+
+  <tr>
+    <td class="numeric">534
+    <td class="numeric">&plusmn; 16
+    <td class="numeric">-18%
+    <td>C
+    <td>fread
+    <td class="numeric"><strong>0x10000</strong>
+    <td>binary
+
+</table>
+
+<p>Of course, the numbers in the table above are measuring only the
+cost of reading the data, without any significant computation being
+performed, so practical gains in the context of a scanner will be
+less.
+
+
+<h2>Effect of options other than table compression</h2>
+
+<p>
+Aside from the effects on scanner speed of the
 table compression <code>-C</code> options outlined above, there are a
 number of options/actions which degrade performance. These are, from
 most expensive to least:
@@ -2398,6 +2540,9 @@ some excess text you scanned, use <code>yyless()</code>.
 
 <p><code>REJECT</code> should be avoided at all costs when performance
 is important. It is a particularly expensive option.
+
+
+<h2>Avoiding backing up</h2>
 
 <p>Getting rid of backing up is messy and often may be an enormous amount
 of work for a complicated scanner. In principal, one begins by using the
@@ -2494,6 +2639,9 @@ feature will be to automatically add rules to eliminate backing up).
 eliminating backing up only if you eliminate <em>every</em> instance of
 backing up. Leaving just one means you gain nothing.
 
+
+<h2>Trailing context</h2>
+
 <p><em>Variable</em> trailing context (where both the leading and trailing
 parts do not have a fixed length) entails almost the same performance loss
 as <code>REJECT</code> (i.e., substantial). So when possible a rule like:
@@ -2520,7 +2668,11 @@ as <code>REJECT</code> (i.e., substantial). So when possible a rule like:
 </code></pre>
 
 <p>Note that here the special '|' action does <em>not</em> provide any
-savings, and can even make things worse (see Deficiencies / Bugs below).
+savings, and can even make things worse (see
+<a href="#deficiencies-n-bugs">Deficiencies / Bugs</a>).
+
+
+<h2>Matching longer tokens</h2>
 
 <p>Another area where the user can increase a scanner's performance (and
 one that's easier to implement) arises from the fact that the longer the
@@ -2566,6 +2718,9 @@ does <em>not</em> slow down the scanner! The speed of the scanner is
 independent of the number of rules or (modulo the considerations given
 at the beginning of this section) how complicated the rules are with
 regard to operators such as '*' and '|'.
+
+
+<h2>Combining tokens with adjacent whitespace</h2>
 
 <p>A final example in speeding up a scanner: suppose you want to scan
 through a file containing identifiers and keywords, one per line and
@@ -2645,6 +2800,9 @@ which doesn't include a newline:
 
 <p>Compiled with <code>-Cf</code>, this is about as fast as one can get
 a <code>smflex</code> scanner to go for this particular problem.
+
+
+<h2>Miscellaneous</h2>
 
 <p>A final note: <code>smflex</code> is slow when matching NUL's,
 particularly when a token contains multiple NUL's. It's best to write
