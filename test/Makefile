@@ -188,6 +188,16 @@ out/perf/corpus.c:
 	@mkdir -p out/perf
 	cat ../*.c ../*.h > $@
 
+# Same file, but with CRLF line endings.
+out/perf/corpus-crlf.c: out/perf/corpus.c
+	perl -p -e 's/\n/\r\n/' < $< > $@
+
+# 'readfile' program for baseline.
+all: out/perf/readfile-c.exe
+out/perf/readfile-c.exe: readfile.c
+	$(CC) -o$@ -std=c89 -O2 -Wall -Werror -DHAS_POSIX $<
+
+
 # Base name of the lexer to test.
 LEXER_NAME := c-lexer1
 #LEXER_NAME := elsa-lexer
