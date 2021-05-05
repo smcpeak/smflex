@@ -44,29 +44,38 @@
 /******************/
 
 %{
-  /* type of each L1 token */
-  enum Lexer1TokenType {
-    L1_IDENTIFIER,           /* 0 */
-    L1_INT_LITERAL,          /* 1 */
-    L1_FLOAT_LITERAL,        /* 2 */
-    L1_STRING_LITERAL,       /* 3 */
-    L1_UDEF_QUAL,            /* 4 */     /* dsw: user-defined qualifier */
-    L1_CHAR_LITERAL,         /* 5 */
-    L1_OPERATOR,             /* 6 */
-    L1_PREPROCESSOR,         /* 7 */
-    L1_WHITESPACE,           /* 8 */
-    L1_COMMENT,              /* 9 */
-    L1_ILLEGAL,             /* 10 */
-    NUM_L1_TOKENS
-  };
 
-  /* Record a token that has been seen. */
-  static void lexer_emit(enum Lexer1TokenType, char const *text, int len);
+#ifdef yyFlexLexer_CLASS_DEFINED
+// We are using the C++ interface.
+#  include <fstream>
+using std::ifstream;
+#endif
 
-  /* Record a token fragment. */
-  static void collector_append(char const *text, int len);
 
-  #define COLLECTOR yytext, yyleng
+/* type of each L1 token */
+enum Lexer1TokenType {
+  L1_IDENTIFIER,           /* 0 */
+  L1_INT_LITERAL,          /* 1 */
+  L1_FLOAT_LITERAL,        /* 2 */
+  L1_STRING_LITERAL,       /* 3 */
+  L1_UDEF_QUAL,            /* 4 */     /* dsw: user-defined qualifier */
+  L1_CHAR_LITERAL,         /* 5 */
+  L1_OPERATOR,             /* 6 */
+  L1_PREPROCESSOR,         /* 7 */
+  L1_WHITESPACE,           /* 8 */
+  L1_COMMENT,              /* 9 */
+  L1_ILLEGAL,             /* 10 */
+  NUM_L1_TOKENS
+};
+
+/* Record a token that has been seen. */
+static void lexer_emit(enum Lexer1TokenType, char const *text, int len);
+
+/* Record a token fragment. */
+static void collector_append(char const *text, int len);
+
+#define COLLECTOR yytext, yyleng
+
 %}
 
 /****************/
@@ -325,6 +334,18 @@ static void collector_append(char const *text, int len)
 
 static void scanFile(char const *fname)
 {
+#ifdef yyFlexLexer_CLASS_DEFINED
+  ifstream in(fname);
+  if (!in) {
+    cerr << "failed to open input file \"" << fname << "\"\n";
+    exit(2);
+  }
+
+  yyFlexLexer lexer(&in);
+  while (lexer.yylex())
+    {}
+
+#else
   /* Open a named file, which is how I expect a real scanner would
    * usually operate. */
   FILE *fp = fopen(fname, "rb");
@@ -339,6 +360,8 @@ static void scanFile(char const *fname)
     {}
 
   fclose(fp);
+
+#endif
 }
 
 
@@ -361,10 +384,21 @@ int main(int argc, char **argv)
     }
   }
   else {
-    /* Read from stdin.  By allowing both, I can see if this makes
-     * any speed difference. */
+    /* Read from stdin.  By allowing both stdin and named files, I can
+     * see if it makes any speed difference. */
+#ifdef yyFlexLexer_CLASS_DEFINED
+    yyFlexLexer lexer;
+    while (lexer.yylex())
+      {}
+
+    // Make sure everything is flushed from cout before we go back to
+    // using stdio printf.
+    cout.flush();
+#else
     while (yylex())
       {}
+
+#endif
   }
 
   if (iters > 1) {

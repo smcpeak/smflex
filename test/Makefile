@@ -188,13 +188,34 @@ out/perf/corpus.c:
 	@mkdir -p out/perf
 	cat ../*.c ../*.h > $@
 
+# Base name of the lexer to test.
+LEXER_NAME := c-lexer1
+#LEXER_NAME := elsa-lexer
+
+# Whether to generate a C or C++ interface.
+INTERFACE := c
+#INTERFACE := cpp
+
+# How many times to run a program being measured.  More runs obviously
+# takes more time but produces more reliable measurement.
+NUM_RUNS := 3
+
+# Within the test program, how many times should it scan its input?
+# More scans takes more time but gives a higher signal to noise ratio
+# and discounts startup overhead.
+NUM_SCANS := 100
+
+
 # Names for various flex/smflex option combinations.
 default_OPS       :=
-align_OPS         := -Ca
-equiv_meta_OPS    := -Cem
-meta_OPS          := -Cm
-equiv_OPS         := -Ce
-compr_OPS         := -C
+batch_OPS         := -B
+align_OPS         := -Ca -B
+equiv_meta_OPS    := -Cem -B
+meta_OPS          := -Cm -B
+equiv_OPS         := -Ce -B
+compr_OPS         := -C -B
+
+# All of the modes involving 'f' or 'F' have 'B' implicitly.
 full_equiv_OPS    := -Cfe
 Fast_equiv_OPS    := -CFe
 Cfull_OPS         := -Cf
@@ -204,80 +225,93 @@ Fast_OPS          := -F
 full_align_OPS    := -Cfa
 Fast_align_OPS    := -CFa
 
+
 # List of named configurations, in the order I want them to appear in
 # the summary.txt file.
 PERF_CONFIGS :=
 
-# All of these are about 10x slower than the others, so turn them off
-# by default so I can crank up the iteration count.
+# The default, interactive scanner is around 10x slower, so I normally
+# do not want to spend time measuring it.
 ifeq ($(MEASURE_SLOW_CONFIGS),1)
 PERF_CONFIGS += default
-PERF_CONFIGS += align
+endif
+
+PERF_CONFIGS += batch
+
+ifeq ($(INTERFACE),c)
+PERF_CONFIGS += align           # no C++ (compile error)
+endif
+
 PERF_CONFIGS += equiv_meta
-PERF_CONFIGS += meta
+
+ifeq ($(INTERFACE),c)
+PERF_CONFIGS += meta            # no C++ (compile error)
+endif
+
 PERF_CONFIGS += equiv
-PERF_CONFIGS += compr
+
+ifeq ($(INTERFACE),c)
+PERF_CONFIGS += compr           # no C++ (compile error)
 endif
 
 PERF_CONFIGS += full_equiv
-PERF_CONFIGS += Fast_equiv
-PERF_CONFIGS += Cfull
-PERF_CONFIGS += CFast
-PERF_CONFIGS += full
-PERF_CONFIGS += Fast
-PERF_CONFIGS += full_align
-PERF_CONFIGS += Fast_align
+
+ifeq ($(INTERFACE),c)
+PERF_CONFIGS += Fast_equiv      # no C++ (explicit prohibition)
+PERF_CONFIGS += Cfull           # no C++ (compile error)
+PERF_CONFIGS += CFast           # no C++ (explicit prohibition)
+PERF_CONFIGS += full            # no C++ (compile error)
+PERF_CONFIGS += Fast            # no C++ (explicit prohibition)
+PERF_CONFIGS += full_align      # no C++ (compile error)
+PERF_CONFIGS += Fast_align      # no C++ (explicit prohibition)
+endif
 
 # Rule to build a performance-test executable.
 #
 # At least for now, I'm not making this depend on $(SMFLEX) because
 # I won't want to have to redo everything after each change.
-.PRECIOUS: out/perf/c-lexer1-%.exe
-out/perf/c-lexer1-%.exe: c-lexer1.lex
+.PRECIOUS: out/perf/$(LEXER_NAME)-$(INTERFACE)-%.exe
+out/perf/$(LEXER_NAME)-$(INTERFACE)-%.exe: $(LEXER_NAME).lex
 	@mkdir -p out/perf
-	$(SMFLEX) -oout/perf/c-lexer1-$*.yy.c $($*_OPS) $<
-	$(CC) -O2 -o$@ out/perf/c-lexer1-$*.yy.c
+ifeq ($(INTERFACE),c)
+	$(SMFLEX) -oout/perf/$(LEXER_NAME)-$(INTERFACE)-$*.yy.c $($*_OPS) $<
+	$(CC) -O2 -Wall -o$@ out/perf/$(LEXER_NAME)-$(INTERFACE)-$*.yy.c
+else
+	$(SMFLEX) -+ -oout/perf/$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc $($*_OPS) $<
+	$(CXX) -O2 -Wall -o$@ out/perf/$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc
+endif
 
-
-# How many times to run a program being measured.  More runs obviously
-# takes more time but produces more reliable measurement.
-NUM_RUNS := 3
 
 # How to run a program and measure its execution time.
 MEASURE_TIME := perl median-of-5.pl -iters $(NUM_RUNS)
 
-# Within the test program, how many times should it scan its input?
-# More scans takes more time but gives a higher signal to noise ratio
-# and discounts startup overhead.
-NUM_SCANS := 100
-
 
 # Rule to run an executable and measure its size and speed.
-.PRECIOUS: out/perf/c-lexer1-%.log
-out/perf/c-lexer1-%.log: out/perf/c-lexer1-%.exe out/perf/corpus.c
+.PRECIOUS: out/perf/$(LEXER_NAME)-$(INTERFACE)-%-$(NUM_RUNS)-$(NUM_SCANS).log
+out/perf/$(LEXER_NAME)-$(INTERFACE)-%-$(NUM_RUNS)-$(NUM_SCANS).log: out/perf/$(LEXER_NAME)-$(INTERFACE)-%.exe out/perf/corpus.c
 	size $< > $@
 	$(MEASURE_TIME) $< out/perf/corpus.c $(NUM_SCANS) >> $@
 
 
 # The summary file depends on each measurement.
-$(foreach config,$(PERF_CONFIGS),$(eval out/perf/summary.txt: out/perf/c-lexer1-$(config).log))
+$(foreach config,$(PERF_CONFIGS),$(eval out/perf/$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt: out/perf/$(LEXER_NAME)-$(INTERFACE)-$(config)-$(NUM_RUNS)-$(NUM_SCANS).log))
 
 # Single file with all results.
-out/perf/summary.txt:
+out/perf/$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt:
 	echo "configuration size_bytes    time_ms" > $@
 	echo "------------- ---------- ----------" >> $@
 	for config in $(PERF_CONFIGS); do \
 	  printf "%-13s " "$$config" >> $@ || exit; \
-	  head -2 out/perf/c-lexer1-$$config.log | tail -1 | \
+	  head -2 out/perf/$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | tail -1 | \
 	    awk '{ printf "%10s ", $$4 }' >> $@ || exit; \
-	  grep '^median:' out/perf/c-lexer1-$$config.log | \
+	  grep '^median:' out/perf/$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | \
 	    awk '{ printf "%10s\n", $$2 }' >> $@ || exit; \
 	done
 	cat $@
 
 # Convenience alias.
 .PHONY: perftest
-perftest: out/perf/summary.txt
+perftest: out/perf/$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt
 
 .PHONY: perfclean
 perfclean:
