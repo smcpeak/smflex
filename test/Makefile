@@ -192,10 +192,46 @@ out/perf/corpus.c:
 out/perf/corpus-crlf.c: out/perf/corpus.c
 	perl -p -e 's/\n/\r\n/' < $< > $@
 
+
+# How many times to run a program being measured.  More runs obviously
+# takes more time but produces more reliable measurement.
+NUM_RUNS := 5
+
+# Within the test program, how many times should it scan its input?
+# More scans takes more time but gives a higher signal to noise ratio
+# and discounts startup overhead.
+NUM_SCANS := 100
+
+# How to run a program and measure its execution time.
+MEASURE_TIME := perl median-of-5.pl -iters $(NUM_RUNS)
+
+
 # 'readfile' program for baseline.
 all: out/perf/readfile-c.exe
 out/perf/readfile-c.exe: readfile.c
 	$(CC) -o$@ -std=c89 -O2 -Wall -Werror -DHAS_POSIX $<
+
+all: out/perf/readfile-cpp.exe
+out/perf/readfile-cpp.exe: readfile.c
+	$(CXX) -o$@ -xc++ -std=c++98 -O2 -Wall -Werror -DHAS_POSIX $<
+
+# This collects together the measurements supporting the main
+# conclusions from the readfile experiment:
+#
+#   - fread vs. read vs. iostream is all about the same
+#   - size of buffer must be a power of 2 for fread on MinGW
+#   - text mode reading is about 2x slower
+#   - compiled as C vs. C++ does not make a difference
+#
+out/perf/readfile-summary.txt: out/perf/readfile-c.exe out/perf/readfile-cpp.exe
+	rm -f $@
+	$(MEASURE_TIME) -oneline out/perf/readfile-c.exe   fread    0x2000 out/perf/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) -oneline out/perf/readfile-cpp.exe fread    0x2000 out/perf/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) -oneline out/perf/readfile-c.exe   fread    0x2000 out/perf/corpus.c 1000 t >>$@
+	$(MEASURE_TIME) -oneline out/perf/readfile-c.exe   read     0x2000 out/perf/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) -oneline out/perf/readfile-cpp.exe iostream 0x2000 out/perf/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) -oneline out/perf/readfile-c.exe   fread    0x2001 out/perf/corpus.c 1000 b >>$@
+	cat $@
 
 
 # Base name of the lexer to test.
@@ -205,15 +241,6 @@ LEXER_NAME := c-lexer1
 # Whether to generate a C or C++ interface.
 INTERFACE := c
 #INTERFACE := cpp
-
-# How many times to run a program being measured.  More runs obviously
-# takes more time but produces more reliable measurement.
-NUM_RUNS := 3
-
-# Within the test program, how many times should it scan its input?
-# More scans takes more time but gives a higher signal to noise ratio
-# and discounts startup overhead.
-NUM_SCANS := 100
 
 
 # Names for various flex/smflex option combinations.
@@ -290,10 +317,6 @@ else
 	$(SMFLEX) -+ -oout/perf/$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc $($*_OPS) $<
 	$(CXX) -O2 -Wall -o$@ out/perf/$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc
 endif
-
-
-# How to run a program and measure its execution time.
-MEASURE_TIME := perl median-of-5.pl -iters $(NUM_RUNS)
 
 
 # Rule to run an executable and measure its size and speed.
