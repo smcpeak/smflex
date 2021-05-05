@@ -207,12 +207,18 @@ Fast_align_OPS    := -CFa
 # List of named configurations, in the order I want them to appear in
 # the summary.txt file.
 PERF_CONFIGS :=
+
+# All of these are about 10x slower than the others, so turn them off
+# by default so I can crank up the iteration count.
+ifeq ($(MEASURE_SLOW_CONFIGS),1)
 PERF_CONFIGS += default
 PERF_CONFIGS += align
 PERF_CONFIGS += equiv_meta
 PERF_CONFIGS += meta
 PERF_CONFIGS += equiv
 PERF_CONFIGS += compr
+endif
+
 PERF_CONFIGS += full_equiv
 PERF_CONFIGS += Fast_equiv
 PERF_CONFIGS += Cfull
