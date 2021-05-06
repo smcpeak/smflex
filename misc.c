@@ -60,7 +60,7 @@ char const yy_output_file_line_directive[] =
 
 
 /* Add a #define to the action file. */
-void action_define(char *defname, int value)
+void action_define(char const *defname, int value)
 {
   char buf[MAXLINE];
 

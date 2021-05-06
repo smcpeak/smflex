@@ -15,7 +15,7 @@ extern void format_synerr(char msg[], char arg[]);
 extern void synerr(char str[]);
 extern void format_warn(char msg[], char arg[]);
 extern void warn(char str[]);
-extern void format_pinpoint_message(char msg[], char arg[]);
+extern void format_pinpoint_message(char const *msg, char const *arg);
 extern void pinpoint_message(char str[]);
 extern void line_warning(char str[], int line);
 extern void line_pinpoint(char str[], int line);

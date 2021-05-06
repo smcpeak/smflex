@@ -22,7 +22,7 @@ extern char const yy_output_file_line_directive[];
 
 
 /* See definitions for documentation. */
-void action_define(char *defname, int value);
+void action_define(char const *defname, int value);
 void add_action(char const *new_text);
 void *allocate_array(int size, size_t element_size);
 int all_lower(char *str);

@@ -764,7 +764,7 @@ void warn(char str[])
 /* format_pinpoint_message - write out a message formatted with one string,
  *                           pinpointing its location
  */
-void format_pinpoint_message(char msg[], char arg[])
+void format_pinpoint_message(char const *msg, char const *arg)
 {
   char errmsg[MAXLINE];
 
