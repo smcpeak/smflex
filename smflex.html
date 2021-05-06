@@ -909,13 +909,11 @@ an action:
     </code></pre>
 
     <p>(The first three rules share the fourth's action since they use the
-    special '|' action.) <code>REJECT</code> is a particularly expensive
-    feature in terms of scanner performance; if it is used in <em>any</em>
-    of the scanner's actions it will slow down <em>all</em> of the scanner's
-    matching. Furthermore, <code>REJECT</code> cannot be used with the
-    <code>-Cf</code> or <code>-CF</code> options (see below).
+    special '|' action.)  Any use of <code>REJECT</code> imposes
+    restrictions on scanner performance; see
+    <a href="#performance-considerations">Performance Considerations</a>.
 
-    <p>Note also that unlike the other special actions, <code>REJECT</code>
+    <p>Be aware that, unlike the other special actions, <code>REJECT</code>
     is a <em>branch</em>; code immediately following it in the action will
     <em>not</em> be executed.
 
