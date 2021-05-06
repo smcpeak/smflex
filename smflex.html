@@ -1058,27 +1058,24 @@ an action:
 <p>The output of <code>smflex</code> is the file <code>lex.yy.c</code>,
 which contains the scanning routine <code>yylex()</code>, a number of
 tables used by it for matching tokens, and a number of auxiliary routines
-and macros. By default, <code>yylex()</code> is declared as follows:
+and macros. By default, <code>yylex()</code> is defined as follows:
 
 <pre><code>
     int yylex()
-        {
-        ... various definitions and the actions in here ...
-        }
+    {
+      ... various definitions and the actions in here ...
+    }
 </code></pre>
 
-<p>(If your environment supports function prototypes, then it will be
-"int yylex( void )".) This definition may be changed by defining the
-"YY_DECL" macro. For example, you could use:
+<p>This definition may be changed by defining the
+<code>YY_DECL</code> macro. For example, you could use:
 
 <pre><code>
-    #define YY_DECL float lexscan( a, b ) float a, b;
+    #define YY_DECL float lexscan(float a, float b)
 </code></pre>
 
 <p>to give the scanning routine the name <code>lexscan</code>, returning a
-float, and taking two floats as arguments. Note that if you give arguments
-to the scanning routine using a K&amp;R-style/non-prototyped function
-declaration, you must terminate the definition with a semi-colon (;).
+float, and taking two floats as arguments.
 
 <p>Whenever <code>yylex()</code> is called, it scans tokens from the
 global input file <code>yyin</code> (which defaults to stdin). It
