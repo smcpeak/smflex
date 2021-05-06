@@ -6,16 +6,16 @@
 Given a C source file that contains #line directives, check them for
 accuracy.  Specifically:
 
-1. When a #line directive refers to another file, check that the first
-non-blank line after it contains text that appears on the corresponding
-line in the other file.  For example, if we are checking "generated.c",
-then if we see:
+1. When a #line directive refers to another file, check that the lines
+line after it, until the next #line directive or EOF, each contain text
+that appears on the corresponding line in the other file.  For example,
+if we are checking "generated.c", then if we see:
 
   #line 10 "some-file.c"
   int x = 3;
 
 then we will check that line 10 of some-file.c contains "int x = 3;"
-as a substring.
+as a substring, and so on for subsequent lines.
 
 2. When a #line directiv refers to the containing file, check that the
 line number is correct for its location.  For example, again if checking
@@ -26,8 +26,8 @@ line number is correct for its location.  For example, again if checking
 then we will check that that #line directive in fact appears on line 33
 of generated.c (33 instead of 34 because the *next* line is 34).
 
-If all checks pass, exit with code 0.  Otherwise print what problem
-was encountered and exit with code 2.
+If all checks pass, exit with code 0.  Otherwise print what problems
+were encountered and exit with code 2.
 
 """
 
@@ -88,7 +88,9 @@ nameToContents = {}
 
 
 def getFileContents(fname):
-  """Return a list of the lines in 'fname'."""
+  """Return a list of the lines in 'fname'.
+
+  If the file cannot be read, raises IOException."""
 
   global nameToContents
 
@@ -155,25 +157,29 @@ for inputLineNumber, inputLine in enumerate(inputFileLines, start=1):
       directivesWithDifferentFile += 1
 
       # Read the named source file.
-      sourceFileLines = getFileContents(namedFile)
+      try:
+        sourceFileLines = getFileContents(namedFile)
+      except IOError as e:
+        complain(f"""\
+          Line {inputLineNumber} of {inputFileName} is:
+
+            {inputLine}
+
+          but attempting to read "{namedFile}" failed:
+
+            {e}""")
+        break
 
       # Check that the line number is within range.
       if 1 <= namedLineNumber and namedLineNumber <= len(sourceFileLines):
-        # Look for the first non-blank line after the #line directive
-        # in the input file.
-        n = inputLineNumber + 1    # Line number of non-blank line.
-        while (n < len(inputFileLines) and
-               blankPattern.match(inputFileLines[n - 1])):
-          n += 1
-
-        # Found one?
-        if n <= len(inputFileLines):
+        # Check all subsequent lines until the next #line or EOF.
+        n = inputLineNumber + 1    # Number of line being checked.
+        while n < len(inputFileLines):
           inputFileLine = chomp(inputFileLines[n - 1])
 
-          # If the found line is itself a #line directive, then ignore
-          # the previous one.
+          # If hit #line, bail.
           if lineDirectivePattern.match(inputFileLine):
-            continue
+            break
 
           # Get the corresponding source file line number.
           sourceLineNumber = namedLineNumber + (n-1 - inputLineNumber)
@@ -183,12 +189,13 @@ for inputLineNumber, inputLine in enumerate(inputFileLines, start=1):
 
                 {inputLine}
 
-              The first non-blank line after that is line {n}:
+              That section contains line {n}:
 
                 {inputFileLine}
 
               The corresponding source code line would be line {sourceLineNumber},
               but {namedFile} only has {len(sourceFileLines)} lines.""")
+            break
 
           # Get the corresponding source file line.
           sourceLine = chomp(sourceFileLines[sourceLineNumber - 1])
@@ -201,7 +208,7 @@ for inputLineNumber, inputLine in enumerate(inputFileLines, start=1):
 
                 {inputLine}
 
-              The first non-blank line after that is line {n}:
+              That section contains line {n}:
 
                 {inputFileLine}
 
@@ -209,17 +216,11 @@ for inputLineNumber, inputLine in enumerate(inputFileLines, start=1):
 
                 {sourceLine}
 
-              The former is not a subtring of the latter, which means
+              The former is not a substring of the latter, which means
               these do not match.""")
+            break
 
-        else:
-          warn(f"""\
-            Warning: Line {inputLineNumber} of {inputFileName} is:
-
-              {inputLine}
-
-            It not followed by any non-blank lines.
-            """)
+          n += 1
 
       else:
         complain(f"""\
