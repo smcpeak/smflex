@@ -9,6 +9,13 @@ fi
 src="$1"
 dest="$2"
 
+if [ -f "$src.lex" -o -f "$src.lexpp" ]; then
+  true
+else
+  echo "Neither \"$src.lex\" nor \"$src.lexpp\" exist."
+  exit 2
+fi
+
 # Copy $1 to $2 unless the former does not exist or the latter
 # already exists.  Also substitute $dest for $src in the contents.
 copy_if() {
