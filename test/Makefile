@@ -209,8 +209,11 @@ MEASURE_TIME := perl median-of-5.pl -iters $(NUM_RUNS)
 # flex-2.5.4 executable, for comparison.
 FLEX254 := ../../flex-2.5.4/flex
 
+# flex-2.6.4, also for comparison.
+FLEX264 := /usr/bin/flex
+
 # Compilation flags for use when making performance test programs.
-PERF_CFLAGS += -O2 -Wall -Werror -Wno-unused-function -DHAS_POSIX -Iinclude
+PERF_CFLAGS := -O2 -Wall -Werror -Wno-unused-function -DHAS_POSIX
 
 
 # 'readfile' program for baseline.
@@ -253,10 +256,17 @@ INTERFACE := c
 # Which variant of flex to use.
 VARIANT := smflex
 #VARIANT := flex254
+#VARIANT := flex264
 
 # Map VARIANT to an executable.
 smflex_EXEC       := $(SMFLEX)
 flex254_EXEC      := $(FLEX254)
+flex264_EXEC      := $(FLEX264)
+
+# Map VARIANT to additional compilation flags.
+smflex_CFLAGS     :=
+flex254_CFLAGS    := -Iinclude-flex-2.5.4
+flex264_CFLAGS    := -Iinclude-flex-2.6.4
 
 
 # Names for various flex/smflex option combinations.
@@ -319,10 +329,10 @@ out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%.exe: $(LEXER_NAME).lex
 	@mkdir -p out/perf
 ifeq ($(INTERFACE),c)
 	$($(VARIANT)_EXEC) -oout/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.c $($*_OPS) $<
-	$(CC) $(PERF_CFLAGS) -o$@ out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.c
+	$(CC) $(PERF_CFLAGS) $($(VARIANT)_CFLAGS) -o$@ out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.c
 else
 	$($(VARIANT)_EXEC) -+ -oout/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc $($*_OPS) $<
-	$(CXX) $(PERF_CFLAGS) -o$@ out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc
+	$(CXX) $(PERF_CFLAGS) $($(VARIANT)_CFLAGS) -o$@ out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc
 endif
 
 

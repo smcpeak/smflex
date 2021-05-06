@@ -49,7 +49,10 @@
 /* We are using the C++ interface. */
 #  define USING_CPP_INTERFACE
 #  include <fstream>
+#  include <iostream>
 using std::ifstream;
+using std::cerr;
+using std::cout;
 #endif
 
 #ifdef FLEX_SCANNER
