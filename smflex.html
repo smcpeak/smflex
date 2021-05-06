@@ -1916,7 +1916,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dd><p>Write output files using platform native line endings.  The
     default behavior is to always use LF line endings.
 
-<dt><code>-p</code>
+<dt id="performance-report"><code>-p</code>
 
 <dd><p>generates a performance report to stderr. The report consists of
     comments regarding features of the <code>smflex</code> input file which
@@ -2372,6 +2372,12 @@ unless you use <code>%option stack</code>).
 high-performance scanners.  It has been optimized for dealing well with
 large sets of rules.  This section has guidance on how to best use its
 features to get high performance.
+
+<p>When first looking to optimize a scanner, be sure to run
+<code>smflex</code> with the
+<a href="#performance-report"><code>-p -p</code></a> options (the same
+option repeated) in order to get the "performance report".  This
+will warn you of obvious potential issues with the configuration.
 
 
 <h2>Input read method</h2>
