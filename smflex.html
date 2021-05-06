@@ -124,6 +124,9 @@
       border-top: 1px solid #1a1a1a;
       padding: 0.25em 0.5em 0.25em 0.5em;
     }
+    th.row2 {
+      border-top: 0;
+    }
     td {
       padding: 0.125em 0.5em 0.25em 0.5em;
     }
@@ -2383,7 +2386,7 @@ option repeated) in order to get the "performance report".  This
 will warn you of obvious potential issues with the configuration.
 
 
-<h2>Input read method</h2>
+<h2 id="input-read-method">Input Read Method</h2>
 
 <p>
 Before diving into the scanner guts, make sure the method being used
@@ -2514,7 +2517,358 @@ performed, so practical gains in the context of a scanner will be
 less.
 
 
-<h2>Effect of options other than table compression</h2>
+<h2>Table Compression Options</h2>
+
+<p>
+To explore the effect of various table compression options, I first
+used <a href="test/c-lexer1.lex"><code>c-lexer1.lex</code></a>.  This
+is a realistic scanner for a C/C++ that does <em>not</em> explicitly
+enumerate all of the keywords.  I used <code>smflex</code> to generate
+both a C-interface and C++-interface scanner.  It
+was run on MinGW/Windows x86_64, compiled with gcc-5.4.0 at
+optimization level -O2, and performed 1000 scans of the concatenation
+of all <code>smflex</code> source code (~470 KB) in the time shown.
+Each experiment was run 9 times.  For completeness, I used
+commit <code>483c9fd3bc</code>, but I also measured
+<code>flex-2.5.4</code> and <code>flex-2.6.4</code> (the latest) and
+the results were essentially the same.
+
+<p>The following table reports the median time in milliseconds and
+double the standard deviation (i.e., 95% confidence interval).  Sizes
+are in bytes as reported by the <code>size</code> utility.
+
+<table>
+  <tr>
+    <th>
+    <th>
+    <th colspan="3">C interface
+    <th colspan="3">C++ interface
+    <th>
+
+  <tr>
+    <th class="row2">Configuration
+    <th class="row2">Switches
+    <th class="row2">Size
+    <th class="row2">Time
+    <th class="row2">2&sigma;
+    <th class="row2">Size
+    <th class="row2">Time
+    <th class="row2">2&sigma;
+    <th class="row2">Notes
+
+  <tr>
+    <td>equiv_meta
+    <td><code>-B (-Cem)</code>
+    <td class="numeric">25696
+    <td class="numeric">3993
+    <td class="numeric">&plusmn; 48
+    <td class="numeric">56092
+    <td class="numeric">3940
+    <td class="numeric">&plusmn; 27
+    <td>smallest
+
+  <tr>
+    <td>align
+    <td><code>-B -Ca</code>
+    <td class="numeric">52912
+    <td class="numeric">3641
+    <td class="numeric">&plusmn; 29
+    <td class="numeric">83404
+    <td class="numeric">3522
+    <td class="numeric">&plusmn; 15
+    <td>
+
+  <tr>
+    <td>meta
+    <td><code>-B -Cm</code>
+    <td class="numeric">29248
+    <td class="numeric">3796
+    <td class="numeric">&plusmn; 22
+    <td class="numeric">59752
+    <td class="numeric">3818
+    <td class="numeric">&plusmn; 26
+    <td>
+
+  <tr>
+    <td>equiv
+    <td><code>-B -Ce</code>
+    <td class="numeric">26964
+    <td class="numeric">3711
+    <td class="numeric">&plusmn; 32
+    <td class="numeric">57392
+    <td class="numeric">3609
+    <td class="numeric">&plusmn; 27
+    <td>
+
+  <tr>
+    <td>compr
+    <td><code>-B -C</code>
+    <td class="numeric">37808
+    <td class="numeric">3640
+    <td class="numeric">&plusmn; 25
+    <td class="numeric">68252
+    <td class="numeric">3540
+    <td class="numeric">&plusmn; 31
+    <td>
+
+  <tr>
+    <td>full_equiv
+    <td><code>-B -Cfe</code>
+    <td class="numeric">33712
+    <td class="numeric">2091
+    <td class="numeric">&plusmn; 52
+    <td class="numeric">63988
+    <td class="numeric">2512
+    <td class="numeric">&plusmn; 85
+    <td>C++ size+speed
+
+  <tr>
+    <td>Fast_equiv
+    <td><code>-B -CFe</code>
+    <td class="numeric">30616
+    <td class="numeric">1955
+    <td class="numeric">&plusmn; 32
+    <td class="numeric">
+    <td class="numeric">
+    <td class="numeric">
+    <td>C size+speed
+
+  <tr>
+    <td>Cfull
+    <td><code>-B -Cf</code>
+    <td class="numeric">52272
+    <td class="numeric">1901
+    <td class="numeric">&plusmn; 22
+    <td class="numeric">82560
+    <td class="numeric">2389
+    <td class="numeric">&plusmn; 30
+    <td>
+
+  <tr>
+    <td>CFast
+    <td><code>-B -CF</code>
+    <td class="numeric">43176
+    <td class="numeric">1891
+    <td class="numeric">&plusmn; 27
+    <td class="numeric">
+    <td class="numeric">
+    <td class="numeric">
+    <td>
+
+  <tr>
+    <td>full_align
+    <td><code>-B -Cfa</code>
+    <td class="numeric">81664
+    <td class="numeric">1885
+    <td class="numeric">&plusmn; 34
+    <td class="numeric">112016
+    <td class="numeric">2319
+    <td class="numeric">&plusmn; 20
+    <td>C++ fastest
+
+  <tr>
+    <td>Fast_align
+    <td><code>-B -CFa</code>
+    <td class="numeric">64152
+    <td class="numeric">1873
+    <td class="numeric">&plusmn; 29
+    <td class="numeric">
+    <td class="numeric">
+    <td class="numeric">
+    <td>C fastest
+
+</table>
+
+<p>
+This experiment was run on the same hardware as that used to measure
+<a href="#input-read-method">Input Read Method</a> effects.
+Consequently, we can account for about 660 ms of time as the cost of
+simply reading the input bytes.
+
+<p>
+We can make some observations based on this data:
+
+<ul>
+
+<li><p>
+    If speed matters, it is important to use either <code>-Cf</code>
+    ("full") or <code>-CF</code> ("Fast"), as these methods about double
+    the scanning speed compared to the alternatives.
+
+<li><p>
+    When using the C interface, <code>-CFe</code> (Fast_equiv) has the
+    best balance of size and speed.  <code>-CF</code> is perhaps 5%
+    faster while being 33% larger.  <code>-CFa</code> is, per this
+    data, a tiny bit faster still, but at double the size, and the
+    difference is within the measurement uncertainty.
+
+<li><p>
+    When using the C++ interface, we cannot use <code>-CF</code>.
+    The seemingly best size/speed tradeoff is <code>-Cfe</code>, but
+    it is 25% slower than the equivalent C-interface version; I do
+    not know why (I have already ensured that the input method is
+    not responsible).  Following a similar pattern to C,
+    <code>-Cf</code> and <code>-Cfa</code> provide modest speed gains
+    for significant size increases.
+
+</ul>
+
+
+<p>
+As a second experiment, I used
+<a href="test/elsa-lexer.lex"><code>elsa-lexer.lex</code></a>, a
+full-featured C/C++ scanner that <em>does</em> enumerate all of the
+keywords.  Otherwise the experimental conditions were the same as
+above.
+
+<table>
+  <tr>
+    <th>
+    <th>
+    <th colspan="3">C interface
+    <th colspan="3">C++ interface
+    <th>
+
+  <tr>
+    <th class="row2">Configuration
+    <th class="row2">Switches
+    <th class="row2">Size
+    <th class="row2">Time
+    <th class="row2">2&sigma;
+    <th class="row2">Size
+    <th class="row2">Time
+    <th class="row2">2&sigma;
+    <th class="row2">Notes
+
+  <tr>
+    <td>equiv_meta
+    <td><code>-B (-Cem)</code>
+    <td class="numeric">36076
+    <td class="numeric">4187
+    <td class="numeric">&plusmn; 34
+    <td class="numeric">65868
+    <td class="numeric">4068
+    <td class="numeric">&plusmn; 53
+    <td>smallest
+
+  <tr>
+    <td>align
+    <td><code>-B -Ca</code>
+    <td class="numeric">80988
+    <td class="numeric">3718
+    <td class="numeric">&plusmn; 33
+    <td class="numeric">110684
+    <td class="numeric">3652
+    <td class="numeric">&plusmn; 30
+    <td>
+
+  <tr>
+    <td>meta
+    <td><code>-B -Cm</code>
+    <td class="numeric">39964
+    <td class="numeric">3968
+    <td class="numeric">&plusmn; 40
+    <td class="numeric">69624
+    <td class="numeric">3954
+    <td class="numeric">&plusmn; 28
+    <td>
+
+  <tr>
+    <td>equiv
+    <td><code>-B -Ce</code>
+    <td class="numeric">38476
+    <td class="numeric">3801
+    <td class="numeric">&plusmn; 19
+    <td class="numeric">68384
+    <td class="numeric">3783
+    <td class="numeric">&plusmn; 39
+    <td>
+
+  <tr>
+    <td>compr
+    <td><code>-B -C</code>
+    <td class="numeric">55756
+    <td class="numeric">3745
+    <td class="numeric">&plusmn; 38
+    <td class="numeric">85484
+    <td class="numeric">3696
+    <td class="numeric">&plusmn; 32
+    <td>
+
+  <tr>
+    <td>full_equiv
+    <td><code>-B -Cfe</code>
+    <td class="numeric">98000
+    <td class="numeric">2199
+    <td class="numeric">&plusmn; 27
+    <td class="numeric">127888
+    <td class="numeric">2631
+    <td class="numeric">&plusmn; 32
+    <td>C++ size+speed
+
+  <tr>
+    <td>Fast_equiv
+    <td><code>-B -CFe</code>
+    <td class="numeric">131664
+    <td class="numeric">1852
+    <td class="numeric">&plusmn; 24
+    <td class="numeric">
+    <td class="numeric">
+    <td class="numeric">
+    <td>C size+speed
+
+  <tr>
+    <td>Cfull
+    <td><code>-B -Cf</code>
+    <td class="numeric">156704
+    <td class="numeric">1886
+    <td class="numeric">&plusmn; 38
+    <td class="numeric">186556
+    <td class="numeric">2254
+    <td class="numeric">&plusmn; 30
+    <td>C++ fastest
+
+  <tr>
+    <td>CFast
+    <td><code>-B -CF</code>
+    <td class="numeric">327536
+    <td class="numeric">2102
+    <td class="numeric">&plusmn; 26
+    <td class="numeric">
+    <td class="numeric">
+    <td class="numeric">
+    <td>
+
+  <tr>
+    <td>full_align
+    <td><code>-B -Cfa</code>
+    <td class="numeric">283184
+    <td class="numeric">1857
+    <td class="numeric">&plusmn; 42
+    <td class="numeric">312956
+    <td class="numeric">2273
+    <td class="numeric">&plusmn; 40
+    <td>
+
+  <tr>
+    <td>Fast_align
+    <td><code>-B -CFa</code>
+    <td class="numeric">327536
+    <td class="numeric">1812
+    <td class="numeric">&plusmn; 27
+    <td class="numeric">
+    <td class="numeric">
+    <td class="numeric">
+    <td>C fastest
+
+</table>
+
+<p>Overall, the relative (and even absolute) times are similar to the
+previous table.  The larger scanner description makes the size
+substantially larger, especially in the last few entries.
+
+
+<h2>Effect of Options Other Than Table Compression</h2>
 
 <p>
 <strong>Note</strong>: The information in this section is from the
