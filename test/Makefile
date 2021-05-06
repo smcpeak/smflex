@@ -172,9 +172,11 @@ all: out/cppscan-yywrap.ok
 all: out/cppscan.ok
 all: out/elsa-lexer.ok
 all: out/noreject-frob.ok
+all: out/notrailing-context.ok
 all: out/noyylineno.ok
 all: out/outfile-specified.ok
 all: out/reject-frob.ok
+all: out/trailing-context.ok
 all: out/username-main.c_as_cc.ok
 all: out/username-main.ok
 all: out/username-yywrap.ok
@@ -267,6 +269,8 @@ LEXER_NAME := c-lexer1
 #LEXER_NAME := noreject-frob
 #LEXER_NAME := yylineno
 #LEXER_NAME := noyylineno
+#LEXER_NAME := trailing-context
+#LEXER_NAME := notrailing-context
 
 # Whether to generate a C or C++ interface.
 INTERFACE := c
@@ -341,8 +345,8 @@ ifeq ($(INTERFACE),cpp)
   PERF_CONFIGS := $(filter-out Fast% %Fast,$(PERF_CONFIGS))
 endif
 
-ifneq ($(filter reject-frob yylineno,$(LEXER_NAME)),)
-  # REJECT cannot be used with -f or -F.
+ifneq ($(filter reject-frob yylineno trailing-context,$(LEXER_NAME)),)
+  # REJECT, yylineno, and trailing context cannot be used with -f or -F.
   PERF_CONFIGS := $(filter-out Fast% full% %Fast %full,$(PERF_CONFIGS))
 endif
 
