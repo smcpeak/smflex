@@ -276,33 +276,24 @@ PERF_CONFIGS += default
 endif
 
 PERF_CONFIGS += batch
-
-ifeq ($(INTERFACE),c)
-PERF_CONFIGS += align           # no C++ (compile error)
-endif
-
+PERF_CONFIGS += align
 PERF_CONFIGS += equiv_meta
-
-ifeq ($(INTERFACE),c)
-PERF_CONFIGS += meta            # no C++ (compile error)
-endif
-
+PERF_CONFIGS += meta
 PERF_CONFIGS += equiv
-
-ifeq ($(INTERFACE),c)
-PERF_CONFIGS += compr           # no C++ (compile error)
-endif
-
+PERF_CONFIGS += compr
 PERF_CONFIGS += full_equiv
+PERF_CONFIGS += Fast_equiv
+PERF_CONFIGS += Cfull
+PERF_CONFIGS += CFast
+PERF_CONFIGS += full
+PERF_CONFIGS += Fast
+PERF_CONFIGS += full_align
+PERF_CONFIGS += Fast_align
 
-ifeq ($(INTERFACE),c)
-PERF_CONFIGS += Fast_equiv      # no C++ (explicit prohibition)
-PERF_CONFIGS += Cfull           # no C++ (compile error)
-PERF_CONFIGS += CFast           # no C++ (explicit prohibition)
-PERF_CONFIGS += full            # no C++ (compile error)
-PERF_CONFIGS += Fast            # no C++ (explicit prohibition)
-PERF_CONFIGS += full_align      # no C++ (compile error)
-PERF_CONFIGS += Fast_align      # no C++ (explicit prohibition)
+ifeq ($(INTERFACE),cpp)
+  # Remove all the configurations that use Fast, because those are
+  # explicitly prohibited by smflex.
+  PERF_CONFIGS := $(filter-out Fast% %Fast,$(PERF_CONFIGS))
 endif
 
 # Rule to build a performance-test executable.
