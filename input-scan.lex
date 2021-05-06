@@ -145,7 +145,6 @@ LEXOPT          [aceknopr]
                         }
 
         {SCNAME}        RETURNNAME;
-        ^{OPTWS}{NL}    ++linenum; /* allows blank lines in section 1 */
         {OPTWS}{NL}     ACTION_ECHO; ++linenum; /* maybe end of comment line */
 }
 
