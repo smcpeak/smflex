@@ -14,7 +14,7 @@ CC := gcc
 CXX := g++
 
 # C compilation options for correctness test executables.
-CFLAGS := -g -Wall
+CFLAGS := -g -Wall -I.
 
 # smflex produces scanners that define 'yyunput' and 'input' even when
 # they are not used.
@@ -264,10 +264,12 @@ smflex_EXEC       := $(SMFLEX)
 flex254_EXEC      := $(FLEX254)
 flex264_EXEC      := $(FLEX264)
 
-# Map VARIANT to additional compilation flags.
-smflex_CFLAGS     :=
-flex254_CFLAGS    := -Iinclude-flex-2.5.4
-flex264_CFLAGS    := -Iinclude-flex-2.6.4
+# Map VARIANT to additional compilation flags.  The -I. is to allow
+# perftest.h to be included.  The others are to get the respective
+# FlexLexer.h files.
+smflex_CFLAGS     := -I.
+flex254_CFLAGS    := -I. -Iinclude-flex-2.5.4
+flex264_CFLAGS    := -I. -Iinclude-flex-2.6.4
 
 
 # Names for various flex/smflex option combinations.
