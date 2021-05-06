@@ -165,6 +165,7 @@ all: out/cppscan-yywrap.ok
 all: out/cppscan.ok
 all: out/elsa-lexer.ok
 all: out/outfile-specified.ok
+all: out/reject-frob.ok
 all: out/username-main.c_as_cc.ok
 all: out/username-main.ok
 all: out/username-yywrap.ok
