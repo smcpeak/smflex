@@ -972,16 +972,17 @@ an action:
     parentheses.
 
     <pre><code>
-        {
-        int i;
-        /* Copy yytext because unput() trashes yytext */
-        char *yycopy = strdup( yytext );
-        unput( &#39;)&#39; );
-        for ( i = yyleng - 1; i &gt;= 0; --i )
-            unput( yycopy[i] );
-        unput( &#39;(&#39; );
-        free( yycopy );
-        }
+    {
+      int i;
+      /* Copy yytext because unput() trashes yytext */
+      char *yycopy = strdup(yytext);
+      unput(&#39;)&#39;);
+      for (i = yyleng - 1; i &gt;= 0; --i) {
+        unput(yycopy[i]);
+      }
+      unput(&#39;(&#39;);
+      free(yycopy);
+    }
     </code></pre>
 
     <p>Note that since each <code>unput()</code> puts the given character
