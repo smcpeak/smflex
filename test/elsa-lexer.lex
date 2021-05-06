@@ -45,6 +45,8 @@
 /* ----------------------- C definitions ---------------------- */
 %{
 
+#include "perftest.h"                  /* runPerftest */
+
 /* This set of token types comes from cc_tokens.h in Elsa. */
 enum TokenType {
   TOK_EOF,
@@ -217,12 +219,16 @@ enum TokenType {
 
 
 /* Functions invoked by actions. */
-static enum TokenType tok(enum TokenType t);
-static enum TokenType svalTok(enum TokenType t);
-static enum TokenType alternateKeyword_tok(enum TokenType t);
+static enum TokenType tokFunc(enum TokenType t, char const *text, int leng);
+static enum TokenType svalTokFunc(enum TokenType t, char const *text, int leng);
+static enum TokenType alternateKeyword_tokFunc(enum TokenType t, char const *text, int leng);
 static void err(char const *);
 static void warning(char const *);
 static void whitespace();
+
+#define tok(t) tokFunc(t, yytext, yyleng)
+#define svalTok(t) svalTokFunc(t, yytext, yyleng)
+#define alternateKeyword_tok(t) alternateKeyword_tokFunc(t, yytext, yyleng)
 
 
 %}
@@ -643,22 +649,23 @@ static int numErrors = 0;
 static int numWarnings = 0;
 static int numWhitespaces = 0;
 
-static enum TokenType tok(enum TokenType t)
+static enum TokenType tokFunc(enum TokenType t, char const *text, int leng)
 {
   tokenCount[t]++;
-  lastTokenText = yytext;
-  lastTokenLen = yyleng;
+  lastTokenText = text;
+  lastTokenLen = leng;
   return t;
 }
 
-static enum TokenType svalTok(enum TokenType t)
+static enum TokenType svalTokFunc(enum TokenType t, char const *text, int leng)
 {
-  return tok(t);
+  return tokFunc(t, text, leng);
 }
 
-static enum TokenType alternateKeyword_tok(enum TokenType t)
+static enum TokenType alternateKeyword_tokFunc(enum TokenType t,
+  char const *text, int leng)
 {
-  return tok(t);
+  return tokFunc(t, text, leng);
 }
 
 static void err(char const *msg)
@@ -679,49 +686,9 @@ static void whitespace()
 }
 
 
-static void scanFile(char const *fname)
-{
-  /* Open a named file, which is how I expect a real scanner would
-   * usually operate. */
-  FILE *fp = fopen(fname, "rb");
-  if (!fp) {
-    printf("failed to open file \"%s\"\n", fname);
-    exit(2);
-  }
-
-  yyrestart(fp);
-
-  while (yylex())
-    {}
-
-  fclose(fp);
-}
-
-
 int main(int argc, char **argv)
 {
-  int iters = 1;
-
-  if (argc >= 2) {
-    /* Read a named file. */
-    char const *inputFname = argv[1];
-
-    if (argc >= 3) {
-      /* Specify number of iterations. */
-      iters = atoi(argv[2]);
-      printf("iters: %d\n", iters);
-    }
-
-    for (int i=0; i < iters; i++) {
-      scanFile(inputFname);
-    }
-  }
-  else {
-    /* Read from stdin.  By allowing both, I can see if this makes
-     * any speed difference. */
-    while (yylex())
-      {}
-  }
+  int iters = runPerftest(argc, argv);
 
   if (iters > 1) {
     /* Abbreviated stats, to reduce clutter. */
