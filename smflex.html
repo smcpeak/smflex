@@ -2622,6 +2622,18 @@ The results are nearly identical.  The only significant impact is
 the inability to use the faster tables.
 
 
+<h2>Investigation of variable trailing context</h2>
+
+<p>
+Same story as the previous two.  Experiment:
+
+<pre><code>
+  $ cd test
+  $ make perftest LEXER_NAME=notrailing-context    # baseline
+  $ make perftest LEXER_NAME=trailing-context      # with yylineno
+</code></pre>
+
+
 <h2>Avoiding backing up</h2>
 
 <p>Getting rid of backing up is messy and often may be an enormous amount
@@ -2750,6 +2762,10 @@ as <code>REJECT</code> (i.e., substantial). So when possible a rule like:
 <p>Note that here the special '|' action does <em>not</em> provide any
 savings, and can even make things worse (see
 <a href="#deficiencies-n-bugs">Deficiencies / Bugs</a>).
+
+<p>If there are any rules with variable trailing context, then the
+<code>-f</code> and <code>-F</code> table compression flags cannot
+be used.
 
 
 <h2>Matching longer tokens</h2>
