@@ -1104,34 +1104,35 @@ better is to use <code>YY_FLUSH_BUFFER</code> (see above). Note that
 <code>return</code> statement in one of the actions, the scanner may
 then be called again and it will resume scanning where it left off.
 
-<p>By default (and for purposes of efficiency), the scanner uses
-block-reads rather than simple <code>getc()</code> calls to read
+<p>If the scanner is built with the <code>-B</code> / <code>%option batch</code>
+option, the scanner uses
+block reads rather than simple <code>getc()</code> calls to read
 characters from <code>yyin</code>. The nature of how it gets its input
-can be controlled by defining the <code>YY_INPUT</code> macro. YY_INPUT's
-calling sequence is "YY_INPUT(buf,result,max_size)". Its action is to
+can be controlled by defining the <code>YY_INPUT</code> macro. <code>YY_INPUT</code>'s
+calling sequence is <code>YY_INPUT(buf, result, max_size)</code>. Its action is to
 place up to <code>max_size</code> characters in the character array
 <code>buf</code> and return in the integer variable <code>result</code>
-either the number of characters read or the constant YY_NULL (0 on Unix
-systems) to indicate EOF. The default YY_INPUT reads from the global
-file-pointer "yyin".
+either the number of characters read or the constant <code>YY_NULL</code> (0 on Unix
+systems) to indicate EOF. The default <code>YY_INPUT</code> reads from the global
+pointer <code>yyin</code>.
 
-<p>A sample definition of YY_INPUT (in the definitions section of the
-input file):
+<p>A sample definition of <code>YY_INPUT</code> (in the definitions section of the
+input file) is:
 
 <pre><code>
     %{
-    #define YY_INPUT(buf,result,max_size) \
-        { \
-        int c = getchar(); \
-        result = (c == EOF) ? YY_NULL : (buf[0] = c, 1); \
-        }
+    #define YY_INPUT(buf, result, max_size) {          \
+      int c = getchar();                               \
+      result = (c == EOF) ? YY_NULL : (buf[0] = c, 1); \
+    }
     %}
 </code></pre>
 
 <p>This definition will change the input processing to occur one character
-at a time.
+at a time.  (The <code>-I</code> / <code>%option interactive</code>
+option also has that effect.)
 
-<p>When the scanner receives an end-of-file indication from YY_INPUT,
+<p>When the scanner receives an end-of-file indication from <code>YY_INPUT</code>,
 the scanner terminates, returning 0 to its caller.  The start
 condition remains unchanged; it does <em>not</em> revert to
 <code>INITIAL</code>.
