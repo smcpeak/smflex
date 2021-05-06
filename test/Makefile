@@ -26,17 +26,24 @@ CXXFLAGS := $(CFLAGS)
 # smflex executable.
 SMFLEX := ../smflex
 
+# Options to pass to smflex for additional diagnostic reporting.
+# Specifically, this causes the "performance report" to be printed,
+# which consists of one-line commentary on certain configurations.
+# I have this enabled both to exercise the option and to check that
+# what it is saying is sensible.
+SMFLEX_OPTS := -p -p
+
 # Run smflex on one file.
 .PRECIOUS: out/%.yy.c
 out/%.yy.c: %.lex
 	@mkdir -p out
-	$(SMFLEX) -o$@ $<
+	$(SMFLEX) $(SMFLEX_OPTS) -o$@ $<
 	python3 ../check-line-directives.py $@
 
 # Run smflex on outfile.lex, avoiding use of -o option.
 out/outfile-specified.yy.c: outfile.lex $(SMFLEX)
 	@mkdir -p out
-	$(SMFLEX) $<
+	$(SMFLEX) $(SMFLEX_OPTS) $<
 
 # Compile a C file in out/.
 #
@@ -67,7 +74,7 @@ out/%.o: %.c
 .PRECIOUS: out/%.yy.cc
 out/%.yy.cc: %.lexpp $(SMFLEX)
 	@mkdir -p out
-	$(SMFLEX) -o$@ $<
+	$(SMFLEX) $(SMFLEX_OPTS) -o$@ $<
 	python3 ../check-line-directives.py $@
 
 # Compile C++ file in out/.
@@ -265,7 +272,7 @@ VARIANT := smflex
 #VARIANT := flex264
 
 # Map VARIANT to an executable.
-smflex_EXEC       := $(SMFLEX)
+smflex_EXEC       := $(SMFLEX) $(SMFLEX_OPTS)
 flex254_EXEC      := $(FLEX254)
 flex264_EXEC      := $(FLEX264)
 
