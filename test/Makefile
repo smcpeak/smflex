@@ -217,7 +217,10 @@ NUM_RUNS := 5
 NUM_SCANS := 100
 
 # How to run a program and measure its execution time.
-MEASURE_TIME := perl median-of-5.pl -iters $(NUM_RUNS)
+#
+# The "-oneline" is pretty important; on MinGW, redirecting all
+# output to /dev/null speeds up the program substantially!
+MEASURE_TIME := perl median-of-5.pl -iters $(NUM_RUNS) -oneline
 
 # flex-2.5.4 executable, for comparison.
 FLEX254 := ../../flex-2.5.4/flex
@@ -250,13 +253,13 @@ out/perf/readfile-cpp.exe: readfile.c
 #
 out/perf/readfile-summary.txt: out/perf/readfile-c.exe out/perf/readfile-cpp.exe
 	rm -f $@
-	$(MEASURE_TIME) -oneline out/perf/readfile-c.exe   fread    0x2000 out/perf/corpus.c 1000 b >>$@
-	$(MEASURE_TIME) -oneline out/perf/readfile-cpp.exe fread    0x2000 out/perf/corpus.c 1000 b >>$@
-	$(MEASURE_TIME) -oneline out/perf/readfile-c.exe   fread    0x2000 out/perf/corpus.c 1000 t >>$@
-	$(MEASURE_TIME) -oneline out/perf/readfile-c.exe   read     0x2000 out/perf/corpus.c 1000 b >>$@
-	$(MEASURE_TIME) -oneline out/perf/readfile-cpp.exe iostream 0x2000 out/perf/corpus.c 1000 b >>$@
-	$(MEASURE_TIME) -oneline out/perf/readfile-c.exe   fread    0x2010 out/perf/corpus.c 1000 b >>$@
-	$(MEASURE_TIME) -oneline out/perf/readfile-c.exe   fread   0x10000 out/perf/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) out/perf/readfile-c.exe   fread    0x2000 out/perf/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) out/perf/readfile-cpp.exe fread    0x2000 out/perf/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) out/perf/readfile-c.exe   fread    0x2000 out/perf/corpus.c 1000 t >>$@
+	$(MEASURE_TIME) out/perf/readfile-c.exe   read     0x2000 out/perf/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) out/perf/readfile-cpp.exe iostream 0x2000 out/perf/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) out/perf/readfile-c.exe   fread    0x2010 out/perf/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) out/perf/readfile-c.exe   fread   0x10000 out/perf/corpus.c 1000 b >>$@
 	cat $@
 
 
@@ -381,14 +384,14 @@ $(foreach config,$(PERF_CONFIGS),$(eval out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTE
 
 # Single file with all results.
 out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt:
-	echo "configuration size_bytes    time_ms" > $@
-	echo "------------- ---------- ----------" >> $@
+	echo "configuration size_bytes    time_ms +/-" > $@
+	echo "------------- ---------- ---------- ---" >> $@
 	for config in $(PERF_CONFIGS); do \
 	  printf "%-13s " "$$config" >> $@ || exit; \
 	  head -2 out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | tail -1 | \
 	    awk '{ printf "%10s ", $$4 }' >> $@ || exit; \
-	  grep '^median:' out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | \
-	    awk '{ printf "%10s\n", $$2 }' >> $@ || exit; \
+	  grep ' +- ' out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | \
+	    awk '{ printf "%10s %3s\n", $$1, $$3 }' >> $@ || exit; \
 	done
 	cat $@
 
