@@ -164,6 +164,7 @@ all: out/cppscan-main.ok
 all: out/cppscan-yywrap.ok
 all: out/cppscan.ok
 all: out/elsa-lexer.ok
+all: out/noreject-frob.ok
 all: out/outfile-specified.ok
 all: out/reject-frob.ok
 all: out/username-main.c_as_cc.ok
@@ -251,6 +252,8 @@ out/perf/readfile-summary.txt: out/perf/readfile-c.exe out/perf/readfile-cpp.exe
 # Base name of the lexer to test.
 LEXER_NAME := c-lexer1
 #LEXER_NAME := elsa-lexer
+#LEXER_NAME := reject-frob
+#LEXER_NAME := noreject-frob
 
 # Whether to generate a C or C++ interface.
 INTERFACE := c
@@ -301,7 +304,7 @@ PERF_CONFIGS :=
 # The default, interactive scanner is around 10x slower, so I normally
 # do not want to spend time measuring it.
 ifeq ($(MEASURE_SLOW_CONFIGS),1)
-PERF_CONFIGS += default
+  PERF_CONFIGS += default
 endif
 
 PERF_CONFIGS += batch
@@ -324,6 +327,12 @@ ifeq ($(INTERFACE),cpp)
   # explicitly prohibited by smflex.
   PERF_CONFIGS := $(filter-out Fast% %Fast,$(PERF_CONFIGS))
 endif
+
+ifeq ($(LEXER_NAME),reject-frob)
+  # REJECT cannot be used with -f or -F.
+  PERF_CONFIGS := $(filter-out Fast% full% %Fast %full,$(PERF_CONFIGS))
+endif
+
 
 # Rule to build a performance-test executable with $(VARIANT).
 #

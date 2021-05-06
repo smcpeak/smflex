@@ -1,5 +1,5 @@
-/* reject-frob.lex */
-/* First example in REJECT section of the manual. */
+/* noreject-frob.lex */
+/* Like reject-frob.lex, but without REJECT. */
 
 %{
 
@@ -9,13 +9,11 @@ static void special(void);
 
 %}
 
-        /* BEGIN: fragment in manual */
         int word_count = 0;
 %%
 
-frob        special(); REJECT;
+frob        special();
 [^ \t\n]+   ++word_count;
-        /* END: fragment in manual */
 
 [ \t\n]     /* Nothing; do not echo. */
 
