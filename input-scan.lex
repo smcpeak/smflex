@@ -45,6 +45,15 @@
       action_define(def, 1); \
   }
 
+/* Add a newline to the current action text.  This is done when we
+ * consume a line of source text but do not otherwise emit anything,
+ * since we need to stay synchronized with the #line scope.
+ *
+ * In general, every time we increment 'linenum', we must either echo
+ * the newline we matched, call ADD_ACTION_NL(), or emit a new #line
+ * directive. */
+#define ADD_ACTION_NL() add_action("\n")
+
 #define MARK_END_OF_PROLOG mark_prolog();
 
 #define YY_DECL \
@@ -101,6 +110,7 @@ LEXOPT          [aceknopr]
   static int bracelevel, didadef, indented_code;
   static int doing_rule_action = false;
   static int option_sense;
+  static int doing_start_conditions = false;
 
   int doing_codeblock = false;
   int i;
@@ -111,8 +121,18 @@ LEXOPT          [aceknopr]
         ^{WS}           indented_code = true; BEGIN(CODEBLOCK);
         ^"/*"           ACTION_ECHO; yy_push_state( COMMENT );
         ^#{OPTWS}line{WS}       yy_push_state( LINEDIR );
-        ^"%s"{NAME}?    return SCDECL;
-        ^"%x"{NAME}?    return XSCDECL;
+        ^"%s"{NAME}?    {
+                          /* About to emit SC #defines, which must be
+                           * in output file context. */
+                          add_action(yy_output_file_line_directive);
+                          doing_start_conditions = true;
+                          return SCDECL;
+                        }
+        ^"%x"{NAME}?    {
+                          add_action(yy_output_file_line_directive);
+                          doing_start_conditions = true;
+                          return XSCDECL;
+                        }
         ^"%{".*{NL}     {
                           ++ linenum;
                           line_directive_out((FILE *) 0, 1);
@@ -131,10 +151,17 @@ LEXOPT          [aceknopr]
                           return SECTEND;
                         }
 
-        ^"%option"      BEGIN(OPTION); return OPTION_OP;
+        ^"%option"      {
+                          /* We could emit lots or nothing while
+                           * processing options.  It has to be treated
+                           * as non-source. */
+                          add_action(yy_output_file_line_directive);
+                          BEGIN(OPTION);
+                          return OPTION_OP;
+                        }
 
-        ^"%"{LEXOPT}{OPTWS}[[:digit:]]*{OPTWS}{NL}      ++linenum; /* ignore */
-        ^"%"{LEXOPT}{WS}.*{NL}  ++linenum;      /* ignore */
+        ^"%"{LEXOPT}{OPTWS}[[:digit:]]*{OPTWS}{NL}    ++linenum; ADD_ACTION_NL(); /* ignore */
+        ^"%"{LEXOPT}{WS}.*{NL}                        ++linenum; ADD_ACTION_NL(); /* ignore */
 
         ^"%"[^sxaceknopr{}].*   synerr( _( "unrecognized '%' directive" ) );
 
@@ -145,7 +172,19 @@ LEXOPT          [aceknopr]
                         }
 
         {SCNAME}        RETURNNAME;
-        {OPTWS}{NL}     ACTION_ECHO; ++linenum; /* maybe end of comment line */
+        {OPTWS}{NL}     {
+                          ++linenum;
+                          if (doing_start_conditions) {
+                            /* We switched to output #line scope when we
+                             * started processing these.  Return to
+                             * input file scope. */
+                            line_directive_out((FILE*)NULL, 1 /*do_infile*/);
+                            doing_start_conditions = false;
+                          }
+                          else {
+                            ACTION_ECHO;
+                          }
+                        }
 }
 
 
@@ -169,7 +208,11 @@ LEXOPT          [aceknopr]
 }
 
 <CODEBLOCK>{
-        ^"%}".*{NL}     ++linenum; BEGIN(INITIAL);
+        ^"%}".*{NL}     {
+                          ++linenum;
+                          ADD_ACTION_NL();
+                          BEGIN(INITIAL);
+                        }
 
         {NAME}|{NOT_NAME}|.     ACTION_ECHO;
 
@@ -203,12 +246,20 @@ LEXOPT          [aceknopr]
                             synerr(_("incomplete name definition"));
                           BEGIN(INITIAL);
                           ++linenum;
+                          ADD_ACTION_NL();
                         }
 }
 
 
 <OPTION>{
-        {NL}            ++linenum; BEGIN(INITIAL);
+        {NL}            {
+                          ++linenum;
+
+                          /* Return to source context after processing
+                           * a line of options. */
+                          line_directive_out((FILE*)NULL, 1 /*do_infile*/);
+                          BEGIN(INITIAL);
+                        }
         {WS}            option_sense = true;
 
         "="             return '=';
@@ -277,7 +328,7 @@ LEXOPT          [aceknopr]
                         }
 }
 
-<RECOVER>.*{NL}         ++linenum; BEGIN(INITIAL);
+<RECOVER>.*{NL}         ++linenum; ADD_ACTION_NL(); BEGIN(INITIAL);
 
 
 <SECT2PROLOG>{
@@ -298,7 +349,7 @@ LEXOPT          [aceknopr]
                         }
 
         .*              ACTION_ECHO;
-        {NL}    ++linenum; ACTION_ECHO;
+        {NL}            ++linenum; ACTION_ECHO;
 
         <<EOF>>         {
                           mark_prolog();
@@ -308,7 +359,10 @@ LEXOPT          [aceknopr]
 }
 
 <SECT2>{
-        ^{OPTWS}{NL}    ++linenum; /* allow blank lines in section 2 */
+        ^{OPTWS}{NL}    {       /* allow blank lines in section 2 */
+                          ++linenum;
+                          ADD_ACTION_NL();
+                        }
 
         ^{OPTWS}"%{"    {
                           indented_code = false;
@@ -488,6 +542,7 @@ LEXOPT          [aceknopr]
                           synerr(_("missing quote"));
                           BEGIN(SECT2);
                           ++linenum;
+                          ADD_ACTION_NL();
                           return '"';
                         }
 }
@@ -550,6 +605,7 @@ LEXOPT          [aceknopr]
                           synerr(_("missing }"));
                           BEGIN(SECT2);
                           ++linenum;
+                          ADD_ACTION_NL();
                           return '}';
                         }
 }

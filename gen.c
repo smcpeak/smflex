@@ -1132,7 +1132,7 @@ void make_tables()
     outn("char *yytext;");
   }
 
-  out(&action_array[defs1_offset]);
+  out_with_line_directive_substitution(&action_array[defs1_offset]);
 
   line_directive_out(scanner_c_file, 0);
 
