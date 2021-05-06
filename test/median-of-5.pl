@@ -87,13 +87,15 @@ for (my $i = 1; $i <= $iters; $i++) {
   # run it
   #
   if ($showOutput) {
-    mysystem(@ARGV);
+    # Redirect input from /dev/null to avoid hanging if the program
+    # tries to read stdin.
+    #
+    # It is unfortunate that I cannot easily do redirection w/o using
+    # shell, since that means metacharacters in @ARGV are vulnerable.
+    mysystem("@ARGV </dev/null");
   }
   else {
-    # it is unfortunate that I cannot easily redirect output w/o
-    # using shell, since that means metacharacters in @ARGV are
-    # also vulnerable
-    mysystem("@ARGV >/dev/null 2>&1");
+    mysystem("@ARGV </dev/null >/dev/null 2>&1");
   }
 
   my @after = gettimeofday();
