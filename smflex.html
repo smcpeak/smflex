@@ -1001,41 +1001,39 @@ an action:
     to mark the input stream with an end-of-file.
 
 <li><p><code>input()</code>
-    reads the next character from the input stream. For example, the
+    reads the next character from the input.  Once a character is read in
+    this way, it is considered "consumed", and will not be subsequently
+    matched by scanner rules.  For example, the
     following is one way to eat up C comments:
 
     <pre><code>
         %%
-        &quot;/*&quot;        {
+        &quot;/*&quot;      {
                     int c;
+                    for (;;) {
+                      while ( (c = input()) != &#39;*&#39; &amp;&amp; c != EOF )
+                        {}    /* eat up text of comment */
 
-                    for ( ; ; )
-                        {
-                        while ( (c = input()) != &#39;*&#39; &amp;&amp;
-                                c != EOF )
-                            ;    /* eat up text of comment */
-
-                        if ( c == &#39;*&#39; )
-                            {
-                            while ( (c = input()) == &#39;*&#39; )
-                                ;
-                            if ( c == &#39;/&#39; )
-                                break;    /* found the end */
-                            }
-
-                        if ( c == EOF )
-                            {
-                            error( &quot;EOF in comment&quot; );
-                            break;
-                            }
+                      if (c == &#39;*&#39;) {
+                        while ( (c = input()) == &#39;*&#39; )
+                          {}
+                        if (c == &#39;/&#39;) {
+                          break;    /* found the end */
                         }
+                      }
+
+                      if (c == EOF) {
+                        error(&quot;EOF in comment&quot;);
+                        break;
+                      }
                     }
+                  }
     </code></pre>
 
-    <p>(Note that if the scanner is compiled using <code>C++</code>, then
-    <code>input()</code> is instead referred to as <code>yyinput()</code>,
-    in order to avoid a name clash with the <code>C++</code> stream by the
-    name of <code>input</code>.)
+    <p>When using <code>%option c++</code>,
+    <code>input()</code> is instead called <code>yyinput()</code>
+    in order to avoid a name clash with the C++ stream by the
+    name of <code>input</code>.
 
 <li><p><code>YY_FLUSH_BUFFER</code>
     flushes the scanner's internal buffer so that the next time the
