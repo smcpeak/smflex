@@ -1924,13 +1924,6 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     you give the flag twice, you will also get comments regarding features
     that lead to minor performance losses.
 
-    <p>Note that the use of <code>REJECT</code>, <code>%option yylineno</code>,
-    and variable trailing context (see
-    <a href="#deficiencies-n-bugs">Deficiencies / Bugs</a>)
-    entails a substantial performance penalty; use of
-    <code>yymore()</code>, the <code>^</code> operator, and the <code>-I</code>
-    flag entail minor performance penalties.
-
 <dt><code>-s</code>
 
 <dd><p>causes the <em>default rule</em> (that unmatched scanner input is
