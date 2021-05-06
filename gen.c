@@ -287,7 +287,10 @@ void gen_find_action()
     indent_puts("yy_current_state = *--yy_state_ptr;");
     indent_puts("yy_lp = yy_accept[yy_current_state];");
 
-    outn("find_rule: /* we branch to this label when backing up */");
+    /* One way this is unused is '%option yylineno', which claims
+     * to use REJECT (presumably because it needs similar table
+     * maintenance) but actually does not. */
+    outn("YY_POSSIBLY_UNUSED_LABEL(find_rule) /* we branch to this label when backing up */");
 
     indent_puts("for ( ; ; ) /* until we find what rule we matched */");
 
