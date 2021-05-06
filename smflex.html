@@ -2601,6 +2601,23 @@ the fact that it is incompatible with <code>-f</code> and
 the speed of the default settings.
 
 
+<h2>Investigation of yylineno</h2>
+
+<p>
+Similar to the preceding section, there are automated performance
+tests of <code>%option yylineno</code> in the source:
+
+<pre><code>
+  $ cd test
+  $ make perftest LEXER_NAME=noyylineno    # baseline
+  $ make perftest LEXER_NAME=yylineno      # with yylineno
+</code></pre>
+
+<p>
+The results are nearly identical.  The only significant impact is
+the inability to use the faster tables.
+
+
 <h2>Avoiding backing up</h2>
 
 <p>Getting rid of backing up is messy and often may be an enormous amount

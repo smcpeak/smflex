@@ -825,7 +825,7 @@ void readin()
 
     if (do_yylineno) {
       fprintf(stderr,
-              _("%%option yylineno entails a large performance penalty\n"));
+              _("%%option yylineno entails a large performance penalty (maybe; see manual)\n"));
     }
 
     if (performance_report > 1) {
