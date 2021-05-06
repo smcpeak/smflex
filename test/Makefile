@@ -13,7 +13,7 @@ all:
 CC := gcc
 CXX := g++
 
-# C compilation options.
+# C compilation options for correctness test executables.
 CFLAGS := -g -Wall
 
 # smflex produces scanners that define 'yyunput' and 'input' even when
@@ -206,15 +206,21 @@ NUM_SCANS := 100
 # How to run a program and measure its execution time.
 MEASURE_TIME := perl median-of-5.pl -iters $(NUM_RUNS)
 
+# flex-2.5.4 executable, for comparison.
+FLEX254 := ../../flex-2.5.4/flex
+
+# Compilation flags for use when making performance test programs.
+PERF_CFLAGS += -O2 -Wall -Werror -Wno-unused-function -DHAS_POSIX -Iinclude
+
 
 # 'readfile' program for baseline.
 all: out/perf/readfile-c.exe
 out/perf/readfile-c.exe: readfile.c
-	$(CC) -o$@ -std=c89 -O2 -Wall -Werror -DHAS_POSIX $<
+	$(CC) -o$@ -std=c89 $(PERF_CFLAGS) $<
 
 all: out/perf/readfile-cpp.exe
 out/perf/readfile-cpp.exe: readfile.c
-	$(CXX) -o$@ -xc++ -std=c++98 -O2 -Wall -Werror -DHAS_POSIX $<
+	$(CXX) -o$@ -xc++ -std=c++98 $(PERF_CFLAGS) $<
 
 # This collects together the measurements supporting the main
 # conclusions from the readfile experiment:
@@ -243,6 +249,14 @@ LEXER_NAME := c-lexer1
 # Whether to generate a C or C++ interface.
 INTERFACE := c
 #INTERFACE := cpp
+
+# Which variant of flex to use.
+VARIANT := smflex
+#VARIANT := flex254
+
+# Map VARIANT to an executable.
+smflex_EXEC       := $(SMFLEX)
+flex254_EXEC      := $(FLEX254)
 
 
 # Names for various flex/smflex option combinations.
@@ -296,48 +310,48 @@ ifeq ($(INTERFACE),cpp)
   PERF_CONFIGS := $(filter-out Fast% %Fast,$(PERF_CONFIGS))
 endif
 
-# Rule to build a performance-test executable.
+# Rule to build a performance-test executable with $(VARIANT).
 #
 # At least for now, I'm not making this depend on $(SMFLEX) because
 # I won't want to have to redo everything after each change.
-.PRECIOUS: out/perf/$(LEXER_NAME)-$(INTERFACE)-%.exe
-out/perf/$(LEXER_NAME)-$(INTERFACE)-%.exe: $(LEXER_NAME).lex
+.PRECIOUS: out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%.exe
+out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%.exe: $(LEXER_NAME).lex
 	@mkdir -p out/perf
 ifeq ($(INTERFACE),c)
-	$(SMFLEX) -oout/perf/$(LEXER_NAME)-$(INTERFACE)-$*.yy.c $($*_OPS) $<
-	$(CC) -O2 -Wall -o$@ out/perf/$(LEXER_NAME)-$(INTERFACE)-$*.yy.c
+	$($(VARIANT)_EXEC) -oout/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.c $($*_OPS) $<
+	$(CC) $(PERF_CFLAGS) -o$@ out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.c
 else
-	$(SMFLEX) -+ -oout/perf/$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc $($*_OPS) $<
-	$(CXX) -O2 -Wall -o$@ out/perf/$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc
+	$($(VARIANT)_EXEC) -+ -oout/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc $($*_OPS) $<
+	$(CXX) $(PERF_CFLAGS) -o$@ out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc
 endif
 
 
 # Rule to run an executable and measure its size and speed.
-.PRECIOUS: out/perf/$(LEXER_NAME)-$(INTERFACE)-%-$(NUM_RUNS)-$(NUM_SCANS).log
-out/perf/$(LEXER_NAME)-$(INTERFACE)-%-$(NUM_RUNS)-$(NUM_SCANS).log: out/perf/$(LEXER_NAME)-$(INTERFACE)-%.exe out/perf/corpus.c
+.PRECIOUS: out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%-$(NUM_RUNS)-$(NUM_SCANS).log
+out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%-$(NUM_RUNS)-$(NUM_SCANS).log: out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%.exe out/perf/corpus.c
 	size $< > $@
 	$(MEASURE_TIME) $< out/perf/corpus.c $(NUM_SCANS) >> $@
 
 
 # The summary file depends on each measurement.
-$(foreach config,$(PERF_CONFIGS),$(eval out/perf/$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt: out/perf/$(LEXER_NAME)-$(INTERFACE)-$(config)-$(NUM_RUNS)-$(NUM_SCANS).log))
+$(foreach config,$(PERF_CONFIGS),$(eval out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt: out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(config)-$(NUM_RUNS)-$(NUM_SCANS).log))
 
 # Single file with all results.
-out/perf/$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt:
+out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt:
 	echo "configuration size_bytes    time_ms" > $@
 	echo "------------- ---------- ----------" >> $@
 	for config in $(PERF_CONFIGS); do \
 	  printf "%-13s " "$$config" >> $@ || exit; \
-	  head -2 out/perf/$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | tail -1 | \
+	  head -2 out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | tail -1 | \
 	    awk '{ printf "%10s ", $$4 }' >> $@ || exit; \
-	  grep '^median:' out/perf/$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | \
+	  grep '^median:' out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | \
 	    awk '{ printf "%10s\n", $$2 }' >> $@ || exit; \
 	done
 	cat $@
 
 # Convenience alias.
 .PHONY: perftest
-perftest: out/perf/$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt
+perftest: out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt
 
 .PHONY: perfclean
 perfclean:

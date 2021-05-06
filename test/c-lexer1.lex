@@ -45,10 +45,16 @@
 
 %{
 
-#ifdef yyFlexLexer_CLASS_DEFINED
-// We are using the C++ interface.
+#if defined(yyFlexLexer_CLASS_DEFINED) || defined(__FLEX_LEXER_H)
+/* We are using the C++ interface. */
+#  define USING_CPP_INTERFACE
 #  include <fstream>
 using std::ifstream;
+#endif
+
+#ifdef FLEX_SCANNER
+/* Using 'flex', which does not declare 'read' properly. */
+#include <unistd.h>                    /* read */
 #endif
 
 
@@ -334,7 +340,7 @@ static void collector_append(char const *text, int len)
 
 static void scanFile(char const *fname)
 {
-#ifdef yyFlexLexer_CLASS_DEFINED
+#ifdef USING_CPP_INTERFACE
   ifstream in(fname);
   if (!in) {
     cerr << "failed to open input file \"" << fname << "\"\n";
@@ -386,7 +392,7 @@ int main(int argc, char **argv)
   else {
     /* Read from stdin.  By allowing both stdin and named files, I can
      * see if it makes any speed difference. */
-#ifdef yyFlexLexer_CLASS_DEFINED
+#ifdef USING_CPP_INTERFACE
     yyFlexLexer lexer;
     while (lexer.yylex())
       {}
