@@ -220,10 +220,12 @@ PERF_CFLAGS := -O2 -Wall -Werror -Wno-unused-function -DHAS_POSIX
 # 'readfile' program for baseline.
 all: out/perf/readfile-c.exe
 out/perf/readfile-c.exe: readfile.c
+	@mkdir -p out/perf
 	$(CC) -o$@ -std=c89 $(PERF_CFLAGS) $<
 
 all: out/perf/readfile-cpp.exe
 out/perf/readfile-cpp.exe: readfile.c
+	@mkdir -p out/perf
 	$(CXX) -o$@ -xc++ -std=c++98 $(PERF_CFLAGS) $<
 
 # This collects together the measurements supporting the main
