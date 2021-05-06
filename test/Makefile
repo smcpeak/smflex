@@ -159,6 +159,7 @@ all: out/cpp-manual-example.ok
 all: out/cpp-prefix-yywrap-yyclass.ok
 all: out/cpp-prefix-yywrap.ok
 all: out/cpp-prefix.ok
+all: out/cppscan-full.ok
 all: out/cppscan-main.ok
 all: out/cppscan-yywrap.ok
 all: out/cppscan.ok

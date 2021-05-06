@@ -1,0 +1,12 @@
+/* cppscan-full.lexpp */
+/* Scanner using C++ and %option full. */
+
+%option c++
+%option full
+%option main
+
+%%
+username           cout << "USERNAME";
+
+%%
+/* EOF */
