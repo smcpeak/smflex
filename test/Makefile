@@ -172,6 +172,7 @@ all: out/cppscan-yywrap.ok
 all: out/cppscan.ok
 all: out/elsa-lexer.ok
 all: out/noreject-frob.ok
+all: out/noyylineno.ok
 all: out/outfile-specified.ok
 all: out/reject-frob.ok
 all: out/username-main.c_as_cc.ok
@@ -179,6 +180,7 @@ all: out/username-main.ok
 all: out/username-yywrap.ok
 all: out/username.ok
 all: out/vert-bar-action.ok
+all: out/yylineno.ok
 
 # These tests read a second file.
 username-yywrap.ok: username-yywrap.input2
@@ -256,11 +258,15 @@ out/perf/readfile-summary.txt: out/perf/readfile-c.exe out/perf/readfile-cpp.exe
 	cat $@
 
 
-# Base name of the lexer to test.
+# Base name of the lexer to test.  I usually specify this on the
+# command line, rather than modifying Makefile, but the list here
+# is useful as reference for the allowable values.
 LEXER_NAME := c-lexer1
 #LEXER_NAME := elsa-lexer
 #LEXER_NAME := reject-frob
 #LEXER_NAME := noreject-frob
+#LEXER_NAME := yylineno
+#LEXER_NAME := noyylineno
 
 # Whether to generate a C or C++ interface.
 INTERFACE := c
@@ -335,10 +341,12 @@ ifeq ($(INTERFACE),cpp)
   PERF_CONFIGS := $(filter-out Fast% %Fast,$(PERF_CONFIGS))
 endif
 
-ifeq ($(LEXER_NAME),reject-frob)
+ifneq ($(filter reject-frob yylineno,$(LEXER_NAME)),)
   # REJECT cannot be used with -f or -F.
   PERF_CONFIGS := $(filter-out Fast% full% %Fast %full,$(PERF_CONFIGS))
 endif
+
+#$(info PERF_CONFIGS: $(PERF_CONFIGS))
 
 
 # Rule to build a performance-test executable with $(VARIANT).
