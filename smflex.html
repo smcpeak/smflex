@@ -234,7 +234,7 @@ and reference sections:
 <li><a href="#patterns">Patterns</a>:
     the extended regular expressions used by <code>smflex</code>
 
-<li><a href="#how-the-input-is-matched">How The Input Is Matched</a>:
+<li><a href="#rule-semantics">Rule Semantics</a>:
     the rules for determining what has been matched
 
 <li><a href="#actions">Actions</a>:
@@ -482,7 +482,9 @@ a series of rules of the form:
 <p>where the pattern must be unindented and the action must begin on
 the same line.
 
-<p>See below for a further description of patterns and actions.
+<p>See below for further description of <a href="#patterns">Patterns</a>,
+<a href="#rule-semantics">Rule Semantics</a>, and
+<a href="#actions">Actions</a>.
 
 <p>Finally, the user code section is simply copied to
 <code>lex.yy.c</code> verbatim. It is used for companion routines
@@ -775,21 +777,28 @@ following could be used (the special '|' action is explained below):
 <p>A similar trick will work for matching a foo or a
 bar-at-the-beginning-of-a-line.
 
-<h1 id="how-the-input-is-matched">HOW THE INPUT IS MATCHED</h1>
+<h1 id="rule-semantics">RULE SEMANTICS</h1>
 
 <p>When the generated scanner is run, it analyzes its input looking for
-strings which match any of its patterns. If it finds more than one match,
+strings which match any of its active rule patterns. If it finds more than one match,
 it takes the one matching the most text (for trailing context rules,
 this includes the length of the trailing part, even though it will
 then be returned to the input). If it finds two or more matches of the
 same length, the rule listed first in the <code>smflex</code> input file
 is chosen.
 
+<p>Whether a rule is <em>active</em> depends on the scanner's current
+<em>start condition</em> and whether and how the
+rule is qualified with start conditions.  If you do not use any
+start conditions, then all rules are always active.
+See <a href="#start-conditions">Start Conditions</a> for more on this
+aspect.
+
 <p>Once the match is determined, the text corresponding to the match
 (called the <em>token</em>) is made available in the global character
 pointer <code>yytext</code>, and its length in the global integer
 <code>yyleng</code>. The <em>action</em> corresponding to the matched
-pattern is then executed (a more detailed description of actions follows),
+pattern is then executed (a more detailed description of <a href="#actions">actions</a> follows),
 and then the remaining input is scanned for another match.
 
 <p>If no match is found, then the <em>default rule</em> is executed:
@@ -2885,10 +2894,9 @@ particularly when a token contains multiple NUL's. It's best to write
 rules which match <em>short</em> amounts of text if it's anticipated
 that the text will often include NUL's.
 
-<p>Another final note regarding performance: as mentioned in
-<a href="#how-the-input-is-matched">How the Input is Matched</a>,
+<p>Another final note regarding performance:
 dynamically resizing <code>yytext</code>
-to accommodate huge tokens is a slow process because it presently
+to accommodate huge tokens is a slow process because it
 requires that the (huge) token be rescanned from the beginning. Thus if
 performance is vital, you should attempt to match "large" quantities of
 text but not "huge" quantities, where the cutoff between the two is at
