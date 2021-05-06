@@ -819,22 +819,22 @@ void readin()
     reject = false;
 
   if (performance_report > 0) {
+    if (interactive)
+      fprintf(stderr,
+              _("-I (interactive) entails a large (10x) performance penalty\n"));
+
     if (do_yylineno) {
       fprintf(stderr,
               _("%%option yylineno entails a large performance penalty\n"));
     }
 
     if (performance_report > 1) {
-      if (interactive)
-        fprintf(stderr,
-                _("-I (interactive) entails a minor performance penalty\n"));
-
       if (yymore_used)
         fprintf(stderr, _("yymore() entails a minor performance penalty\n"));
     }
 
     if (reject)
-      fprintf(stderr, _("REJECT entails a large performance penalty\n"));
+      fprintf(stderr, _("REJECT entails a large performance penalty (maybe; see manual)\n"));
 
     if (variable_trailing_context_rules)
       fprintf(stderr,
