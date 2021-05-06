@@ -2515,6 +2515,11 @@ less.
 <h2>Effect of options other than table compression</h2>
 
 <p>
+<strong>Note</strong>: The information in this section is from the
+original <code>flex-2.5.4</code> manual, but is suspect.  See next
+section.
+
+<p>
 Aside from the effects on scanner speed of the
 table compression <code>-C</code> options outlined above, there are a
 number of options/actions which degrade performance. These are, from
@@ -2539,6 +2544,63 @@ some excess text you scanned, use <code>yyless()</code>.
 
 <p><code>REJECT</code> should be avoided at all costs when performance
 is important. It is a particularly expensive option.
+
+
+<h2>Investigation of REJECT</h2>
+
+<p>
+The previous section claims that <code>REJECT</code> is very expensive,
+so I built a performance test for it.  In the <code>smflex</code>
+source tree, run:
+
+<pre><code>
+  $ cd test
+  $ make perftest LEXER_NAME=noreject-frob    # baseline
+  $ make perftest LEXER_NAME=reject-frob      # with REJECT
+</code></pre>
+
+<p>
+On my Windows/MinGW machine, I get (100 iterations, median of 5):
+
+<table>
+  <tr>
+    <th>Configuration
+    <th>Baseline time (ms)
+    <th>REJECT time (ms)
+
+  <tr>
+    <td>batch (<code>-B</code>)
+    <td class="numeric">647
+    <td class="numeric">677
+
+  <tr>
+    <td>meta (<code>-B -Cm</code>)
+    <td class="numeric">641
+    <td class="numeric">644
+
+  <tr>
+    <td>compr (<code>-B -C</code>)
+    <td class="numeric">599
+    <td class="numeric">628
+
+  <tr>
+    <td>full (<code>-f</code>)
+    <td class="numeric">360
+    <td>
+
+  <tr>
+    <td>Fast (<code>-F</code>)
+    <td class="numeric">404
+    <td>
+
+</table>
+
+<p>
+From this we can see that <code>REJECT</code> itself is not very
+expensive, only adding a few percent to the run time.  However,
+the fact that it is incompatible with <code>-f</code> and
+<code>-F</code> <em>is</em> impactful, as either is about double
+the speed of the default settings.
 
 
 <h2>Avoiding backing up</h2>
