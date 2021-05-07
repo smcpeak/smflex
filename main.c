@@ -789,7 +789,7 @@ void readin()
   /* This prepares the first #line directive referring to the source
    * file to be emitted.  But because the output file is NULL, the
    * directive is put in 'action_array' for the moment. */
-  line_directive_out((FILE *)NULL, 1);
+  line_directive_out_src();
 
   if (yyparse()) {
     pinpoint_message(_("fatal parse error"));

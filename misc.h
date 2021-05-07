@@ -41,6 +41,7 @@ int htoi(Char str[]);
 void lerrif(const char msg[], int arg);
 void lerrsf(const char msg[], const char arg[]);
 void line_directive_out(FILE *output_file, int do_infile);
+void line_directive_out_src(void);
 void mark_defs1(void);
 void mark_prolog(void);
 void mk2data(int value);

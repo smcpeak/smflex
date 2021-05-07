@@ -407,6 +407,17 @@ void line_directive_out(FILE *output_file, int do_infile)
 }
 
 
+/* Emit a #line directive that refers to the source file.
+ *
+ * This one-line implementation was previously scattered around in
+ * several places.  I have now consolidated them to call this one
+ * instead. */
+void line_directive_out_src()
+{
+  line_directive_out((FILE*)NULL, 1 /*do_infile*/);
+}
+
+
 /* mark_defs1 - mark the current position in the action array as
  *               representing where the user's section 1 definitions end
  *               and the prolog begins

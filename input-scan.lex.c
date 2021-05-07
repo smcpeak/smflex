@@ -1618,7 +1618,7 @@ YY_RULE_SETUP
 #line 136 "input-scan.lex"
 {
                           ++ linenum;
-                          line_directive_out((FILE *) 0, 1);
+                          line_directive_out_src();
                           indented_code = false;
                           BEGIN(CODEBLOCK);
                         }
@@ -1639,7 +1639,7 @@ YY_RULE_SETUP
                           sectnum = 2;
                           bracelevel = 0;
                           mark_defs1();
-                          line_directive_out((FILE *) 0, 1);
+                          line_directive_out_src();
                           BEGIN(SECT2PROLOG);
                           return SECTEND;
                         }
@@ -1706,7 +1706,7 @@ YY_RULE_SETUP
                             /* We switched to output #line scope when we
                              * started processing these.  Return to
                              * input file scope. */
-                            line_directive_out((FILE*)NULL, 1 /*do_infile*/);
+                            line_directive_out_src();
                             doing_start_conditions = false;
                           }
                           else {
@@ -1860,7 +1860,7 @@ YY_RULE_SETUP
 
                           /* Return to source context after processing
                            * a line of options. */
-                          line_directive_out((FILE*)NULL, 1 /*do_infile*/);
+                          line_directive_out_src();
                           BEGIN(INITIAL);
                         }
 #line 1867 "input-scan.lex.c"

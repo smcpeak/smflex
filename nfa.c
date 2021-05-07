@@ -269,7 +269,7 @@ void finish_rule(int mach, int variable_trail_rule,
      *
      * This is suppressed for continued actions because there is no
      * actual text from the source file here. */
-    line_directive_out((FILE *)NULL, 1 /*do_infile*/);
+    line_directive_out_src();
   }
 }
 

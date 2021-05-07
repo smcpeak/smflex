@@ -135,7 +135,7 @@ LEXOPT          [aceknopr]
                         }
         ^"%{".*{NL}     {
                           ++ linenum;
-                          line_directive_out((FILE *) 0, 1);
+                          line_directive_out_src();
                           indented_code = false;
                           BEGIN(CODEBLOCK);
                         }
@@ -146,7 +146,7 @@ LEXOPT          [aceknopr]
                           sectnum = 2;
                           bracelevel = 0;
                           mark_defs1();
-                          line_directive_out((FILE *) 0, 1);
+                          line_directive_out_src();
                           BEGIN(SECT2PROLOG);
                           return SECTEND;
                         }
@@ -178,7 +178,7 @@ LEXOPT          [aceknopr]
                             /* We switched to output #line scope when we
                              * started processing these.  Return to
                              * input file scope. */
-                            line_directive_out((FILE*)NULL, 1 /*do_infile*/);
+                            line_directive_out_src();
                             doing_start_conditions = false;
                           }
                           else {
@@ -257,7 +257,7 @@ LEXOPT          [aceknopr]
 
                           /* Return to source context after processing
                            * a line of options. */
-                          line_directive_out((FILE*)NULL, 1 /*do_infile*/);
+                          line_directive_out_src();
                           BEGIN(INITIAL);
                         }
         {WS}            option_sense = true;
