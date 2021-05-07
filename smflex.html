@@ -192,7 +192,7 @@
     -b               Generate backing-up information.
     -h, --help       Print usage.
     -n               Write output with platform native line endings.
-    -ooutput         Specify name of output file.
+    -ooutput         Specify name of output file ["lex.yy.c" or "lex.yy.cc"].
     -p               Write performance report to stderr.
     -v               Write scanner statistics to stderr.
     -w               Suppress warnings.
@@ -203,21 +203,26 @@
   Options that influence the interface (API) of the generated scanner:
 
     -+               Generate a scanner with a C++ interface.
-    -Pprefix         Specify symbol name prefix in generated scanner.
+    -Pprefix         Specify symbol name prefix in generated scanner ["yy"].
 
   Options that influence the behavior of the generated scanner:
 
-    -7               Generate a 7-bit scanner.
-    -8               Generate an 8-bit scanner.
+    -7               Generate a 7-bit scanner [if -Cf or -CF but not -Cfe or -CFe].
+    -8               Generate an 8-bit scanner [opposite of -7].
     -d               Generate a debug mode scanner.
     -f               Generate "full" tables.
     -i               Generate a case-insensitive scanner.
     -s               Suppress the default "echo" rule.
-    -B               Generate a batch (non-interactive) scanner.
-    -C[...]          Generate scanner with various table compression modes.
+    -B               Generate a batch (non-interactive) scanner [if -Cf* or -CF*].
+    -C[...]          Generate scanner with various table compression modes [-Cem].
     -F               Generate "Fast" tables.
-    -I               Generate an interactive scanner.
+    -I               Generate an interactive scanner [opposite of -B].
 </code></pre>
+
+<p>
+The values enclosed in square brackets are the defaults.  When no
+default is indicated it means it defaults to off.
+
 
 <h1 id="overview">OVERVIEW</h1>
 
