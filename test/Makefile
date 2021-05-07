@@ -4,6 +4,9 @@
 # Default target, runs all tests.
 all:
 
+# Let "check" be an alias for "all".
+check: all
+
 # Remove built-in implicit rules.
 .SUFFIXES:
 
