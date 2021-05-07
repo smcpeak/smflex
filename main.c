@@ -220,13 +220,6 @@ void check_options()
       csize = CSIZE;
   }
 
-  if (interactive == unspecified) {
-    if (fulltbl || fullspd)
-      interactive = false;
-    else
-      interactive = true;
-  }
-
   if (fulltbl || fullspd) {
     if (usemecs)
       flexerror(_("-Cf/-CF and -Cm don't make sense together"));
@@ -520,7 +513,8 @@ void flexinit(int argc, char **argv)
   fullspd = long_align = nowarn = yymore_used = continued_action = false;
   do_yylineno = in_rule = reject = do_stdinit = false;
   yymore_really_used = reject_really_used = unspecified;
-  interactive = csize = unspecified;
+  csize = unspecified;
+  interactive = false;
   gen_line_dirs = usemecs = useecs = true;
   performance_report = 0;
   did_outfilename = 0;

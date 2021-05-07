@@ -1,4 +1,4 @@
-[due to YY_INTERACTIVE, yy_is_interactive is: 1]
+[default case, so yy_is_interactive is: 0]
 [setting yy_is_interactive due to yy_set_interactive: 1]
 [getc(): 104]
 [getc(): 105]
@@ -18,14 +18,13 @@
 [getc(): 114]
 [getc(): 101]
 [getc(): 10]
-hi USERNAME there
-[getc(): 98]
+hi USERNAME there[getc(): 98]
 [getc(): 108]
 [getc(): 97]
 [getc(): 104]
 [getc(): 10]
-blah
-[getc(): 117]
+
+blah[getc(): 117]
 [getc(): 115]
 [getc(): 101]
 [getc(): 114]
@@ -35,6 +34,7 @@ blah
 [getc(): 101]
 [getc(): 33]
 [getc(): 10]
-USERNAME!
-[getc(): -1]
-[due to YY_INTERACTIVE, yy_is_interactive is: 1]
+
+USERNAME![getc(): -1]
+
+[default case, so yy_is_interactive is: 0]

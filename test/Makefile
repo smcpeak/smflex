@@ -162,6 +162,8 @@ out/c-lexer1-no-lines.yy.c: c-lexer1.lex $(SMFLEX)
 all: out/c-int-batch.ok
 all: out/c-int-default.ok
 all: out/c-int-interactive.ok
+all: out/c-int-interactive-set-int-0.ok
+all: out/c-int-interactive-set-int-isatty.ok
 all: out/c-int-set-int-0.ok
 all: out/c-int-set-int-1.ok
 all: out/c-int-set-int-isatty.ok
