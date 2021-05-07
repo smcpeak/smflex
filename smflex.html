@@ -133,6 +133,12 @@
     td.numeric {
       text-align: right;
     }
+    .highlight {
+      background-color: #ddd;
+    }
+    .center {
+      text-align: center;
+    }
     header {
       margin-bottom: 4em;
       text-align: center;
@@ -2569,22 +2575,43 @@ less.
 <h2>Table Compression Options</h2>
 
 <p>
-To explore the effect of various table compression options, I first
-used <a href="test/c-lexer1.lex"><code>c-lexer1.lex</code></a>.  This
+There are six flags that affect scanner speed in a potentially
+beneficial way:
+<code>-Ca -Ce -Cm -Cf -CF -8</code>.  Naively, that is 64 combinations
+to test, but there are three rules that limit that:
+
+<ol>
+<li><code>-Cf</code> and <code>-CF</code> cannot be combined.
+<li><code>-Cm</code> cannot be combined with <code>-Cf</code> or
+    <code>-CF</code>.
+<li><code>-8</code> can only be added when <code>-Cf</code> or
+    <code>-CF</code> is present but <code>-Ce</code> is not
+    (because it is already active in the other configurations).
+</ol>
+
+<p>That leaves us with 20 combinations to test, as shown in the tables
+below.
+
+<p>
+I first applied these combinations to
+<a href="test/c-lexer1.lex"><code>c-lexer1.lex</code></a>.  This
 is a realistic scanner for a C/C++ that does <em>not</em> explicitly
 enumerate all of the keywords.  I used <code>smflex</code> to generate
 both a C-interface and C++-interface scanner.  It
 was run on MinGW/Windows x86_64, compiled with gcc-5.4.0 at
 optimization level -O2, and performed 1000 scans of the concatenation
 of all <code>smflex</code> source code (~470 KB) in the time shown.
-Each experiment was run 9 times.  For completeness, I used
-commit <code>483c9fd3bc</code>, but I also measured
+Each experiment was run 5 times.  For completeness, I used
+commit <code>483c9fd3bc</code>.  I also measured
 <code>flex-2.5.4</code> and <code>flex-2.6.4</code> (the latest) and
-the results were essentially the same.
+the results were essentially the same, so I have not included that data.
 
-<p>The following table reports the median time in milliseconds and
-double the standard deviation (i.e., 95% confidence interval).  Sizes
-are in bytes as reported by the <code>size</code> utility.
+<p>The following table reports the median time in milliseconds and the
+<a href="https://en.wikipedia.org/wiki/Interquartile_range">interquartile range</a>.
+Sizes are in bytes as reported by the <code>size</code> utility.
+The <span class="highlight">highlighted</span> cells are those that
+use <code>-Cf</code> or <code>-CF</code> (since the others are about
+half the speed), and where no other cell is both smaller and faster.
 
 <table>
   <tr>
@@ -2599,132 +2626,231 @@ are in bytes as reported by the <code>size</code> utility.
     <th class="row2">Switches
     <th class="row2">Size
     <th class="row2">Time
-    <th class="row2">2&sigma;
+    <th class="row2">IQR
     <th class="row2">Size
     <th class="row2">Time
-    <th class="row2">2&sigma;
+    <th class="row2">IQR
     <th class="row2">Notes
 
   <tr>
-    <td>equiv_meta
-    <td><code>-B (-Cem)</code>
-    <td class="numeric">25696
-    <td class="numeric">3993
-    <td class="numeric">&plusmn; 48
-    <td class="numeric">56092
-    <td class="numeric">3940
-    <td class="numeric">&plusmn; 27
-    <td>smallest
-
-  <tr>
-    <td>align
-    <td><code>-B -Ca</code>
-    <td class="numeric">52912
-    <td class="numeric">3641
-    <td class="numeric">&plusmn; 29
-    <td class="numeric">83404
-    <td class="numeric">3522
-    <td class="numeric">&plusmn; 15
+    <td>compr
+    <td><code>-C</code>
+    <td class="numeric">37808
+    <td class="numeric">3556
+    <td class="numeric">&plusmn; 22
+    <td class="numeric">68252
+    <td class="numeric">3567
+    <td class="numeric">&plusmn; 7
     <td>
 
   <tr>
-    <td>meta
-    <td><code>-B -Cm</code>
-    <td class="numeric">29248
-    <td class="numeric">3796
-    <td class="numeric">&plusmn; 22
-    <td class="numeric">59752
-    <td class="numeric">3818
-    <td class="numeric">&plusmn; 26
+    <td>align
+    <td><code>-Ca</code>
+    <td class="numeric">52912
+    <td class="numeric">3542
+    <td class="numeric">&plusmn; 7
+    <td class="numeric">83404
+    <td class="numeric">3520
+    <td class="numeric">&plusmn; 10
     <td>
 
   <tr>
     <td>equiv
-    <td><code>-B -Ce</code>
+    <td><code>-Ce</code>
     <td class="numeric">26964
-    <td class="numeric">3711
-    <td class="numeric">&plusmn; 32
+    <td class="numeric">3633
+    <td class="numeric">&plusmn; 20
     <td class="numeric">57392
-    <td class="numeric">3609
-    <td class="numeric">&plusmn; 27
+    <td class="numeric">3610
+    <td class="numeric">&plusmn; 23
     <td>
 
   <tr>
-    <td>compr
-    <td><code>-B -C</code>
-    <td class="numeric">37808
-    <td class="numeric">3640
-    <td class="numeric">&plusmn; 25
-    <td class="numeric">68252
-    <td class="numeric">3540
-    <td class="numeric">&plusmn; 31
+    <td>meta
+    <td><code>-Cm</code>
+    <td class="numeric">29248
+    <td class="numeric">3697
+    <td class="numeric">&plusmn; 7
+    <td class="numeric">59752
+    <td class="numeric">3728
+    <td class="numeric">&plusmn; 21
     <td>
 
   <tr>
-    <td>full_equiv
-    <td><code>-B -Cfe</code>
-    <td class="numeric">33712
-    <td class="numeric">2091
-    <td class="numeric">&plusmn; 52
-    <td class="numeric">63988
-    <td class="numeric">2512
-    <td class="numeric">&plusmn; 85
-    <td>C++ size+speed
+    <td>align_equiv
+    <td><code>-Cae</code>
+    <td class="numeric">30484
+    <td class="numeric">3809
+    <td class="numeric">&plusmn; 29
+    <td class="numeric">60848
+    <td class="numeric">3643
+    <td class="numeric">&plusmn; 21
+    <td>
 
   <tr>
-    <td>Fast_equiv
-    <td><code>-B -CFe</code>
-    <td class="numeric">30616
-    <td class="numeric">1955
-    <td class="numeric">&plusmn; 32
-    <td class="numeric">
-    <td class="numeric">
-    <td class="numeric">
-    <td>C size+speed
-
-  <tr>
-    <td>Cfull
-    <td><code>-B -Cf</code>
-    <td class="numeric">52272
-    <td class="numeric">1901
+    <td>equiv_meta
+    <td><code>-Cem</code>
+    <td class="numeric">25696
+    <td class="numeric">3897
     <td class="numeric">&plusmn; 22
-    <td class="numeric">82560
-    <td class="numeric">2389
-    <td class="numeric">&plusmn; 30
+    <td class="numeric">56092
+    <td class="numeric">3877
+    <td class="numeric">&plusmn; 19
+    <td>default; smallest
+
+  <tr>
+    <td>align_meta
+    <td><code>-Cam</code>
+    <td class="numeric">34688
+    <td class="numeric">3789
+    <td class="numeric">&plusmn; 24
+    <td class="numeric">65160
+    <td class="numeric">3781
+    <td class="numeric">&plusmn; 33
     <td>
 
   <tr>
-    <td>CFast
-    <td><code>-B -CF</code>
-    <td class="numeric">43176
-    <td class="numeric">1891
-    <td class="numeric">&plusmn; 27
-    <td class="numeric">
-    <td class="numeric">
-    <td class="numeric">
+    <td>align_equiv_meta
+    <td><code>-Caem</code>
+    <td class="numeric">27776
+    <td class="numeric">3803
+    <td class="numeric">&plusmn; 11
+    <td class="numeric">58172
+    <td class="numeric">3813
+    <td class="numeric">&plusmn; 20
+    <td>
+
+  <tr>
+    <td>full
+    <td><code>-Cf</code>
+    <td class="numeric">52272
+    <td class="numeric">1870
+    <td class="numeric">&plusmn; 12
+    <td class="numeric highlight">82560
+    <td class="numeric highlight">2294
+    <td class="numeric">&plusmn; 7
+    <td>
+
+  <tr>
+    <td>full_8
+    <td><code>-Cf -8</code>
+    <td class="numeric">81456
+    <td class="numeric">1869
+    <td class="numeric">&plusmn; 8
+    <td class="numeric">111744
+    <td class="numeric">2294
+    <td class="numeric">&plusmn; 16
     <td>
 
   <tr>
     <td>full_align
-    <td><code>-B -Cfa</code>
-    <td class="numeric">81664
-    <td class="numeric">1885
-    <td class="numeric">&plusmn; 34
-    <td class="numeric">112016
-    <td class="numeric">2319
-    <td class="numeric">&plusmn; 20
-    <td>C++ fastest
+    <td><code>-Cfa</code>
+    <td class="numeric highlight">81664
+    <td class="numeric highlight">1845
+    <td class="numeric">&plusmn; 19
+    <td class="numeric highlight">112016
+    <td class="numeric highlight">2282
+    <td class="numeric">&plusmn; 7
+    <td>C and C++ fastest
+
+  <tr>
+    <td>full_align_8
+    <td><code>-Cfa -8</code>
+    <td class="numeric">140032
+    <td class="numeric">1854
+    <td class="numeric">&plusmn; 15
+    <td class="numeric">170384
+    <td class="numeric">2290
+    <td class="numeric">&plusmn; 17
+    <td>
+
+  <tr>
+    <td>full_equiv
+    <td><code>-Cfe</code>
+    <td class="numeric">33712
+    <td class="numeric">2058
+    <td class="numeric">&plusmn; 1
+    <td class="numeric highlight">63988
+    <td class="numeric highlight">2462
+    <td class="numeric">&plusmn; 15
+    <td>C++ size+speed
+
+  <tr>
+    <td>full_align_equiv
+    <td><code>-Cfae</code>
+    <td class="numeric">43952
+    <td class="numeric">2045
+    <td class="numeric">&plusmn; 9
+    <td class="numeric">74228
+    <td class="numeric">2460
+    <td class="numeric">&plusmn; 14
+    <td>
+
+  <tr>
+    <td>Fast
+    <td><code>-CF</code>
+    <td class="numeric highlight">43176
+    <td class="numeric highlight">1858
+    <td class="numeric">&plusmn; 13
+    <td>
+    <td>
+    <td>
+    <td>
+
+  <tr>
+    <td>Fast_8
+    <td><code>-CF -8</code>
+    <td class="numeric">57304
+    <td class="numeric">1868
+    <td class="numeric">&plusmn; 10
+    <td>
+    <td>
+    <td>
+    <td>
 
   <tr>
     <td>Fast_align
-    <td><code>-B -CFa</code>
+    <td><code>-CFa</code>
     <td class="numeric">64152
-    <td class="numeric">1873
-    <td class="numeric">&plusmn; 29
-    <td class="numeric">
-    <td class="numeric">
-    <td class="numeric">
-    <td>C fastest
+    <td class="numeric">1857
+    <td class="numeric">&plusmn; 5
+    <td>
+    <td>
+    <td>
+    <td>
+
+  <tr>
+    <td>Fast_align_8
+    <td><code>-CFa -8</code>
+    <td class="numeric">92824
+    <td class="numeric">1855
+    <td class="numeric">&plusmn; 15
+    <td>
+    <td>
+    <td>
+    <td>
+
+  <tr>
+    <td>Fast_equiv
+    <td><code>-CFe</code>
+    <td class="numeric highlight">30616
+    <td class="numeric highlight">1933
+    <td class="numeric">&plusmn; 17
+    <td>
+    <td>
+    <td>
+    <td>C size+speed
+
+  <tr>
+    <td>Fast_align_equiv
+    <td><code>-CFae</code>
+    <td class="numeric highlight">38152
+    <td class="numeric highlight">1902
+    <td class="numeric">&plusmn; 9
+    <td>
+    <td>
+    <td>
+    <td>
 
 </table>
 
@@ -2733,6 +2859,20 @@ This experiment was run on the same hardware as that used to measure
 <a href="#input-read-method">Input Read Method</a> effects.
 Consequently, we can account for about 660 ms of time as the cost of
 simply reading the input bytes.
+
+<p>
+Here is a plot of the C interface data for -Cf and -CF:
+
+<div class="center">
+<img src="img-c-lexer1-c-1000.png" alt="Plot of c-lexer1.lex C data">
+</div>
+
+<p>
+And the C++ interface data for -Cf:
+
+<div class="center">
+<img src="img-c-lexer1-cpp-1000.png" alt="Plot of c-lexer1.lex C++ data">
+</div>
 
 <p>
 We can make some observations based on this data:
@@ -2746,10 +2886,10 @@ We can make some observations based on this data:
 
 <li><p>
     When using the C interface, <code>-CFe</code> (Fast_equiv) has the
-    best balance of size and speed.  <code>-CF</code> is perhaps 5%
-    faster while being 33% larger.  <code>-CFa</code> is, per this
-    data, a tiny bit faster still, but at double the size, and the
-    difference is within the measurement uncertainty.
+    best balance of size and speed.  <code>-CF</code> (Fast) is faster
+    while being 33% larger.  <code>-Cfa</code> (full_align) is slightly
+    faster still, but the difference is within measurement error and
+    the size is doubled.
 
 <li><p>
     When using the C++ interface, we cannot use <code>-CF</code>.
@@ -2783,138 +2923,251 @@ above.
     <th class="row2">Switches
     <th class="row2">Size
     <th class="row2">Time
-    <th class="row2">2&sigma;
+    <th class="row2">IQR
     <th class="row2">Size
     <th class="row2">Time
-    <th class="row2">2&sigma;
+    <th class="row2">IQR
     <th class="row2">Notes
 
   <tr>
-    <td>equiv_meta
-    <td><code>-B (-Cem)</code>
-    <td class="numeric">36076
-    <td class="numeric">4187
-    <td class="numeric">&plusmn; 34
-    <td class="numeric">65868
-    <td class="numeric">4068
-    <td class="numeric">&plusmn; 53
-    <td>smallest
-
-  <tr>
-    <td>align
-    <td><code>-B -Ca</code>
-    <td class="numeric">80988
-    <td class="numeric">3718
-    <td class="numeric">&plusmn; 33
-    <td class="numeric">110684
-    <td class="numeric">3652
-    <td class="numeric">&plusmn; 30
+    <td>compr
+    <td><code>-C</code>
+    <td class="numeric">55756
+    <td class="numeric">3637
+    <td class="numeric">&plusmn; 14
+    <td class="numeric">85484
+    <td class="numeric">3692
+    <td class="numeric">&plusmn; 10
     <td>
 
   <tr>
-    <td>meta
-    <td><code>-B -Cm</code>
-    <td class="numeric">39964
-    <td class="numeric">3968
-    <td class="numeric">&plusmn; 40
-    <td class="numeric">69624
-    <td class="numeric">3954
-    <td class="numeric">&plusmn; 28
+    <td>align
+    <td><code>-Ca</code>
+    <td class="numeric">80988
+    <td class="numeric">3627
+    <td class="numeric">&plusmn; 19
+    <td class="numeric">110684
+    <td class="numeric">3633
+    <td class="numeric">&plusmn; 8
     <td>
 
   <tr>
     <td>equiv
-    <td><code>-B -Ce</code>
+    <td><code>-Ce</code>
     <td class="numeric">38476
-    <td class="numeric">3801
-    <td class="numeric">&plusmn; 19
+    <td class="numeric">3723
+    <td class="numeric">&plusmn; 6
     <td class="numeric">68384
-    <td class="numeric">3783
-    <td class="numeric">&plusmn; 39
+    <td class="numeric">3772
+    <td class="numeric">&plusmn; 20
     <td>
 
   <tr>
-    <td>compr
-    <td><code>-B -C</code>
-    <td class="numeric">55756
-    <td class="numeric">3745
-    <td class="numeric">&plusmn; 38
-    <td class="numeric">85484
-    <td class="numeric">3696
-    <td class="numeric">&plusmn; 32
+    <td>meta
+    <td><code>-Cm</code>
+    <td class="numeric">39964
+    <td class="numeric">3869
+    <td class="numeric">&plusmn; 6
+    <td class="numeric">69624
+    <td class="numeric">3871
+    <td class="numeric">&plusmn; 17
     <td>
 
   <tr>
-    <td>full_equiv
-    <td><code>-B -Cfe</code>
-    <td class="numeric">98000
-    <td class="numeric">2199
-    <td class="numeric">&plusmn; 27
-    <td class="numeric">127888
-    <td class="numeric">2631
-    <td class="numeric">&plusmn; 32
-    <td>C++ size+speed
+    <td>align_equiv
+    <td><code>-Cae</code>
+    <td class="numeric">47180
+    <td class="numeric">3951
+    <td class="numeric">&plusmn; 16
+    <td class="numeric">77024
+    <td class="numeric">3830
+    <td class="numeric">&plusmn; 5
+    <td>
 
   <tr>
-    <td>Fast_equiv
-    <td><code>-B -CFe</code>
-    <td class="numeric">131664
-    <td class="numeric">1852
-    <td class="numeric">&plusmn; 24
-    <td class="numeric">
-    <td class="numeric">
-    <td class="numeric">
-    <td>C size+speed
+    <td>equiv_meta
+    <td><code>-Cem</code>
+    <td class="numeric">36076
+    <td class="numeric">4061
+    <td class="numeric">&plusmn; 9
+    <td class="numeric">65868
+    <td class="numeric">3981
+    <td class="numeric">&plusmn; 13
+    <td>smallest; default
 
   <tr>
-    <td>Cfull
-    <td><code>-B -Cf</code>
-    <td class="numeric">156704
-    <td class="numeric">1886
-    <td class="numeric">&plusmn; 38
-    <td class="numeric">186556
-    <td class="numeric">2254
-    <td class="numeric">&plusmn; 30
+    <td>align_meta
+    <td><code>-Cam</code>
+    <td class="numeric">48316
+    <td class="numeric">3871
+    <td class="numeric">&plusmn; 1
+    <td class="numeric">77976
+    <td class="numeric">3865
+    <td class="numeric">&plusmn; 15
+    <td>
+
+  <tr>
+    <td>align_equiv_meta
+    <td><code>-Caem</code>
+    <td class="numeric">42092
+    <td class="numeric">4089
+    <td class="numeric">&plusmn; 16
+    <td class="numeric">71916
+    <td class="numeric">3929
+    <td class="numeric">&plusmn; 14
+    <td>
+
+  <tr>
+    <td>full
+    <td><code>-Cf</code>
+    <td class="numeric highlight">156704
+    <td class="numeric highlight">1845
+    <td class="numeric">&plusmn; 9
+    <td class="numeric highlight">186556
+    <td class="numeric highlight">2214
+    <td class="numeric">&plusmn; 15
     <td>C++ fastest
 
   <tr>
-    <td>CFast
-    <td><code>-B -CF</code>
-    <td class="numeric">327536
-    <td class="numeric">2102
-    <td class="numeric">&plusmn; 26
-    <td class="numeric">
-    <td class="numeric">
-    <td class="numeric">
+    <td>full_8
+    <td><code>-Cf -8</code>
+    <td class="numeric">282144
+    <td class="numeric">1857
+    <td class="numeric">&plusmn; 2
+    <td class="numeric">311996
+    <td class="numeric">2221
+    <td class="numeric">&plusmn; 32
     <td>
 
   <tr>
     <td>full_align
-    <td><code>-B -Cfa</code>
-    <td class="numeric">283184
-    <td class="numeric">1857
-    <td class="numeric">&plusmn; 42
+    <td><code>-Cfa</code>
+    <td class="numeric highlight">283184
+    <td class="numeric highlight">1819
+    <td class="numeric">&plusmn; 16
     <td class="numeric">312956
-    <td class="numeric">2273
-    <td class="numeric">&plusmn; 40
+    <td class="numeric">2214
+    <td class="numeric">&plusmn; 16
+    <td>C fastest
+
+  <tr>
+    <td>full_align_8
+    <td><code>-Cfa -8</code>
+    <td class="numeric">534064
+    <td class="numeric">1831
+    <td class="numeric">&plusmn; 13
+    <td class="numeric">563836
+    <td class="numeric">2236
+    <td class="numeric">&plusmn; 7
+    <td>
+
+  <tr>
+    <td>full_equiv
+    <td><code>-Cfe</code>
+    <td class="numeric highlight">98000
+    <td class="numeric highlight">2148
+    <td class="numeric">&plusmn; 6
+    <td class="numeric highlight">127888
+    <td class="numeric highlight">2557
+    <td class="numeric">&plusmn; 5
+    <td>C++ size+speed
+
+  <tr>
+    <td>full_align_equiv
+    <td><code>-Cfae</code>
+    <td class="numeric">166592
+    <td class="numeric">2155
+    <td class="numeric">&plusmn; 4
+    <td class="numeric">196496
+    <td class="numeric">2623
+    <td class="numeric">&plusmn; 16
+    <td>
+
+  <tr>
+    <td>Fast
+    <td><code>-CF</code>
+    <td class="numeric">327536
+    <td class="numeric">2040
+    <td class="numeric">&plusmn; 18
+    <td>
+    <td>
+    <td>
+    <td>
+
+  <tr>
+    <td>Fast_8
+    <td><code>-CF -8</code>
+    <td class="numeric">366464
+    <td class="numeric">1829
+    <td class="numeric">&plusmn; 8
+    <td>
+    <td>
+    <td>
     <td>
 
   <tr>
     <td>Fast_align
-    <td><code>-B -CFa</code>
+    <td><code>-CFa</code>
     <td class="numeric">327536
-    <td class="numeric">1812
-    <td class="numeric">&plusmn; 27
-    <td class="numeric">
-    <td class="numeric">
-    <td class="numeric">
-    <td>C fastest
+    <td class="numeric">1823
+    <td class="numeric">&plusmn; 5
+    <td>
+    <td>
+    <td>
+    <td>
+
+  <tr>
+    <td>Fast_align_8
+    <td><code>-CFa -8</code>
+    <td class="numeric">366448
+    <td class="numeric">1822
+    <td class="numeric">&plusmn; 14
+    <td>
+    <td>
+    <td>
+    <td>
+
+  <tr>
+    <td>Fast_equiv
+    <td><code>-CFe</code>
+    <td class="numeric highlight">131664
+    <td class="numeric highlight">1864
+    <td class="numeric">&plusmn; 6
+    <td>
+    <td>
+    <td>
+    <td>C size+speed
+
+  <tr>
+    <td>Fast_align_equiv
+    <td><code>-CFae</code>
+    <td class="numeric">234032
+    <td class="numeric">1879
+    <td class="numeric">&plusmn; 3
+    <td>
+    <td>
+    <td>
+    <td>
 
 </table>
 
+<p>
+Plot of C interface times for -Cf and -CF:
+
+<div class="center">
+<img src="img-elsa-lexer-c-1000.png" alt="Plot of elsa-lexer.lex C data">
+</div>
+
+<p>
+And the C++ interface data for -Cf:
+
+<div class="center">
+<img src="img-elsa-lexer-cpp-1000.png" alt="Plot of elsa-lexer.lex C++ data">
+</div>
+
 <p>Overall, the relative (and even absolute) times are similar to the
 previous table.  The larger scanner description makes the size
-substantially larger, especially in the last few entries.
+substantially larger.
 
 
 <h2>Effect of Options Other Than Table Compression</h2>
