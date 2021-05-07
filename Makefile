@@ -272,9 +272,8 @@ config.mk: config.mk.in config.status
 # The rules in this section are meant for use when making changes to
 # smflex itself.  They are not normally enabled for these reasons:
 #
-# 1. The build from distribution source should not require any tools
-#    beyond a C compiler, but these rules rely on having other tools
-#    installed.
+# 1. These rules rely on having other tools installed.  The normal
+#    build from a source distribution should only need a C compiler.
 #
 # 2. The build from a fresh git clone would otherwise needlessly
 #    rebuild some things because the file timestamps after a clone
@@ -306,15 +305,18 @@ input-parse.y.h: input-parse.y.c
 input-scan.lex.c: input-scan.lex
 	$(SMFLEX_EXEC) $(SMFLEX_FLAGS) $(COMPRESSION) input-scan.lex
 
-# 'generated-scanner.skl.c' contains the contents of 'generated-scanner.skl' as a C string.
+# 'generated-scanner.skl.c' contains the contents of
+# 'generated-scanner.skl' as a C string.
 generated-scanner.skl.c: generated-scanner.skl encode.sh
 	$(SHELL) encode.sh generated-scanner.skl generated-scanner.skl.c scanner_skl_contents
 
-# Similarly, 'generated-header.skl.c' contains the contents of 'generated-header.skl'.
+# Similarly, 'generated-header.skl.c' contains the contents of
+# 'generated-header.skl'.
 generated-header.skl.c: generated-header.skl encode.sh
 	$(SHELL) encode.sh generated-header.skl generated-header.skl.c header_skl_contents
 
-# If 'configure' has changed but its output script is older, run it.
+# If 'configure' has changed, but its output script is older, run the
+# latter.
 config.status: configure
 	./config.status --recheck
 
