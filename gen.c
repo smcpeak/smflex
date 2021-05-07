@@ -1438,12 +1438,25 @@ void make_tables()
 }
 
 
+/* Return true if 'c' is a character that can be part of an identifier
+ * in C++. */
+static int is_identifier_char(char c)
+{
+  return c == '_' ||
+         ('0' <= c && c <= '9') ||
+         ('A' <= c && c <= 'Z') ||
+         ('a' <= c && c <= 'z');
+}
+
+
 /* Write 'line' and a newline to 'fp', except if it contains any
  * occurrences of "yyFlexLexer", replace the "yy" part with 'prefix'.
  *
  * If 'fp' is 'scanner_c_file', then increment 'out_linenum'. */
-void emit_with_class_name_substitution(FILE * fp, char const *line)
+void emit_with_class_name_substitution(FILE *fp, char const *line)
 {
+  char const *p = line;
+
   if (fp == scanner_c_file) {
     out_line_count(line);
     ++out_linenum;        /* For the final newline, below. */
@@ -1451,18 +1464,34 @@ void emit_with_class_name_substitution(FILE * fp, char const *line)
 
   /* Look for the default class name so we can change it. */
   char const *yyFlexLexer;
-  while ((yyFlexLexer = strstr(line, "yyFlexLexer")) != NULL) {
-    /* Replace the "yy" in 'yyFlexLexer' with 'prefix'.  By default,
-     * 'prefix' is "yy", but we still use the general mechanism. */
-    fprintf(fp, "%.*s%s", (int) (yyFlexLexer - line), line,  /* up to "yy" */
-            prefix);                                         /* replacement */
+  while ((yyFlexLexer = strstr(p, "yyFlexLexer")) != NULL) {
+    /* Check that what we found is surrounded by word boundaries. */
+    if ( ((yyFlexLexer == line) || !is_identifier_char(yyFlexLexer[-1])) &&
+         !is_identifier_char(yyFlexLexer[11]) ) {
+      /* Replace the "yy" in 'yyFlexLexer' with 'prefix'.  By default,
+       * 'prefix' is "yy", but we still use the general mechanism. */
+      fprintf(fp, "%.*s%s",
+              (int)(yyFlexLexer - p), p,     /* up to "yy" */
+              prefix);                       /* replacement for "yy" */
+    }
+    else {
+      /* At least one side is not a word boundary.  Emit unchanged.
+       *
+       * This never happens in the current system because this name
+       * substitution stuff is only applied to the skeleton files,
+       * and they do not have any occurrences of "yyFlexLexer" that
+       * are part of another identifier.  But I have manually tested
+       * that this works, and it could be useful in the future. */
+      fprintf(fp, "%.*syy",
+              (int)(yyFlexLexer - p), p);    /* up to "yy" */
+    }
 
     /* Resume after the "yy". */
-    line = yyFlexLexer + 2;
+    p = yyFlexLexer + 2;
   }
 
   /* Print the remaining line with no substitution. */
-  fprintf(fp, "%s\n", line);
+  fprintf(fp, "%s\n", p);
 }
 
 
