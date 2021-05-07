@@ -1842,13 +1842,9 @@ otherwise.
 
 <dd>
 <p>In the generated scanner, the actions are all gathered in one large
-switch statement and separated using <code>YY_BREAK</code>, which may be
-redefined. By default, it is simply a "break", to separate each rule's
-action from the following rule's. Redefining <code>YY_BREAK</code>
-allows, for example, C++ users to #define YY_BREAK to do nothing (while
-being very careful that every rule ends with a "break" or a "return"!) to
-avoid suffering from unreachable statement warnings where because a rule's
-action ends with "return", the <code>YY_BREAK</code> is inaccessible.
+switch statement, with each case terminated with the
+<code>YY_BREAK</code> macro, which expands to "<code>break;</code>" by
+default.  This may be redefined.
 
 </dl>
 
