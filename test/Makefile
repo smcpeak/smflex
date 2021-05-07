@@ -10,10 +10,13 @@ check: all
 # Remove built-in implicit rules.
 .SUFFIXES:
 
-# C compiler and linker.
+# Pull in definitions from main build.
+include ../config.mk
+-include ../personal.mk
+
+# C++ compiler and linker.
 #
-# TODO: Get this from ../config.mk.
-CC := gcc
+# TODO: Arrange for config.mk to set this.
 CXX := g++
 
 # C compilation options for correctness test executables.
@@ -40,13 +43,15 @@ SMFLEX_OPTS := -p -p
 # specifically.
 SHELL := /bin/bash
 
+PYTHON3 := python3
+
 
 # Run smflex on one file.
 .PRECIOUS: out/%.yy.c
 out/%.yy.c: %.lex
 	@mkdir -p out
 	$(SMFLEX) $(SMFLEX_OPTS) -o$@ $<
-	python3 ../check-line-directives.py $@
+	$(PYTHON3) ../check-line-directives.py $@
 
 # Run smflex on outfile.lex, avoiding use of -o option.
 out/outfile-specified.yy.c: outfile.lex $(SMFLEX)
@@ -83,7 +88,7 @@ out/%.o: %.c
 out/%.yy.cc: %.lexpp $(SMFLEX)
 	@mkdir -p out
 	$(SMFLEX) $(SMFLEX_OPTS) -o$@ $<
-	python3 ../check-line-directives.py $@
+	$(PYTHON3) ../check-line-directives.py $@
 
 # Compile C++ file in out/.
 .PRECIOUS: out/%.oo
@@ -424,35 +429,43 @@ $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%-$(NUM_RUNS)-$(NUM_SCANS).log: $
 	$(MEASURE_TIME) $< $(OPERF)/corpus.c $(NUM_SCANS) >> $@
 
 
-# The table file depends on each measurement.
-$(foreach config,$(PERF_CONFIGS),$(eval $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS).txt: $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(config)-$(NUM_RUNS)-$(NUM_SCANS).log))
+# The TSV table file depends on each measurement.
+$(foreach config,$(PERF_CONFIGS),$(eval $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS).tsv: $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(config)-$(NUM_RUNS)-$(NUM_SCANS).log))
 
-# Single file with all results.
-$(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS).txt:
-	echo "configuration    size_bytes    time_ms +/-" > $@
-	echo "---------------- ---------- ---------- ---" >> $@
+# TSV table of results for all configurations.
+$(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS).tsv:
+	echo "configuration	size_bytes	time_ms	+/-" > $@
 	for config in $(PERF_CONFIGS); do \
-	  printf "%-16s " $$config >> $@ || exit; \
+	  printf "%s	" $$config >> $@ || exit; \
 	  head -2 $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | tail -1 | \
-	    awk '{ printf "%10s ", $$4 }' >> $@ || exit; \
+	    awk '{ printf "%s	", $$4 }' >> $@ || exit; \
 	  grep ' +/- ' $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | \
-	    awk '{ printf "%10s %3s\n", $$1, $$3 }' >> $@ || exit; \
+	    awk '{ printf "%s	%s\n", $$1, $$3 }' >> $@ || exit; \
 	done
+
+# ASCII table of a TSV table.
+$(OPERF)/table-%.txt: $(OPERF)/table-%.tsv
+	$(PYTHON3) tsv-to-ascii-table.py < $^ > $@
 	cat $@
+
+# Make an HTML table; requires TSV_TO_HTML_TABLE, which is a script of
+# mine that I have not (yet?) checked in here.
+$(OPERF)/table-%.html: $(OPERF)/table-%.tsv
+	$(TSV_TO_HTML_TABLE) --coltag:switches:code --appendcol:Notes \
+	  "--prefixcol:+/-:&plusmn; " < $^ > $@
 
 
 # Construct a single shell command that, when executed, will print
-# out all of the configurations and their switches.
-PRINT_CONFIGS_AND_OPS := $(foreach config,$(PERF_CONFIGS),printf "%-16s %-10s\n" $(config) "$($(config)_OPS)";)
+# out all of the configurations and their switches as TSV.
+PRINT_CONFIGS_AND_OPS := $(foreach config,$(PERF_CONFIGS),printf "%s	%s\n" $(config) "$($(config)_OPS)";)
 
 # Use that to make a table of configuration and switches.  This file is
 # meant to be combined with the others using 'cut' and 'paste'.
-$(OPERF)/table-switches.txt:
+$(OPERF)/table-switches.tsv:
 	@mkdir -p $(dir $@)
-	echo "configuration    switches  " > $@
-	echo "---------------- ----------" >> $@
+	printf "%s	%s\n" configuration switches > $@
 	( $(PRINT_CONFIGS_AND_OPS) ) >> $@
-	cat $@
+	$(PYTHON3) tsv-to-ascii-table.py < $@
 
 
 # Run the active test set.
@@ -464,17 +477,16 @@ perftest: $(OPERF)/table-switches.txt
 
 
 # Run $(LEXER_NAME) in both C and C++ mode and create a combined table.
-$(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-both-$(NUM_RUNS)-$(NUM_SCANS).txt: $(OPERF)/table-switches.txt
+$(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-both-$(NUM_RUNS)-$(NUM_SCANS).tsv: $(OPERF)/table-switches.tsv
 	$(MAKE) perftest INTERFACE=c
 	$(MAKE) perftest INTERFACE=cpp
-	paste -d ' ' \
-	  $(OPERF)/table-switches.txt \
-	  <( cut -b18- $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-c-$(NUM_RUNS)-$(NUM_SCANS).txt ) \
-	  <( cut -b18- $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-cpp-$(NUM_RUNS)-$(NUM_SCANS).txt ) \
+	paste \
+	  $(OPERF)/table-switches.tsv \
+	  <( cut -f2- $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-c-$(NUM_RUNS)-$(NUM_SCANS).tsv ) \
+	  <( cut -f2- $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-cpp-$(NUM_RUNS)-$(NUM_SCANS).tsv ) \
 	  > $@
-	cat $@
 
-# Alias for the above.
+# Run the above and make an ASCII table.
 .PHONY: perftest-both-interfaces
 perftest-both-interfaces: $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-both-$(NUM_RUNS)-$(NUM_SCANS).txt
 
