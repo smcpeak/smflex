@@ -21,6 +21,9 @@ SHELL = /bin/sh
 # Bison parser generator.
 BISON = bison
 
+# Python 3 interpreter.  Only needed if MAINTAINER_MODE=1.
+PYTHON3 = python3
+
 # Enable all GCC warnings.
 WARNINGS = -Wall
 
@@ -93,23 +96,15 @@ $(SMFLEX): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $(SMFLEX) $(LDFLAGS) $(OBJECTS) $(LIBS)
 
 
-# Main set of automated tests.
+# Quick test.
+#
+# This does not invoke the tests in test/ by itself because I want
+# people to be able to put smflex into their own project by just
+# copying the files in the root directory.  I also like that what
+# is run by default lets people quickly get some confidence that the
+# basic system is working before investing time into the long tests.
 test: check
 check: $(SMFLEX)
-	@#
-	@# Make sure I do not have "scan.tmp" in input-scan.lex.c.
-	@#
-	if grep scan.tmp input-scan.lex.c; then false; else true; fi
-	@#
-	@# Check the #line directives.
-	@#
-	python3 ./check-line-directives.py input-scan.lex.c
-ifneq ($(SKIP_TEST_DIR),1)
-	@#
-	@# Run the tests in test/.
-	@#
-	$(MAKE) -C test CC=$(CC)
-endif
 	@#
 	@# Check to see if the current smflex produces the same output
 	@# as it did before.
@@ -127,7 +122,18 @@ endif
 	@#
 	diff input-scan.lex.c scan.actual
 	rm scan.actual
-	@echo "Check successful, using COMPRESSION=\"$(COMPRESSION)\""
+ifeq ($(MAINTAINER_MODE),1)
+	@#
+	@# Make sure I do not have "scan.tmp" in input-scan.lex.c.
+	@#
+	if grep scan.tmp input-scan.lex.c; then false; else true; fi
+	@#
+	@# Check the #line directives.
+	@#
+	$(PYTHON3) ./check-line-directives.py input-scan.lex.c
+endif
+	@echo "Check successful, using COMPRESSION=\"$(COMPRESSION)\"".
+	@echo "Run \"make -C test check\" and \"make bigcheck\" for more thorough checking."
 
 # One step of 'bigcheck'.  COMPRESSION should be set.
 #
