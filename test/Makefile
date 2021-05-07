@@ -149,6 +149,15 @@ out/%.matches: % ../smflex.html
 	diff -u $* out/$*.manual
 	touch $@
 
+# Test the -L (no #line directive) option.
+out/c-lexer1-no-lines.yy.c: c-lexer1.lex $(SMFLEX)
+	@mkdir -p $(dir $@)
+	$(SMFLEX) $(SMFLEX_OPTS) -L -o$@ $<
+	if grep '#line' $@; then \
+	  echo "There are not supposed to be any #line directives in that file."; \
+	  exit 2; \
+	fi
+
 # Tests to run, in sorted ("env LANG=C sort") order.
 all: out/c-int-batch.ok
 all: out/c-int-default.ok
@@ -157,6 +166,7 @@ all: out/c-int-set-int-0.ok
 all: out/c-int-set-int-1.ok
 all: out/c-int-set-int-isatty.ok
 all: out/c-lexer1.ok
+all: out/c-lexer1-no-lines.ok
 all: out/continued-action2.ok
 all: out/cpp-int-batch.ok
 all: out/cpp-int-default.ok
