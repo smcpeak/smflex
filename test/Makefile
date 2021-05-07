@@ -197,13 +197,16 @@ clean:
 	rm -rf out
 
 # --------------------- Performance Testing ---------------------
+# Directory in which to store performance test outputs.
+OPERF := operf
+
 # Performance testing corpus.
-out/perf/corpus.c:
-	@mkdir -p out/perf
+$(OPERF)/corpus.c:
+	@mkdir -p $(OPERF)
 	cat ../*.c ../*.h > $@
 
 # Same file, but with CRLF line endings.
-out/perf/corpus-crlf.c: out/perf/corpus.c
+$(OPERF)/corpus-crlf.c: $(OPERF)/corpus.c
 	perl -p -e 's/\n/\r\n/' < $< > $@
 
 
@@ -233,14 +236,14 @@ PERF_CFLAGS := -O2 -Wall -Werror -Wno-unused-function -DHAS_POSIX
 
 
 # 'readfile' program for baseline.
-all: out/perf/readfile-c.exe
-out/perf/readfile-c.exe: readfile.c
-	@mkdir -p out/perf
+all: $(OPERF)/readfile-c.exe
+$(OPERF)/readfile-c.exe: readfile.c
+	@mkdir -p $(OPERF)
 	$(CC) -o$@ -std=c89 $(PERF_CFLAGS) $<
 
-all: out/perf/readfile-cpp.exe
-out/perf/readfile-cpp.exe: readfile.c
-	@mkdir -p out/perf
+all: $(OPERF)/readfile-cpp.exe
+$(OPERF)/readfile-cpp.exe: readfile.c
+	@mkdir -p $(OPERF)
 	$(CXX) -o$@ -xc++ -std=c++98 $(PERF_CFLAGS) $<
 
 # This collects together the measurements supporting the main
@@ -251,15 +254,15 @@ out/perf/readfile-cpp.exe: readfile.c
 #   - text mode reading is about 2x slower
 #   - compiled as C vs. C++ does not make a difference
 #
-out/perf/readfile-summary.txt: out/perf/readfile-c.exe out/perf/readfile-cpp.exe
+$(OPERF)/readfile-summary.txt: $(OPERF)/readfile-c.exe $(OPERF)/readfile-cpp.exe
 	rm -f $@
-	$(MEASURE_TIME) out/perf/readfile-c.exe   fread    0x2000 out/perf/corpus.c 1000 b >>$@
-	$(MEASURE_TIME) out/perf/readfile-cpp.exe fread    0x2000 out/perf/corpus.c 1000 b >>$@
-	$(MEASURE_TIME) out/perf/readfile-c.exe   fread    0x2000 out/perf/corpus.c 1000 t >>$@
-	$(MEASURE_TIME) out/perf/readfile-c.exe   read     0x2000 out/perf/corpus.c 1000 b >>$@
-	$(MEASURE_TIME) out/perf/readfile-cpp.exe iostream 0x2000 out/perf/corpus.c 1000 b >>$@
-	$(MEASURE_TIME) out/perf/readfile-c.exe   fread    0x2010 out/perf/corpus.c 1000 b >>$@
-	$(MEASURE_TIME) out/perf/readfile-c.exe   fread   0x10000 out/perf/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) $(OPERF)/readfile-c.exe   fread    0x2000 $(OPERF)/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) $(OPERF)/readfile-cpp.exe fread    0x2000 $(OPERF)/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) $(OPERF)/readfile-c.exe   fread    0x2000 $(OPERF)/corpus.c 1000 t >>$@
+	$(MEASURE_TIME) $(OPERF)/readfile-c.exe   read     0x2000 $(OPERF)/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) $(OPERF)/readfile-cpp.exe iostream 0x2000 $(OPERF)/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) $(OPERF)/readfile-c.exe   fread    0x2010 $(OPERF)/corpus.c 1000 b >>$@
+	$(MEASURE_TIME) $(OPERF)/readfile-c.exe   fread   0x10000 $(OPERF)/corpus.c 1000 b >>$@
 	cat $@
 
 
@@ -360,48 +363,48 @@ endif
 #
 # At least for now, I'm not making this depend on $(SMFLEX) because
 # I won't want to have to redo everything after each change.
-.PRECIOUS: out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%.exe
-out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%.exe: $(LEXER_NAME).lex
-	@mkdir -p out/perf
+.PRECIOUS: $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%.exe
+$(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%.exe: $(LEXER_NAME).lex
+	@mkdir -p $(OPERF)
 ifeq ($(INTERFACE),c)
-	$($(VARIANT)_EXEC) -oout/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.c $($*_OPS) $<
-	$(CC) $(PERF_CFLAGS) $($(VARIANT)_CFLAGS) -o$@ out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.c
+	$($(VARIANT)_EXEC) -o$(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.c $($*_OPS) $<
+	$(CC) $(PERF_CFLAGS) $($(VARIANT)_CFLAGS) -o$@ $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.c
 else
-	$($(VARIANT)_EXEC) -+ -oout/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc $($*_OPS) $<
-	$(CXX) $(PERF_CFLAGS) $($(VARIANT)_CFLAGS) -o$@ out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc
+	$($(VARIANT)_EXEC) -+ -o$(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc $($*_OPS) $<
+	$(CXX) $(PERF_CFLAGS) $($(VARIANT)_CFLAGS) -o$@ $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc
 endif
 
 
 # Rule to run an executable and measure its size and speed.
-.PRECIOUS: out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%-$(NUM_RUNS)-$(NUM_SCANS).log
-out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%-$(NUM_RUNS)-$(NUM_SCANS).log: out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%.exe out/perf/corpus.c
+.PRECIOUS: $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%-$(NUM_RUNS)-$(NUM_SCANS).log
+$(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%-$(NUM_RUNS)-$(NUM_SCANS).log: $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%.exe $(OPERF)/corpus.c
 	size $< > $@
-	$(MEASURE_TIME) $< out/perf/corpus.c $(NUM_SCANS) >> $@
+	$(MEASURE_TIME) $< $(OPERF)/corpus.c $(NUM_SCANS) >> $@
 
 
 # The summary file depends on each measurement.
-$(foreach config,$(PERF_CONFIGS),$(eval out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt: out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(config)-$(NUM_RUNS)-$(NUM_SCANS).log))
+$(foreach config,$(PERF_CONFIGS),$(eval $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt: $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(config)-$(NUM_RUNS)-$(NUM_SCANS).log))
 
 # Single file with all results.
-out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt:
+$(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt:
 	echo "configuration size_bytes    time_ms +/-" > $@
 	echo "------------- ---------- ---------- ---" >> $@
 	for config in $(PERF_CONFIGS); do \
 	  printf "%-13s " "$$config" >> $@ || exit; \
-	  head -2 out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | tail -1 | \
+	  head -2 $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | tail -1 | \
 	    awk '{ printf "%10s ", $$4 }' >> $@ || exit; \
-	  grep ' +- ' out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | \
+	  grep ' +- ' $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | \
 	    awk '{ printf "%10s %3s\n", $$1, $$3 }' >> $@ || exit; \
 	done
 	cat $@
 
 # Convenience alias.
 .PHONY: perftest
-perftest: out/perf/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt
+perftest: $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt
 
 .PHONY: perfclean
 perfclean:
-	rm -rf out/perf
+	if -d $(OPERF); then rm -r $(OPERF); fi
 
 
 # EOF
