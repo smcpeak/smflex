@@ -118,10 +118,16 @@ if (!$oneline && $iters > 1) {
 
 # sort the results in increasing numeric order
 @results = sort {$a <=> $b} @results;
-#print("sorted results: @results\n");
+#print("sorted: @results\n");
 
-# select middle element
-my $mid = $results[int(scalar(@results) / 2)];
+# Select middle, first quartile, and last quartile elements.
+my $n = scalar(@results);
+my $median = $results[int($n / 2)];
+my $firstQuartile = $results[int($n / 4)];
+my $lastQuartile = $results[int($n * 3 / 4)];
+
+# Interquartile dispersion.
+my $interquartile = $lastQuartile - $firstQuartile;
 
 # mean average
 my $sum = 0;
@@ -141,16 +147,17 @@ my $stddev = sqrt($variance);
 
 
 if ($oneline) {
-  printf("%10d +- %3d ms: %s\n",
-         int($mid),
-         int($stddev * 2),
+  printf("%10d +/- %4d ms: %s\n",
+         $median,
+         $interquartile,
          join(' ', @ARGV));
 }
 
 elsif ($iters > 1) {
-  print("median: $mid ms\n");
-  printf("mean  : %.2f ms\n", $mean);
-  printf("stddev: %.2f ms\n", $stddev);
+  printf("median: %10d    ms\n", $median);
+  printf("iquart: %10d    ms\n", $interquartile);
+  printf("mean  : %13.2f ms\n", $mean);
+  printf("stddev: %13.2f ms\n", $stddev);
 }
 
 
