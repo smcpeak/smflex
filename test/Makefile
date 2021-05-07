@@ -12,7 +12,7 @@ check: all
 
 # C compiler and linker.
 #
-# TODO: Get this from ./configure.
+# TODO: Get this from ../config.mk.
 CC := gcc
 CXX := g++
 
@@ -35,6 +35,11 @@ SMFLEX := ../smflex
 # I have this enabled both to exercise the option and to check that
 # what it is saying is sensible.
 SMFLEX_OPTS := -p -p
+
+# I use the <(...) syntax in the 'paste' command below, so I need bash
+# specifically.
+SHELL := /bin/bash
+
 
 # Run smflex on one file.
 .PRECIOUS: out/%.yy.c
@@ -316,59 +321,81 @@ flex264_CFLAGS    := -I. -Iinclude-flex-2.6.4
 
 
 # Names for various flex/smflex option combinations.
-default_OPS       :=
-batch_OPS         := -B
-align_OPS         := -Ca -B
-equiv_meta_OPS    := -Cem -B
-meta_OPS          := -Cm -B
-equiv_OPS         := -Ce -B
-compr_OPS         := -C -B
+#
+# I think this is an exhaustive list, except for non-default -7, given
+# the restrictions:
+#
+#   - Set of all flags: a e m f F 8.
+#   - Cannot combine f and F.
+#   - Cannot combine m either either f or F.
+#   - 8 is an option only with (f or F) and not e
+#     (since it is already active in other configurations)
+#
+# There is also 'r' but that just changes the input method, which does
+# not make a significant difference for performance.
+#
+# Note that -Cem is the default, not -C.
+#
+compr_OPS               := -C
+align_OPS               := -Ca
+equiv_OPS               := -Ce
+meta_OPS                := -Cm
+align_equiv_OPS         := -Cae
+equiv_meta_OPS          := -Cem
+align_meta_OPS          := -Cam
+align_equiv_meta_OPS    := -Caem
+full_OPS                := -Cf
+full_8_OPS              := -Cf -8
+full_align_OPS          := -Cfa
+full_align_8_OPS        := -Cfa -8
+full_equiv_OPS          := -Cfe
+full_align_equiv_OPS    := -Cfae
+Fast_OPS                := -CF
+Fast_8_OPS              := -CF -8
+Fast_align_OPS          := -CFa
+Fast_align_8_OPS        := -CFa -8
+Fast_equiv_OPS          := -CFe
+Fast_align_equiv_OPS    := -CFae
 
-# All of the modes involving 'f' or 'F' have 'B' implicitly.
-full_equiv_OPS    := -Cfe
-Fast_equiv_OPS    := -CFe
-Cfull_OPS         := -Cf
-CFast_OPS         := -CF
-full_OPS          := -f
-Fast_OPS          := -F
-full_align_OPS    := -Cfa
-Fast_align_OPS    := -CFa
-
-
-# List of named configurations, in the order I want them to appear in
-# the summary.txt file.
+# List of named configurations, in the same order as above.
 PERF_CONFIGS :=
-
-# The default, interactive scanner is around 10x slower, so I normally
-# do not want to spend time measuring it.
-ifeq ($(MEASURE_SLOW_CONFIGS),1)
-  PERF_CONFIGS += default
-endif
-
-PERF_CONFIGS += batch
-PERF_CONFIGS += align
-PERF_CONFIGS += equiv_meta
-PERF_CONFIGS += meta
-PERF_CONFIGS += equiv
 PERF_CONFIGS += compr
-PERF_CONFIGS += full_equiv
-PERF_CONFIGS += Fast_equiv
-PERF_CONFIGS += Cfull
-PERF_CONFIGS += CFast
+PERF_CONFIGS += align
+PERF_CONFIGS += equiv
+PERF_CONFIGS += meta
+PERF_CONFIGS += align_equiv
+PERF_CONFIGS += equiv_meta
+PERF_CONFIGS += align_meta
+PERF_CONFIGS += align_equiv_meta
 PERF_CONFIGS += full
-PERF_CONFIGS += Fast
+PERF_CONFIGS += full_8
 PERF_CONFIGS += full_align
+PERF_CONFIGS += full_align_8
+PERF_CONFIGS += full_equiv
+PERF_CONFIGS += full_align_equiv
+PERF_CONFIGS += Fast
+PERF_CONFIGS += Fast_8
 PERF_CONFIGS += Fast_align
+PERF_CONFIGS += Fast_align_8
+PERF_CONFIGS += Fast_equiv
+PERF_CONFIGS += Fast_align_equiv
+
+# Utility to filter out a substring.  (Ordinary 'filter-out' cannot
+# do that.)
+#
+# usage: $(call FILTER_OUT_SUBSTR,substring,list of things to filter))
+FILTER_OUT_SUBSTR = $(foreach element,$(2),$(if $(findstring $(1),$(element)),,$(element)))
 
 ifeq ($(INTERFACE),cpp)
   # Remove all the configurations that use Fast, because those are
-  # explicitly prohibited by smflex.
-  PERF_CONFIGS := $(filter-out Fast% %Fast,$(PERF_CONFIGS))
+  # explicitly prohibited when using the C++ interface.
+  PERF_CONFIGS := $(call FILTER_OUT_SUBSTR,Fast,$(PERF_CONFIGS))
 endif
 
 ifneq ($(filter reject-frob yylineno trailing-context,$(LEXER_NAME)),)
   # REJECT, yylineno, and trailing context cannot be used with -f or -F.
-  PERF_CONFIGS := $(filter-out Fast% full% %Fast %full,$(PERF_CONFIGS))
+  PERF_CONFIGS := $(call FILTER_OUT_SUBSTR,Fast,$(PERF_CONFIGS))
+  PERF_CONFIGS := $(call FILTER_OUT_SUBSTR,full,$(PERF_CONFIGS))
 endif
 
 #$(info PERF_CONFIGS: $(PERF_CONFIGS))
@@ -397,29 +424,75 @@ $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%-$(NUM_RUNS)-$(NUM_SCANS).log: $
 	$(MEASURE_TIME) $< $(OPERF)/corpus.c $(NUM_SCANS) >> $@
 
 
-# The summary file depends on each measurement.
-$(foreach config,$(PERF_CONFIGS),$(eval $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt: $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(config)-$(NUM_RUNS)-$(NUM_SCANS).log))
+# The table file depends on each measurement.
+$(foreach config,$(PERF_CONFIGS),$(eval $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS).txt: $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(config)-$(NUM_RUNS)-$(NUM_SCANS).log))
 
 # Single file with all results.
-$(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt:
-	echo "configuration size_bytes    time_ms +/-" > $@
-	echo "------------- ---------- ---------- ---" >> $@
+$(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS).txt:
+	echo "configuration    size_bytes    time_ms +/-" > $@
+	echo "---------------- ---------- ---------- ---" >> $@
 	for config in $(PERF_CONFIGS); do \
-	  printf "%-13s " "$$config" >> $@ || exit; \
+	  printf "%-16s " $$config >> $@ || exit; \
 	  head -2 $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | tail -1 | \
 	    awk '{ printf "%10s ", $$4 }' >> $@ || exit; \
-	  grep ' +- ' $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | \
+	  grep ' +/- ' $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$$config-$(NUM_RUNS)-$(NUM_SCANS).log | \
 	    awk '{ printf "%10s %3s\n", $$1, $$3 }' >> $@ || exit; \
 	done
 	cat $@
 
-# Convenience alias.
+
+# Construct a single shell command that, when executed, will print
+# out all of the configurations and their switches.
+PRINT_CONFIGS_AND_OPS := $(foreach config,$(PERF_CONFIGS),printf "%-16s %-10s\n" $(config) "$($(config)_OPS)";)
+
+# Use that to make a table of configuration and switches.  This file is
+# meant to be combined with the others using 'cut' and 'paste'.
+$(OPERF)/table-switches.txt:
+	@mkdir -p $(dir $@)
+	echo "configuration    switches  " > $@
+	echo "---------------- ----------" >> $@
+	( $(PRINT_CONFIGS_AND_OPS) ) >> $@
+	cat $@
+
+
+# Run the active test set.
 .PHONY: perftest
-perftest: $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS)-summary.txt
+perftest: $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS).txt
+
+# Also make the switch table.
+perftest: $(OPERF)/table-switches.txt
+
+
+# Run $(LEXER_NAME) in both C and C++ mode and create a combined table.
+$(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-both-$(NUM_RUNS)-$(NUM_SCANS).txt: $(OPERF)/table-switches.txt
+	$(MAKE) perftest INTERFACE=c
+	$(MAKE) perftest INTERFACE=cpp
+	paste -d ' ' \
+	  $(OPERF)/table-switches.txt \
+	  <( cut -b18- $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-c-$(NUM_RUNS)-$(NUM_SCANS).txt ) \
+	  <( cut -b18- $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-cpp-$(NUM_RUNS)-$(NUM_SCANS).txt ) \
+	  > $@
+	cat $@
+
+# Alias for the above.
+.PHONY: perftest-both-interfaces
+perftest-both-interfaces: $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-both-$(NUM_RUNS)-$(NUM_SCANS).txt
+
+
+# Run both c-lexer1 and elsa-lexer in both C and C++ mode.
+.PHONY: perftest-both-lexers
+perftest-both-lexers:
+	$(MAKE) perftest-both-interfaces LEXER_NAME=c-lexer1
+	$(MAKE) perftest-both-interfaces LEXER_NAME=elsa-lexer
+
 
 .PHONY: perfclean
 perfclean:
 	if test -d $(OPERF); then rm -r $(OPERF); fi
+
+# Do-nothing target, useful if I just want to exercise the Makefile
+# logic without running any recipes.
+nothing:
 
 
 # EOF
