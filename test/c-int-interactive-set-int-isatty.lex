@@ -20,9 +20,6 @@ exit               printf("exiting...\n"); exit(0);
 
 %%
 
-/* Unlike the other examples, for variety and perhaps better realism,
- * let's call 'yy_set_interactive' from 'main()' instead of in
- * 'YY_USER_INIT'. */
 int main()
 {
   /* BEGIN: example fragment */
