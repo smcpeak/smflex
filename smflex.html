@@ -173,10 +173,14 @@
   <p>Version 1.0.0-dev
 </header>
 
+
+<!-- ======================================================= -->
 <h1 id="name">NAME</h1>
 
 <p><code>smflex</code> - Scott McPeak's fast lexical analyzer generator
 
+
+<!-- ======================================================= -->
 <h1 id="synopsis">SYNOPSIS</h1>
 
 <pre><code>
@@ -224,6 +228,8 @@ The values enclosed in square brackets are the defaults.  When no
 default is indicated it means it defaults to off.
 
 
+
+<!-- ======================================================= -->
 <h1 id="overview">OVERVIEW</h1>
 
 <p>This manual describes <code>smflex</code>, a tool for generating programs
@@ -306,6 +312,8 @@ and reference sections:
 
 </ul>
 
+
+<!-- ======================================================= -->
 <h1 id="description">DESCRIPTION</h1>
 
 <p><code>smflex</code> is a tool for generating <em>scanners</em>: programs
@@ -319,6 +327,8 @@ with the <code>-lfl</code> library to produce an executable. When the
 executable is run, it analyzes its input for occurrences of the regular
 expressions. Whenever it finds one, it executes the corresponding C code.
 
+
+<!-- ======================================================= -->
 <h1 id="some-simple-examples">SOME SIMPLE EXAMPLES</h1>
 
 <p>First some simple examples to get the flavor of how one uses
@@ -427,6 +437,8 @@ what it has seen.
 <p>The details of this example will be explained in the following
 sections.
 
+
+<!-- ======================================================= -->
 <h1 id="format-of-the-input-file">FORMAT OF THE INPUT FILE</h1>
 
 <p>The <code>smflex</code> input file consists of three sections, separated
@@ -517,6 +529,8 @@ present for <em>POSIX</em> compliance; see below for other such features).
 unindented comment (i.e., a line beginning with "/*") is also copied
 verbatim to the output up to the next "*/".
 
+
+<!-- ======================================================= -->
 <h1 id="patterns">PATTERNS</h1>
 
 <p>The patterns in the input are written using an extended set of regular
@@ -785,6 +799,8 @@ following could be used (the special '|' action is explained below):
 <p>A similar trick will work for matching a foo or a
 bar-at-the-beginning-of-a-line.
 
+
+<!-- ======================================================= -->
 <h1 id="rule-semantics">RULE SEMANTICS</h1>
 
 <p>When the generated scanner is run, it analyzes its input looking for
@@ -820,6 +836,8 @@ standard output. Thus, the simplest legal <code>smflex</code> input is:
 <p>which generates a scanner that simply copies its input (one character
 at a time) to its output.
 
+
+<!-- ======================================================= -->
 <h1 id="actions">ACTIONS</h1>
 
 <p>Each pattern in a rule has a corresponding action, which can be
@@ -1061,6 +1079,8 @@ an action:
 
 </ul>
 
+
+<!-- ======================================================= -->
 <h1 id="the-generated-scanner">THE GENERATED SCANNER</h1>
 
 <p>The output of <code>smflex</code> is the file <code>lex.yy.c</code>,
@@ -1158,6 +1178,8 @@ the section <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
 <code>yyout</code> global (default, stdout), which may be redefined by
 the user simply by assigning it to some other <code>FILE</code> pointer.
 
+
+<!-- ======================================================= -->
 <h1 id="start-conditions">START CONDITIONS</h1>
 
 <p><code>smflex</code> provides a mechanism for conditionally activating
@@ -1499,6 +1521,8 @@ size limitation. If memory is exhausted, program execution aborts.
 <p>To use start condition stacks, your scanner must include a
 <code>%option stack</code> directive (see Options below).
 
+
+<!-- ======================================================= -->
 <h1 id="multiple-input-buffers">MULTIPLE INPUT BUFFERS</h1>
 
 <p>Some scanners (such as those which support "include" files) require
@@ -1675,6 +1699,8 @@ cast an integer expression reflecting the size of the buffer.
 
 </dl>
 
+
+<!-- ======================================================= -->
 <h1 id="end-of-file-rules">END-OF-FILE RULES</h1>
 
 <p>The special rule "&lt;&lt;EOF&gt;&gt;" indicates actions which are to
@@ -1730,6 +1756,8 @@ example:
              }
 </code></pre>
 
+
+<!-- ======================================================= -->
 <h1 id="miscellaneous-macros">MISCELLANEOUS MACROS</h1>
 
 <p>The macro <code>YY_USER_ACTION</code> can be defined to provide an
@@ -1802,6 +1830,8 @@ being very careful that every rule ends with a "break" or a "return"!) to
 avoid suffering from unreachable statement warnings where because a rule's
 action ends with "return", the <code>YY_BREAK</code> is inaccessible.
 
+
+<!-- ======================================================= -->
 <h1 id="values-available-to-the-user">VALUES AVAILABLE TO THE USER</h1>
 
 <p>This section summarizes the various values available to the user in
@@ -1847,6 +1877,8 @@ the rule actions.
 
 </ul>
 
+
+<!-- ======================================================= -->
 <h1 id="interfacing-with-yacc">INTERFACING WITH YACC</h1>
 
 <p>One of the main uses of <code>smflex</code> is as a companion to
@@ -1871,6 +1903,8 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     [0-9]+        yylval = atoi( yytext ); return TOK_NUMBER;
 </code></pre>
 
+
+<!-- ======================================================= -->
 <h1 id="options">OPTIONS</h1>
 
 <p><code>smflex</code> has the following options:
@@ -2367,6 +2401,7 @@ in the corresponding routine not appearing in the generated scanner:
 unless you use <code>%option stack</code>).
 
 
+<!-- ======================================================= -->
 <h1 id="performance-considerations">PERFORMANCE CONSIDERATIONS</h1>
 
 <p>The main design goal of <code>smflex</code> is that it generate
@@ -3508,6 +3543,7 @@ every scanner definition from the start to save the hassle of renaming
 things later.
 
 
+<!-- ======================================================= -->
 <h1 id="incompatibilities-with-flex">INCOMPATIBILITIES WITH FLEX</h1>
 
 <p>This is Scott McPeak's fork of <code>flex-2.5.4</code>.  I have made
@@ -3795,6 +3831,7 @@ I have also found and fixed a few pre-existing bugs:
 </ul>
 
 
+<!-- ======================================================= -->
 <h1 id="incompatibilities-with-lex-and-posix">INCOMPATIBILITIES WITH LEX AND POSIX</h1>
 
 <p><strong>NOTE</strong>: This is Scott McPeak's fork of
@@ -3812,6 +3849,7 @@ accompanied <code>flex-2.5.4</code>.  They are available in the
 revision history before 2021-04-30.
 
 
+<!-- ======================================================= -->
 <h1 id="diagnostics">DIAGNOSTICS</h1>
 
 <dl>
@@ -3898,6 +3936,7 @@ have listed at least one of them twice).
 </dl>
 
 
+<!-- ======================================================= -->
 <h1 id="deficiencies-n-bugs">DEFICIENCIES / BUGS</h1>
 
 <p>Some trailing context patterns cannot be properly matched and generate
@@ -3946,6 +3985,8 @@ the number of states if it does.
 
 <p>The <code>smflex</code> internal algorithms need documentation.
 
+
+<!-- ======================================================= -->
 <h1 id="see-also">SEE ALSO</h1>
 
 <p>lex(1), yacc(1), sed(1), awk(1).
@@ -3960,6 +4001,8 @@ Techniques and Tools</em>, Addison-Wesley (1986). Describes the
 pattern-matching techniques used by <code>smflex</code> (deterministic
 finite automata).
 
+
+<!-- ======================================================= -->
 <h1 id="author">AUTHOR</h1>
 
 <p>This document describes Scott McPeak's fork of
