@@ -419,7 +419,7 @@ perftest: $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$(NUM_RUNS)-$(NUM_SCANS
 
 .PHONY: perfclean
 perfclean:
-	if -d $(OPERF); then rm -r $(OPERF); fi
+	if test -d $(OPERF); then rm -r $(OPERF); fi
 
 
 # EOF
