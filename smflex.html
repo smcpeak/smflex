@@ -514,20 +514,21 @@ file may be skipped, too.
 
 <p>In the definitions and rules sections, any <em>indented</em> text or
 text enclosed in <code>%{</code> and <code>%}</code> is copied verbatim
-to the output (with the %{}'s removed). The %{}'s must appear unindented
-on lines by themselves.
+to the output (with the <code>%{}</code> delimiters removed). The
+<code>%{}</code> delimiters must appear unindented on lines by themselves.
 
-<p>In the rules section, any indented or %{} text appearing before
-the first rule may be used to declare variables which are local to the
-scanning routine and (after the declarations) code which is to be executed
-whenever the scanning routine is entered. Other indented or %{} text in
-the rule section is still copied to the output, but its meaning is not
-well-defined and it may well cause compile-time errors (this feature is
-present for <em>POSIX</em> compliance; see below for other such features).
+<p>In the rules section, any indented or <code>%{}</code> text appearing
+before the first rule may be used to declare variables which are local
+to the scanning routine and specify code to execute whenever the
+scanning routine is entered.
+
+<p>Indented or <code>%{}</code> text appearing in the rule section after
+the first rule is also copied to the output, but its meaning is not
+defined.
 
 <p>In the definitions section (but not in the rules section), an
-unindented comment (i.e., a line beginning with "/*") is also copied
-verbatim to the output up to the next "*/".
+unindented comment (i.e., a line beginning with "<code>/*"</code>) is
+also copied verbatim to the output up to the next "<code>*/</code>".
 
 
 <!-- ======================================================= -->
