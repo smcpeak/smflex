@@ -1760,6 +1760,11 @@ example:
 <!-- ======================================================= -->
 <h1 id="miscellaneous-macros">MISCELLANEOUS MACROS</h1>
 
+<dl>
+
+<dt><code>YY_USER_ACTION</code>
+
+<dd>
 <p>The macro <code>YY_USER_ACTION</code> can be defined to provide an
 action which is always executed prior to the matched rule's action. For
 example, it could be #define'd to call a routine to convert yytext to
@@ -1781,11 +1786,17 @@ total number of rules (including the default rule, even if you use
     int ctr[YY_NUM_RULES];
 </code></pre>
 
+<dt><code>YY_USER_INIT</code>
+
+<dd>
 <p>The macro <code>YY_USER_INIT</code> may be defined to provide an
 action which is always executed before the first scan (and before the
 scanner's internal initializations are done). For example, it could be
 used to call a routine to read in a data table or open a logging file.
 
+<dt><code>yy_set_interactive()</code>
+
+<dd>
 <p>The macro <code id="yy_set_interactive">yy_set_interactive(is_interactive)</code>
 can be used to control whether the current buffer is considered
 <em>interactive</em>. An interactive buffer is processed much more
@@ -1812,15 +1823,24 @@ interactive, as demonstrated by
       {}
 </code></pre>
 
+<dt><code>yy_set_bol(at_bol)</code>
+
+<dd>
 <p>The macro <code>yy_set_bol(at_bol)</code> can be used to control
 whether the current buffer's scanning context for the next token match
 is done as though at the beginning of a line. A non-zero macro argument
 makes rules anchored with
 
+<dt><code>YY_AT_BOL()</code>
+
+<dd>
 <p>The macro <code>YY_AT_BOL()</code> returns true if the next token
 scanned from the current buffer will have '^' rules active, false
 otherwise.
 
+<dt><code>YY_BREAK</code>
+
+<dd>
 <p>In the generated scanner, the actions are all gathered in one large
 switch statement and separated using <code>YY_BREAK</code>, which may be
 redefined. By default, it is simply a "break", to separate each rule's
@@ -1829,6 +1849,8 @@ allows, for example, C++ users to #define YY_BREAK to do nothing (while
 being very careful that every rule ends with a "break" or a "return"!) to
 avoid suffering from unreachable statement warnings where because a rule's
 action ends with "return", the <code>YY_BREAK</code> is inaccessible.
+
+</dl>
 
 
 <!-- ======================================================= -->
