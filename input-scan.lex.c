@@ -1953,7 +1953,7 @@ YY_RULE_SETUP
 #line 281 "input-scan.lex"
 {
                           useecs = usemecs = false;
-                          use_read = jacobson = true;
+                          jacobson = true;
                         }
 #line 1959 "input-scan.lex.c"
   YY_BREAK
@@ -1962,7 +1962,7 @@ YY_RULE_SETUP
 #line 285 "input-scan.lex"
 {
                           useecs = usemecs = false;
-                          use_read = fulltbl = true;
+                          fulltbl = true;
                         }
 #line 1968 "input-scan.lex.c"
   YY_BREAK
@@ -2331,7 +2331,7 @@ YY_RULE_SETUP
 {
                           /* This rule is separate from the one below because
                            * otherwise we get variable trailing context, so
-                           * we can't build the scanner using -{f,F}.
+                           * we can't build the scanner using -C{f,F}.
                            */
                           bracelevel = 0;
                           continued_action = false;

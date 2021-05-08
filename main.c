@@ -620,13 +620,11 @@ void flexinit(int argc, char **argv)
           break;
 
         case 'f':
-          useecs = usemecs = false;
-          use_read = fulltbl = true;
+          flexerror(_("The -f flag has been removed.  Use -Cfr instead."));
           break;
 
         case 'F':
-          useecs = usemecs = false;
-          use_read = jacobson = true;
+          flexerror(_("The -F flag has been removed.  Use -CFr instead."));
           break;
 
         case '?':
@@ -844,12 +842,12 @@ void readin()
 
   if ((fulltbl || jacobson) && reject) {
     if (real_reject)
-      flexerror(_("REJECT cannot be used with -f or -F"));
+      flexerror(_("REJECT cannot be used with -Cf or -CF"));
     else if (do_yylineno)
-      flexerror(_("%option yylineno cannot be used with -f or -F"));
+      flexerror(_("%option yylineno cannot be used with -Cf or -CF"));
     else
       flexerror(_
-                ("variable trailing context rules cannot be used with -f or -F"));
+                ("variable trailing context rules cannot be used with -Cf or -CF"));
   }
 
   /* Begin writing the primary output file. */
@@ -873,7 +871,7 @@ void readin()
   }
   else if (use_read) {
     /* If using 'read', we need its declaration. */
-    out("\n#include <unistd.h>          /* read, needed for -Cr or -f option */");
+    out("\n#include <unistd.h>          /* read, needed for -Cr option */");
   }
 
   skelout();
@@ -1038,7 +1036,6 @@ void usage()
   fprintf(f, _("\t-b  generate backing-up information to %s\n"),
           backing_name);
   fprintf(f, _("\t-d  turn on debug mode in generated scanner\n"));
-  fprintf(f, _("\t-f  generate fast, large scanner\n"));
   fprintf(f, _("\t-h  produce this help message\n"));
   fprintf(f, _("\t-i  generate case-insensitive scanner\n"));
   fprintf(f, _("\t-l  maximal compatibility with original lex\n"));
@@ -1054,7 +1051,6 @@ void usage()
   fprintf(f, _("\t-v  write summary of scanner statistics to f\n"));
   fprintf(f, _("\t-w  do not generate warnings\n"));
   fprintf(f, _("\t-B  generate batch scanner (opposite of -I)\n"));
-  fprintf(f, _("\t-F  use alternative fast scanner representation\n"));
   fprintf(f, _("\t-I  generate interactive scanner (opposite of -B)\n"));
   fprintf(f, _("\t-L  suppress #line directives in scanner\n"));
   fprintf(f, _("\t-T  %s should run in trace mode\n"), program_name);
@@ -1072,10 +1068,10 @@ void usage()
   fprintf(f, _("\t\t-Ce  construct equivalence classes\n"));
   fprintf(f,
           _
-          ("\t\t-Cf  do not compress scanner tables; use -f representation\n"));
+          ("\t\t-Cf  generate scanner with \"full\" tables; fast and large\n"));
   fprintf(f,
           _
-          ("\t\t-CF  do not compress scanner tables; use -F representation\n"));
+          ("\t\t-CF  generate scanner with \"Fast\" tables\n"));
   fprintf(f, _("\t\t-Cm  construct meta-equivalence classes\n"));
   fprintf(f, _("\t\t-Cr  use read() instead of stdio for scanner input\n"));
   fprintf(f, _("\t-o  specify output filename\n"));

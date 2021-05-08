@@ -159,7 +159,7 @@ bigcheck:
 	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-C" bigcheck1
 	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-Ce" bigcheck1
 	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-Cm" bigcheck1
-	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-f" bigcheck1
+	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-Cf" bigcheck1
 	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-Cfea" bigcheck1
 	rm -f input-scan.lex.c ; $(MAKE) COMPRESSION="-CFer" bigcheck1
 	rm -f input-scan.lex.c ; $(MAKE) bigcheck1

@@ -412,7 +412,7 @@ ifeq ($(INTERFACE),cpp)
 endif
 
 ifneq ($(filter reject-frob yylineno trailing-context,$(LEXER_NAME)),)
-  # REJECT, yylineno, and trailing context cannot be used with -f or -F.
+  # REJECT, yylineno, and trailing context cannot be used with -Cf or -CF.
   PERF_CONFIGS := $(call FILTER_OUT_SUBSTR,Fast,$(PERF_CONFIGS))
   PERF_CONFIGS := $(call FILTER_OUT_SUBSTR,full,$(PERF_CONFIGS))
 endif

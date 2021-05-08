@@ -36,7 +36,7 @@ void usage(void);
  * useecs - if true (-Ce flag), use equivalence classes
  * fulltbl - if true (-Cf flag), don't compress the DFA state table
  * usemecs - if true (-Cm flag), use meta-equivalence classes
- * jacobson - if true (-F flag), use Jacobson method of table representation
+ * jacobson - if true (-CF flag), use Jacobson method of table representation
  * gen_line_dirs - if true (i.e., no -L flag), generate #line directives
  * performance_report - if > 0 (i.e., -p flag), generate a report relating
  *   to scanner performance; if > 1 (-p -p), report on minor performance
@@ -46,7 +46,7 @@ void usage(void);
  * C_plus_plus - if true (i.e., -+ flag), generate a C++ scanner class;
  *   otherwise, a standard C scanner
  * long_align - if true (-Ca flag), favor long-word alignment.
- * use_read - if true (-f, -F, or -Cr) then use read() for scanner input;
+ * use_read - if true (-Cr) then use read() for scanner input;
  *   otherwise, use fread().
  * do_yywrap - do yywrap() processing on EOF.  If false, EOF treated as
  *   "no more files".

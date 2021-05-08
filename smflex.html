@@ -220,12 +220,10 @@
     -7               Generate a 7-bit scanner [if -Cf or -CF but not -Cfe or -CFe].
     -8               Generate an 8-bit scanner [opposite of -7].
     -d               Generate a debug mode scanner.
-    -f               Generate "full" tables.
     -i               Generate a case-insensitive scanner.
     -s               Suppress the default "echo" rule.
     -B               Generate a batch (non-interactive) scanner [true].
-    -C[...]          Generate scanner with various table compression modes [-Cem].
-    -F               Generate "Fast" tables.
+    -C[aefFmr]*      Generate scanner with various table compression modes [-Cem].
     -I               Generate an interactive scanner.
 </code></pre>
 
@@ -1965,12 +1963,6 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     the two look the same as far as the scanner's concerned), or reaches
     an end-of-file.
 
-<dt><code>-f</code>
-
-<dd><p>specifies <em>fast scanner</em>. No table compression is done and stdio
-    is bypassed. The result is large but fast. This option is equivalent to
-    <code>-Cfr</code> (see below).
-
 <dt><code>-h</code>
 
 <dd><p>generates a "help" summary of <code>smflex</code>'s options to
@@ -2033,30 +2025,6 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     such until they enter <em>another</em> character.  (Furthermore, if
     the terminal is configured to use the default "cooked" input mode,
     that requires typing in another newline.)
-
-<dt><code>-F</code>
-
-<dd><p>specifies that the fast scanner table representation should be used
-    (and stdio bypassed). This representation is about as fast as the
-    full table representation <code>(-f)</code>, and for some sets of
-    patterns will be considerably smaller (and for others, larger). In
-    general, if the pattern set contains both "keywords" and a
-    catch-all, "identifier" rule, such as in the set:
-
-    <pre><code>
-        &quot;case&quot;    return TOK_CASE;
-        &quot;switch&quot;  return TOK_SWITCH;
-        ...
-        &quot;default&quot; return TOK_DEFAULT;
-        [a-z]+    return TOK_ID;
-</code></pre>
-
-    <p>then you're better off using the full table representation. If only
-    the "identifier" rule is present and you then use a hash table or some
-    such to detect the keywords, you're better off using <code>-F</code>.
-
-    <p>This option is equivalent to <code>-CFr</code> (see below). It cannot
-    be used with <code>-+</code>.
 
 <dt id="interactive-option"><code>-I</code>
 
@@ -2156,13 +2124,34 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     table/object file sizes (typically a factor of 2-5) and are pretty cheap
     performance-wise (one array look-up per character scanned).
 
-    <p><code>-Cf</code> specifies that the <em>full</em> scanner tables
+    <p><code>-Cf</code> specifies that the "full" scanner tables
     should be generated - <code>smflex</code> should not compress the tables
     by taking advantages of similar transition functions for different states.
 
-    <p><code>-CF</code> specifies that the alternate fast scanner
-    representation (described above under the <code>-F</code> flag) should
-    be used. This option cannot be used with <code>-+</code>.
+
+    <p><code>-CF</code>
+
+    specifies that the "Fast" scanner table representation should be used.
+    This representation is about as fast as the
+    full table representation (<code>-Cf</code>), and for some sets of
+    patterns will be considerably smaller (and for others, larger). In
+    general, if the pattern set contains both "keywords" and a
+    catch-all, "identifier" rule, such as in the set:
+
+    <pre><code>
+        &quot;case&quot;    return TOK_CASE;
+        &quot;switch&quot;  return TOK_SWITCH;
+        ...
+        &quot;default&quot; return TOK_DEFAULT;
+        [a-z]+    return TOK_ID;
+</code></pre>
+
+    <p>then you're better off using the full table representation (<code>-Cf</code>). If only
+    the "identifier" rule is present and you then use a hash table or some
+    such to detect the keywords, you're better off using <code>-CF</code>.
+
+    <p>This option cannot be used with <code>-+</code>.
+
 
     <p><code>-Cm</code> directs <code>smflex</code> to construct
     <em>meta-equivalence classes</em>, which are sets of equivalence classes
@@ -2302,8 +2291,8 @@ number are equivalent to <code>smflex</code> flags or their negation:
     <span id="debug-option">debug           -d option</span>
     default         opposite of -s option
     ecs             -Ce option
-    fast            -F option
-    full            -f option
+    fast            -CF option
+    full            -Cf option
     interactive     -I option
     meta-ecs        -Cm option
     perf-report     -p option
@@ -2572,7 +2561,7 @@ performed, so practical gains in the context of a scanner will be
 less.
 
 
-<h2>Table Compression Options</h2>
+<h2 id="table-compression-options">Table Compression Options</h2>
 
 <p>
 There are six flags that affect scanner speed in a potentially
@@ -3242,12 +3231,12 @@ On my Windows/MinGW machine, I get (100 iterations, median of 5):
     <td class="numeric">628
 
   <tr>
-    <td>full (<code>-f</code>)
+    <td>full (<code>-Cf</code>)
     <td class="numeric">360
     <td>
 
   <tr>
-    <td>Fast (<code>-F</code>)
+    <td>Fast (<code>-CF</code>)
     <td class="numeric">404
     <td>
 
@@ -3256,8 +3245,8 @@ On my Windows/MinGW machine, I get (100 iterations, median of 5):
 <p>
 From this we can see that <code>REJECT</code> itself is not very
 expensive, only adding a few percent to the run time.  However,
-the fact that it is incompatible with <code>-f</code> and
-<code>-F</code> <em>is</em> impactful, as either is about double
+the fact that it is incompatible with <code>-Cf</code> and
+<code>-CF</code> <em>is</em> impactful, as either is about double
 the speed of the default settings.
 
 
@@ -3420,7 +3409,7 @@ savings, and can even make things worse (see
 <a href="#deficiencies-n-bugs">Deficiencies / Bugs</a>).
 
 <p>If there are any rules with variable trailing context, then the
-<code>-f</code> and <code>-F</code> table compression flags cannot
+<code>-Cf</code> and <code>-CF</code> table compression flags cannot
 be used.
 
 
@@ -3825,6 +3814,32 @@ a number of changes that introduce incompatibilities with
 to transition to my <code>smflex</code>, and this list can help that.
 
 <ul>
+
+<li><p><code>flex-2.5.4</code> accepts <code>-f</code> and
+    <code>-F</code> options as aliases for <code>-Cfr</code> and
+    <code>-CFr</code>, respectively.  <code>smflex</code> does not
+    accept them.
+
+    <p>Rationale: The aliases are confusing and unnecessary, and
+    interfere with being able to further untangle and clarify the
+    options.
+
+    <p>Replacement: Use <code>-Cfr</code> or <code>-CFr</code>.
+
+<li><p>In <code>flex-2.5.4</code>, both <code>%option full</code>
+    and <code>%option fast</code> implied <code>%option read</code>.
+    That implication has been removed.
+
+    <p>Rationale: I want options to be as orthogonal as possible.
+    <a href="#table-compression-options">Table compression</a> is
+    completely independent of
+    <a href="#input-read-method">input read method</a>.
+
+    <p>Replacement: Use <code>%option read</code> explicitly if desired,
+    although there is little reason to do so, as I have not been able to
+    measure any performance difference when using the default buffer
+    size (and <code>read</code> is less portable than
+    <code>fread</code>).
 
 <li><p><code>flex-2.5.4</code> accepts
     <code>%option always-interactive</code> and
@@ -4252,8 +4267,8 @@ matched. The number of entries is equal to the number of DFA states if
 the scanner does not use <code>REJECT</code>, and somewhat greater than
 the number of states if it does.
 
-<p><code>REJECT</code> cannot be used with the <code>-f</code> or
-<code>-F</code> options.
+<p><code>REJECT</code> cannot be used with the <code>-Cf</code> or
+<code>-CF</code> options.
 
 <p>The <code>smflex</code> internal algorithms need documentation.
 

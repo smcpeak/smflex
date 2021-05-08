@@ -409,8 +409,8 @@ void ntod()
   inittbl();
 
   /* Check to see whether we should build a separate table for
-   * transitions on NUL characters.  We don't do this for full-speed
-   * (-F) scanners, since for them we don't have a simple state
+   * transitions on NUL characters.  We don't do this for Jacobson
+   * (-CF) scanners, since for them we don't have a simple state
    * number lying around with which to index the table.  We also
    * don't bother doing it for scanners unless (1) NUL is in its own
    * equivalence class (indicated by a positive value of

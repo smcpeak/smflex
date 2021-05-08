@@ -280,11 +280,11 @@ LEXOPT          [aceknopr]
         ecs             useecs = option_sense;
         fast            {
                           useecs = usemecs = false;
-                          use_read = jacobson = true;
+                          jacobson = true;
                         }
         full            {
                           useecs = usemecs = false;
-                          use_read = fulltbl = true;
+                          fulltbl = true;
                         }
         input           ACTION_IFDEF("YY_NO_INPUT", ! option_sense);
         interactive     interactive = option_sense;
@@ -418,7 +418,7 @@ LEXOPT          [aceknopr]
         {WS}            {
                           /* This rule is separate from the one below because
                            * otherwise we get variable trailing context, so
-                           * we can't build the scanner using -{f,F}.
+                           * we can't build the scanner using -C{f,F}.
                            */
                           bracelevel = 0;
                           continued_action = false;
