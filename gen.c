@@ -528,13 +528,12 @@ void gen_next_match()
      */
 
     indent_lbrace();
-    indent_puts("const struct yy_trans_info *yy_trans_info;\n");
-    indent_puts("YY_CHAR yy_c;\n");
-    indent_put2s("for ( yy_c = %s;", char_map);
-    indent_puts
-      ("      (yy_trans_info = &yy_current_state[(unsigned int) yy_c])->");
-    indent_puts("yy_verify == yy_c;");
-    indent_put2s("      yy_c = %s )", char_map_2);
+    indent_puts ("const struct yy_trans_info *yy_trans_info;\n");
+    indent_puts ("YY_CHAR yy_c;\n");
+    indent_put2s("for (yy_c = %s;", char_map);
+    indent_puts ("     (yy_trans_info = &yy_current_state[(unsigned)yy_c])");
+    indent_puts ("         ->yy_verify == yy_c;");
+    indent_put2s("     yy_c = %s)", char_map_2);
 
     indent_lbrace();
 
