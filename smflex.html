@@ -164,11 +164,13 @@
     // Ugly hack to remove the leading and trailing blank line from <pre><code> blocks, from:
     // https://stackoverflow.com/questions/14946908/how-can-i-ignore-leading-and-trailing-linebreaks-within-an-html-code-block-usi
     window.onload = function (){
-      // remove leading linebreaks from code blocks.
+      // Remove leading and trailing newlines code blocks.  The
+      // final newline can be followed by spaces and it will still
+      // be removed.
       var pre = document.getElementsByTagName("code");
       for (var i = 0, len = pre.length; i < len; i++) {
         var text = pre[i].firstChild.nodeValue;
-        pre[i].firstChild.nodeValue = text.replace(/^\n+|\n+$/g, "");
+        pre[i].firstChild.nodeValue = text.replace(/^\n+|\n+[ ]*$/g, "");
       }
     }
   </script>
