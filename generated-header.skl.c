@@ -66,7 +66,7 @@ const char *header_skl_contents[] = {
   "  // could affect table compression.  I should investigate if both",
   "  // can be made to use the same mechanism.",
   "  //",
-  "  // Update: Indeed, when 'smflex' is invoked with the '-CF' flag, then",
+  "  // Update: Indeed, when 'smflex' is invoked with the '-CJ' flag, then",
   "  // 'yy_state_type' will be a pointer, but currently the C++ interface",
   "  // is prevented from using that representation; I do not know why.",
   "  // So that implies that resolving this question requires doing some",

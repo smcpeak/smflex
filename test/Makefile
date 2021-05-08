@@ -369,12 +369,12 @@ full_align_OPS          := -Cfa
 full_align_8_OPS        := -Cfa -8
 full_equiv_OPS          := -Cfe
 full_align_equiv_OPS    := -Cfae
-Fast_OPS                := -CF
-Fast_8_OPS              := -CF -8
-Fast_align_OPS          := -CFa
-Fast_align_8_OPS        := -CFa -8
-Fast_equiv_OPS          := -CFe
-Fast_align_equiv_OPS    := -CFae
+Jaco_OPS                := -CJ
+Jaco_8_OPS              := -CJ -8
+Jaco_align_OPS          := -CJa
+Jaco_align_8_OPS        := -CJa -8
+Jaco_equiv_OPS          := -CJe
+Jaco_align_equiv_OPS    := -CJae
 
 # List of named configurations, in the same order as above.
 PERF_CONFIGS :=
@@ -392,12 +392,12 @@ PERF_CONFIGS += full_align
 PERF_CONFIGS += full_align_8
 PERF_CONFIGS += full_equiv
 PERF_CONFIGS += full_align_equiv
-PERF_CONFIGS += Fast
-PERF_CONFIGS += Fast_8
-PERF_CONFIGS += Fast_align
-PERF_CONFIGS += Fast_align_8
-PERF_CONFIGS += Fast_equiv
-PERF_CONFIGS += Fast_align_equiv
+PERF_CONFIGS += Jaco
+PERF_CONFIGS += Jaco_8
+PERF_CONFIGS += Jaco_align
+PERF_CONFIGS += Jaco_align_8
+PERF_CONFIGS += Jaco_equiv
+PERF_CONFIGS += Jaco_align_equiv
 
 # Utility to filter out a substring.  (Ordinary 'filter-out' cannot
 # do that.)
@@ -406,14 +406,14 @@ PERF_CONFIGS += Fast_align_equiv
 FILTER_OUT_SUBSTR = $(foreach element,$(2),$(if $(findstring $(1),$(element)),,$(element)))
 
 ifeq ($(INTERFACE),cpp)
-  # Remove all the configurations that use Fast, because those are
+  # Remove all the configurations that use Jaco, because those are
   # explicitly prohibited when using the C++ interface.
-  PERF_CONFIGS := $(call FILTER_OUT_SUBSTR,Fast,$(PERF_CONFIGS))
+  PERF_CONFIGS := $(call FILTER_OUT_SUBSTR,Jaco,$(PERF_CONFIGS))
 endif
 
 ifneq ($(filter reject-frob yylineno trailing-context,$(LEXER_NAME)),)
-  # REJECT, yylineno, and trailing context cannot be used with -Cf or -CF.
-  PERF_CONFIGS := $(call FILTER_OUT_SUBSTR,Fast,$(PERF_CONFIGS))
+  # REJECT, yylineno, and trailing context cannot be used with -Cf or -CJ.
+  PERF_CONFIGS := $(call FILTER_OUT_SUBSTR,Jaco,$(PERF_CONFIGS))
   PERF_CONFIGS := $(call FILTER_OUT_SUBSTR,full,$(PERF_CONFIGS))
 endif
 

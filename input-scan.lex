@@ -278,16 +278,17 @@ LEXOPT          [aceknopr]
         debug           ddebug = option_sense;
         default         spprdflt = ! option_sense;
         ecs             useecs = option_sense;
-        fast            {
-                          useecs = usemecs = false;
-                          jacobson = true;
-                        }
+        fast            synerr(_("\"fast\" has been renamed to \"jacobson\""));
         full            {
                           useecs = usemecs = false;
                           fulltbl = true;
                         }
         input           ACTION_IFDEF("YY_NO_INPUT", ! option_sense);
         interactive     interactive = option_sense;
+        jacobson        {
+                          useecs = usemecs = false;
+                          jacobson = true;
+                        }
         main            {
                           action_define("YY_MAIN", option_sense);
                         }
@@ -418,7 +419,7 @@ LEXOPT          [aceknopr]
         {WS}            {
                           /* This rule is separate from the one below because
                            * otherwise we get variable trailing context, so
-                           * we can't build the scanner using -C{f,F}.
+                           * we can't build the scanner using -C{f,J}.
                            */
                           bracelevel = 0;
                           continued_action = false;

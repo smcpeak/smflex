@@ -36,7 +36,7 @@ void usage(void);
  * useecs - if true (-Ce flag), use equivalence classes
  * fulltbl - if true (-Cf flag), don't compress the DFA state table
  * usemecs - if true (-Cm flag), use meta-equivalence classes
- * jacobson - if true (-CF flag), use Jacobson method of table representation
+ * jacobson - if true (-CJ flag), use Jacobson method of table representation
  * gen_line_dirs - if true (i.e., no -L flag), generate #line directives
  * performance_report - if > 0 (i.e., -p flag), generate a report relating
  *   to scanner performance; if > 1 (-p -p), report on minor performance

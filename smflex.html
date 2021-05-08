@@ -217,7 +217,7 @@
 
   Options that influence the behavior of the generated scanner:
 
-    -7               Generate a 7-bit scanner [if -Cf or -CF but not -Cfe or -CFe].
+    -7               Generate a 7-bit scanner [if -Cf or -CJ but not -Cfe or -CJe].
     -8               Generate an 8-bit scanner [opposite of -7].
     -d               Generate a debug mode scanner.
     -i               Generate a case-insensitive scanner.
@@ -1940,7 +1940,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     of scanner states which require backing up and the input characters on
     which they do so. By adding rules one can remove backing-up states. If
     <em>all</em> backing-up states are eliminated and <code>-Cf</code>
-    or <code>-CF</code> is used, the generated scanner will run faster
+    or <code>-CJ</code> is used, the generated scanner will run faster
     (see the <code>-p</code> flag). Only users who wish to squeeze every
     last cycle out of their scanners need worry about this option. (See the
     section <a href="#performance-considerations">Performance Considerations</a>.)
@@ -2037,7 +2037,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     <a href="#yy_set_interactive"><code>yy_set_interactive()</code></a>.
 
     <p>This option is not compatible with the <code>-Cf</code> or
-    <code>-CF</code> options.
+    <code>-CJ</code> options.
 
 <dt><code>-L</code>
 
@@ -2071,17 +2071,17 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     contains an 8-bit character.
 
     <p>Note, however, that unless you generate your scanner using the
-    <code>-Cf</code> or <code>-CF</code> table compression options, use of
+    <code>-Cf</code> or <code>-CJ</code> table compression options, use of
     <code>-7</code> will save only a small amount of table space, and make
     your scanner considerably less portable. <code>smflex</code>'s default behavior
     is to generate an 8-bit scanner unless you use the <code>-Cf</code> or
-    <code>-CF</code>, in which case <code>smflex</code> defaults to generating
+    <code>-CJ</code>, in which case <code>smflex</code> defaults to generating
     7-bit scanners unless your site was always configured to generate 8-bit
     scanners (as will often be the case with non-USA sites). You can tell
     whether <code>smflex</code> generated a 7-bit or an 8-bit scanner by inspecting the
     flag summary in the <code>-v</code> output as described above.
 
-    <p>Note that if you use <code>-Cfe</code> or <code>-CFe</code> (those
+    <p>Note that if you use <code>-Cfe</code> or <code>-CJe</code> (those
     table compression options, but also using equivalence classes as discussed
     see below), <code>smflex</code> still defaults to generating an 8-bit scanner, since
     usually with these compression options full 8-bit tables are not much
@@ -2091,7 +2091,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dd><p>instructs <code>smflex</code> to generate an 8-bit scanner, i.e.,
     one which can recognize 8-bit characters. This flag is only needed
-    for scanners generated using <code>-Cf</code> or <code>-CF</code>,
+    for scanners generated using <code>-Cf</code> or <code>-CJ</code>,
     as otherwise <code>smflex</code> defaults to generating an 8-bit scanner anyway.
 
     <p>See the discussion of <code>-7</code> above for <code>smflex</code>'s default behavior
@@ -2143,9 +2143,9 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     by taking advantages of similar transition functions for different states.
 
 
-    <dt><code>-CF</code> ("Fast")
+    <dt><code>-CJ</code> ("Jacobson")
 
-    <dd><p>specifies that the "Fast" scanner table representation should be used.
+    <dd><p>specifies that the "Jacobson" scanner table representation should be used.
     This representation is about as fast as the
     "full" table representation (<code>-Cf</code>), and for some sets of
     patterns will be considerably smaller (and for others, larger). In
@@ -2162,7 +2162,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
     <p>then you're better off using the full table representation (<code>-Cf</code>). If only
     the "identifier" rule is present and you then use a hash table or some
-    such to detect the keywords, you're better off using <code>-CF</code>.
+    such to detect the keywords, you're better off using <code>-CJ</code>.
 
     <p>This option cannot be used with <code>-+</code>.
 
@@ -2199,7 +2199,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     </dl>
 
 
-    <p>The options <code>-Cf</code> or <code>-CF</code> and <code>-Cm</code>
+    <p>The options <code>-Cf</code> or <code>-CJ</code> and <code>-Cm</code>
     do not make sense together &mdash; there is no opportunity for meta-equivalence
     classes if the table is not being compressed. Otherwise the options may
     be freely mixed, and are cumulative.
@@ -2220,9 +2220,9 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
               -Cm
               -Ce
               -C
-              -C{f,F}e
-              -C{f,F}
-              -C{f,F}a
+              -C{f,J}e
+              -C{f,J}
+              -C{f,J}a
         fastest &amp; largest
 </code></pre>
 
@@ -2317,9 +2317,9 @@ number are equivalent to <code>smflex</code> flags or their negation:
     <span id="debug-option">debug           -d option</span>
     default         opposite of -s option
     ecs             -Ce option
-    fast            -CF option
     full            -Cf option
     interactive     -I option
+    jacobson        -CJ option
     meta-ecs        -Cm option
     perf-report     -p option
     read            -Cr option
@@ -2592,15 +2592,15 @@ less.
 <p>
 There are six flags that affect scanner speed in a potentially
 beneficial way:
-<code>-Ca -Ce -Cm -Cf -CF -8</code>.  Naively, that is 64 combinations
+<code>-Ca -Ce -Cm -Cf -CJ -8</code>.  Naively, that is 64 combinations
 to test, but there are three rules that limit that:
 
 <ol>
-<li><code>-Cf</code> and <code>-CF</code> cannot be combined.
+<li><code>-Cf</code> and <code>-CJ</code> cannot be combined.
 <li><code>-Cm</code> cannot be combined with <code>-Cf</code> or
-    <code>-CF</code>.
+    <code>-CJ</code>.
 <li><code>-8</code> can only be added when <code>-Cf</code> or
-    <code>-CF</code> is present but <code>-Ce</code> is not
+    <code>-CJ</code> is present but <code>-Ce</code> is not
     (because it is already active in the other configurations).
 </ol>
 
@@ -2625,7 +2625,7 @@ the results were essentially the same, so I have not included that data.
 <a href="https://en.wikipedia.org/wiki/Interquartile_range">interquartile range</a>.
 Sizes are in bytes as reported by the <code>size</code> utility.
 The <span class="highlight">highlighted</span> cells are those that
-use <code>-Cf</code> or <code>-CF</code> (since the others are about
+use <code>-Cf</code> or <code>-CJ</code> (since the others are about
 half the speed), and where no other cell is both smaller and faster.
 
 <table>
@@ -2802,8 +2802,8 @@ half the speed), and where no other cell is both smaller and faster.
     <td>
 
   <tr>
-    <td>Fast
-    <td><code>-CF</code>
+    <td>Jaco
+    <td><code>-CJ</code>
     <td class="numeric highlight">43176
     <td class="numeric highlight">1858
     <td class="numeric">&plusmn; 13
@@ -2813,8 +2813,8 @@ half the speed), and where no other cell is both smaller and faster.
     <td>
 
   <tr>
-    <td>Fast_8
-    <td><code>-CF -8</code>
+    <td>Jaco_8
+    <td><code>-CJ -8</code>
     <td class="numeric">57304
     <td class="numeric">1868
     <td class="numeric">&plusmn; 10
@@ -2824,8 +2824,8 @@ half the speed), and where no other cell is both smaller and faster.
     <td>
 
   <tr>
-    <td>Fast_align
-    <td><code>-CFa</code>
+    <td>Jaco_align
+    <td><code>-CJa</code>
     <td class="numeric">64152
     <td class="numeric">1857
     <td class="numeric">&plusmn; 5
@@ -2835,8 +2835,8 @@ half the speed), and where no other cell is both smaller and faster.
     <td>
 
   <tr>
-    <td>Fast_align_8
-    <td><code>-CFa -8</code>
+    <td>Jaco_align_8
+    <td><code>-CJa -8</code>
     <td class="numeric">92824
     <td class="numeric">1855
     <td class="numeric">&plusmn; 15
@@ -2846,8 +2846,8 @@ half the speed), and where no other cell is both smaller and faster.
     <td>
 
   <tr>
-    <td>Fast_equiv
-    <td><code>-CFe</code>
+    <td>Jaco_equiv
+    <td><code>-CJe</code>
     <td class="numeric highlight">30616
     <td class="numeric highlight">1933
     <td class="numeric">&plusmn; 17
@@ -2857,8 +2857,8 @@ half the speed), and where no other cell is both smaller and faster.
     <td>C size+speed
 
   <tr>
-    <td>Fast_align_equiv
-    <td><code>-CFae</code>
+    <td>Jaco_align_equiv
+    <td><code>-CJae</code>
     <td class="numeric highlight">38152
     <td class="numeric highlight">1902
     <td class="numeric">&plusmn; 9
@@ -2876,7 +2876,8 @@ Consequently, we can account for about 660 ms of time as the cost of
 simply reading the input bytes.
 
 <p>
-Here is a plot of the C interface data for -Cf and -CF:
+Here is a plot of the C interface data for -Cf and -CJ
+(TODO: This uses old names "-CF" and "Fast" instead of "-CJ" and "Jaco"):
 
 <div class="center">
 <img src="img-c-lexer1-c-1000.png" alt="Plot of c-lexer1.lex C data">
@@ -2896,18 +2897,18 @@ We can make some observations based on this data:
 
 <li><p>
     If speed matters, it is important to use either <code>-Cf</code>
-    ("full") or <code>-CF</code> ("Fast"), as these methods about double
+    ("full") or <code>-CJ</code> ("Jacobson"), as these methods about double
     the scanning speed compared to the alternatives.
 
 <li><p>
-    When using the C interface, <code>-CFe</code> (Fast_equiv) has the
-    best balance of size and speed.  <code>-CF</code> (Fast) is faster
+    When using the C interface, <code>-CJe</code> (Jaco_equiv) has the
+    best balance of size and speed.  <code>-CJ</code> (Jaco) is faster
     while being 33% larger.  <code>-Cfa</code> (full_align) is slightly
     faster still, but the difference is within measurement error and
     the size is doubled.
 
 <li><p>
-    When using the C++ interface, we cannot use <code>-CF</code>.
+    When using the C++ interface, we cannot use <code>-CJ</code>.
     The seemingly best size/speed tradeoff is <code>-Cfe</code>, but
     it is 25% slower than the equivalent C-interface version; I do
     not know why (I have already ensured that the input method is
@@ -3099,8 +3100,8 @@ above.
     <td>
 
   <tr>
-    <td>Fast
-    <td><code>-CF</code>
+    <td>Jaco
+    <td><code>-CJ</code>
     <td class="numeric">327536
     <td class="numeric">2040
     <td class="numeric">&plusmn; 18
@@ -3110,8 +3111,8 @@ above.
     <td>
 
   <tr>
-    <td>Fast_8
-    <td><code>-CF -8</code>
+    <td>Jaco_8
+    <td><code>-CJ -8</code>
     <td class="numeric">366464
     <td class="numeric">1829
     <td class="numeric">&plusmn; 8
@@ -3121,8 +3122,8 @@ above.
     <td>
 
   <tr>
-    <td>Fast_align
-    <td><code>-CFa</code>
+    <td>Jaco_align
+    <td><code>-CJa</code>
     <td class="numeric">327536
     <td class="numeric">1823
     <td class="numeric">&plusmn; 5
@@ -3132,8 +3133,8 @@ above.
     <td>
 
   <tr>
-    <td>Fast_align_8
-    <td><code>-CFa -8</code>
+    <td>Jaco_align_8
+    <td><code>-CJa -8</code>
     <td class="numeric">366448
     <td class="numeric">1822
     <td class="numeric">&plusmn; 14
@@ -3143,8 +3144,8 @@ above.
     <td>
 
   <tr>
-    <td>Fast_equiv
-    <td><code>-CFe</code>
+    <td>Jaco_equiv
+    <td><code>-CJe</code>
     <td class="numeric highlight">131664
     <td class="numeric highlight">1864
     <td class="numeric">&plusmn; 6
@@ -3154,8 +3155,8 @@ above.
     <td>C size+speed
 
   <tr>
-    <td>Fast_align_equiv
-    <td><code>-CFae</code>
+    <td>Jaco_align_equiv
+    <td><code>-CJae</code>
     <td class="numeric">234032
     <td class="numeric">1879
     <td class="numeric">&plusmn; 3
@@ -3167,7 +3168,7 @@ above.
 </table>
 
 <p>
-Plot of C interface times for -Cf and -CF:
+Plot of C interface times for -Cf and -CJ:
 
 <div class="center">
 <img src="img-elsa-lexer-c-1000.png" alt="Plot of elsa-lexer.lex C data">
@@ -3262,7 +3263,7 @@ On my Windows/MinGW machine, I get (100 iterations, median of 5):
     <td>
 
   <tr>
-    <td>Fast (<code>-CF</code>)
+    <td>Jaco (<code>-CJ</code>)
     <td class="numeric">404
     <td>
 
@@ -3272,7 +3273,7 @@ On my Windows/MinGW machine, I get (100 iterations, median of 5):
 From this we can see that <code>REJECT</code> itself is not very
 expensive, only adding a few percent to the run time.  However,
 the fact that it is incompatible with <code>-Cf</code> and
-<code>-CF</code> <em>is</em> impactful, as either is about double
+<code>-CJ</code> <em>is</em> impactful, as either is about double
 the speed of the default settings.
 
 
@@ -3360,7 +3361,7 @@ will have to back up to accept "foo". Similarly, the comment for State
 
 <p>The final comment reminds us that there's no point going to all
 the trouble of removing backing up from the rules unless we're using
-<code>-Cf</code> or <code>-CF</code>, since there's no performance gain
+<code>-Cf</code> or <code>-CJ</code>, since there's no performance gain
 doing so with compressed scanners.
 
 <p>The way to remove the backing up is to add "error" rules:
@@ -3435,7 +3436,7 @@ savings, and can even make things worse (see
 <a href="#deficiencies-n-bugs">Deficiencies / Bugs</a>).
 
 <p>If there are any rules with variable trailing context, then the
-<code>-Cf</code> and <code>-CF</code> table compression flags cannot
+<code>-Cf</code> and <code>-CJ</code> table compression flags cannot
 be used.
 
 
@@ -3833,27 +3834,51 @@ things later.
 <!-- ======================================================= -->
 <h1 id="incompatibilities-with-flex">INCOMPATIBILITIES WITH FLEX</h1>
 
-<p>This is Scott McPeak's fork of <code>flex-2.5.4</code>.  I have made
+<p>This document describes <code>smflex</code>,
+Scott McPeak's fork of <code>flex-2.5.4</code>.  I have made
 a number of changes that introduce incompatibilities with
-<code>flex-2.5.4</code>, listed below.  Although compatibility with
+<code>flex-2.5.4</code>, listed below.  Although full compatibility with
 <code>flex-2.5.4</code> is not among my goals, I want to enable users
-to transition to my <code>smflex</code>, and this list can help that.
+to transition to <code>smflex</code>, and this list can help that.
+
+<p>The general theme of these changes is to simplify and clarify the
+options interface.
 
 <ul>
 
+<li><p><code>flex-2.5.4</code> uses <code>-CF</code> and
+    <code>%option fast</code> to mean to use Jacobson tables.
+    In <code>smflex</code>, they has been renamed to <code>-CJ</code>
+    and <code>%option jacobson</code>.
+
+    <p>Rationale: The <code>-CF</code> flag was confusingly similar to
+    <code>-Cf</code>, and the name "fast" descriptive of a desired
+    property rather than a method of achieving it (and the "full" method
+    was also aspirationally described as "fast" in places).  The method
+    is evidently (based on a single comment in <code>main.h</code>!)
+    based on Guy Jacobson's 1988 PhD thesis, "Succinct static data
+    structures", so I used that as a basis for a new name.  I chose to
+    keep the option ("J") letter capitalized as an aid when
+    transitioning (since, in the old system, the fact that "F" was
+    capitalized was its only distinguishing feature).
+
+    <p>Replacement: Use <code>-CJ</code> and
+    <code>%option jacobson</code> instead.
+
 <li><p><code>flex-2.5.4</code> accepts <code>-f</code> and
     <code>-F</code> options as aliases for <code>-Cfr</code> and
-    <code>-CFr</code>, respectively.  <code>smflex</code> does not
+    <code>-CJr</code>, respectively.  <code>smflex</code> does not
     accept them.
 
     <p>Rationale: The aliases are confusing and unnecessary, and
     interfere with being able to further untangle and clarify the
     options.
 
-    <p>Replacement: Use <code>-Cfr</code> or <code>-CFr</code>.
+    <p>Replacement: Use <code>-Cfr</code> or <code>-CJr</code>.
 
 <li><p>In <code>flex-2.5.4</code>, both <code>%option full</code>
-    and <code>%option fast</code> implied <code>%option read</code>.
+    and <code>%option fast</code> (now called
+    <code>%option jacobson</code>) implied <code>%option read</code>.
     That implication has been removed.
 
     <p>Rationale: I want options to be as orthogonal as possible.
@@ -3861,11 +3886,7 @@ to transition to my <code>smflex</code>, and this list can help that.
     completely independent of
     <a href="#input-read-method">input read method</a>.
 
-    <p>Replacement: Use <code>%option read</code> explicitly if desired,
-    although there is little reason to do so, as I have not been able to
-    measure any performance difference when using the default buffer
-    size (and <code>read</code> is less portable than
-    <code>fread</code>).
+    <p>Replacement: Use <code>%option read</code> explicitly if desired.
 
 <li><p><code>flex-2.5.4</code> accepts
     <code>%option always-interactive</code> and
@@ -3909,7 +3930,7 @@ to transition to my <code>smflex</code>, and this list can help that.
 
 <li><p><code>flex-2.5.4</code> defaults to generating an interactive
     scanner (<a href="#interactive-option"><code>-I</code></a> option)
-    except when using <code>-Cf</code> or <code>-CF</code>.
+    except when using <code>-Cf</code> or <code>-CJ</code>.
     <code>smflex</code> generates a batch scanner by default, independent
     of other options.
 
@@ -3964,7 +3985,7 @@ to transition to my <code>smflex</code>, and this list can help that.
     eliminate <code>libfl.a</code> without losing functionality.
 
     <p>Replacement: Remove <code>%option main</code> and provide an
-    explicit definition.
+    explicit definition: <code>int main() { yylex(); return 0; }</code>.
 
 <li><p>In <code>flex-2.5.4</code>, <code>%option main</code>
     implied <code>%option noyywrap</code>.  (Furthermore,
@@ -4211,7 +4232,7 @@ rules. This error can also occur due to internal problems.
 <dd>Your scanner specification includes recognizing the 8-bit
 character <code>'x'</code> and you did not specify the -8 flag, and your
 scanner defaulted to 7-bit because you used the <code>-Cf</code> or
-<code>-CF</code> table compression options. See the discussion of the
+<code>-CJ</code> table compression options. See the discussion of the
 <code>-7</code> flag for details.
 
 <dt><p><code>smflex scanner push-back overflow</code>
@@ -4294,7 +4315,7 @@ the scanner does not use <code>REJECT</code>, and somewhat greater than
 the number of states if it does.
 
 <p><code>REJECT</code> cannot be used with the <code>-Cf</code> or
-<code>-CF</code> options.
+<code>-CJ</code> options.
 
 <p>The <code>smflex</code> internal algorithms need documentation.
 

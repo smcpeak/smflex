@@ -222,20 +222,20 @@ void check_options()
 
   if (fulltbl || jacobson) {
     if (usemecs)
-      flexerror(_("-Cf/-CF and -Cm don't make sense together"));
+      flexerror(_("-Cf/-CJ and -Cm don't make sense together"));
 
     if (interactive)
-      flexerror(_("-Cf/-CF and -I are incompatible"));
+      flexerror(_("-Cf/-CJ and -I are incompatible"));
 
     if (do_yylineno)
-      flexerror(_("-Cf/-CF and %option yylineno are incompatible"));
+      flexerror(_("-Cf/-CJ and %option yylineno are incompatible"));
 
     if (fulltbl && jacobson)
-      flexerror(_("-Cf and -CF are mutually exclusive"));
+      flexerror(_("-Cf and -CJ are mutually exclusive"));
   }
 
   if (C_plus_plus && jacobson)
-    flexerror(_("Can't use -+ with -CF option"));
+    flexerror(_("Can't use -+ with -CJ option"));
 
   if (useecs) {                 /* Set up doubly-linked equivalence classes. */
 
@@ -403,7 +403,7 @@ void flexend(int exit_status)
     if (fulltbl)
       putc('f', stderr);
     if (jacobson)
-      putc('F', stderr);
+      putc('J', stderr);
     if (useecs)
       putc('e', stderr);
     if (usemecs)
@@ -593,6 +593,10 @@ void flexinit(int argc, char **argv)
                 break;
 
               case 'F':
+                flexerror(_("-CF has been renamed to -CJ."));
+                break;
+
+              case 'J':
                 jacobson = true;
                 break;
 
@@ -624,7 +628,7 @@ void flexinit(int argc, char **argv)
           break;
 
         case 'F':
-          flexerror(_("The -F flag has been removed.  Use -CFr instead."));
+          flexerror(_("The -F flag has been removed.  Use -CJr instead."));
           break;
 
         case '?':
@@ -842,12 +846,12 @@ void readin()
 
   if ((fulltbl || jacobson) && reject) {
     if (real_reject)
-      flexerror(_("REJECT cannot be used with -Cf or -CF"));
+      flexerror(_("REJECT cannot be used with -Cf or -CJ"));
     else if (do_yylineno)
-      flexerror(_("%option yylineno cannot be used with -Cf or -CF"));
+      flexerror(_("%option yylineno cannot be used with -Cf or -CJ"));
     else
       flexerror(_
-                ("variable trailing context rules cannot be used with -Cf or -CF"));
+                ("variable trailing context rules cannot be used with -Cf or -CJ"));
   }
 
   /* Begin writing the primary output file. */
@@ -1071,7 +1075,7 @@ void usage()
           ("\t\t-Cf  generate scanner with \"full\" tables; fast and large\n"));
   fprintf(f,
           _
-          ("\t\t-CF  generate scanner with \"Fast\" tables\n"));
+          ("\t\t-CJ  generate scanner with \"Jacobson\" tables\n"));
   fprintf(f, _("\t\t-Cm  construct meta-equivalence classes\n"));
   fprintf(f, _("\t\t-Cr  use read() instead of stdio for scanner input\n"));
   fprintf(f, _("\t-o  specify output filename\n"));
