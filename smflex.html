@@ -342,8 +342,9 @@ expressions. Whenever it finds one, it executes the corresponding C code.
 <!-- ======================================================= -->
 <h1 id="some-simple-examples">SOME SIMPLE EXAMPLES</h1>
 
-<p>First some simple examples to get the flavor of how one uses
-<code>smflex</code>. The following <code>smflex</code> input specifies a
+<p>Let's start with some simple examples to get the flavor of how one uses
+<code>smflex</code>. The following <code>smflex</code>
+<a href="test/username.lex">input</a> specifies a
 scanner which whenever it encounters the string "username" will replace
 it with the user's login name:
 
@@ -918,7 +919,8 @@ an action:
     <code>yytext</code> and <code>yyleng</code> set up appropriately. It
     may either be one which matched as much text as the originally
     chosen rule but came later in the <code>smflex</code> input file, or
-    one which matched less text. For example, the following will both
+    one which matched less text. For example, the
+    <a href="test/reject-frob.lex">following</a> will both
     count the words in the input and call the routine special() whenever
     "frob" is seen:
 
@@ -3760,7 +3762,8 @@ reentrant scanners. You can instantiate multiple instances of the same
 scanner classes together in the same program using the <code>-P</code>
 option discussed above.
 
-<p>Here is an example of a simple C++ scanner:
+<p>Here is an <a href="test/cpp-manual-example.lexpp">example</a>
+of a simple C++ scanner:
 
 <pre><!-- BEGIN example: "cpp-manual-example.lexpp" indent=4 --><code>
         // An example of using the smflex C++ scanner class.
