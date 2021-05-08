@@ -877,7 +877,7 @@ a single blank, and throws away whitespace found at the end of a line:
 
 <pre><code>
     %%
-    [ \t]+        putchar( &#39; &#39; );
+    [ \t]+        putchar( ' ' );
     [ \t]+$       /* ignore this token */
 </code></pre>
 
@@ -1020,11 +1020,11 @@ an action:
       int i;
       /* Copy yytext because unput() trashes yytext */
       char *yycopy = strdup(yytext);
-      unput(&#39;)&#39;);
+      unput(')');
       for (i = yyleng - 1; i &gt;= 0; --i) {
         unput(yycopy[i]);
       }
-      unput(&#39;(&#39;);
+      unput('(');
       free(yycopy);
     }
     </code></pre>
@@ -1055,13 +1055,13 @@ an action:
         "/*"      {
                     int c;
                     for (;;) {
-                      while ( (c = input()) != &#39;*&#39; &amp;&amp; c != EOF )
+                      while ( (c = input()) != '*' &amp;&amp; c != EOF )
                         {}    /* eat up text of comment */
 
-                      if (c == &#39;*&#39;) {
-                        while ( (c = input()) == &#39;*&#39; )
+                      if (c == '*') {
+                        while ( (c = input()) == '*' )
                           {}
-                        if (c == &#39;/&#39;) {
+                        if (c == '/') {
                           break;    /* found the end */
                         }
                       }
@@ -1338,9 +1338,9 @@ the floating-point number 123.456:
                         atof( yytext ) );
                 }
     &lt;expect&gt;\n           {
-                /* that&#39;s the end of the line, so
+                /* that's the end of the line, so
                  * we need another "expect-number"
-                 * before we&#39;ll recognize any more
+                 * before we'll recognize any more
                  * numbers
                  */
                 BEGIN(INITIAL);
@@ -1364,8 +1364,8 @@ maintaining a count of the current input line.
 
     "/*"         BEGIN(comment);
 
-    &lt;comment&gt;[^*\n]*        /* eat anything that&#39;s not a &#39;*&#39; */
-    &lt;comment&gt;"*"+[^*/\n]*   /* eat up &#39;*&#39;s not followed by &#39;/&#39;s */
+    &lt;comment&gt;[^*\n]*        /* eat anything that's not a '*' */
+    &lt;comment&gt;"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
     &lt;comment&gt;\n             ++line_num;
     &lt;comment&gt;"*"+"/"        BEGIN(INITIAL);
 </code></pre>
@@ -1396,8 +1396,8 @@ fashion:
                  BEGIN(comment);
                  }
 
-    &lt;comment&gt;[^*\n]*        /* eat anything that&#39;s not a &#39;*&#39; */
-    &lt;comment&gt;"*"+[^*/\n]*   /* eat up &#39;*&#39;s not followed by &#39;/&#39;s */
+    &lt;comment&gt;[^*\n]*        /* eat anything that's not a '*' */
+    &lt;comment&gt;"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
     &lt;comment&gt;\n             ++line_num;
     &lt;comment&gt;"*"+"/"        BEGIN(comment_caller);
 </code></pre>
@@ -1433,7 +1433,7 @@ using exclusive start conditions, including expanded escape sequences
 
     &lt;str&gt;\"        { /* saw closing quote - all done */
             BEGIN(INITIAL);
-            *string_buf_ptr = &#39;\0&#39;;
+            *string_buf_ptr = '\0';
             /* return string constant token type and
              * value to parser
              */
@@ -1458,15 +1458,15 @@ using exclusive start conditions, including expanded escape sequences
 
     &lt;str&gt;\\[0-9]+ {
             /* generate error - bad escape sequence; something
-             * like &#39;\48&#39; or &#39;\0777777&#39;
+             * like '\48' or '\0777777'
              */
             }
 
-    &lt;str&gt;\\n  *string_buf_ptr++ = &#39;\n&#39;;
-    &lt;str&gt;\\t  *string_buf_ptr++ = &#39;\t&#39;;
-    &lt;str&gt;\\r  *string_buf_ptr++ = &#39;\r&#39;;
-    &lt;str&gt;\\b  *string_buf_ptr++ = &#39;\b&#39;;
-    &lt;str&gt;\\f  *string_buf_ptr++ = &#39;\f&#39;;
+    &lt;str&gt;\\n  *string_buf_ptr++ = '\n';
+    &lt;str&gt;\\t  *string_buf_ptr++ = '\t';
+    &lt;str&gt;\\r  *string_buf_ptr++ = '\r';
+    &lt;str&gt;\\b  *string_buf_ptr++ = '\b';
+    &lt;str&gt;\\f  *string_buf_ptr++ = '\f';
 
     &lt;str&gt;\\(.|\n)  *string_buf_ptr++ = yytext[1];
 
@@ -1494,20 +1494,20 @@ which matches the initial <code>'{'</code>. So, for example,
 
 <pre><code>
     &lt;ESC&gt;{
-        "\\n"   return &#39;\n&#39;;
-        "\\r"   return &#39;\r&#39;;
-        "\\f"   return &#39;\f&#39;;
-        "\\0"   return &#39;\0&#39;;
+        "\\n"   return '\n';
+        "\\r"   return '\r';
+        "\\f"   return '\f';
+        "\\0"   return '\0';
     }
 </code></pre>
 
 <p>is equivalent to:
 
 <pre><code>
-    &lt;ESC&gt;"\\n"  return &#39;\n&#39;;
-    &lt;ESC&gt;"\\r"  return &#39;\r&#39;;
-    &lt;ESC&gt;"\\f"  return &#39;\f&#39;;
-    &lt;ESC&gt;"\\0"  return &#39;\0&#39;;
+    &lt;ESC&gt;"\\n"  return '\n';
+    &lt;ESC&gt;"\\r"  return '\r';
+    &lt;ESC&gt;"\\f"  return '\f';
+    &lt;ESC&gt;"\\0"  return '\0';
 </code></pre>
 
 <p>Start condition scopes may be nested.
@@ -3220,7 +3220,7 @@ most expensive to least:
 
     pattern sets that require backing up
 
-    &#39;^&#39; beginning-of-line operator
+    '^' beginning-of-line operator
     yymore()
 </code></pre>
 
@@ -3516,9 +3516,9 @@ natural first approach is:
     break    |
     ... etc ...
     volatile |
-    while    /* it&#39;s a keyword */
+    while    /* it's a keyword */
 
-    .|\n     /* it&#39;s not a keyword */
+    .|\n     /* it's not a keyword */
 </code></pre>
 
 <p>To eliminate the back-tracking, introduce a catch-all rule:
@@ -3530,10 +3530,10 @@ natural first approach is:
     break    |
     ... etc ...
     volatile |
-    while    /* it&#39;s a keyword */
+    while    /* it's a keyword */
 
     [a-z]+   |
-    .|\n     /* it&#39;s not a keyword */
+    .|\n     /* it's not a keyword */
 </code></pre>
 
 <p>Now, if it's guaranteed that there's exactly one word per line, then
@@ -3547,10 +3547,10 @@ recognition of newlines with that of the other tokens:
     break\n  |
     ... etc ...
     volatile\n |
-    while\n  /* it&#39;s a keyword */
+    while\n  /* it's a keyword */
 
     [a-z]+\n |
-    .|\n     /* it&#39;s not a keyword */
+    .|\n     /* it's not a keyword */
 </code></pre>
 
 <p>One has to be careful here, as we have now reintroduced backing up into
@@ -3573,11 +3573,11 @@ which doesn't include a newline:
     break\n  |
     ... etc ...
     volatile\n |
-    while\n  /* it&#39;s a keyword */
+    while\n  /* it's a keyword */
 
     [a-z]+\n |
     [a-z]+   |
-    .|\n     /* it&#39;s not a keyword */
+    .|\n     /* it's not a keyword */
 </code></pre>
 
 <p>Compiled with <code>-Cf</code>, this is about as fast as one can get
