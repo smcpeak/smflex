@@ -80,7 +80,7 @@ static char smflex_version[] = SMFLEX_VERSION;
 
 int printstats, syntaxerror, eofseen, ddebug, trace, nowarn, spprdflt;
 int interactive, caseins, do_yylineno, useecs, fulltbl, usemecs;
-int fullspd, gen_line_dirs, performance_report, backing_up_report;
+int jacobson, gen_line_dirs, performance_report, backing_up_report;
 int C_plus_plus, long_align, use_read, do_yywrap, csize;
 int yymore_used, reject, real_reject, continued_action, in_rule;
 int yymore_really_used, reject_really_used;
@@ -214,13 +214,13 @@ void check_options()
     reject_really_used = true;
 
   if (csize == unspecified) {
-    if ((fulltbl || fullspd) && !useecs)
+    if ((fulltbl || jacobson) && !useecs)
       csize = DEFAULT_CSIZE;
     else
       csize = CSIZE;
   }
 
-  if (fulltbl || fullspd) {
+  if (fulltbl || jacobson) {
     if (usemecs)
       flexerror(_("-Cf/-CF and -Cm don't make sense together"));
 
@@ -230,11 +230,11 @@ void check_options()
     if (do_yylineno)
       flexerror(_("-Cf/-CF and %option yylineno are incompatible"));
 
-    if (fulltbl && fullspd)
+    if (fulltbl && jacobson)
       flexerror(_("-Cf and -CF are mutually exclusive"));
   }
 
-  if (C_plus_plus && fullspd)
+  if (C_plus_plus && jacobson)
     flexerror(_("Can't use -+ with -CF option"));
 
   if (useecs) {                 /* Set up doubly-linked equivalence classes. */
@@ -338,7 +338,7 @@ void flexend(int exit_status)
   if (backing_up_report && backing_up_file) {
     if (num_backing_up == 0)
       fprintf(backing_up_file, _("No backing up.\n"));
-    else if (fullspd || fulltbl)
+    else if (jacobson || fulltbl)
       fprintf(backing_up_file,
               _("%d backing up (non-accepting) states.\n"), num_backing_up);
     else
@@ -402,7 +402,7 @@ void flexend(int exit_status)
       putc('a', stderr);
     if (fulltbl)
       putc('f', stderr);
-    if (fullspd)
+    if (jacobson)
       putc('F', stderr);
     if (useecs)
       putc('e', stderr);
@@ -427,7 +427,7 @@ void flexend(int exit_status)
 
     if (num_backing_up == 0)
       fprintf(stderr, _("  No backing up\n"));
-    else if (fullspd || fulltbl)
+    else if (jacobson || fulltbl)
       fprintf(stderr,
               _("  %d backing-up (non-accepting) states\n"), num_backing_up);
     else
@@ -510,7 +510,7 @@ void flexinit(int argc, char **argv)
 
   printstats = syntaxerror = trace = spprdflt = caseins = false;
   C_plus_plus = backing_up_report = ddebug = fulltbl = false;
-  fullspd = long_align = nowarn = yymore_used = continued_action = false;
+  jacobson = long_align = nowarn = yymore_used = continued_action = false;
   do_yylineno = in_rule = reject = do_stdinit = false;
   yymore_really_used = reject_really_used = unspecified;
   csize = unspecified;
@@ -593,7 +593,7 @@ void flexinit(int argc, char **argv)
                 break;
 
               case 'F':
-                fullspd = true;
+                jacobson = true;
                 break;
 
               case 'f':
@@ -626,7 +626,7 @@ void flexinit(int argc, char **argv)
 
         case 'F':
           useecs = usemecs = false;
-          use_read = fullspd = true;
+          use_read = jacobson = true;
           break;
 
         case '?':
@@ -842,7 +842,7 @@ void readin()
   if (variable_trailing_context_rules)
     reject = true;
 
-  if ((fulltbl || fullspd) && reject) {
+  if ((fulltbl || jacobson) && reject) {
     if (real_reject)
       flexerror(_("REJECT cannot be used with -f or -F"));
     else if (do_yylineno)
@@ -920,7 +920,7 @@ void readin()
       outn(yy_nostdinit);
   }
 
-  if (fullspd)
+  if (jacobson)
     outn("typedef const struct yy_trans_info *yy_state_type;");
   else if (!C_plus_plus)
     outn("typedef int yy_state_type;");

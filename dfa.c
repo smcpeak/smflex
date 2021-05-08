@@ -440,7 +440,7 @@ void ntod()
   /* Note that the test for ecgroup[0] == numecs below accomplishes
    * both (1) and (2) above
    */
-  if (!fullspd && ecgroup[0] == numecs) {
+  if (!jacobson && ecgroup[0] == numecs) {
     /* NUL is alone in its equivalence class, which is the
      * last one.
      */
@@ -468,7 +468,7 @@ void ntod()
   }
 
 
-  if (fullspd) {
+  if (jacobson) {
     for (i = 0; i <= numecs; ++i)
       state[i] = 0;
 
@@ -535,7 +535,7 @@ void ntod()
     }
   }
 
-  if (!fullspd) {
+  if (!jacobson) {
     if (!snstods(nset, 0, accset, 0, 0, &end_of_buffer_state))
       flexfatal(_("could not create unique end-of-buffer state"));
 
@@ -661,7 +661,7 @@ void ntod()
       outn("    },\n");
     }
 
-    else if (fullspd)
+    else if (jacobson)
       place_state(state, ds, totaltrans);
 
     else if (ds == end_of_buffer_state)
@@ -690,7 +690,7 @@ void ntod()
   if (fulltbl)
     dataend();
 
-  else if (!fullspd) {
+  else if (!jacobson) {
     cmptmps();                  /* create compressed template entries */
 
     /* Create tables for all the states with only one

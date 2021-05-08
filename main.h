@@ -36,7 +36,7 @@ void usage(void);
  * useecs - if true (-Ce flag), use equivalence classes
  * fulltbl - if true (-Cf flag), don't compress the DFA state table
  * usemecs - if true (-Cm flag), use meta-equivalence classes
- * fullspd - if true (-F flag), use Jacobson method of table representation
+ * jacobson - if true (-F flag), use Jacobson method of table representation
  * gen_line_dirs - if true (i.e., no -L flag), generate #line directives
  * performance_report - if > 0 (i.e., -p flag), generate a report relating
  *   to scanner performance; if > 1 (-p -p), report on minor performance
@@ -66,7 +66,7 @@ void usage(void);
 
 extern int printstats, syntaxerror, eofseen, ddebug, trace, nowarn, spprdflt;
 extern int interactive, caseins, do_yylineno;
-extern int useecs, fulltbl, usemecs, fullspd;
+extern int useecs, fulltbl, usemecs, jacobson;
 extern int gen_line_dirs, performance_report, backing_up_report;
 extern int C_plus_plus, long_align, use_read, do_yywrap;
 extern int csize;

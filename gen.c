@@ -107,7 +107,7 @@ void gen_backing_up()
   if (reject || num_backing_up == 0)
     return;
 
-  if (fullspd)
+  if (jacobson)
     indent_puts("if ( yy_current_state[-1].yy_nxt )");
   else
     indent_puts("if ( yy_accept[yy_current_state] )");
@@ -131,7 +131,7 @@ void gen_bu_action()
   indent_puts("/* undo the effects of YY_DO_BEFORE_ACTION */");
   indent_puts("*yy_cp = yy_hold_char;");
 
-  if (fullspd || fulltbl)
+  if (jacobson || fulltbl)
     indent_puts("yy_cp = yy_last_accepting_cpos + 1;");
   else
     /* Backing-up info for compressed tables is taken \after/
@@ -277,7 +277,7 @@ void genecs()
 /* Generate the code to find the action number. */
 void gen_find_action()
 {
-  if (fullspd)
+  if (jacobson)
     indent_puts("yy_act = yy_current_state[-1].yy_nxt;");
 
   else if (fulltbl)
@@ -503,7 +503,7 @@ void gen_next_match()
     indent_puts("yy_current_state = -yy_current_state;");
   }
 
-  else if (fullspd) {
+  else if (jacobson) {
     /* In this version of the inner loop, 'yy_current_state' is a
      * pointer to an array of 'yy_trans_info', and that array is
      * indexed into using the current character (or character class).
@@ -598,7 +598,7 @@ void gen_next_state(int worry_about_NULs)
            "yy_ec[YY_SC_TO_UI(*yy_cp)]" : "YY_SC_TO_UI(*yy_cp)");
 
   if (worry_about_NULs && nultrans) {
-    if (!fulltbl && !fullspd)
+    if (!fulltbl && !jacobson)
       /* Compressed tables back up *before* they match. */
       gen_backing_up();
 
@@ -610,7 +610,7 @@ void gen_next_state(int worry_about_NULs)
     indent_put2s("yy_current_state = yy_nxt[yy_current_state][%s];",
                  char_map);
 
-  else if (fullspd)
+  else if (jacobson)
     indent_put2s("yy_current_state += yy_current_state[%s].yy_nxt;",
                  char_map);
 
@@ -625,7 +625,7 @@ void gen_next_state(int worry_about_NULs)
     indent_down();
   }
 
-  if (fullspd || fulltbl)
+  if (jacobson || fulltbl)
     gen_backing_up();
 
   if (reject)
@@ -643,7 +643,7 @@ void gen_NUL_trans()
    */
   int need_backing_up = (num_backing_up > 0 && !reject);
 
-  if (need_backing_up && (!nultrans || fullspd || fulltbl))
+  if (need_backing_up && (!nultrans || jacobson || fulltbl))
     /* We're going to need yy_cp lying around for the call
      * below to gen_backing_up().
      */
@@ -662,7 +662,7 @@ void gen_NUL_trans()
     indent_puts("yy_is_jam = (yy_current_state <= 0);");
   }
 
-  else if (fullspd) {
+  else if (jacobson) {
     do_indent();
     out_dec("int yy_c = %d;\n", NUL_ec);
 
@@ -698,7 +698,7 @@ void gen_NUL_trans()
    * compressed tables have *already* done such backing up, so
    * we needn't bother with it again.
    */
-  if (need_backing_up && (fullspd || fulltbl)) {
+  if (need_backing_up && (jacobson || fulltbl)) {
     outc('\n');
     indent_puts("if ( ! yy_is_jam )");
     indent_lbrace();
@@ -711,7 +711,7 @@ void gen_NUL_trans()
 /* Generate the code to find the start state. */
 void gen_start_state()
 {
-  if (fullspd) {
+  if (jacobson) {
     if (bol_needed) {
       indent_puts
         ("yy_current_state = yy_start_state_list[yy_start + YY_AT_BOL()];");
@@ -1032,7 +1032,7 @@ void make_tables()
   out_dec("#define YY_NUM_RULES %d\n", num_rules);
   out_dec("#define YY_END_OF_BUFFER %d\n", num_rules + 1);
 
-  if (fullspd) {
+  if (jacobson) {
     /* Need to define the transet type as a size large
      * enough to hold the biggest offset.
      */
@@ -1062,7 +1062,7 @@ void make_tables()
     indent_down();
   }
 
-  if (fullspd)
+  if (jacobson)
     genctbl();
   else if (fulltbl)
     genftbl();
@@ -1084,7 +1084,7 @@ void make_tables()
     out_str_dec(C_state_decl, "yy_NUL_trans", lastdfa + 1);
 
     for (i = 1; i <= lastdfa; ++i) {
-      if (fullspd)
+      if (jacobson)
         out_dec("    &yy_transition[%d],\n", base[i]);
       else
         mkdata(nultrans[i]);
@@ -1406,7 +1406,7 @@ void make_tables()
   skelout();
   set_indent(6);
 
-  if (fullspd || fulltbl)
+  if (jacobson || fulltbl)
     indent_puts("yy_cp = yy_c_buf_p;");
 
   else {                        /* compressed table */

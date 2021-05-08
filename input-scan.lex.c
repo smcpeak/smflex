@@ -1953,7 +1953,7 @@ YY_RULE_SETUP
 #line 281 "input-scan.lex"
 {
                           useecs = usemecs = false;
-                          use_read = fullspd = true;
+                          use_read = jacobson = true;
                         }
 #line 1959 "input-scan.lex.c"
   YY_BREAK

@@ -280,7 +280,7 @@ LEXOPT          [aceknopr]
         ecs             useecs = option_sense;
         fast            {
                           useecs = usemecs = false;
-                          use_read = fullspd = true;
+                          use_read = jacobson = true;
                         }
         full            {
                           useecs = usemecs = false;
