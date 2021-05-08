@@ -167,6 +167,11 @@
       // Remove leading and trailing newlines code blocks.  The
       // final newline can be followed by spaces and it will still
       // be removed.
+      //
+      // NOTE: If the code begins with an HTML comment, that will
+      // interfere with removing leading blank lines, even though the
+      // comment is not shown in the display.  Therefore, place any
+      // comments for "BEGIN example", etc., outside the "code" element.
       var pre = document.getElementsByTagName("code");
       for (var i = 0, len = pre.length; i < len; i++) {
         var text = pre[i].firstChild.nodeValue;
@@ -917,13 +922,13 @@ an action:
     count the words in the input and call the routine special() whenever
     "frob" is seen:
 
-    <pre><code><!-- BEGIN example: "reject-frob.lex" fragment=true indent=8 -->
+    <pre><!-- BEGIN example: "reject-frob.lex" fragment=true indent=8 --><code>
                 int word_count = 0;
         %%
 
         frob        special(); REJECT;
         [^ \t\n]+   ++word_count;
-    </code></pre><!-- END example -->
+    </code><!-- END example --></pre>
 
     <p>Without the <code>REJECT</code>, any "frob"'s in the input would not
     be counted as words, since the scanner normally executes only one action
@@ -1824,12 +1829,12 @@ prior to beginning to scan the buffer that is (or is not) to be considered
 interactive, as demonstrated by
 <a href="test/c-int-interactive-set-int-isatty.lex"><code>test/c-int-interactive-set-int-isatty.lex</code></a>:
 
-<pre><code><!-- BEGIN example: "c-int-interactive-set-int-isatty.lex" fragment=true indent=2 -->
+<pre><!-- BEGIN example: "c-int-interactive-set-int-isatty.lex" fragment=true indent=2 --><code>
     yyin = stdin;
     yy_set_interactive(isatty(fileno(yyin)) &gt; 0);
     while (yylex())
       {}
-</code></pre><!-- END example -->
+</code><!-- END example --></pre>
 
 <dt><code>yy_set_bol(at_bol)</code>
 
@@ -3757,7 +3762,7 @@ option discussed above.
 
 <p>Here is an example of a simple C++ scanner:
 
-<pre><code><!-- BEGIN example: "cpp-manual-example.lexpp" indent=4 -->
+<pre><!-- BEGIN example: "cpp-manual-example.lexpp" indent=4 --><code>
         // An example of using the smflex C++ scanner class.
 
     %option c++
@@ -3821,7 +3826,7 @@ option discussed above.
 
         return 0;
     }
-</code></pre><!-- END example -->
+</code><!-- END example --></pre>
 
 <p>If you want to create multiple (different) lexer classes, use
 the <code>-P</code> flag (or <code>%option prefix</code>) to rename
