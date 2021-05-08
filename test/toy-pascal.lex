@@ -22,6 +22,7 @@ ID       [a-zA-Z][a-zA-Z0-9]*
                                atof(yytext));
                       }
 
+  /* Comments can go between rules, but must be indented. */
 if|then|begin|end|procedure|function|program        {
                         printf("A keyword: %s\n", yytext);
                       }

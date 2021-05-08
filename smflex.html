@@ -413,6 +413,7 @@ other than a newline (indicated by the "." regular expression).
                                    atof(yytext));
                           }
 
+      /* Comments can go between rules, but must be indented. */
     if|then|begin|end|procedure|function|program        {
                             printf("A keyword: %s\n", yytext);
                           }
@@ -526,6 +527,10 @@ file may be skipped, too.
 text enclosed in <code>%{</code> and <code>%}</code> is copied verbatim
 to the output (with the <code>%{}</code> delimiters removed). The
 <code>%{}</code> delimiters must appear unindented on lines by themselves.
+
+<p>In the rules section, comments can be placed between rules in
+<code>/* the usual C notation */</code>, but must be
+<strong>indented</strong>.
 
 <p>In the rules section, any indented or <code>%{}</code> text appearing
 before the first rule may be used to declare variables which are local
