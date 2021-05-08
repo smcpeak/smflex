@@ -444,9 +444,7 @@ void flexend(int exit_status)
     if (lastccl == 0)
       fprintf(stderr, _("  no character classes\n"));
     else
-      fprintf(stderr,
-              _
-              ("  %d/%d character classes needed %d/%d words of storage, %d reused\n"),
+      fprintf(stderr, _("  %d/%d character classes needed %d/%d words of storage, %d reused\n"),
               lastccl, current_maxccls, cclmap[lastccl] + ccllen[lastccl],
               current_max_ccl_tbl_size, cclreuse);
 
@@ -833,9 +831,7 @@ void readin()
       fprintf(stderr, _("REJECT entails a large performance penalty (maybe; see manual)\n"));
 
     if (variable_trailing_context_rules)
-      fprintf(stderr,
-              _
-              ("Variable trailing context rules entail a large performance penalty\n"));
+      fprintf(stderr, _("Variable trailing context rules entail a large performance penalty\n"));
   }
 
   if (reject)
@@ -850,8 +846,7 @@ void readin()
     else if (do_yylineno)
       flexerror(_("%option yylineno cannot be used with -Cf or -CJ"));
     else
-      flexerror(_
-                ("variable trailing context rules cannot be used with -Cf or -CJ"));
+      flexerror(_("variable trailing context rules cannot be used with -Cf or -CJ"));
   }
 
   /* Begin writing the primary output file. */
@@ -1031,9 +1026,7 @@ void usage()
 {
   FILE *f = stdout;
 
-  fprintf(f,
-          _
-          ("%s [-bcdfhilnpstvwBFILTV78+? -C[aefFmr] -ooutput -Pprefix -Sskeleton]\n"),
+  fprintf(f, _("%s [-bcdfhilnpstvwBFILTV78+? -C[aefFmr] -ooutput -Pprefix -Sskeleton]\n"),
           program_name);
   fprintf(f, _("\t[--help --version] [file ...]\n"));
 
@@ -1063,19 +1056,11 @@ void usage()
   fprintf(f, _("\t-8  generate 8-bit scanner\n"));
   fprintf(f, _("\t-+  generate C++ scanner class\n"));
   fprintf(f, _("\t-?  produce this help message\n"));
-  fprintf(f,
-          _
-          ("\t-C  specify degree of table compression (default is -Cem):\n"));
-  fprintf(f,
-          _
-          ("\t\t-Ca  trade off larger tables for better memory alignment\n"));
+  fprintf(f, _("\t-C  specify degree of table compression (default is -Cem):\n"));
+  fprintf(f, _("\t\t-Ca  trade off larger tables for better memory alignment\n"));
   fprintf(f, _("\t\t-Ce  construct equivalence classes\n"));
-  fprintf(f,
-          _
-          ("\t\t-Cf  generate scanner with \"full\" tables; fast and large\n"));
-  fprintf(f,
-          _
-          ("\t\t-CJ  generate scanner with \"Jacobson\" tables\n"));
+  fprintf(f, _("\t\t-Cf  generate scanner with \"full\" tables; fast and large\n"));
+  fprintf(f, _("\t\t-CJ  generate scanner with \"Jacobson\" tables\n"));
   fprintf(f, _("\t\t-Cm  construct meta-equivalence classes\n"));
   fprintf(f, _("\t\t-Cr  use read() instead of stdio for scanner input\n"));
   fprintf(f, _("\t-o  specify output filename\n"));
