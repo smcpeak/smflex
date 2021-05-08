@@ -2103,19 +2103,30 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     <a href="#generating-cpp-scanners">Generating C++ Scanners</a>
     for details.
 
-<dt><code>-C[aefFmr]</code>
+<dt><code>-C[aefFmr]*</code>
 
-<dd><p>controls the degree of table compression and, more generally,
-    trade-offs between small scanners and fast scanners.
+<dd><p><code>-C</code> controls the degree of table compression and,
+    more generally, trade-offs between small scanners and fast scanners.
+    <code>-C</code> can be followed by a string of the following letters:
 
-    <p><code>-Ca</code> ("align") instructs <code>smflex</code> to trade off larger tables
+    <dl>
+
+
+    <dt><code>-Ca</code> ("align")
+
+    <dd><p>instructs <code>smflex</code> to trade off larger tables
     in the generated scanner for faster performance because the elements
     of the tables are better aligned for memory access and computation. On
-    some RISC architectures, fetching and manipulating longwords is more
-    efficient than with smaller-sized units such as shortwords. This option
-    can double the size of the tables used by your scanner.
+    some RISC architectures, fetching and manipulating <code>long</code>s is more
+    efficient than <code>short</code>s. This option
+    can double (or more) the size of the tables used by your scanner,
+    depending on the ratio of <code>sizeof(long)</code> to
+    <code>sizeof(short)</code>.
 
-    <p><code>-Ce</code> directs <code>smflex</code> to construct <em>equivalence
+
+    <dt><code>-Ce</code> ("equivalence")
+
+    <dd><p>directs <code>smflex</code> to construct <em>equivalence
     classes</em>, i.e., sets of characters which have identical lexical
     properties (for example, if the only appearance of digits in the
     <code>smflex</code> input is in the character class "[0-9]" then the
@@ -2124,16 +2135,19 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     table/object file sizes (typically a factor of 2-5) and are pretty cheap
     performance-wise (one array look-up per character scanned).
 
-    <p><code>-Cf</code> specifies that the "full" scanner tables
-    should be generated - <code>smflex</code> should not compress the tables
+
+    <dt><code>-Cf</code> ("full")
+
+    <dd><p>specifies that the "full" scanner tables
+    should be generated &mdash; <code>smflex</code> should not compress the tables
     by taking advantages of similar transition functions for different states.
 
 
-    <p><code>-CF</code>
+    <dt><code>-CF</code> ("Fast")
 
-    specifies that the "Fast" scanner table representation should be used.
+    <dd><p>specifies that the "Fast" scanner table representation should be used.
     This representation is about as fast as the
-    full table representation (<code>-Cf</code>), and for some sets of
+    "full" table representation (<code>-Cf</code>), and for some sets of
     patterns will be considerably smaller (and for others, larger). In
     general, if the pattern set contains both "keywords" and a
     catch-all, "identifier" rule, such as in the set:
@@ -2153,19 +2167,24 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     <p>This option cannot be used with <code>-+</code>.
 
 
-    <p><code>-Cm</code> directs <code>smflex</code> to construct
+    <dt><code>-Cm</code> ("meta")
+
+    <dd><p>directs <code>smflex</code> to construct
     <em>meta-equivalence classes</em>, which are sets of equivalence classes
     (or characters, if equivalence classes are not being used) that are
     commonly used together. Meta-equivalence classes are often a big win
     when using compressed tables, but they have a moderate performance impact
     (one or two "if" tests and one array look-up per character scanned).
 
-    <p><code>-Cr</code> causes the generated scanner to <em>bypass</em>
+
+    <dt><code>-Cr</code> ("read")
+
+    <dd><p>causes the generated scanner to <em>bypass</em>
     use of the standard I/O library (stdio) for input. Instead of calling
     <code>fread()</code> or <code>getc()</code>, the scanner will use the
-    <code>read()</code> system call, resulting in a performance gain which
-    varies from system to system, but in general is probably negligible
-    unless you are also using <code>-Cf</code> or <code>-CF</code>. Using
+    <code>read()</code> system call.  See
+    <a href="#input-read-method">Input Read Method</a> for a discussion
+    of the performance effect.  Using
     <code>-Cr</code> can cause strange behavior if, for example, you read from
     <code>yyin</code> using stdio prior to calling the scanner (because the
     scanner will miss whatever text your previous reads left in the stdio
@@ -2177,14 +2196,17 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     Using <code>-Cr</code> introduces a compile-time dependency on
     <code>unistd.h</code> and a link-time dependency on <code>read</code>.
 
+    </dl>
+
+
+    <p>The options <code>-Cf</code> or <code>-CF</code> and <code>-Cm</code>
+    do not make sense together &mdash; there is no opportunity for meta-equivalence
+    classes if the table is not being compressed. Otherwise the options may
+    be freely mixed, and are cumulative.
+
     <p>A lone <code>-C</code> specifies that the scanner tables should be
     compressed but neither equivalence classes nor meta-equivalence classes
     should be used.
-
-    <p>The options <code>-Cf</code> or <code>-CF</code> and <code>-Cm</code>
-    do not make sense together - there is no opportunity for meta-equivalence
-    classes if the table is not being compressed. Otherwise the options may
-    be freely mixed, and are cumulative.
 
     <p>The default setting is <code>-Cem</code>, which specifies
     that <code>smflex</code> should generate equivalence classes and
@@ -2204,7 +2226,11 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
         fastest &amp; largest
 </code></pre>
 
-    <p>Note that scanners with the smallest tables are usually generated
+    <p>See <a href="#table-compression-options">Table Compression Options</a>
+    for an empirical analysis of the performance effect of these
+    options.
+
+    <p>Scanners with the smallest tables are usually generated
     and compiled the quickest, so during development you will usually want
     to use the default, maximal compression.
 
