@@ -3820,7 +3820,7 @@ option discussed above.
     }
 </code></pre><!-- END example -->
 
-<p>If you want to create multiple (different) lexer classes, you use
+<p>If you want to create multiple (different) lexer classes, use
 the <code>-P</code> flag (or <code>%option prefix</code>) to rename
 each <code>yyFlexLexer</code> to some other <code>xxFlexLexer</code>. You
 then can freely include the generated header files in your other sources
@@ -3841,8 +3841,12 @@ a number of changes that introduce incompatibilities with
 <code>flex-2.5.4</code> is not among my goals, I want to enable users
 to transition to <code>smflex</code>, and this list can help that.
 
+
+<h2 id="changes-to-the-options-interface">Changes to the Options Interface</h2>
+
 <p>The general theme of these changes is to simplify and clarify the
-options interface.
+options interface, as well as removing some legacy features unlikely
+to be of continued value.
 
 <ul>
 
@@ -3959,7 +3963,7 @@ options interface.
 
     <p>Replacement: None in <code>smflex</code>.  If this feature is
     essential to your scanner, you will have to stick with
-    <code>flex</code>.
+    <code>flex</code>.  I'd like to hear about such cases.
 
 <li><p><code>flex-2.5.4</code> accepts <code>-l</code> and
     <code>lex-compat</code>, both meaning to enable compatibility
@@ -3971,113 +3975,6 @@ options interface.
     this just finishes the job.
 
     <p>Replacement: None.
-
-<li><p>In <code>flex-2.5.4</code>, the <code>main()</code>
-    function generated with
-    <a href="#option-main"><code>%option main</code></a>
-    called <code>yylex()</code> just once.  Now it calls
-    <code>yylex()</code> in a loop until it returns 0.
-
-    <p>Rationale: The old behavior was useful only in the case of a
-    scanner that never returned any token codes, instead only executing
-    actions and continuing to scan.  Additionally, the new behavior
-    matches what the old <code>libfl.a</code> contained, allowing me to
-    eliminate <code>libfl.a</code> without losing functionality.
-
-    <p>Replacement: Remove <code>%option main</code> and provide an
-    explicit definition: <code>int main() { yylex(); return 0; }</code>.
-
-<li><p>In <code>flex-2.5.4</code>, <code>%option main</code>
-    implied <code>%option noyywrap</code>.  (Furthermore,
-    <code>%option nomain</code> implied <code>%option yywrap</code>,
-    although that behavior was not documented.)  Now, these two
-    options are independent of each other.
-
-    <p>Rationale: I do not see any reason for the original behavior.
-    The effect of the two options was and is orthogonal.
-
-    <p>Replacement: Explicitly set the relevant options.
-
-<li><p>In <code>flex-2.5.4</code>, the default behavior was to
-    enable <code>yywrap()</code>.  Now it is disabled by default.
-
-    <p>Rationale: Most users do not want <code>yywrap()</code>.  Those
-    that do can easiily set the option asking for it.  By making it
-    default to off, I can eliminate <code>libfl.a</code> without
-    breaking scanners that previously implicitly relied on it.
-
-    <p>Replacement: Explicitly use <code>%option yywrap</code>.
-
-<li><p><code>flex-2.5.4</code> provided <code>libfl.a</code>, which
-    contained definitions of <code>main()</code> (which called
-    <code>yylex()</code> in a loop) and <code>yywrap()</code> (which
-    returned 1).  I have removed <code>libfl.a</code> entirely.
-
-    <p>Rationale: The existence of a library compiled on the build
-    machine but that executes on the host machine is a significant
-    annoyance when cross-compiling and when dealing with the many
-    varieties of C/C++ implementations on Windows.  With this change,
-    the generated scanner consists entirely of source code that does
-    not depend on anything except the standard C or C++ libraries.
-
-    <p>Replacement: Set <code>%option main</code> to get an equivalent
-    <code>main()</code> emitted into the generated scanner.
-    <code>%option noyywrap</code> is now the default, so there should
-    be no issue with trying to link with <code>yywrap()</code>.  (If
-    there is, just define it yourself: <code>int yywrap() { return 1; }</code>.)
-
-<li><p>There are several changes to the C++ interface
-    compared to <code>flex-2.5.4</code>:
-
-    <ul>
-
-    <li><p>The separate <code>FlexLexer</code> abstract base class is gone.
-
-        <p>Rationale:
-        It was not very useful (since a client would have no way of knowing
-        what the token codes meant), and interferes with being able to easily
-        combine multiple scanners in one program (since the cleanest way to
-        do that would be to emit <em>two</em> headers, which is undesirable).
-
-        <p>Replacement: None.  If there is a compelling case for such an
-        interface, let me know and I'll consider re-adding it.
-
-    <li><p>The single <code>FlexLexer.h</code> header has been replaced
-        by generating a different header for every scanner class.
-
-        <p>Rationale: The old method was clumsy and not entirely
-        effective, depending on the project's <code>#include</code>
-        structure.  It was also sometimes annoying to retrieve that
-        header from a system include directory.  The new way keeps all
-        scanners cleanly separated and there is no dependence on
-        system includes.
-
-        <p>Replacement: Replace all uses of <code>FlexLexer.h</code>
-        with <code>lex.yy.h</code> or the whatever name you have
-        selected with <code>-o</code> or <code>%option outfile</code>.
-
-    <li><p>Previously it was possible to select C++ mode by invoking
-        <code>flex</code> as <code>flex++</code>; that sensitivity to
-        the program name has been removed.
-
-        <p>Rationale: I dislike the idea that a program's behavior
-        depends on its name.
-
-        <p>Replacement: Use <code>%option c++</code> or the
-        <code>-+</code> command line option.
-
-    <li><p>The <code>int yylex(istream *new_in, ostream *new_out = 0)</code>
-        method is gone.
-
-        <p>Rationale: It was not very useful, and created an overload
-        of an important method, which is confusing.
-
-        <p>Replacement: The replacement for <code>yylex(i,o)</code> is
-        to call <code>switch_streams(i,o)</code> and then
-        <code>yylex()</code>, which is precisely what the old method
-        did.
-
-    </ul>
 
 <li><p><code>flex-2.5.4</code> accepted and ignored the <code>-c</code>
     command line option.  This option is no longer accepted.
@@ -4125,7 +4022,131 @@ options interface.
     <p>Replacement: Change <code>generated-scanner.skl</code> and
     recompile.
 
+<li><p>In <code>flex-2.5.4</code>, <code>%option main</code>
+    implied <code>%option noyywrap</code>.  (Furthermore,
+    <code>%option nomain</code> implied <code>%option yywrap</code>,
+    although that behavior was not documented.)  Now, these two
+    options are independent of each other.
+
+    <p>Rationale: I do not see any reason for the original behavior.
+    The effect of the two options was and is orthogonal.
+
+    <p>Replacement: Explicitly set the relevant options.
+
 </ul>
+
+
+<h2 id="removal-of-libfl-a">Removal of libfl.a</h2>
+
+<p>
+<code>flex-2.5.4</code> included <code>libfl.a</code>, an optional
+run-time support library.  That has been removed as detailed below.
+
+<ul>
+
+<li><p>In <code>flex-2.5.4</code>, the <code>main()</code>
+    function generated with
+    <a href="#option-main"><code>%option main</code></a>
+    called <code>yylex()</code> just once.  Now it calls
+    <code>yylex()</code> in a loop until it returns 0.
+
+    <p>Rationale: The old behavior was useful only in the case of a
+    scanner that never returned any token codes, instead only executing
+    actions and continuing to scan.  Additionally, the new behavior
+    matches what the old <code>libfl.a</code> contained, allowing me to
+    eliminate <code>libfl.a</code> without losing functionality.
+
+    <p>Replacement: Remove <code>%option main</code> and provide an
+    explicit definition: <code>int main() { yylex(); return 0; }</code>.
+
+<li><p>In <code>flex-2.5.4</code>, the default behavior was to
+    enable <code>yywrap()</code>.  Now it is disabled by default.
+
+    <p>Rationale: Most users do not want <code>yywrap()</code>.  Those
+    that do can easiily set the option asking for it.  By making it
+    default to off, I can eliminate <code>libfl.a</code> without
+    breaking scanners that previously implicitly relied on it.
+
+    <p>Replacement: Explicitly use <code>%option yywrap</code>.
+
+<li><p><code>flex-2.5.4</code> provided <code>libfl.a</code>, which
+    contained definitions of <code>main()</code> (which called
+    <code>yylex()</code> in a loop) and <code>yywrap()</code> (which
+    returned 1).  I have removed <code>libfl.a</code> entirely.
+
+    <p>Rationale: The existence of a library compiled on the build
+    machine but that executes on the host machine is a significant
+    annoyance when cross-compiling and when dealing with the many
+    varieties of C/C++ implementations on Windows.  With this change,
+    the generated scanner consists entirely of source code that does
+    not depend on anything except the standard C or C++ libraries.
+
+    <p>Replacement: Set <code>%option main</code> to get an equivalent
+    <code>main()</code> emitted into the generated scanner.
+    <code>%option noyywrap</code> is now the default, so there should
+    be no issue with trying to link with <code>yywrap()</code>.  (If
+    there is, just define it yourself: <code>int yywrap() { return 1; }</code>.)
+
+</ul>
+
+
+<h2 id="changes-to-the-cpp-interface">Changes to the C++ Interface</h2>
+
+<p>There are several changes to the C++ interface
+compared to <code>flex-2.5.4</code>:
+
+<ul>
+
+<li><p>The separate <code>FlexLexer</code> abstract base class is gone.
+
+    <p>Rationale:
+    It was not very useful (since a client would have no way of knowing
+    what the token codes meant), and interferes with being able to easily
+    combine multiple scanners in one program (since the cleanest way to
+    do that would be to emit <em>two</em> headers, which is undesirable).
+
+    <p>Replacement: None.  If there is a compelling case for such an
+    interface, let me know and I'll consider re-adding it.
+
+<li><p>The single <code>FlexLexer.h</code> header has been replaced
+    by generating a different header for every scanner class.
+
+    <p>Rationale: The old method was clumsy and not entirely
+    effective, depending on the project's <code>#include</code>
+    structure.  It was also sometimes annoying to retrieve that
+    header from a system include directory.  The new way keeps all
+    scanners cleanly separated and there is no dependence on
+    system includes.
+
+    <p>Replacement: Replace all uses of <code>FlexLexer.h</code>
+    with <code>lex.yy.h</code> or the whatever name you have
+    selected with <code>-o</code> or <code>%option outfile</code>.
+
+<li><p>Previously it was possible to select C++ mode by invoking
+    <code>flex</code> as <code>flex++</code>; that sensitivity to
+    the program name has been removed.
+
+    <p>Rationale: I dislike the idea that a program's behavior
+    depends on its name.
+
+    <p>Replacement: Use <code>%option c++</code> or the
+    <code>-+</code> command line option.
+
+<li><p>The <code>int yylex(istream *new_in, ostream *new_out = 0)</code>
+    method is gone.
+
+    <p>Rationale: It was not very useful, and created an overload
+    of an important method, which is confusing.
+
+    <p>Replacement: The replacement for <code>yylex(i,o)</code> is
+    to call <code>switch_streams(i,o)</code> and then
+    <code>yylex()</code>, which is precisely what the old method
+    did.
+
+</ul>
+
+
+<h2 id="fixed-bugs">Fixed Bugs</h2>
 
 <p>
 I have also found and fixed a few pre-existing bugs:
