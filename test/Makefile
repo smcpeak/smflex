@@ -197,6 +197,7 @@ all-df: out/cppscan.ok
 all-df: out/count-lines-chars.ok
 all-df: out/elsa-lexer.ok
 all-df: out/noreject-frob.ok
+all-df: out/normalize-whitespace.ok
 all-df: out/notrailing-context.ok
 all-df: out/noyylineno.ok
 all-df: out/outfile-specified.ok

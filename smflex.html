@@ -872,14 +872,15 @@ which deletes all occurrences of "zap me" from its input:
 <p>(It will copy all other characters in the input to the output since
 they will be matched by the default rule.)
 
-<p>Here is a program which compresses multiple blanks and tabs down to
+<p>Here is a <a href="test/normalize-whitespace.lex">program</a>
+which compresses multiple blanks and tabs down to
 a single blank, and throws away whitespace found at the end of a line:
 
-<pre><code>
+<pre><!-- BEGIN example: "normalize-whitespace.lex" fragment=true indent=4 --><code>
     %%
-    [ \t]+        putchar( ' ' );
+    [ \t]+        putchar(' ');
     [ \t]+$       /* ignore this token */
-</code></pre>
+</code><!-- END example --></pre>
 
 <p>If the action contains a '{', then the action spans till the balancing
 '}' is found, and the action may cross multiple lines. <code>smflex</code>
