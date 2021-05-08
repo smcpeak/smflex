@@ -39,6 +39,13 @@ SMFLEX := ../smflex
 # what it is saying is sensible.
 SMFLEX_OPTS := -p -p
 
+# Which option combination to test.  See table of XXX_OPS variables,
+# below in the performance test section.  For the moment, the only
+# way to activate 'full' is by specifying TEST_CONFIG=full on the
+# 'make' command line.
+TEST_CONFIG := default
+#TEST_CONFIG := full
+
 # I use the <(...) syntax in the 'paste' command below, so I need bash
 # specifically.
 SHELL := /bin/bash
@@ -50,7 +57,7 @@ PYTHON3 := python3
 .PRECIOUS: out/%.yy.c
 out/%.yy.c: %.lex
 	@mkdir -p out
-	$(SMFLEX) $(SMFLEX_OPTS) -o$@ $<
+	$(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -o$@ $<
 	$(PYTHON3) ../check-line-directives.py $@
 
 # Run smflex on outfile.lex, avoiding use of -o option.
@@ -87,7 +94,7 @@ out/%.o: %.c
 .PRECIOUS: out/%.yy.cc
 out/%.yy.cc: %.lexpp $(SMFLEX)
 	@mkdir -p out
-	$(SMFLEX) $(SMFLEX_OPTS) -o$@ $<
+	$(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -o$@ $<
 	$(PYTHON3) ../check-line-directives.py $@
 
 # Compile C++ file in out/.
@@ -171,43 +178,49 @@ out/c-lexer1-no-lines.yy.c: c-lexer1.lex $(SMFLEX)
 	  exit 2; \
 	fi
 
-# Tests to run, in sorted ("env LANG=C sort") order.
-all: out/c-int-batch.ok
-all: out/c-int-default.ok
-all: out/c-int-interactive.ok
-all: out/c-int-interactive-set-int-0.ok
-all: out/c-int-interactive-set-int-isatty.ok
-all: out/c-int-set-int-0.ok
-all: out/c-int-set-int-1.ok
-all: out/c-int-set-int-isatty.ok
-all: out/c-lexer1.ok
-all: out/c-lexer1-no-lines.ok
-all: out/continued-action2.ok
-all: out/cpp-int-batch.ok
-all: out/cpp-int-default.ok
-all: out/cpp-int-interactive.ok
-all: out/cpp-manual-example.lexpp.matches
-all: out/cpp-manual-example.ok
-all: out/cpp-prefix-yywrap-yyclass.ok
-all: out/cpp-prefix-yywrap.ok
-all: out/cpp-prefix.ok
-all: out/cppscan-full.ok
-all: out/cppscan-main.ok
-all: out/cppscan-yywrap.ok
-all: out/cppscan.ok
-all: out/elsa-lexer.ok
-all: out/noreject-frob.ok
-all: out/notrailing-context.ok
-all: out/noyylineno.ok
-all: out/outfile-specified.ok
-all: out/reject-frob.ok
-all: out/trailing-context.ok
-all: out/username-main.c_as_cc.ok
-all: out/username-main.ok
-all: out/username-yywrap.ok
-all: out/username.ok
-all: out/vert-bar-action.ok
-all: out/yylineno.ok
+# Tests to run in both "default" and "full" configurations.
+all-df: out/c-int-batch.ok
+all-df: out/c-int-default.ok
+all-d : out/c-int-interactive.ok
+all-d : out/c-int-interactive-set-int-0.ok
+all-d : out/c-int-interactive-set-int-isatty.ok
+all-df: out/c-int-set-int-0.ok
+all-df: out/c-int-set-int-1.ok
+all-df: out/c-int-set-int-isatty.ok
+all-df: out/c-lexer1.ok
+all-df: out/c-lexer1-no-lines.ok
+all-df: out/continued-action2.ok
+all-df: out/cpp-int-batch.ok
+all-df: out/cpp-int-default.ok
+all-d : out/cpp-int-interactive.ok
+all-df: out/cpp-manual-example.lexpp.matches
+all-df: out/cpp-manual-example.ok
+all-df: out/cpp-prefix-yywrap-yyclass.ok
+all-df: out/cpp-prefix-yywrap.ok
+all-df: out/cpp-prefix.ok
+all-df: out/cppscan-full.ok
+all-df: out/cppscan-main.ok
+all-df: out/cppscan-yywrap.ok
+all-df: out/cppscan.ok
+all-df: out/elsa-lexer.ok
+all-df: out/noreject-frob.ok
+all-df: out/notrailing-context.ok
+all-df: out/noyylineno.ok
+all-df: out/outfile-specified.ok
+all-d : out/reject-frob.ok
+all-d : out/trailing-context.ok
+all-df: out/username-main.c_as_cc.ok
+all-df: out/username-main.ok
+all-df: out/username-yywrap.ok
+all-df: out/username.ok
+all-df: out/vert-bar-action.ok
+all-d : out/yylineno.ok
+
+# Add the right set of tests to 'all'.
+all: all-df
+ifeq ($(TEST_CONFIG),default)
+  all: all-d
+endif
 
 # These tests read a second file.
 username-yywrap.ok: username-yywrap.input2
@@ -341,6 +354,7 @@ flex264_CFLAGS    := -I. -Iinclude-flex-2.6.4
 #
 # Note that -Cem is the default, not -C.
 #
+default_OPS             :=
 compr_OPS               := -C
 align_OPS               := -Ca
 equiv_OPS               := -Ce
