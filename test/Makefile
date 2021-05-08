@@ -221,6 +221,17 @@ endif
 username-yywrap.ok: username-yywrap.input2
 cppscan-yywrap.ok: cppscan-yywrap.input2
 
+# Check smflex.html for syntax errors if HTML_CHECKER is defined.
+# I use the Nu Html Checker (v.Nu) at:
+# https://github.com/validator/validator
+ifneq ($(HTML_CHECKER),)
+all: out/smflex-check-html.ok
+out/smflex-check-html.ok: ../smflex.html
+	@mkdir -p $(dir $@)
+	$(HTML_CHECKER) $^
+	touch $@
+endif
+
 # Command to print a message at the end.
 all:
 	@echo 'All tests in test/ passed.  (Use "make clean" there to reset.)'
@@ -228,6 +239,7 @@ all:
 # Remove all test outputs.
 clean:
 	rm -rf out
+
 
 # --------------------- Performance Testing ---------------------
 # Directory in which to store performance test outputs.
