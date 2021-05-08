@@ -544,7 +544,9 @@ void gen_next_match()
 
 /* Generate the code to find the next state. */
 void gen_next_state(int worry_about_NULs)
-{                               /* NOTE - changes in here should be reflected in gen_next_match() */
+{
+  /* NOTE - changes in here should be reflected in gen_next_match() */
+
   char char_map[256];
 
   if (worry_about_NULs && !nultrans) {
@@ -597,7 +599,9 @@ void gen_next_state(int worry_about_NULs)
 
 /* Generate the code to make a NUL transition. */
 void gen_NUL_trans()
-{                               /* NOTE - changes in here should be reflected in gen_next_match() */
+{
+  /* NOTE - changes in here should be reflected in gen_next_match() */
+
   /* Only generate a definition for "yy_cp" if we'll generate code
    * that uses it.  Otherwise lint and the like complain.
    */
@@ -1053,7 +1057,8 @@ void make_tables()
     dataend();
   }
 
-  if (ddebug) {                 /* Spit out table mapping rules to line numbers. */
+  if (ddebug) {
+    /* Spit out table mapping rules to line numbers. */
     if (!C_plus_plus) {
       indent_puts("extern int yy_flex_debug;");
       indent_puts("int yy_flex_debug = 1;\n");
@@ -1401,7 +1406,8 @@ void make_tables()
   gen_NUL_trans();
 
   skelout();
-  if (do_yylineno) {            /* update yylineno inside of unput() */
+  if (do_yylineno) {
+    /* update yylineno inside of unput() */
     indent_puts("if ( c == '\\n' )");
     indent_up();
     indent_puts("--yylineno;");
