@@ -271,7 +271,7 @@ and reference sections:
 
 <li><a href="#start-conditions">Start Conditions</a>:
     introducing context into your scanners, and
-    managing &quot;mini-scanners&quot;
+    managing "mini-scanners"
 
 <li><a href="#multiple-input-buffers">Multiple Input Buffers</a>:
     how to manipulate multiple input sources; how to
@@ -290,7 +290,7 @@ and reference sections:
     connecting <code>smflex</code> scanners together with yacc parsers
 
 <li><a href="#options">Options</a>:
-    <code>smflex</code> command-line options, and the &quot;%option&quot;
+    <code>smflex</code> command-line options, and the "%option"
     directive
 
 <li><a href="#performance-considerations">Performance Considerations</a>:
@@ -350,7 +350,7 @@ it with the user's login name:
 
 <pre><!-- BEGIN example: "username.lex" fragment=true indent=4 --><code>
     %%
-    username    printf(&quot;%s&quot;, getlogin());
+    username    printf("%s", getlogin());
 </code><!-- END example --></pre>
 
 <p>By default, any text not matched by a <code>smflex</code> scanner is
@@ -372,7 +372,7 @@ of the rules.
     %%
     int main() {
       yylex();
-      printf(&quot;# of lines = %d, # of chars = %d\n&quot;,
+      printf("# of lines = %d, # of chars = %d\n",
              num_lines, num_chars);
       return 0;
     }
@@ -403,28 +403,28 @@ other than a newline (indicated by the "." regular expression).
     %%
 
     {DIGIT}+    {
-                printf( &quot;An integer: %s (%d)\n&quot;, yytext,
-                        atoi( yytext ) );
+                  printf("An integer: %s (%d)\n", yytext,
+                         atoi(yytext));
                 }
 
-    {DIGIT}+&quot;.&quot;{DIGIT}*        {
-                printf( &quot;A float: %s (%g)\n&quot;, yytext,
-                        atof( yytext ) );
+    {DIGIT}+"."{DIGIT}*        {
+                  printf("A float: %s (%g)\n", yytext,
+                         atof(yytext));
                 }
 
     if|then|begin|end|procedure|function        {
-                printf( &quot;A keyword: %s\n&quot;, yytext );
+                  printf("A keyword: %s\n", yytext);
                 }
 
-    {ID}        printf( &quot;An identifier: %s\n&quot;, yytext );
+    {ID}        printf("An identifier: %s\n", yytext);
 
-    &quot;+&quot;|&quot;-&quot;|&quot;*&quot;|&quot;/&quot;   printf( &quot;An operator: %s\n&quot;, yytext );
+    "+"|"-"|"*"|"/"   printf( "An operator: %s\n", yytext );
 
-    &quot;{&quot;[^}\n]*&quot;}&quot;     /* eat up one-line comments */
+    "{"[^}\n]*"}"     /* eat up one-line comments */
 
     [ \t\n]+          /* eat up whitespace */
 
-    .           printf( &quot;Unrecognized character: %s\n&quot;, yytext );
+    .           printf( "Unrecognized character: %s\n", yytext );
 
     %%
 
@@ -434,7 +434,7 @@ other than a newline (indicated by the "." regular expression).
         {
         ++argv, --argc;  /* skip over program name */
         if ( argc &gt; 0 )
-                yyin = fopen( argv[0], &quot;r&quot; );
+                yyin = fopen( argv[0], "r" );
         else
                 yyin = stdin;
 
@@ -492,13 +492,13 @@ digit, and "ID" to be a regular expression which matches a letter followed
 by zero-or-more letters-or-digits. A subsequent reference to
 
 <pre><code>
-    {DIGIT}+&quot;.&quot;{DIGIT}*
+    {DIGIT}+"."{DIGIT}*
 </code></pre>
 
 <p>is identical to
 
 <pre><code>
-    ([0-9])+&quot;.&quot;([0-9])*
+    ([0-9])+"."([0-9])*
 </code></pre>
 
 <p>and matches one-or-more digits followed by a '.' followed by
@@ -862,7 +862,7 @@ which deletes all occurrences of "zap me" from its input:
 
 <pre><code>
     %%
-    &quot;zap me&quot;
+    "zap me"
 </code></pre>
 
 <p>(It will copy all other characters in the input to the output since
@@ -1048,7 +1048,7 @@ an action:
 
     <pre><code>
         %%
-        &quot;/*&quot;      {
+        "/*"      {
                     int c;
                     for (;;) {
                       while ( (c = input()) != &#39;*&#39; &amp;&amp; c != EOF )
@@ -1063,7 +1063,7 @@ an action:
                       }
 
                       if (c == EOF) {
-                        error(&quot;EOF in comment&quot;);
+                        error("EOF in comment");
                         break;
                       }
                     }
@@ -1202,7 +1202,7 @@ rules. Any rule whose pattern is prefixed with "&lt;sc&gt;" will only be
 active when the scanner is in the start condition named "sc". For example,
 
 <pre><code>
-    &lt;STRING&gt;[^&quot;]*        { /* eat up the string body ... */
+    &lt;STRING&gt;[^"]*        { /* eat up the string body ... */
                 ...
                 }
 </code></pre>
@@ -1329,13 +1329,13 @@ the floating-point number 123.456:
     %%
     expect-floats        BEGIN(expect);
 
-    &lt;expect&gt;[0-9]+&quot;.&quot;[0-9]+      {
-                printf( &quot;found a float, = %f\n&quot;,
+    &lt;expect&gt;[0-9]+"."[0-9]+      {
+                printf( "found a float, = %f\n",
                         atof( yytext ) );
                 }
     &lt;expect&gt;\n           {
                 /* that&#39;s the end of the line, so
-                 * we need another &quot;expect-number&quot;
+                 * we need another "expect-number"
                  * before we&#39;ll recognize any more
                  * numbers
                  */
@@ -1343,11 +1343,11 @@ the floating-point number 123.456:
                 }
 
     [0-9]+      {
-                printf( &quot;found an integer, = %d\n&quot;,
+                printf( "found an integer, = %d\n",
                         atoi( yytext ) );
                 }
 
-    &quot;.&quot;         printf( &quot;found a dot\n&quot; );
+    "."         printf( "found a dot\n" );
 </code></pre>
 
 <p>Here is a scanner which recognizes (and discards) C comments while
@@ -1358,12 +1358,12 @@ maintaining a count of the current input line.
     %%
             int line_num = 1;
 
-    &quot;/*&quot;         BEGIN(comment);
+    "/*"         BEGIN(comment);
 
     &lt;comment&gt;[^*\n]*        /* eat anything that&#39;s not a &#39;*&#39; */
-    &lt;comment&gt;&quot;*&quot;+[^*/\n]*   /* eat up &#39;*&#39;s not followed by &#39;/&#39;s */
+    &lt;comment&gt;"*"+[^*/\n]*   /* eat up &#39;*&#39;s not followed by &#39;/&#39;s */
     &lt;comment&gt;\n             ++line_num;
-    &lt;comment&gt;&quot;*&quot;+&quot;/&quot;        BEGIN(INITIAL);
+    &lt;comment&gt;"*"+"/"        BEGIN(INITIAL);
 </code></pre>
 
 <p>This scanner goes to a bit of trouble to match as much text as possible
@@ -1380,22 +1380,22 @@ fashion:
             int line_num = 1;
             int comment_caller;
 
-    &quot;/*&quot;         {
+    "/*"         {
                  comment_caller = INITIAL;
                  BEGIN(comment);
                  }
 
     ...
 
-    &lt;foo&gt;&quot;/*&quot;    {
+    &lt;foo&gt;"/*"    {
                  comment_caller = foo;
                  BEGIN(comment);
                  }
 
     &lt;comment&gt;[^*\n]*        /* eat anything that&#39;s not a &#39;*&#39; */
-    &lt;comment&gt;&quot;*&quot;+[^*/\n]*   /* eat up &#39;*&#39;s not followed by &#39;/&#39;s */
+    &lt;comment&gt;"*"+[^*/\n]*   /* eat up &#39;*&#39;s not followed by &#39;/&#39;s */
     &lt;comment&gt;\n             ++line_num;
-    &lt;comment&gt;&quot;*&quot;+&quot;/&quot;        BEGIN(comment_caller);
+    &lt;comment&gt;"*"+"/"        BEGIN(comment_caller);
 </code></pre>
 
 <p>Furthermore, you can access the current start condition using the
@@ -1425,9 +1425,9 @@ using exclusive start conditions, including expanded escape sequences
             char *string_buf_ptr;
 
 
-    \&quot;      string_buf_ptr = string_buf; BEGIN(str);
+    \"      string_buf_ptr = string_buf; BEGIN(str);
 
-    &lt;str&gt;\&quot;        { /* saw closing quote - all done */
+    &lt;str&gt;\"        { /* saw closing quote - all done */
             BEGIN(INITIAL);
             *string_buf_ptr = &#39;\0&#39;;
             /* return string constant token type and
@@ -1444,7 +1444,7 @@ using exclusive start conditions, including expanded escape sequences
             /* octal escape sequence */
             int result;
 
-            (void) sscanf( yytext + 1, &quot;%o&quot;, &amp;result );
+            (void) sscanf( yytext + 1, "%o", &amp;result );
 
             if ( result &gt; 0xff )
                     /* error, constant is out-of-bounds */
@@ -1466,7 +1466,7 @@ using exclusive start conditions, including expanded escape sequences
 
     &lt;str&gt;\\(.|\n)  *string_buf_ptr++ = yytext[1];
 
-    &lt;str&gt;[^\\\n\&quot;]+        {
+    &lt;str&gt;[^\\\n\"]+        {
             char *yptr = yytext;
 
             while ( *yptr )
@@ -1490,20 +1490,20 @@ which matches the initial <code>'{'</code>. So, for example,
 
 <pre><code>
     &lt;ESC&gt;{
-        &quot;\\n&quot;   return &#39;\n&#39;;
-        &quot;\\r&quot;   return &#39;\r&#39;;
-        &quot;\\f&quot;   return &#39;\f&#39;;
-        &quot;\\0&quot;   return &#39;\0&#39;;
+        "\\n"   return &#39;\n&#39;;
+        "\\r"   return &#39;\r&#39;;
+        "\\f"   return &#39;\f&#39;;
+        "\\0"   return &#39;\0&#39;;
     }
 </code></pre>
 
 <p>is equivalent to:
 
 <pre><code>
-    &lt;ESC&gt;&quot;\\n&quot;  return &#39;\n&#39;;
-    &lt;ESC&gt;&quot;\\r&quot;  return &#39;\r&#39;;
-    &lt;ESC&gt;&quot;\\f&quot;  return &#39;\f&#39;;
-    &lt;ESC&gt;&quot;\\0&quot;  return &#39;\0&#39;;
+    &lt;ESC&gt;"\\n"  return &#39;\n&#39;;
+    &lt;ESC&gt;"\\r"  return &#39;\r&#39;;
+    &lt;ESC&gt;"\\f"  return &#39;\f&#39;;
+    &lt;ESC&gt;"\\0"  return &#39;\0&#39;;
 </code></pre>
 
 <p>Start condition scopes may be nested.
@@ -1614,7 +1614,7 @@ expands include files (the <code>&lt;&lt;EOF&gt;&gt;</code> feature is
 discussed below):
 
 <pre><code>
-    /* the &quot;incl&quot; state is used for picking up the name
+    /* the "incl" state is used for picking up the name
      * of an include file
      */
     %x incl
@@ -1635,14 +1635,14 @@ discussed below):
     &lt;incl&gt;[^ \t\n]+   { /* got the include file name */
             if ( include_stack_ptr &gt;= MAX_INCLUDE_DEPTH )
                 {
-                fprintf( stderr, &quot;Includes nested too deeply&quot; );
+                fprintf( stderr, "Includes nested too deeply" );
                 exit( 1 );
                 }
 
             include_stack[include_stack_ptr++] =
                 YY_CURRENT_BUFFER;
 
-            yyin = fopen( yytext, &quot;r&quot; );
+            yyin = fopen( yytext, "r" );
 
             if ( ! yyin )
                 error( ... );
@@ -1760,12 +1760,12 @@ example:
     ...other rules for dealing with quotes...
 
     &lt;quote&gt;&lt;&lt;EOF&gt;&gt;   {
-             error( &quot;unterminated quote&quot; );
+             error( "unterminated quote" );
              yyterminate();
              }
     &lt;&lt;EOF&gt;&gt;  {
              if ( *++filelist )
-                 yyin = fopen( *filelist, &quot;r&quot; );
+                 yyin = fopen( *filelist, "r" );
              else
                 yyterminate();
              }
@@ -1928,7 +1928,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <pre><code>
     %{
-    #include &quot;y.tab.h&quot;
+    #include "y.tab.h"
     %}
 
     %%
@@ -1963,7 +1963,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     a line of the form:
 
     <pre><code>
-        --accepting rule at line 53 (&quot;the matched text&quot;)
+        --accepting rule at line 53 ("the matched text")
 </code></pre>
 
     <p>The line number refers to the location of the rule in the file
@@ -2163,10 +2163,10 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     catch-all, "identifier" rule, such as in the set:
 
     <pre><code>
-        &quot;case&quot;    return TOK_CASE;
-        &quot;switch&quot;  return TOK_SWITCH;
+        "case"    return TOK_CASE;
+        "switch"  return TOK_SWITCH;
         ...
-        &quot;default&quot; return TOK_DEFAULT;
+        "default" return TOK_DEFAULT;
         [a-z]+    return TOK_ID;
 </code></pre>
 
@@ -2335,7 +2335,7 @@ number are equivalent to <code>smflex</code> flags or their negation:
     read            -Cr option
     verbose         -v option
     warn            opposite of -w option
-                    (use &quot;%option nowarn&quot; for -w)
+                    (use "%option nowarn" for -w)
 </code></pre>
 
 <p>Some <code>%option</code>s provide features otherwise not available:
@@ -2411,19 +2411,19 @@ is indeed used, or unsetting them to indicate it actually is not used
 <p>Three options take string-delimited values, offset with '=':
 
 <pre><code>
-    %option outfile=&quot;ABC&quot;
+    %option outfile="ABC"
 </code></pre>
 
 <p>is equivalent to <code>-oABC</code>, and
 
 <pre><code>
-    %option prefix=&quot;XYZ&quot;
+    %option prefix="XYZ"
 </code></pre>
 
 <p>is equivalent to <code>-PXYZ</code>. Finally,
 
 <pre><code>
-    %option yyclass=&quot;foo&quot;
+    %option yyclass="foo"
 </code></pre>
 
 <p>only applies when generating a C++ scanner ( <code>-+</code>
@@ -3465,12 +3465,12 @@ for the action. Recall the scanner for C comments:
     %%
             int line_num = 1;
 
-    &quot;/*&quot;         BEGIN(comment);
+    "/*"         BEGIN(comment);
 
     &lt;comment&gt;[^*\n]*
-    &lt;comment&gt;&quot;*&quot;+[^*/\n]*
+    &lt;comment&gt;"*"+[^*/\n]*
     &lt;comment&gt;\n             ++line_num;
-    &lt;comment&gt;&quot;*&quot;+&quot;/&quot;        BEGIN(INITIAL);
+    &lt;comment&gt;"*"+"/"        BEGIN(INITIAL);
 </code></pre>
 
 <p>This could be sped up by writing it as:
@@ -3480,13 +3480,13 @@ for the action. Recall the scanner for C comments:
     %%
             int line_num = 1;
 
-    &quot;/*&quot;         BEGIN(comment);
+    "/*"         BEGIN(comment);
 
     &lt;comment&gt;[^*\n]*
     &lt;comment&gt;[^*\n]*\n      ++line_num;
-    &lt;comment&gt;&quot;*&quot;+[^*/\n]*
-    &lt;comment&gt;&quot;*&quot;+[^*/\n]*\n ++line_num;
-    &lt;comment&gt;&quot;*&quot;+&quot;/&quot;        BEGIN(INITIAL);
+    &lt;comment&gt;"*"+[^*/\n]*
+    &lt;comment&gt;"*"+[^*/\n]*\n ++line_num;
+    &lt;comment&gt;"*"+"/"        BEGIN(INITIAL);
 </code></pre>
 
 <p>Now instead of each newline requiring the processing of another action,
