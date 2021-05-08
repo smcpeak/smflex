@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# See COPYING for license terms.
+# Written by Scott McPeak and placed into the public domain.
 
 """check-line-directives.py
 
