@@ -860,13 +860,14 @@ at a time) to its output.
 any arbitrary C statement. The pattern ends at the first non-escaped
 whitespace character; the remainder of the line is its action. If the
 action is empty, then when the pattern is matched the input token is
-simply discarded. For example, here is the specification for a program
+simply discarded. For example, here is the specification for a
+<a href="test/zap-me.lex">program</a>
 which deletes all occurrences of "zap me" from its input:
 
-<pre><code>
+<pre><!-- BEGIN example: "zap-me.lex" fragment=true indent=4 --><code>
     %%
     "zap me"
-</code></pre>
+</code><!-- END example --></pre>
 
 <p>(It will copy all other characters in the input to the output since
 they will be matched by the default rule.)
