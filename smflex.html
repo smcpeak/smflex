@@ -1061,7 +1061,8 @@ an action:
                   }
     </code></pre>
 
-    <p>When using <code>%option c++</code>,
+    <p>If the generated scanner is compiled with a C++ compiler
+    (with or without <code>%option c++</code>),
     <code>input()</code> is instead called <code>yyinput()</code>
     in order to avoid a name clash with the C++ stream by the
     name of <code>input</code>.
