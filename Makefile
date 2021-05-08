@@ -239,6 +239,7 @@ dist2:
 	mkdir $(DIST_NAME)
 	tar cf - $(DISTFILES) | (cd $(DIST_NAME) && tar xfB -)
 	rm -r $(DIST_NAME)/test/out
+	rm -r $(DIST_NAME)/test/operf
 	rm $(DIST_NAME)/test/.gitignore
 	tar chf $(DIST_NAME).tar $(DIST_NAME)
 	gzip <$(DIST_NAME).tar >$(DIST_NAME).tar.gz
