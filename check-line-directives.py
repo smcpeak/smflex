@@ -170,66 +170,55 @@ for inputLineNumber, inputLine in enumerate(inputFileLines, start=1):
             {e}""")
         break
 
-      # Check that the line number is within range.
-      if 1 <= namedLineNumber and namedLineNumber <= len(sourceFileLines):
-        # Check all subsequent lines until the next #line or EOF.
-        n = inputLineNumber + 1    # Number of line being checked.
-        while n < len(inputFileLines):
-          inputFileLine = chomp(inputFileLines[n - 1])
+      # Check all subsequent lines until the next #line or EOF.
+      n = inputLineNumber + 1    # Number of line being checked.
+      while n < len(inputFileLines):
+        inputFileLine = chomp(inputFileLines[n - 1])
 
-          # If hit #line, bail.
-          if lineDirectivePattern.match(inputFileLine):
-            break
+        # If hit #line, bail.
+        if lineDirectivePattern.match(inputFileLine):
+          break
 
-          # Get the corresponding source file line number.
-          sourceLineNumber = namedLineNumber + (n-1 - inputLineNumber)
-          if sourceLineNumber > len(sourceFileLines):
-            complain(f"""\
-              Line {inputLineNumber} of {inputFileName} is:
+        # Get the corresponding source file line number.
+        sourceLineNumber = namedLineNumber + (n-1 - inputLineNumber)
+        if sourceLineNumber > len(sourceFileLines):
+          complain(f"""\
+            Line {inputLineNumber} of {inputFileName} is:
 
-                {inputLine}
+              {inputLine}
 
-              That section contains line {n}:
+            That section contains line {n}:
 
-                {inputFileLine}
+              {inputFileLine}
 
-              The corresponding source code line would be line {sourceLineNumber},
-              but {namedFile} only has {len(sourceFileLines)} lines.""")
-            break
+            The corresponding source code line would be line {sourceLineNumber},
+            but {namedFile} only has {len(sourceFileLines)} lines.""")
+          break
 
-          # Get the corresponding source file line.
-          sourceLine = chomp(sourceFileLines[sourceLineNumber - 1])
+        # Get the corresponding source file line.
+        sourceLine = chomp(sourceFileLines[sourceLineNumber - 1])
 
-          # Check that line 'n' in the input file is a substring of
-          # 'sourceLine'.
-          if inputFileLine not in sourceLine:
-            complain(f"""\
-              Line {inputLineNumber} of {inputFileName} is:
+        # Check that line 'n' in the input file is a substring of
+        # 'sourceLine'.
+        if inputFileLine not in sourceLine:
+          complain(f"""\
+            Line {inputLineNumber} of {inputFileName} is:
 
-                {inputLine}
+              {inputLine}
 
-              That section contains line {n}:
+            That section contains line {n}:
 
-                {inputFileLine}
+              {inputFileLine}
 
-              The corresponding source code line is line {sourceLineNumber}:
+            The corresponding source code line is line {sourceLineNumber}:
 
-                {sourceLine}
+              {sourceLine}
 
-              The former is not a substring of the latter, which means
-              these do not match.""")
-            break
+            The former is not a substring of the latter, which means
+            these do not match.""")
+          break
 
-          n += 1
-
-      else:
-        complain(f"""\
-          Line {inputLineNumber} of {inputFileName} is:
-
-            {inputLine}
-
-          It refers to line {namedLineNumber}, but that is out of range for
-          {namedFile}, which has {len(sourceFileLines)} lines.""")
+        n += 1
 
   else:
     # Not a #line directive line, keep going.
