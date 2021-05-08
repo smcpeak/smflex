@@ -1006,7 +1006,7 @@ void make_tables()
   int i;
   int did_eof_rule = false;
 
-  skelout();
+  skelout_upto("yymore_yytext");
 
   /* First, take care of YY_DO_BEFORE_ACTION depending on yymore
    * being used.
@@ -1022,11 +1022,11 @@ void make_tables()
     indent_puts("yyleng = (int) (yy_cp - yy_bp); \\");
 
   /* Now also deal with copying yytext_ptr to yytext if needed. */
-  skelout();
+  skelout_upto("array_yytext");
 
   set_indent(0);
 
-  skelout();
+  skelout_upto("dfa_tables");
 
 
   out_dec("#define YY_NUM_RULES %d\n", num_rules);
@@ -1179,7 +1179,7 @@ void make_tables()
 
   /* Copy everything up to and including the beginning of the
    * definition of the YY_INPUT macro. */
-  skelout();
+  skelout_upto("yy_input_defn");
 
   if (!C_plus_plus) {
     /* Provide the body of YY_INPUT.
@@ -1231,7 +1231,7 @@ void make_tables()
     /* For the C++ interface, the skeleton defines YY_INPUT. */
   }
 
-  skelout();
+  skelout_upto("YY_RULE_SETUP");
 
   indent_puts("#define YY_RULE_SETUP \\");
   indent_up();
@@ -1245,14 +1245,14 @@ void make_tables()
   indent_puts("YY_USER_ACTION");
   indent_down();
 
-  skelout();
+  skelout_upto("user_local_decl");
 
   /* Copy prolog to output file. */
   out(&action_array[prolog_offset]);
 
   line_directive_out(scanner_c_file, 0);
 
-  skelout();
+  skelout_upto("yymore_loop_top");
 
   set_indent(2);
 
@@ -1265,7 +1265,7 @@ void make_tables()
     indent_rbrace();
   }
 
-  skelout();
+  skelout_upto("find_next_match");
 
   gen_start_state();
 
@@ -1273,11 +1273,11 @@ void make_tables()
   outn("yy_match:");
   gen_next_match();
 
-  skelout();
+  skelout_upto("find_action_number");
   set_indent(2);
   gen_find_action();
 
-  skelout();
+  skelout_upto("yylineno_update");
   if (do_yylineno) {
     indent_puts("if ( yy_act != YY_END_OF_BUFFER )");
     indent_lbrace();
@@ -1292,7 +1292,7 @@ void make_tables()
     indent_rbrace();
   }
 
-  skelout();
+  skelout_upto("action_debug_code");
   if (ddebug) {
     indent_puts("if ( yy_flex_debug )");
 
@@ -1367,7 +1367,7 @@ void make_tables()
   }
 
   /* Copy actions to output file. */
-  skelout();
+  skelout_upto("user_actions");
   indent_up();
   gen_bu_action();
 
@@ -1403,7 +1403,7 @@ void make_tables()
   /* First, deal with backing up and setting up yy_cp if the scanner
    * finds that it should JAM on the NUL.
    */
-  skelout();
+  skelout_upto("back_up");
   set_indent(6);
 
   if (jacobson || fulltbl)
@@ -1429,19 +1429,19 @@ void make_tables()
 
   /* Generate code for yy_get_previous_state(). */
   set_indent(1);
-  skelout();
+  skelout_upto("prev_start_to_current");
 
   gen_start_state();
 
   set_indent(2);
-  skelout();
+  skelout_upto("prev_find_next_state");
   gen_next_state(true);
 
   set_indent(1);
-  skelout();
+  skelout_upto("nul_trans_next_state");
   gen_NUL_trans();
 
-  skelout();
+  skelout_upto("yyunput_update_yylineno");
   if (do_yylineno) {
     /* update yylineno inside of unput() */
     indent_puts("if ( c == '\\n' )");
@@ -1450,7 +1450,7 @@ void make_tables()
     indent_down();
   }
 
-  skelout();
+  skelout_upto("yyinput_update_BOL");
   /* Update BOL and yylineno inside of input(). */
   if (bol_needed) {
     indent_puts("yy_current_buffer->yy_at_bol = (c == '\\n');");
@@ -1469,7 +1469,7 @@ void make_tables()
     indent_down();
   }
 
-  skelout();
+  skelout_upto("end_of_skeleton");
 
   /* Copy remainder of input to output. */
 

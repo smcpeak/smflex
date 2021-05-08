@@ -36,6 +36,7 @@
 
 #include <ctype.h>                     /* islower, isupper, etc. */
 #include <string.h>                    /* strcpy, etc. */
+#include <stdio.h>                     /* fprintf */
 #include <stdlib.h>                    /* exit */
 
 
@@ -757,13 +758,17 @@ void *reallocate_array(void *array, int size, size_t element_size)
 }
 
 
-/* skelout - write out one section of the skeleton file
+/* skelout_upto - write out one section of the skeleton file
  *
  * Description
  *    Copies scanner_skl_contents array to scanner_c_file
  *    until a line beginning with "%%" or EOF is found.
+ *
+ * 'expectedLabel' says which "%%" we expect to be next.  This ensures
+ * we stay synchronized and makes it easier to cross-reference the
+ * skeleton and the code generator.
  */
-void skelout()
+void skelout_upto(char const *expectedLabel)
 {
   char buf_storage[MAXLINE];
   char *buf = buf_storage;
@@ -773,8 +778,38 @@ void skelout()
   while ((buf = (char*)scanner_skl_contents[scanner_skl_ind++]) != 0) {
     if (buf[0] == '%') {        /* control line */
       switch (buf[1]) {
-        case '%':
+        case '%': {
+          int colonIndex;
+
+          if (buf[2] != ' ') {
+            fprintf(stderr,
+              _("%s: line %d: \"%%%%\" in skeleton must be immediately followed by a space\n"),
+              program_name, scanner_skl_ind);
+            exit(2);
+          }
+
+          /* Look for the following colon. */
+          for (colonIndex = 3;
+               buf[colonIndex] != '\0' && buf[colonIndex] != ':';
+               colonIndex++)
+            {}
+          if (buf[colonIndex] != ':') {
+            fprintf(stderr,
+              _("%s: line %d: \"%%%%\" in skeleton must be followed by a colon\n"),
+              program_name, scanner_skl_ind);
+            exit(2);
+          }
+
+          /* Make sure the label is right. */
+          if (0!=strncmp(expectedLabel, buf+3, colonIndex-3)) {
+            fprintf(stderr,
+              _("%s: line %d: skeleton \"%%%%\" line has wrong label; expected \"%s\"\n"),
+              program_name, scanner_skl_ind, expectedLabel);
+            exit(2);
+          }
+
           return;
+        }
 
         case '+':
           do_copy = C_plus_plus;
@@ -795,6 +830,15 @@ void skelout()
 
     else if (do_copy) {
       emit_with_class_name_substitution(scanner_c_file, buf);
+    }
+  }
+
+  if (buf == NULL) {
+    if (0!=strcmp(expectedLabel, "end_of_skeleton")) {
+      fprintf(stderr,
+        _("%s: reached end of skeleton file but expected label \"%s\"\n"),
+        program_name, expectedLabel);
+      exit(2);
     }
   }
 }

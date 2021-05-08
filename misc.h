@@ -63,7 +63,7 @@ void outn(const char str[]);
 void out_with_limit(char const *str, size_t length);
 char *readable_form(int c);
 void *reallocate_array(void *array, int size, size_t element_size);
-void skelout(void);
+void skelout_upto(char const *expectedLabel);
 void transition_struct_out(int element_v, int element_n);
 void *yy_flex_xmalloc(int size);
 void zero_out(char *region_ptr, size_t size_in_bytes);

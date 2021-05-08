@@ -855,9 +855,9 @@ void readin()
 
   /* Copy the first chunk from the skeleton.  From here on, extending
    * into 'make_tables()', we alternate between inserting fragments of
-   * code and calling 'skelout()' to copy successive chunks.  The logic
+   * code and calling 'skelout_upto()' to copy successive chunks.  The logic
    * here is tightly synchronized with the skeleton file organization. */
-  skelout();
+  skelout_upto("cpp_header");
 
   if (C_plus_plus) {
     compute_header_file_name();
@@ -873,7 +873,7 @@ void readin()
     out("\n#include <unistd.h>          /* read, needed for -Cr option */");
   }
 
-  skelout();
+  skelout_upto("yytext_def");
 
   if (reject)
     outn("\n#define YY_USES_REJECT");
