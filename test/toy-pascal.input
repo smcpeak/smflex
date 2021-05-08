@@ -1,0 +1,9 @@
+{toy-pascal.input}
+{Based on the "hello world" example on Wikipedia.}
+program HelloWorld(output);
+begin
+    Func(12, 34.50);
+    Write('Hello, World!')
+    {No ";" is required after the last statement of a block -
+        adding one adds a "null statement" to the program, which is ignored by the compiler.}
+end.

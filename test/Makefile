@@ -201,6 +201,7 @@ all-df: out/notrailing-context.ok
 all-df: out/noyylineno.ok
 all-df: out/outfile-specified.ok
 all-d : out/reject-frob.ok
+all-df: out/toy-pascal.ok
 all-d : out/trailing-context.ok
 all-df: out/username-main.c_as_cc.ok
 all-df: out/username-main.ok

@@ -387,60 +387,57 @@ are two rules, one which matches a newline ("\n") and increments both the
 line count and the character count, and one which matches any character
 other than a newline (indicated by the "." regular expression).
 
-<p>A somewhat more complicated example:
+<p>A somewhat more complicated
+<a href="test/toy-pascal.lex">example</a>:
 
-<pre><code>
+<pre><!-- BEGIN example: "toy-pascal.lex" fragment=true indent=4 --><code>
     /* scanner for a toy Pascal-like language */
 
     %{
-    /* need this for the call to atof() below */
-    #include &lt;math.h&gt;
+    #include &lt;math.h&gt;            /* atof */
+    #include &lt;stdlib.h&gt;          /* atoi */
     %}
 
     DIGIT    [0-9]
-    ID       [a-z][a-z0-9]*
+    ID       [a-zA-Z][a-zA-Z0-9]*
 
     %%
 
-    {DIGIT}+    {
-                  printf("An integer: %s (%d)\n", yytext,
-                         atoi(yytext));
-                }
+    {DIGIT}+              {
+                            printf("An integer: %s (%d)\n", yytext,
+                                   atoi(yytext));
+                          }
 
-    {DIGIT}+"."{DIGIT}*        {
-                  printf("A float: %s (%g)\n", yytext,
-                         atof(yytext));
-                }
+    {DIGIT}+"."{DIGIT}*   {
+                            printf("A float: %s (%g)\n", yytext,
+                                   atof(yytext));
+                          }
 
-    if|then|begin|end|procedure|function        {
-                  printf("A keyword: %s\n", yytext);
-                }
+    if|then|begin|end|procedure|function|program        {
+                            printf("A keyword: %s\n", yytext);
+                          }
 
-    {ID}        printf("An identifier: %s\n", yytext);
+    {ID}                  printf("An identifier: %s\n", yytext);
 
-    "+"|"-"|"*"|"/"   printf( "An operator: %s\n", yytext );
+    "'"[^'\n]*"'"         printf("A string: %s\n", yytext);
 
-    "{"[^}\n]*"}"     /* eat up one-line comments */
+    [+*/()-]              printf("An operator: %s\n", yytext);
+    [;.,]                 printf("A punctuator: %s\n", yytext);
 
-    [ \t\n]+          /* eat up whitespace */
+    "{"[^}]*"}"           /* eat up comments, including multi-line */
+    [ \t\n]+              /* eat up whitespace */
 
-    .           printf( "Unrecognized character: %s\n", yytext );
+    .                     printf("Unrecognized character: %s\n", yytext);
 
     %%
 
-    main( argc, argv )
-    int argc;
-    char **argv;
-        {
-        ++argv, --argc;  /* skip over program name */
-        if ( argc &gt; 0 )
-                yyin = fopen( argv[0], "r" );
-        else
-                yyin = stdin;
-
-        yylex();
-        }
-</code></pre>
+    int main(int argc, char **argv)
+    {
+      yyin = (argc &gt;= 2)? fopen(argv[1], "r") : stdin;
+      yylex();
+      return 0;
+    }
+</code><!-- END example --></pre>
 
 <p>This is the beginnings of a simple scanner for a language like
 Pascal. It identifies different types of <em>tokens</em> and reports on
@@ -484,11 +481,12 @@ can subsequently be referred to using "{name}", which will expand to
 
 <pre><code>
     DIGIT    [0-9]
-    ID       [a-z][a-z0-9]*
+    ID       [a-zA-Z][a-zA-Z0-9]*
 </code></pre>
 
 <p>defines "DIGIT" to be a regular expression which matches a single
-digit, and "ID" to be a regular expression which matches a letter followed
+digit, and "ID" to be a regular expression which matches a letter
+(lowercase or uppercase) followed
 by zero-or-more letters-or-digits. A subsequent reference to
 
 <pre><code>

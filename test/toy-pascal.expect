@@ -1,0 +1,20 @@
+A keyword: program
+An identifier: HelloWorld
+An operator: (
+An identifier: output
+An operator: )
+A punctuator: ;
+A keyword: begin
+An identifier: Func
+An operator: (
+An integer: 12 (12)
+A punctuator: ,
+A float: 34.50 (34.5)
+An operator: )
+A punctuator: ;
+An identifier: Write
+An operator: (
+A string: 'Hello, World!'
+An operator: )
+A keyword: end
+A punctuator: .
