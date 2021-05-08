@@ -360,9 +360,9 @@ this input, there is just one rule. "username" is the <em>pattern</em>
 and the "printf" is the <em>action</em>. The "%%" marks the beginning
 of the rules.
 
-<p>Here's another simple example:
+<p>Here's another simple <a href="test/count-lines-chars.lex">example</a>:
 
-<pre><code>
+<pre><!-- BEGIN example: "count-lines-chars.lex" fragment=true indent=4 --><code>
             int num_lines = 0, num_chars = 0;
 
     %%
@@ -370,13 +370,13 @@ of the rules.
     .       ++num_chars;
 
     %%
-    main()
-            {
-            yylex();
-            printf( &quot;# of lines = %d, # of chars = %d\n&quot;,
-                    num_lines, num_chars );
-            }
-</code></pre>
+    int main() {
+      yylex();
+      printf(&quot;# of lines = %d, # of chars = %d\n&quot;,
+             num_lines, num_chars);
+      return 0;
+    }
+</code><!-- END example --></pre>
 
 <p>This scanner counts the number of characters and the number of
 lines in its input (it produces no output other than the final report
