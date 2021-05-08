@@ -1,12 +1,18 @@
 /* username.lex */
 /* Very simple example based on the first one in the manual. */
 
-/* Do not use yywrap(). */
-/* 2021-04-30: It now defaults to off. */
-/*%option noyywrap*/
+  /* The example in the manual is meant to be calling POSIX
+   * 'getlogin()', but for the sake of portability I am
+   * substituting this instead. */
+  static char const *getlogin()
+  {
+    return "USERNAME";
+  }
 
+  /* BEGIN: example fragment */
 %%
-username           printf("USERNAME");
+username    printf("%s", getlogin());
+  /* END: example fragment */
 
 %%
 /* EOF */

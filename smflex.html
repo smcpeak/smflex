@@ -347,10 +347,10 @@ expressions. Whenever it finds one, it executes the corresponding C code.
 scanner which whenever it encounters the string "username" will replace
 it with the user's login name:
 
-<pre><code>
+<pre><!-- BEGIN example: "username.lex" fragment=true indent=4 --><code>
     %%
-    username    printf( &quot;%s&quot;, getlogin() );
-</code></pre>
+    username    printf(&quot;%s&quot;, getlogin());
+</code><!-- END example --></pre>
 
 <p>By default, any text not matched by a <code>smflex</code> scanner is
 copied to the output, so the net effect of this scanner is to copy its
