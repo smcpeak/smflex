@@ -27,7 +27,7 @@ int main()
   yy_set_interactive(isatty(fileno(yyin)) > 0);
   while (yylex())
     {}
-  /* BEGIN: example fragment */
+  /* END: example fragment */
   return 0;
 }
 

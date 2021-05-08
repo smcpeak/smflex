@@ -9,13 +9,13 @@ static void special(void);
 
 %}
 
-        /* BEGIN: fragment in manual */
+        /* BEGIN: example fragment */
         int word_count = 0;
 %%
 
 frob        special(); REJECT;
 [^ \t\n]+   ++word_count;
-        /* END: fragment in manual */
+        /* END: example fragment */
 
 [ \t\n]     /* Nothing; do not echo. */
 

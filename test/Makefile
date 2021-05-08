@@ -156,17 +156,10 @@ endif
 	touch $@
 
 # Check that what is in the manual matches what is in the tests.
-out/%.matches: % ../smflex.html
+all: out/matching-examples.ok
+out/matching-examples.ok: ../smflex.html
 	@mkdir -p out
-	cat ../smflex.html | \
-	  sed -n -e '/-- BEGIN example: $* --/,/-- END example --/p' | \
-	  grep -v -- '-- BEGIN example' | \
-	  grep -v -- '-- END example' | \
-	  sed -e 's/^    //' \
-	      -e 's/&lt;/</g' \
-	      -e 's/&gt;/>/g' \
-	      -e 's/&amp;/&/g' > out/$*.manual
-	diff -u $* out/$*.manual
+	$(PYTHON3) ./check-doc-examples.py $^
 	touch $@
 
 # Test the -L (no #line directive) option.
@@ -193,7 +186,6 @@ all-df: out/continued-action2.ok
 all-df: out/cpp-int-batch.ok
 all-df: out/cpp-int-default.ok
 all-d : out/cpp-int-interactive.ok
-all-df: out/cpp-manual-example.lexpp.matches
 all-df: out/cpp-manual-example.ok
 all-df: out/cpp-prefix-yywrap-yyclass.ok
 all-df: out/cpp-prefix-yywrap.ok

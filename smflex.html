@@ -915,13 +915,13 @@ an action:
     count the words in the input and call the routine special() whenever
     "frob" is seen:
 
-    <pre><code>
+    <pre><code><!-- BEGIN example: "reject-frob.lex" fragment=true indent=8 -->
                 int word_count = 0;
         %%
 
         frob        special(); REJECT;
         [^ \t\n]+   ++word_count;
-    </code></pre>
+    </code></pre><!-- END example -->
 
     <p>Without the <code>REJECT</code>, any "frob"'s in the input would not
     be counted as words, since the scanner normally executes only one action
@@ -1822,12 +1822,12 @@ prior to beginning to scan the buffer that is (or is not) to be considered
 interactive, as demonstrated by
 <a href="test/c-int-interactive-set-int-isatty.lex"><code>test/c-int-interactive-set-int-isatty.lex</code></a>:
 
-<pre><code>
+<pre><code><!-- BEGIN example: "c-int-interactive-set-int-isatty.lex" fragment=true indent=2 -->
     yyin = stdin;
     yy_set_interactive(isatty(fileno(yyin)) &gt; 0);
     while (yylex())
       {}
-</code></pre>
+</code></pre><!-- END example -->
 
 <dt><code>yy_set_bol(at_bol)</code>
 
@@ -3755,7 +3755,7 @@ option discussed above.
 
 <p>Here is an example of a simple C++ scanner:
 
-<pre><code><!-- BEGIN example: cpp-manual-example.lexpp -->
+<pre><code><!-- BEGIN example: "cpp-manual-example.lexpp" indent=4 -->
         // An example of using the smflex C++ scanner class.
 
     %option c++
