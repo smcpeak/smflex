@@ -197,6 +197,7 @@ all-df: out/cppscan.ok
 all-df: out/count-lines-chars.ok
 all-df: out/elsa-lexer.ok
 all-df: out/html-link-validator.ok
+all-df: out/input-c-comments.ok
 all-df: out/noreject-frob.ok
 all-df: out/normalize-whitespace.ok
 all-df: out/notrailing-context.ok
@@ -212,6 +213,7 @@ all-df: out/username-main.ok
 all-df: out/username-yywrap.ok
 all-df: out/username.ok
 all-df: out/vert-bar-action.ok
+all-df: out/yyinput-c-comments.ok
 all-d : out/yyless-foobar.ok
 all-d : out/yylineno.ok
 all-d : out/yymore-mega-kludge.ok

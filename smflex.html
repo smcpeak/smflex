@@ -1053,9 +1053,9 @@ an action:
     reads the next character from the input.  Once a character is read in
     this way, it is considered "consumed", and will not be subsequently
     matched by scanner rules.  For example, the
-    following is one way to eat up C comments:
+    <a href="test/input-c-comments.lex">following</a> is one way to eat up C comments:
 
-    <pre><code>
+    <pre><!-- BEGIN example: "input-c-comments.lex" fragment=true indent=8 --><code>
         %%
         "/*"      {
                     int c;
@@ -1077,7 +1077,7 @@ an action:
                       }
                     }
                   }
-    </code></pre>
+    </code><!-- END example --></pre>
 
     <p>If the generated scanner is compiled with a C++ compiler
     (with or without <code>%option c++</code>),
