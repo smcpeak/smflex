@@ -994,15 +994,16 @@ an action:
     token back to the input stream, where they will be rescanned when
     the scanner looks for the next match. <code>yytext</code> and
     <code>yyleng</code> are adjusted appropriately (e.g.,
-    <code>yyleng</code> will now be equal to <code>n</code> ). For
-    example, on the input "foobar" the following will write out
+    <code>yyleng</code> will now be equal to <code>n</code>). For
+    example, on the input "foobar" the
+    <a href="test/yyless-foobar.lex">following</a> will write out
     "foobarbar":
 
-    <pre><code>
+    <pre><!-- BEGIN example: "yyless-foobar.lex" fragment=true indent=8 --><code>
         %%
         foobar    ECHO; yyless(3);
         [a-z]+    ECHO;
-    </code></pre>
+    </code><!-- END example --></pre>
 
     <p>An argument of 0 to <code>yyless</code> will cause the entire current
     input string to be scanned again. Unless you've changed how the scanner

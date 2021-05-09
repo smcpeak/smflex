@@ -211,6 +211,7 @@ all-df: out/username-main.ok
 all-df: out/username-yywrap.ok
 all-df: out/username.ok
 all-df: out/vert-bar-action.ok
+all-d : out/yyless-foobar.ok
 all-d : out/yylineno.ok
 all-d : out/yymore-mega-kludge.ok
 all-df: out/zap-me.ok
