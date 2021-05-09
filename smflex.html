@@ -1168,17 +1168,18 @@ either the number of characters read or the constant <code>YY_NULL</code> (0 on 
 systems) to indicate EOF. The default <code>YY_INPUT</code> reads from the global
 pointer <code>yyin</code>.
 
-<p>A sample definition of <code>YY_INPUT</code> (in the definitions section of the
+<p>A <a href="test/yy-input-redefined.lex">sample</a>
+definition of <code>YY_INPUT</code> (in the definitions section of the
 input file) is:
 
-<pre><code>
+<pre><!-- BEGIN example: "yy-input-redefined.lex" fragment=true indent=4 --><code>
     %{
     #define YY_INPUT(buf, result, max_size) {          \
       int c = getchar();                               \
       result = (c == EOF) ? YY_NULL : (buf[0] = c, 1); \
     }
     %}
-</code></pre>
+</code><!-- END example --></pre>
 
 <p>This definition will change the input processing to occur one character
 at a time.  (The <code>-I</code> / <code>%option interactive</code>

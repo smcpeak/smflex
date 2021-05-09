@@ -213,6 +213,7 @@ all-df: out/username-main.ok
 all-df: out/username-yywrap.ok
 all-df: out/username.ok
 all-df: out/vert-bar-action.ok
+all-df: out/yy-input-redefined.ok
 all-df: out/yyinput-c-comments.ok
 all-d : out/yyless-foobar.ok
 all-d : out/yylineno.ok
