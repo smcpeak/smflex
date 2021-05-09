@@ -1306,22 +1306,23 @@ equivalent to <code>BEGIN(0)</code>. (The parentheses around the start
 condition name are not required but are considered good style.)
 
 <p><code>BEGIN</code> actions can also be given as indented code
-at the beginning of the rules section. For example, the following
+at the beginning of the rules section. For example, the
+<a href="test/begin-special.lex">following</a>
 will cause the scanner to enter the "SPECIAL" start condition
 whenever <code>yylex()</code> is called and the global variable
 <code>enter_special</code> is true:
 
-<pre><code>
-            int enter_special;
+<pre><!-- BEGIN example: "begin-special.lex" fragment=true indent=4 --><code>
+                    int enter_special;
 
     %x SPECIAL
     %%
-            if ( enter_special )
-                BEGIN(SPECIAL);
+                    if (enter_special) {
+                      BEGIN(SPECIAL);
+                    }
 
-    &lt;SPECIAL&gt;blahblahblah
-    ...more rules follow...
-</code></pre>
+    &lt;SPECIAL&gt;token  {      /* ... etc. ... */
+</code><!-- END example --></pre>
 
 <p>To illustrate the uses of start conditions, here is a scanner which
 provides two different interpretations of a string like "123.456". By

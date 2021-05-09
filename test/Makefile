@@ -172,6 +172,7 @@ out/c-lexer1-no-lines.yy.c: c-lexer1.lex $(SMFLEX)
 	fi
 
 # Tests to run in both "default" and "full" configurations.
+all-df: out/begin-special.ok
 all-df: out/c-int-batch.ok
 all-df: out/c-int-default.ok
 all-d : out/c-int-interactive.ok
