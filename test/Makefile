@@ -157,9 +157,9 @@ endif
 
 # Check that what is in the manual matches what is in the tests.
 all: out/matching-examples.ok
-out/matching-examples.ok: ../smflex.html
+out/matching-examples.ok: ../smflex.html check-doc-examples.py
 	@mkdir -p out
-	$(PYTHON3) ./check-doc-examples.py $^
+	$(PYTHON3) ./check-doc-examples.py $<
 	touch $@
 
 # Test the -L (no #line directive) option.
