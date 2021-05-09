@@ -1379,32 +1379,30 @@ with each rule. In general, when attempting to write a high-speed scanner
 try to match as much possible in each rule, as it's a big win.
 
 <p>Note that start-conditions names are really integer values and can
-be stored as such. Thus, the above could be extended in the following
+be stored as such. Thus, the above could be extended in the
+<a href="test/discard-c-comments2.lex">following</a>
 fashion:
 
-<pre><code>
+<pre><!-- BEGIN example: "discard-c-comments2.lex" fragment=true indent=4 --><code>
     %x comment foo
+                            int line_num = 1;
+                            int comment_caller = INITIAL;
     %%
-            int line_num = 1;
-            int comment_caller;
+    "/*"                    {
+                              comment_caller = INITIAL;
+                              BEGIN(comment);
+                            }
 
-    "/*"         {
-                 comment_caller = INITIAL;
-                 BEGIN(comment);
-                 }
-
-    ...
-
-    &lt;foo&gt;"/*"    {
-                 comment_caller = foo;
-                 BEGIN(comment);
-                 }
+    &lt;foo&gt;"/*"               {
+                              comment_caller = foo;
+                              BEGIN(comment);
+                            }
 
     &lt;comment&gt;[^*\n]*        /* eat anything that's not a '*' */
     &lt;comment&gt;"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
     &lt;comment&gt;\n             ++line_num;
     &lt;comment&gt;"*"+"/"        BEGIN(comment_caller);
-</code></pre>
+</code><!-- END example --></pre>
 
 <p>Furthermore, you can access the current start condition using the
 integer-valued <code>YY_START</code> macro. For example, the above
@@ -1418,8 +1416,9 @@ assignments to <code>comment_caller</code> could instead be written
 <code>YY_START</code> (since that is what's used by AT&amp;T
 <code>lex</code>).
 
-<p>Note that start conditions do not have their own name-space; %s's
-and %x's declare names in the same fashion as #define's.
+<p>Beware that start conditions do not have their own name-space;
+<code>%s</code>'s and <code>%x</code>'s declare names in the same
+fashion as <code>#define</code>'s.
 
 <p>Finally, here's an example of how to match C-style quoted strings
 using exclusive start conditions, including expanded escape sequences

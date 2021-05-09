@@ -1,0 +1,17 @@
+here we [line_num 1 in state 0] go!
+something something something  dark side
+eleven [line_num 3 in state 0] days
+twelve squid  and five [line_num 6 in state 0] elephants
+[line_num 7 in state 0]
+beginfoo
+here we [line_num 9 in state 2] go!
+something something something  dark side
+eleven [line_num 11 in state 2] days
+twelve squid  and five [line_num 14 in state 2] elephants
+[line_num 15 in state 2]
+endfoo
+here we [line_num 17 in state 0] go!
+something something something  dark side
+eleven [line_num 19 in state 0] days
+twelve squid  and five [line_num 22 in state 0] elephants
+[line_num 23 in state 0]
