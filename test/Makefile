@@ -196,6 +196,7 @@ all-df: out/cppscan-yywrap.ok
 all-df: out/cppscan.ok
 all-df: out/count-lines-chars.ok
 all-df: out/elsa-lexer.ok
+all-df: out/html-link-validator.ok
 all-df: out/noreject-frob.ok
 all-df: out/normalize-whitespace.ok
 all-df: out/notrailing-context.ok
@@ -221,6 +222,16 @@ endif
 # These tests read a second file.
 username-yywrap.ok: username-yywrap.input2
 cppscan-yywrap.ok: cppscan-yywrap.input2
+
+# v.Nu does not validate links, so I wrote a little smflex program
+# to do it.  Use it to check the manual.
+#
+# This rule appears before the v.Nu rule because then 'make' will
+# normally run it first, and it is very fast.
+all: out/smflex-check-links.ok
+out/smflex-check-links.ok: ../smflex.html out/html-link-validator.exe
+	cd .. && FAIL_IF_ERRORS=1 test/out/html-link-validator.exe < smflex.html
+	touch $@
 
 # Check smflex.html for syntax errors if HTML_CHECKER is defined.
 # I use the Nu Html Checker (v.Nu) at:

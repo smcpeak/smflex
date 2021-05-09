@@ -1,0 +1,6 @@
+<h1 id="anchor1">Heading 1</h1>
+<a href="#another-anchor">link</a>
+<span id="another-anchor">some span</span>
+<a href="#missing-anchor">link</a>
+<a href="html-link-validator.lex">link to file</a>
+<a href="this file does not exist">link to non-existent file</a>
