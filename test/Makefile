@@ -219,6 +219,7 @@ all-df: out/scan-string-etc.ok
 all-df: out/set-bol.ok
 all-d : out/trailing-context.ok
 all-df: out/unput-parenthesized.ok
+all-d : out/username-full.ok
 all-df: out/username-main.c_as_cc.ok
 all-df: out/username-main.ok
 all-df: out/username-yywrap.ok
