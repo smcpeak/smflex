@@ -1,0 +1,8 @@
+state some text
+state then (* a comment *) more text
+state nested (* comments (* can (* be *) tricky *) to *) handle
+state beginfoo
+state quick open (**) and close
+state endfoo
+state comment with (**********) lots of stars
+state comment with paren (* ) *) in it

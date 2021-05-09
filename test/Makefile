@@ -198,6 +198,7 @@ all-df: out/cppscan.ok
 all-df: out/count-lines-chars.ok
 all-df: out/discard-c-comments.ok
 all-df: out/discard-c-comments2.ok
+all-df: out/discard-ml-comments.ok
 all-df: out/elsa-lexer.ok
 all-df: out/expect-floats.ok
 all-df: out/gather-c-string.ok
