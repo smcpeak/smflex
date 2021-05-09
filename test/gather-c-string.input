@@ -1,0 +1,8 @@
+int main()
+{
+  printf("Hello, world!\n");
+  printf("abcd as octal escapes: \141\142\143\144");
+  printf("unterminated string
+  printf("bad escapes: \999 \48 done");
+  return 0;
+}

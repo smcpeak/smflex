@@ -1,0 +1,7 @@
+string literal: Hello, world!
+
+string literal: abcd as octal escapes: abcd
+unterminated string literal
+bad escape sequence: "\999"
+bad escape sequence: "\48"
+string literal: bad escapes:   done
