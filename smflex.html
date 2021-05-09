@@ -1889,8 +1889,11 @@ makes rules anchored with
 
 <dd>
 <p>The macro <code>YY_AT_BOL()</code> returns true if the next token
-scanned from the current buffer will have '^' rules active, false
+scanned from the current buffer will have <code>^</code> rules active, false
 otherwise.
+
+<p>See <a href="test/set-bol.lex"><code>test/set-bol.lex</code></a>
+for an example with <code>yy_set_bol</code> and <code>YY_AT_BOL</code>.
 
 <dt><code>YY_BREAK</code>
 
