@@ -202,6 +202,7 @@ all-df: out/normalize-whitespace.ok
 all-df: out/notrailing-context.ok
 all-df: out/noyylineno.ok
 all-df: out/outfile-specified.ok
+all-d : out/reject-abcd.ok
 all-d : out/reject-frob.ok
 all-df: out/toy-pascal.ok
 all-d : out/trailing-context.ok

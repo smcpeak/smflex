@@ -941,17 +941,18 @@ an action:
     be counted as words, since the scanner normally executes only one action
     per token. Multiple <code>REJECT</code>s are allowed, each one finding
     the next best choice to the currently active rule. For example, when
-    the following scanner scans the token "abcd", it will write "abcdabcaba"
+    the <a href="test/reject-abcd.lex">following scanner</a> scans the
+    token "abcd", it will write "abcdabcaba"
     to the output:
 
-    <pre><code>
+    <pre><!-- BEGIN example: "reject-abcd.lex" fragment=true indent=8 --><code>
         %%
         a        |
         ab       |
         abc      |
         abcd     ECHO; REJECT;
         .|\n     /* eat up any unmatched character */
-    </code></pre>
+    </code><!-- END example --></pre>
 
     <p>(The first three rules share the fourth's action since they use the
     special '|' action.)  Any use of <code>REJECT</code> imposes
