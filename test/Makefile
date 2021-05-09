@@ -201,6 +201,7 @@ all-df: out/discard-c-comments2.ok
 all-df: out/elsa-lexer.ok
 all-df: out/expect-floats.ok
 all-df: out/gather-c-string.ok
+all-df: out/gather-c-string2.ok
 all-df: out/html-link-validator.ok
 all-df: out/input-c-comments.ok
 all-df: out/noreject-frob.ok
