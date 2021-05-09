@@ -197,6 +197,7 @@ all-df: out/cppscan-yywrap.ok
 all-df: out/cppscan.ok
 all-df: out/count-lines-chars.ok
 all-df: out/elsa-lexer.ok
+all-df: out/expect-floats.ok
 all-df: out/html-link-validator.ok
 all-df: out/input-c-comments.ok
 all-df: out/noreject-frob.ok
