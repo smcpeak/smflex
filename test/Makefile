@@ -184,6 +184,7 @@ all-df: out/c-int-set-int-isatty.ok
 all-df: out/c-lexer1.ok
 all-df: out/c-lexer1-no-lines.ok
 all-df: out/continued-action2.ok
+all-df: out/count-actions.ok
 all-df: out/cpp-int-batch.ok
 all-df: out/cpp-int-default.ok
 all-d : out/cpp-int-interactive.ok
