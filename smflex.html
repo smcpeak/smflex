@@ -1359,21 +1359,20 @@ the floating-point number 123.456:
     "."                 printf("found a dot\n");
 </code><!-- END example --></pre>
 
-<p>Here is a scanner which recognizes (and discards) C comments while
+<p><a href="test/discard-c-comments.lex">Here</a> is a scanner which
+recognizes (and discards) C comments while
 maintaining a count of the current input line.
 
-<pre><code>
+<pre><!-- BEGIN example: "discard-c-comments.lex" fragment=true indent=4 --><code>
     %x comment
+                            int line_num = 1;
     %%
-            int line_num = 1;
-
-    "/*"         BEGIN(comment);
-
+    "/*"                    BEGIN(comment);
     &lt;comment&gt;[^*\n]*        /* eat anything that's not a '*' */
     &lt;comment&gt;"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
     &lt;comment&gt;\n             ++line_num;
     &lt;comment&gt;"*"+"/"        BEGIN(INITIAL);
-</code></pre>
+</code><!-- END example --></pre>
 
 <p>This scanner goes to a bit of trouble to match as much text as possible
 with each rule. In general, when attempting to write a high-speed scanner
