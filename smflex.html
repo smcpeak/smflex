@@ -1755,40 +1755,38 @@ for an example demonstrating each of these functions.
 <!-- ======================================================= -->
 <h1 id="end-of-file-rules">END-OF-FILE RULES</h1>
 
-<p>The special rule "&lt;&lt;EOF&gt;&gt;" indicates actions which are to
+<p>The special rule "<code>&lt;&lt;EOF&gt;&gt;</code>" indicates actions which are to
 be taken when an end-of-file is encountered and <code>yywrap()</code> returns non-zero
 (i.e., indicates no further files to process). The action must finish
 by doing one of four things:
 
 <ul>
 
-<li><p>assigning <code>yyin</code>
-    to a new input file (in previous versions of <code>smflex</code>, after doing the
-    assignment you had to call the special action
-    <code>YY_NEW_FILE;</code> this is no longer necessary);
+<li><p>assigning <code>yyin</code> to a new input file;
 
 <li><p>executing a <code>return</code> statement;
 
 <li><p>executing the special <code>yyterminate()</code> action;
 
 <li><p>or, switching to a new buffer using <code>yy_switch_to_buffer()</code>
-    as shown in the example above.
+    as shown in the example in
+    <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
 
 </ul>
 
-<p>&lt;&lt;EOF&gt;&gt; rules may not be used with other patterns; they
+<p><code>&lt;&lt;EOF&gt;&gt;</code> rules may not be used with other patterns; they
 may only be qualified with a list of start conditions. If an unqualified
-&lt;&lt;EOF&gt;&gt; rule is given, it applies to <em>all</em> start
-conditions which do not already have &lt;&lt;EOF&gt;&gt; actions. To
-specify an &lt;&lt;EOF&gt;&gt; rule for only the initial start condition,
-use
+<code>&lt;&lt;EOF&gt;&gt;</code> rule is given, it applies to <em>all</em> start
+conditions which do not already have <code>&lt;&lt;EOF&gt;&gt;</code> actions. To
+specify an <code>&lt;&lt;EOF&gt;&gt;</code> rule for only the initial start condition,
+use:
 
 <pre><code>
     &lt;INITIAL&gt;&lt;&lt;EOF&gt;&gt;
 </code></pre>
 
-<p>These rules are useful for catching things like unclosed comments. An
-example:
+<p>These rules are useful for catching things like unclosed comments and
+strings.  For example:
 
 <pre><code>
     %x quote
@@ -1797,14 +1795,14 @@ example:
     ...other rules for dealing with quotes...
 
     &lt;quote&gt;&lt;&lt;EOF&gt;&gt;   {
-             error( "unterminated quote" );
-             yyterminate();
+               error("unterminated quote");
+               yyterminate();
              }
     &lt;&lt;EOF&gt;&gt;  {
-             if ( *++filelist )
-                 yyin = fopen( *filelist, "r" );
-             else
-                yyterminate();
+               if (*++filelist)
+                 yyin = fopen(*filelist, "r");
+               else
+                 yyterminate();
              }
 </code></pre>
 
