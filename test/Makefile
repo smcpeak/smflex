@@ -206,6 +206,7 @@ all-d : out/reject-abcd.ok
 all-d : out/reject-frob.ok
 all-df: out/toy-pascal.ok
 all-d : out/trailing-context.ok
+all-df: out/unput-parenthesized.ok
 all-df: out/username-main.c_as_cc.ok
 all-df: out/username-main.ok
 all-df: out/username-yywrap.ok

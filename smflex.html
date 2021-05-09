@@ -1015,11 +1015,12 @@ an action:
 
 <li><p><code>unput(c)</code>
     puts the character <code>c</code> back onto the input stream. It
-    will be the next character scanned. The following action will take
+    will be the next character scanned. The
+    <a href="test/unput-parenthesized.lex">following action</a> will take
     the current token and cause it to be rescanned enclosed in
     parentheses.
 
-    <pre><code>
+    <pre><!-- BEGIN example: "unput-parenthesized.lex" fragment=true indent=0 --><code>
     {
       int i;
       /* Copy yytext because unput() trashes yytext */
@@ -1031,7 +1032,7 @@ an action:
       unput('(');
       free(yycopy);
     }
-    </code></pre>
+    </code><!-- END example --></pre>
 
     <p>Note that since each <code>unput()</code> puts the given character
     back at the <em>beginning</em> of the input stream, pushing back strings
