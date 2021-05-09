@@ -212,6 +212,7 @@ all-df: out/username-yywrap.ok
 all-df: out/username.ok
 all-df: out/vert-bar-action.ok
 all-d : out/yylineno.ok
+all-d : out/yymore-mega-kludge.ok
 all-df: out/zap-me.ok
 
 # Add the right set of tests to 'all'.

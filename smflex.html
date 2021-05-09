@@ -967,14 +967,15 @@ an action:
     tells the scanner that the next time it matches a rule, the
     corresponding token should be <em>appended</em> onto the current
     value of <code>yytext</code> rather than replacing it. For example,
-    given the input "mega-kludge" the following will write
+    given the input "mega-kludge" the
+    <a href="test/yymore-mega-kludge.lex">following</a> will write
     "mega-mega-kludge" to the output:
 
-    <pre><code>
+    <pre><!-- BEGIN example: "yymore-mega-kludge.lex" fragment=true indent=8 --><code>
         %%
         mega-    ECHO; yymore();
         kludge   ECHO;
-    </code></pre>
+    </code><!-- END example --></pre>
 
     <p>First "mega-" is matched and echoed to the output. Then "kludge"
     is matched, but the previous "mega-" is still hanging around at the
