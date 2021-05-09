@@ -130,7 +130,7 @@ ifeq ($(MAINTAINER_MODE),1)
 	@#
 	@# Check the #line directives.
 	@#
-	$(PYTHON3) ./check-line-directives.py input-scan.lex.c
+	$(PYTHON3) ./test/check-line-directives.py input-scan.lex.c
 endif
 	@echo "Check successful, using COMPRESSION=\"$(COMPRESSION)\"".
 	@echo "Run \"make -C test check\" and \"make bigcheck\" for more thorough checking."
@@ -194,7 +194,6 @@ DISTFILES += Makefile
 DISTFILES += NEWS
 DISTFILES += README.md
 DISTFILES += ccl.h
-DISTFILES += check-line-directives.py
 DISTFILES += config.mk.in
 DISTFILES += configure
 DISTFILES += configure.in

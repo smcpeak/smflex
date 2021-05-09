@@ -58,7 +58,7 @@ PYTHON3 := python3
 out/%.yy.c: %.lex
 	@mkdir -p out
 	$(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -o$@ $<
-	$(PYTHON3) ../check-line-directives.py $@
+	$(PYTHON3) ./check-line-directives.py $@
 
 # Run smflex on outfile.lex, avoiding use of -o option.
 out/outfile-specified.yy.c: outfile.lex $(SMFLEX)
@@ -95,7 +95,7 @@ out/%.o: %.c
 out/%.yy.cc: %.lexpp $(SMFLEX)
 	@mkdir -p out
 	$(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -o$@ $<
-	$(PYTHON3) ../check-line-directives.py $@
+	$(PYTHON3) ./check-line-directives.py $@
 
 # Compile C++ file in out/.
 .PRECIOUS: out/%.oo
