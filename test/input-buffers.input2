@@ -1,0 +1,5 @@
+in input-buffers.input2
+include input-buffers.input3
+back in 2
+include input-buffers.input4
+back in 2 again

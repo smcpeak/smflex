@@ -204,6 +204,7 @@ all-df: out/expect-floats.ok
 all-df: out/gather-c-string.ok
 all-df: out/gather-c-string2.ok
 all-df: out/html-link-validator.ok
+all-df: out/input-buffers.ok
 all-df: out/input-c-comments.ok
 all-df: out/noreject-frob.ok
 all-df: out/normalize-whitespace.ok
@@ -233,9 +234,10 @@ ifeq ($(TEST_CONFIG),default)
   all: all-d
 endif
 
-# These tests read a second file.
+# These tests read additional files.
 username-yywrap.ok: username-yywrap.input2
 cppscan-yywrap.ok: cppscan-yywrap.input2
+input-buffers.ok: input-buffers.input2 input-buffers.input3 input-buffers.input4
 
 # v.Nu does not validate links, so I wrote a little smflex program
 # to do it.  Use it to check the manual.

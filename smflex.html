@@ -1576,7 +1576,7 @@ mechanism for creating and switching between multiple input buffers. An
 input buffer is created by using:
 
 <pre><code>
-    YY_BUFFER_STATE yy_create_buffer( FILE *file, int size )
+    YY_BUFFER_STATE yy_create_buffer(FILE *file, int size)
 </code></pre>
 
 <p>which takes a <code>FILE</code> pointer and a size and creates a buffer
@@ -1588,39 +1588,50 @@ type is a pointer to an opaque <code>struct yy_buffer_state</code>
 structure, so you may safely initialize YY_BUFFER_STATE variables to
 <code>((YY_BUFFER_STATE) 0)</code> if you wish, and also refer to the
 opaque structure in order to correctly declare input buffers in source
-files other than that of your scanner. Note that the <code>FILE</code>
-pointer in the call to <code>yy_create_buffer</code> is only used as
-the value of <code>yyin</code> seen by <code>YY_INPUT;</code> if you
+files other than that of your scanner.
+
+<p>The <code>FILE</code>
+pointer in the call to <code>yy_create_buffer</code> is used to set
+the value of <code>yyin</code> while that buffer is the active
+input source.  Within the generated code,
+<code>yyin</code> is only used by <code>YY_INPUT</code>; if you
 redefine <code>YY_INPUT</code> so it no longer uses <code>yyin</code>,
-then you can safely pass a nil <code>FILE</code> pointer to
-<code>yy_create_buffer</code>. You select a particular buffer to scan
-from using:
+then you can safely pass <code>NULL</code> as the <code>FILE</code> pointer.
+However, you may want to use
+<code>yyin</code> yourself, for example (as shown in the example
+below) to close the file.
+
+<p>
+You select a particular buffer to be the active input source with:
 
 <pre><code>
-    void yy_switch_to_buffer( YY_BUFFER_STATE new_buffer )
+    void yy_switch_to_buffer(YY_BUFFER_STATE new_buffer)
 </code></pre>
 
-<p>switches the scanner's input buffer so subsequent tokens will come
-from <code>new_buffer</code>. Note that <code>yy_switch_to_buffer()</code>
-may be used by <code>yywrap()</code> to set things up for continued scanning, instead
-of opening a new file and pointing <code>yyin</code> at it. Note also
-that switching input sources via either <code>yy_switch_to_buffer()</code>
-or <code>yywrap()</code> does <em>not</em> change the start condition.
+<p>This switches the scanner's input buffer so subsequent tokens will come
+from <code>new_buffer</code>.  <code>yy_switch_to_buffer()</code>
+may be used by <code>yywrap()</code> to set things up for continued scanning instead
+of opening a new file and pointing <code>yyin</code> at it.  Calling
+this function does <em>not</em> change the start condition.
+
+<p>When finished scanning from a buffer, call:
 
 <pre><code>
-    void yy_delete_buffer( YY_BUFFER_STATE buffer )
+    void yy_delete_buffer(YY_BUFFER_STATE buffer)
 </code></pre>
 
-<p>is used to reclaim the storage associated with a buffer. (
-<code>buffer</code> can be nil, in which case the routine does
-nothing.) You can also clear the current contents of a buffer using:
+<p>to reclaim the storage associated with it.  If <code>buffer</code> is
+<code>NULL</code>, this function does nothing.
+
+<p>To discard data that has already been read and buffered from a
+particular source, call:
 
 <pre><code>
-    void yy_flush_buffer( YY_BUFFER_STATE buffer )
+    void yy_flush_buffer(YY_BUFFER_STATE buffer)
 </code></pre>
 
-<p>This function discards the buffer's contents, so the next time the
-scanner attempts to match a token from the buffer, it will first fill
+<p>After calling this function, the next time the
+scanner attempts to read data from the buffer, it will first fill
 the buffer anew using <code>YY_INPUT</code>.
 
 <p><code>yy_new_buffer()</code> is an alias for
@@ -1631,64 +1642,65 @@ dynamic objects.
 <p>Finally, the <code>YY_CURRENT_BUFFER</code> macro returns a
 <code>YY_BUFFER_STATE</code> handle to the current buffer.
 
-<p>Here is an example of using these features for writing a scanner which
+<p>Here is an <a href="test/input-buffers.lex">example</a>
+of using these features for writing a scanner which
 expands include files (the <code>&lt;&lt;EOF&gt;&gt;</code> feature is
-discussed below):
+explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
 
-<pre><code>
-    /* the "incl" state is used for picking up the name
-     * of an include file
-     */
+<pre><!-- BEGIN example: "input-buffers.lex" fragment=true indent=4 --><code>
+    /* The "incl" state is used for picking up the name of an include file. */
     %x incl
 
     %{
     #define MAX_INCLUDE_DEPTH 10
     YY_BUFFER_STATE include_stack[MAX_INCLUDE_DEPTH];
-    int include_stack_ptr = 0;
+    int include_stack_len = 0;
     %}
 
     %%
-    include             BEGIN(incl);
+    include[ ]+         BEGIN(incl);
 
     [a-z]+              ECHO;
     [^a-z\n]*\n?        ECHO;
 
-    &lt;incl&gt;[ \t]*      /* eat the whitespace */
-    &lt;incl&gt;[^ \t\n]+   { /* got the include file name */
-            if ( include_stack_ptr &gt;= MAX_INCLUDE_DEPTH )
-                {
-                fprintf( stderr, "Includes nested too deeply" );
-                exit( 1 );
-                }
+    &lt;incl&gt;[^\n]+      { /* got the include file name */
+              FILE *fp = fopen(yytext, "r");
+              if (!fp) {
+                fprintf(stderr, "Cannot open include file: \"%s\".\n", yytext);
+                exit(2);
+              }
 
-            include_stack[include_stack_ptr++] =
-                YY_CURRENT_BUFFER;
+              if (include_stack_len &gt;= MAX_INCLUDE_DEPTH) {
+                fprintf(stderr, "Includes nested too deeply.\n");
+                exit(2);
+              }
+              include_stack[include_stack_len++] = YY_CURRENT_BUFFER;
 
-            yyin = fopen( yytext, "r" );
+              YY_BUFFER_STATE newbuf = yy_create_buffer(fp, YY_BUF_SIZE);
+              yy_switch_to_buffer(newbuf);
 
-            if ( ! yyin )
-                error( ... );
-
-            yy_switch_to_buffer(
-                yy_create_buffer( yyin, YY_BUF_SIZE ) );
-
-            BEGIN(INITIAL);
+              /* Start condition for processing the new file. */
+              BEGIN(INITIAL);
             }
 
     &lt;&lt;EOF&gt;&gt; {
-            if ( --include_stack_ptr &lt; 0 )
-                {
-                yyterminate();
-                }
+              /* We are done with the current buffer. */
+              if (include_stack_len &gt;= 1) {
+                /* The current buffer is one we made, so clean it up. */
+                yy_delete_buffer(YY_CURRENT_BUFFER);
+                fclose(yyin);
 
-            else
-                {
-                yy_delete_buffer( YY_CURRENT_BUFFER );
-                yy_switch_to_buffer(
-                     include_stack[include_stack_ptr] );
-                }
+                /* Return to the buffer on the top of the stack.  Note
+                 * that this sets 'yyin'. */
+                yy_switch_to_buffer(include_stack[--include_stack_len]);
+              }
+
+              else {
+                /* All done. */
+                yyterminate();
+              }
             }
-</code></pre>
+</code><!-- END example --></pre>
 
 <p>Three routines are available for setting up input buffers for
 scanning in-memory strings instead of files. All of them create a
