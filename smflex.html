@@ -1732,7 +1732,7 @@ copy by using:
 
 <dt><code>yy_scan_buffer(char *base, yy_size_t size)</code>
 
-<dd><p>which scans in place the buffer starting at <code>base</code>, consisting
+<dd><p>scans in place the buffer starting at <code>base</code>, consisting
     of <code>size</code> bytes, the last two bytes of which <em>must</em> be
     <code>YY_END_OF_BUFFER_CHAR</code> (ASCII NUL). These last two bytes
     are not scanned; thus, scanning consists of <code>base[0]</code> through
@@ -1740,13 +1740,16 @@ copy by using:
 
 <p>If you fail to set up <code>base</code> in this manner (i.e.,
 forget the final two <code>YY_END_OF_BUFFER_CHAR</code> bytes), then
-<code>yy_scan_buffer()</code> returns a nil pointer instead of creating
+<code>yy_scan_buffer()</code> returns a <code>NULL</code> pointer instead of creating
 a new input buffer.
 
 <p>The type <code>yy_size_t</code> is an integral type to which you can
 cast an integer expression reflecting the size of the buffer.
 
 </dl>
+
+<p>See <a href="test/scan-string-etc.lex"><code>test/scan-string-etc.lex</code></a>
+for an example demonstrating each of these functions.
 
 
 <!-- ======================================================= -->

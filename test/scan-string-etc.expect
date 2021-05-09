@@ -1,0 +1,12 @@
+Scanning with 'yy_scan_string'...
+hi USERNAME there
+blah
+USERNAME!
+Scanning with 'yy_scan_bytes'...
+hi USERNAME there
+blah
+USERNAME!
+Scanning with 'yy_scan_buffer'...
+hi USERNAME there
+blah
+USERNAME!
