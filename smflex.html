@@ -174,8 +174,15 @@
       // comments for "BEGIN example", etc., outside the "code" element.
       var pre = document.getElementsByTagName("code");
       for (var i = 0, len = pre.length; i < len; i++) {
+        // Remove leading newlines from the first child.
         var text = pre[i].firstChild.nodeValue;
-        pre[i].firstChild.nodeValue = text.replace(/^\n+|\n+[ ]*$/g, "");
+        pre[i].firstChild.nodeValue = text.replace(/^\n+/g, "");
+
+        // Remove trailing newlines from the last child.  There
+        // are multiple children if, for example, there is a 'span'
+        // element in the middle.
+        text = pre[i].lastChild.nodeValue;
+        pre[i].lastChild.nodeValue = text.replace(/\n+[ ]*$/g, "");
       }
     }
   </script>
