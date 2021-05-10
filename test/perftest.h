@@ -33,7 +33,7 @@ int yylex();
 static void scanFile(char const *fname)
 {
 #ifdef USING_CPP_INTERFACE
-  ifstream in(fname);
+  ifstream in(fname, std::ios::binary);
   if (!in) {
     cerr << "failed to open input file \"" << fname << "\"\n";
     exit(2);
