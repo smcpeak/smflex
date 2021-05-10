@@ -2229,8 +2229,6 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     "succinct" data structures was evidently the inspiration for
     the representation implemented here.
 
-    <p>This option cannot be used with <code>-+</code>.
-
 
     <dt><code>-Cm</code> ("meta")
 
@@ -2780,7 +2778,7 @@ half the speed), and where no other cell is both smaller and faster.
     <td class="numeric">56092
     <td class="numeric">3877
     <td class="numeric">&plusmn; 19
-    <td>default; smallest
+    <td>C &amp; C++ smallest; default
 
   <tr>
     <td>align_meta
@@ -2807,11 +2805,11 @@ half the speed), and where no other cell is both smaller and faster.
   <tr>
     <td>full
     <td><code>-Cf</code>
-    <td class="numeric">52272
-    <td class="numeric">1870
+    <td class="numeric highlight">52272
+    <td class="numeric highlight">1870
     <td class="numeric">&plusmn; 12
-    <td class="numeric highlight">82560
-    <td class="numeric highlight">2294
+    <td class="numeric">82560
+    <td class="numeric">2294
     <td class="numeric">&plusmn; 7
     <td>
 
@@ -2832,10 +2830,10 @@ half the speed), and where no other cell is both smaller and faster.
     <td class="numeric highlight">81664
     <td class="numeric highlight">1845
     <td class="numeric">&plusmn; 19
-    <td class="numeric highlight">112016
-    <td class="numeric highlight">2282
+    <td class="numeric">112016
+    <td class="numeric">2282
     <td class="numeric">&plusmn; 7
-    <td>C and C++ fastest
+    <td>C fastest
 
   <tr>
     <td>full_align_8
@@ -2854,10 +2852,10 @@ half the speed), and where no other cell is both smaller and faster.
     <td class="numeric">33712
     <td class="numeric">2058
     <td class="numeric">&plusmn; 1
-    <td class="numeric highlight">63988
-    <td class="numeric highlight">2462
+    <td class="numeric">63988
+    <td class="numeric">2462
     <td class="numeric">&plusmn; 15
-    <td>C++ size+speed
+    <td>
 
   <tr>
     <td>full_align_equiv
@@ -2874,66 +2872,66 @@ half the speed), and where no other cell is both smaller and faster.
     <td>Jaco
     <td><code>-CJ</code>
     <td class="numeric highlight">43176
-    <td class="numeric highlight">1858
-    <td class="numeric">&plusmn; 13
-    <td>
-    <td>
-    <td>
+    <td class="numeric highlight">1938
+    <td class="numeric">&plusmn; 3
+    <td class="numeric">73436
+    <td class="numeric">2472
+    <td class="numeric">&plusmn; 7
     <td>
 
   <tr>
     <td>Jaco_8
     <td><code>-CJ -8</code>
     <td class="numeric">57304
-    <td class="numeric">1868
-    <td class="numeric">&plusmn; 10
-    <td>
-    <td>
-    <td>
+    <td class="numeric">1948
+    <td class="numeric">&plusmn; 15
+    <td class="numeric highlight">87788
+    <td class="numeric highlight">2235
+    <td class="numeric">&plusmn; 5
     <td>
 
   <tr>
     <td>Jaco_align
     <td><code>-CJa</code>
     <td class="numeric">64152
-    <td class="numeric">1857
-    <td class="numeric">&plusmn; 5
-    <td>
-    <td>
-    <td>
+    <td class="numeric">1941
+    <td class="numeric">&plusmn; 7
+    <td class="numeric">94428
+    <td class="numeric">2241
+    <td class="numeric">&plusmn; 7
     <td>
 
   <tr>
     <td>Jaco_align_8
     <td><code>-CJa -8</code>
     <td class="numeric">92824
-    <td class="numeric">1855
-    <td class="numeric">&plusmn; 15
-    <td>
-    <td>
-    <td>
-    <td>
+    <td class="numeric">1924
+    <td class="numeric">&plusmn; 11
+    <td class="numeric highlight">123100
+    <td class="numeric highlight">2226
+    <td class="numeric">&plusmn; 4
+    <td>C++ fastest
 
   <tr>
     <td>Jaco_equiv
     <td><code>-CJe</code>
     <td class="numeric highlight">30616
-    <td class="numeric highlight">1933
-    <td class="numeric">&plusmn; 17
-    <td>
-    <td>
-    <td>
-    <td>C size+speed
+    <td class="numeric highlight">2014
+    <td class="numeric">&plusmn; 5
+    <td class="numeric highlight">61056
+    <td class="numeric highlight">2267
+    <td class="numeric">&plusmn; 6
+    <td>C &amp; C++ size &amp; speed
 
   <tr>
     <td>Jaco_align_equiv
     <td><code>-CJae</code>
     <td class="numeric highlight">38152
-    <td class="numeric highlight">1902
-    <td class="numeric">&plusmn; 9
-    <td>
-    <td>
-    <td>
+    <td class="numeric highlight">1980
+    <td class="numeric">&plusmn; 19
+    <td class="numeric highlight">68592
+    <td class="numeric highlight">2252
+    <td class="numeric">&plusmn; 8
     <td>
 
 </table>
@@ -2945,18 +2943,10 @@ Consequently, we can account for about 660 ms of time as the cost of
 simply reading the input bytes.
 
 <p>
-Here is a plot of the C interface data for -Cf and -CJ
-(TODO: This uses old names "-CF" and "Fast" instead of "-CJ" and "Jaco"):
+Here is a plot of the C interface data for -Cf and -CJ:
 
 <div class="center">
-<img src="img-c-lexer1-c-1000.png" alt="Plot of c-lexer1.lex C data">
-</div>
-
-<p>
-And the C++ interface data for -Cf:
-
-<div class="center">
-<img src="img-c-lexer1-cpp-1000.png" alt="Plot of c-lexer1.lex C++ data">
+<img src="img-c-lexer1-both-1000.png" alt="Plot of c-lexer1.lex measurements">
 </div>
 
 <p>
@@ -2973,12 +2963,12 @@ We can make some observations based on this data:
     When using the C interface, <code>-CJe</code> (Jaco_equiv) has the
     best balance of size and speed.  <code>-CJ</code> (Jaco) is faster
     while being 33% larger.  <code>-Cfa</code> (full_align) is slightly
-    faster still, but the difference is within measurement error and
+    faster still, but the difference is small and
     the size is doubled.
 
 <li><p>
-    When using the C++ interface, we cannot use <code>-CJ</code>.
-    The seemingly best size/speed tradeoff is <code>-Cfe</code>, but
+    When using the C++ interface, <code>-CJe</code> again seems to have
+    the best size and speed combination, but
     it is 25% slower than the equivalent C-interface version; I do
     not know why (I have already ensured that the input method is
     not responsible).  Following a similar pattern to C,
@@ -3078,7 +3068,7 @@ above.
     <td class="numeric">65868
     <td class="numeric">3981
     <td class="numeric">&plusmn; 13
-    <td>smallest; default
+    <td>C &amp; C++ smallest; default
 
   <tr>
     <td>align_meta
@@ -3111,7 +3101,7 @@ above.
     <td class="numeric highlight">186556
     <td class="numeric highlight">2214
     <td class="numeric">&plusmn; 15
-    <td>C++ fastest
+    <td>
 
   <tr>
     <td>full_8
@@ -3130,10 +3120,10 @@ above.
     <td class="numeric highlight">283184
     <td class="numeric highlight">1819
     <td class="numeric">&plusmn; 16
-    <td class="numeric">312956
-    <td class="numeric">2214
+    <td class="numeric highlight">312956
+    <td class="numeric highlight">2214
     <td class="numeric">&plusmn; 16
-    <td>C fastest
+    <td>C &amp; C++ fastest
 
   <tr>
     <td>full_align_8
@@ -3155,7 +3145,7 @@ above.
     <td class="numeric highlight">127888
     <td class="numeric highlight">2557
     <td class="numeric">&plusmn; 5
-    <td>C++ size+speed
+    <td>
 
   <tr>
     <td>full_align_equiv
@@ -3172,82 +3162,75 @@ above.
     <td>Jaco
     <td><code>-CJ</code>
     <td class="numeric">327536
-    <td class="numeric">2040
-    <td class="numeric">&plusmn; 18
-    <td>
-    <td>
-    <td>
+    <td class="numeric">2163
+    <td class="numeric">&plusmn; 1
+    <td class="numeric">357516
+    <td class="numeric">2590
+    <td class="numeric">&plusmn; 7
     <td>
 
   <tr>
     <td>Jaco_8
     <td><code>-CJ -8</code>
     <td class="numeric">366464
-    <td class="numeric">1829
-    <td class="numeric">&plusmn; 8
-    <td>
-    <td>
-    <td>
+    <td class="numeric">1869
+    <td class="numeric">&plusmn; 7
+    <td class="numeric">396428
+    <td class="numeric">2289
+    <td class="numeric">&plusmn; 13
     <td>
 
   <tr>
     <td>Jaco_align
     <td><code>-CJa</code>
     <td class="numeric">327536
-    <td class="numeric">1823
-    <td class="numeric">&plusmn; 5
-    <td>
-    <td>
-    <td>
+    <td class="numeric">1865
+    <td class="numeric">&plusmn; 20
+    <td class="numeric">357532
+    <td class="numeric">2278
+    <td class="numeric">&plusmn; 18
     <td>
 
   <tr>
     <td>Jaco_align_8
     <td><code>-CJa -8</code>
     <td class="numeric">366448
-    <td class="numeric">1822
-    <td class="numeric">&plusmn; 14
-    <td>
-    <td>
-    <td>
+    <td class="numeric">1873
+    <td class="numeric">&plusmn; 5
+    <td class="numeric">396444
+    <td class="numeric">2272
+    <td class="numeric">&plusmn; 23
     <td>
 
   <tr>
     <td>Jaco_equiv
     <td><code>-CJe</code>
     <td class="numeric highlight">131664
-    <td class="numeric highlight">1864
+    <td class="numeric highlight">1908
     <td class="numeric">&plusmn; 6
-    <td>
-    <td>
-    <td>
-    <td>C size+speed
+    <td class="numeric highlight">161660
+    <td class="numeric highlight">2332
+    <td class="numeric">&plusmn; 39
+    <td>C &amp; C++ size &amp; speed
 
   <tr>
     <td>Jaco_align_equiv
     <td><code>-CJae</code>
     <td class="numeric">234032
-    <td class="numeric">1879
-    <td class="numeric">&plusmn; 3
-    <td>
-    <td>
-    <td>
+    <td class="numeric">1922
+    <td class="numeric">&plusmn; 6
+    <td class="numeric">264028
+    <td class="numeric">2339
+    <td class="numeric">&plusmn; 12
     <td>
 
 </table>
 
 <p>
-Plot of C interface times for -Cf and -CJ:
+Plot of times for -Cf and -CJ:
 
 <div class="center">
-<img src="img-elsa-lexer-c-1000.png" alt="Plot of elsa-lexer.lex C data">
-</div>
-
-<p>
-And the C++ interface data for -Cf:
-
-<div class="center">
-<img src="img-elsa-lexer-cpp-1000.png" alt="Plot of elsa-lexer.lex C++ data">
+<img src="img-elsa-lexer-both-1000.png" alt="Plot of elsa-lexer.lex measurements">
 </div>
 
 <p>Overall, the relative (and even absolute) times are similar to the
@@ -4212,6 +4195,25 @@ compared to <code>flex-2.5.4</code>:
     to call <code>switch_streams(i,o)</code> and then
     <code>yylex()</code>, which is precisely what the old method
     did.
+
+</ul>
+
+
+<h2 id="new-features">New Features</h2>
+
+<p>
+There is one new feature:
+
+<ul>
+
+<li><p>
+    <code>flex-2.5.4</code> did not allow <code>%option c++</code> to be
+    used with the <code>-CJ</code> (called <code>-CF</code> by that
+    version) table compression option.  That limitation has been
+    removed; the C++ interface now supports all of the same options as
+    the C interface.  The key change making that possible is the
+    change to emit a per-scanner header file rather than forcing all
+    scanners to share the same one.
 
 </ul>
 

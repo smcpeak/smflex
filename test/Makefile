@@ -446,12 +446,6 @@ PERF_CONFIGS += Jaco_align_equiv
 # usage: $(call FILTER_OUT_SUBSTR,substring,list of things to filter))
 FILTER_OUT_SUBSTR = $(foreach element,$(2),$(if $(findstring $(1),$(element)),,$(element)))
 
-ifeq ($(INTERFACE),cpp)
-  # Remove all the configurations that use Jaco, because those are
-  # explicitly prohibited when using the C++ interface.
-  PERF_CONFIGS := $(call FILTER_OUT_SUBSTR,Jaco,$(PERF_CONFIGS))
-endif
-
 ifneq ($(filter reject-frob yylineno trailing-context,$(LEXER_NAME)),)
   # REJECT, yylineno, and trailing context cannot be used with -Cf or -CJ.
   PERF_CONFIGS := $(call FILTER_OUT_SUBSTR,Jaco,$(PERF_CONFIGS))
@@ -545,12 +539,27 @@ $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-both-$(NUM_RUNS)-$(NUM_SCANS).tsv: $(OPE
 .PHONY: perftest-both-interfaces
 perftest-both-interfaces: $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-both-$(NUM_RUNS)-$(NUM_SCANS).txt
 
+# Also make the HTML table if I have the script.
+ifneq ($(TSV_TO_HTML_TABLE),)
+perftest-both-interfaces: $(OPERF)/table-$(VARIANT)-$(LEXER_NAME)-both-$(NUM_RUNS)-$(NUM_SCANS).html
+endif
 
 # Run both c-lexer1 and elsa-lexer in both C and C++ mode.
 .PHONY: perftest-both-lexers
 perftest-both-lexers:
 	$(MAKE) perftest-both-interfaces LEXER_NAME=c-lexer1
 	$(MAKE) perftest-both-interfaces LEXER_NAME=elsa-lexer
+
+
+# Create plots.
+../img-c-lexer1-both-1000.png: c-lexer1.gp operf/table-smflex-c-lexer1-both-5-1000.tsv
+	$(GNUPLOT) $<
+
+../img-elsa-lexer-both-1000.png: elsa-lexer.gp operf/table-smflex-elsa-lexer-both-5-1000.tsv
+	$(GNUPLOT) $<
+
+.PHONY: plots
+plots: ../img-c-lexer1-both-1000.png ../img-elsa-lexer-both-1000.png
 
 
 .PHONY: perfclean
