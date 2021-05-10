@@ -234,9 +234,6 @@ void check_options()
       flexerror(_("-Cf and -CJ are mutually exclusive"));
   }
 
-  if (C_plus_plus && jacobson)
-    flexerror(_("Can't use -+ with -CJ option"));
-
   if (useecs) {                 /* Set up doubly-linked equivalence classes. */
 
     /* We loop all the way up to csize, since ecgroup[csize] is
@@ -917,10 +914,14 @@ void readin()
       outn(yy_nostdinit);
   }
 
-  if (jacobson)
-    outn("typedef const struct yy_trans_info *yy_state_type;");
-  else if (!C_plus_plus)
-    outn("typedef int yy_state_type;");
+  if (!C_plus_plus) {
+    if (jacobson) {
+      outn("typedef const struct yy_trans_info_struct *yy_state_type;");
+    }
+    else {
+      outn("typedef int yy_state_type;");
+    }
+  }
 
   if (ddebug)
     outn("\n#define SMFLEX_DEBUG");

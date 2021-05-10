@@ -321,10 +321,31 @@ void flexerror(const char msg[])
 }
 
 
+/* Print error using a format string, which must have two "%s" in it,
+ * but no newline, and two strings to substitute. */
+void flexerror_ss(char const *fmt, char const *s1, char const *s2)
+{
+  fprintf(stderr, "%s: ", program_name);
+  fprintf(stderr, fmt, s1, s2);
+  fprintf(stderr, "\n");
+  flexend(1);
+}
+
+
 /* flexfatal - report a fatal error message and terminate */
 void flexfatal(const char msg[])
 {
   fprintf(stderr, _("%s: fatal internal error, %s\n"), program_name, msg);
+  exit(1);
+}
+
+
+/* Report fatal error with one string substitution. */
+void flexfatal_s(char const *fmt, char const *s)
+{
+  fprintf(stderr, "%s: fatal internal error: ", program_name);
+  fprintf(stderr, fmt, s);
+  fprintf(stderr, "\n");
   exit(1);
 }
 
@@ -841,6 +862,20 @@ void skelout_upto(char const *expectedLabel)
       exit(2);
     }
   }
+}
+
+
+/* Return true if 'str' starts with 'prefix'. */
+int starts_with(char const *str, char const *prefix)
+{
+  return 0==strncmp(str, prefix, strlen(prefix));
+}
+
+
+/* Return true if 's1' and 's2' are equal as strings. */
+int str_eq(char const *s1, char const *s2)
+{
+  return 0==strcmp(s1, s2);
 }
 
 

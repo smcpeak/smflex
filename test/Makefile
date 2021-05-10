@@ -193,6 +193,7 @@ all-df: out/cpp-prefix-yywrap-yyclass.ok
 all-df: out/cpp-prefix-yywrap.ok
 all-df: out/cpp-prefix.ok
 all-df: out/cppscan-full.ok
+all-df: out/cppscan-jacobson.ok
 all-df: out/cppscan-main.ok
 all-df: out/cppscan-yywrap.ok
 all-df: out/cppscan.ok

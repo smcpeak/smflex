@@ -1,0 +1,12 @@
+/* cppscan-jacobson.lexpp */
+/* Scanner using C++ and %option jacobson. */
+
+%option c++
+%option jacobson
+%option main
+
+%%
+username           cout << "USERNAME";
+
+%%
+/* EOF */

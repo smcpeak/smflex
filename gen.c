@@ -154,7 +154,7 @@ void genctbl()
   int end_of_buffer_action = num_rules + 1;
 
   /* Table of verify for transition and offset to next state. */
-  out_dec("static const struct yy_trans_info yy_transition[%d] =\n",
+  out_dec("static const yy_trans_info yy_transition[%d] =\n",
           tblend + numecs + 1);
   outn("    {");
 
@@ -224,7 +224,7 @@ void genctbl()
   outn("    };\n");
 
   /* Table of pointers to start states. */
-  out_dec("static const struct yy_trans_info *yy_start_state_list[%d] =\n",
+  out_dec("static const yy_trans_info *yy_start_state_list[%d] =\n",
           lastsc * 2 + 1);
   outn("    {");                /* } so vi doesn't get confused */
 
@@ -528,16 +528,16 @@ void gen_next_match()
      */
 
     indent_lbrace();
-    indent_puts ("const struct yy_trans_info *yy_trans_info;\n");
+    indent_puts ("const yy_trans_info *yy_trans_info_ptr;\n");
     indent_puts ("YY_CHAR yy_c;\n");
     indent_put2s("for (yy_c = %s;", char_map);
-    indent_puts ("     (yy_trans_info = &yy_current_state[(unsigned)yy_c])");
+    indent_puts ("     (yy_trans_info_ptr = &yy_current_state[(unsigned)yy_c])");
     indent_puts ("         ->yy_verify == yy_c;");
     indent_put2s("     yy_c = %s)", char_map_2);
 
     indent_lbrace();
 
-    indent_puts("yy_current_state += yy_trans_info->yy_nxt;");
+    indent_puts("yy_current_state += yy_trans_info_ptr->yy_nxt;");
 
     if (num_backing_up > 0) {
       outc('\n');
@@ -666,11 +666,11 @@ void gen_NUL_trans()
     do_indent();
     out_dec("int yy_c = %d;\n", NUL_ec);
 
-    indent_puts("const struct yy_trans_info *yy_trans_info;\n");
-    indent_puts("yy_trans_info = &yy_current_state[(unsigned int) yy_c];");
-    indent_puts("yy_current_state += yy_trans_info->yy_nxt;");
+    indent_puts("const yy_trans_info *yy_trans_info_ptr;\n");
+    indent_puts("yy_trans_info_ptr = &yy_current_state[(unsigned int) yy_c];");
+    indent_puts("yy_current_state += yy_trans_info_ptr->yy_nxt;");
 
-    indent_puts("yy_is_jam = (yy_trans_info->yy_verify != yy_c);");
+    indent_puts("yy_is_jam = (yy_trans_info_ptr->yy_verify != yy_c);");
   }
 
   else {
@@ -1041,7 +1041,14 @@ void make_tables()
       (total_table_size >= MAX_SHORT || long_align) ? "long" : "short";
 
     set_indent(0);
-    indent_puts("struct yy_trans_info");
+    if (C_plus_plus) {
+      /* Define the nested structure. */
+      indent_puts("typedef struct yyFlexLexer::yy_trans_info_struct");
+    }
+    else {
+      /* Define the global structure. */
+      indent_puts("typedef struct yy_trans_info_struct");
+    }
     indent_lbrace();
 
     if (long_align)
@@ -1058,8 +1065,8 @@ void make_tables()
      */
 
     indent_put2s("%s yy_nxt;", trans_offset_type);
-    indent_puts("};");
     indent_down();
+    indent_puts("} yy_trans_info;");
   }
 
   if (jacobson)
@@ -1537,6 +1544,19 @@ void emit_with_class_name_substitution(FILE *fp, char const *line)
 }
 
 
+/* Evaluate the skeleton conditional 'cond'. */
+static int evaluate_skel_condition(char const *cond)
+{
+  if (str_eq(cond, "jacobson")) {
+    return !!jacobson;
+  }
+  else {
+    flexfatal_s(_("bad skeleton condition: \"%s\""), cond);
+    return false;     // not reached
+  }
+}
+
+
 /* Write the header file containing the C++ lexer class definition. */
 void emit_header_file(char const *header_file_name)
 {
@@ -1546,9 +1566,8 @@ void emit_header_file(char const *header_file_name)
   header_file = fopen(header_file_name,
                       write_native_line_endings ? "w" : "wb");
   if (header_file == NULL) {
-    fprintf(stderr, _("failed to create header file \"%s\": %s\n"),
-            header_file_name, strerror(errno));
-    exit(2);
+    flexerror_ss(_("failed to create header file \"%s\": %s"),
+                 header_file_name, strerror(errno));
   }
 
   /* Begin with a title and description. */
@@ -1558,16 +1577,51 @@ void emit_header_file(char const *header_file_name)
 
   /* Copy the header contents into it. */
   {
-    char const **line;
-    for (line = header_skl_contents; *line != NULL; line++) {
-      emit_with_class_name_substitution(header_file, *line);
+    int in_if = false;
+    int emitting_if = false;
+
+    char const **lineptr;
+    for (lineptr = header_skl_contents; *lineptr != NULL; lineptr++) {
+      char const *line = *lineptr;
+      if (line[0] == '%') {
+        if (starts_with(line+1, "if ")) {
+          if (in_if) {
+            flexfatal_s("cannot nest %%if: \"%s\"", line);
+          }
+          in_if = true;
+          emitting_if = evaluate_skel_condition(line+4);
+        }
+
+        else if (starts_with(line+1, "else")) {
+          if (!in_if) {
+            flexfatal("%%else when not in %%if");
+          }
+          emitting_if = !emitting_if;
+        }
+
+        else if (starts_with(line+1, "endif")) {
+          if (!in_if) {
+            flexfatal("%%endif when not in %%if");
+          }
+          in_if = false;
+          emitting_if = false;
+        }
+
+        else {
+          flexfatal_s(_("bad skeleton directive: %s"), line);
+        }
+      }
+      else {
+        if (!in_if || emitting_if) {
+          emit_with_class_name_substitution(header_file, line);
+        }
+      }
     }
   }
 
   /* Finish up. */
   if (fclose(header_file) != 0) {
-    fprintf(stderr, _("failed to close header file \"%s\": %s\n"),
-            header_file_name, strerror(errno));
-    exit(2);
+    flexerror_ss(_("failed to close header file \"%s\": %s\n"),
+                 header_file_name, strerror(errno));
   }
 }
