@@ -2128,10 +2128,22 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     which can only recognize 7-bit characters in its input. The advantage of
     using <code>-7</code> is that the scanner's tables can be up to half the
     size of those generated using the <code>-8</code> option (see below). The
-    disadvantage is that such scanners often hang or crash if their input
+    disadvantage is that such scanners can hang or crash if their input
     contains an 8-bit character.
 
-    <p>Note, however, that unless you generate your scanner using the
+    <p>smcpeak: Hangs and crashes!  What does that mean?  First, with
+    <code>-7</code>, the scanner uses all 8 bits of each character to
+    index into its tables, but the tables only have 128 elements, so a
+    high bit will cause an out-of-bounds read.  However, most often this
+    just reads a value in an adjacent state, which is logically
+    nonsensical but not by itself terribly dangerous.  I have not seen
+    any hangs or crashes in my testing, but I can't rule it out either,
+    especially with the large space of table compression options.  Also,
+    I tried adding a 7-bit mask to the inner loop to avoid the bounds
+    problem; it made the scanner I was testing slow down by about 1.5%.
+    I have not decided whether to go ahead and make that an option too.
+
+    <p>Unless you generate your scanner using the
     <code>-Cf</code> or <code>-CJ</code> table compression options, use of
     <code>-7</code> will save only a small amount of table space, and make
     your scanner considerably less portable. <code>smflex</code>'s default behavior
@@ -2141,7 +2153,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     whether <code>smflex</code> generated a 7-bit or an 8-bit scanner by inspecting the
     flag summary in the <code>-v</code> output as described above.
 
-    <p>Note that if you use <code>-Cfe</code> or <code>-CJe</code> (those
+    <p>If you use <code>-Cfe</code> or <code>-CJe</code> (those
     table compression options, but also using equivalence classes as discussed
     below), <code>smflex</code> still defaults to generating an 8-bit scanner, since
     usually with these compression options full 8-bit tables are not much
