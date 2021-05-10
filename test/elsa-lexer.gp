@@ -30,9 +30,9 @@ set rmargin 5
 set lmargin 10
 
 plot 'operf/table-smflex-elsa-lexer-both-5-1000.tsv' \
-        using 3:4 with points title 'C' linestyle 1, \
+        using 3:4:5 with yerrorbars title 'C' linestyle 1, \
      '' using 3:4:1 with labels notitle offset 0, char -0.6, \
-     '' using 6:7 with points title 'C++' linestyle 2, \
+     '' using 6:7:8 with yerrorbars title 'C++' linestyle 2, \
      '' using 6:7:1 with labels notitle offset 0, char 1
 
 # EOF
