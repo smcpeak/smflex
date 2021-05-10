@@ -2696,9 +2696,12 @@ was run on MinGW/Windows x86_64, compiled with gcc-5.4.0 at
 optimization level -O2, and performed 1000 scans of the concatenation
 of all <code>smflex</code> source code (~470 KB) in the time shown.
 Each experiment was run 5 times.  For completeness, I used
-commit <code>483c9fd3bc</code>.  I also measured
+commit <code>cc94802c19</code>.  I also measured
 <code>flex-2.5.4</code> and <code>flex-2.6.4</code> (the latest) and
-the results were essentially the same, so I have not included that data.
+the results were essentially the same (for the entries they can generate;
+those versions do not allow <code>-CJ</code> (called <code>-CF</code> by
+them) and <code>-+</code> at the
+same time), so I have not included that data.
 
 <p>The following table reports the median time in milliseconds and the
 <a href="https://en.wikipedia.org/wiki/Interquartile_range">interquartile range</a>.
