@@ -21,7 +21,7 @@ set title 'elsa-lexer.lex, -Cf and -CJ only, median of 5 runs, 1000 scans' font 
 
 # Axis ranges
 set xrange [0:600000]
-set yrange [1750:2700]
+set yrange [1750:2300]
 
 # Adjust edge margins since otherwise the text gets slightly cut off.
 set bmargin 4
