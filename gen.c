@@ -959,7 +959,7 @@ void gentabs()
 /* Write out a formatted string (with a secondary string argument) at the
  * current indentation level, adding a final newline.
  */
-void indent_put2s(char fmt[], char arg[])
+void indent_put2s(char const *fmt, char const *arg)
 {
   do_indent();
   out_str(fmt, arg);
