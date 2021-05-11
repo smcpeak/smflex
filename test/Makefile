@@ -118,8 +118,11 @@ out/%.exe: out/%.yy.o
 out/%.c_as_cc.exe: out/%.yy.c_as_cc.o
 	$(CXX) -o$@ $(CXXFLAGS) $^
 
-# username is special because it uses testmain.
-out/username.exe: out/testmain.o
+# Make sure we run smflex before trying to compile this.
+out/main-for-username.o: out/username.yy.c
+
+# username is special because it uses main-for-username.
+out/username.exe: out/main-for-username.o
 
 # Use C++ linking for *.oo files.
 out/%.exe: out/%.yy.oo
