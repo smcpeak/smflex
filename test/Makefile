@@ -55,7 +55,7 @@ PYTHON3 := python3
 
 # Run smflex on one file.
 .PRECIOUS: out/%.yy.c
-out/%.yy.c: %.lex
+out/%.yy.c: %.lex $(SMFLEX)
 	@mkdir -p out
 	$(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -o$@ $<
 	$(PYTHON3) ./check-line-directives.py $@
