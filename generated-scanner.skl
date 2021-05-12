@@ -210,8 +210,6 @@ static void *yy_flex_realloc(void *, size_t);
 
 static void yy_flex_free(void *);
 
-#define yy_new_buffer yy_create_buffer
-
 static void yy_load_buffer_state(yy_lexer_t *yy_lexer);
 static void yy_init_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE b,
                            YY_INPUT_STREAM_TYPE *file);

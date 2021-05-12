@@ -1642,11 +1642,6 @@ particular source, call:
 scanner attempts to read data from the buffer, it will first fill
 the buffer anew using <code>YY_INPUT</code>.
 
-<p><code>yy_new_buffer()</code> is an alias for
-<code>yy_create_buffer()</code>, provided for compatibility with the
-C++ use of <code>new</code> and <code>delete</code> for creating and destroying
-dynamic objects.
-
 <p>Finally, the <code>YY_CURRENT_BUFFER</code> macro returns a
 <code>YY_BUFFER_STATE</code> handle to the current buffer.
 
@@ -4181,6 +4176,20 @@ run-time support library.  That has been removed as detailed below.
     by adding parameters), set the <code>yy_client_data</code> field
     of the <code>yy_lexer_t</code> object.
 
+<li><p><code>yy_new_buffer</code>: <code>flex-2.5.4</code> defined
+    <code>yy_new_buffer</code> as an alias for
+    <code>yy_create_buffer</code>.  That alias has been removed.
+
+    <p>Rationale: The explanation in the <code>flex</code> manual for
+    the existence of this function was: "compatibility with the C++ use
+    of <code>new</code> and <code>delete</code> for creating and
+    destroying dynamic objects".  I find that a very weak justification
+    for adding a redundant name to the name space.  The fact that a
+    function has "new" it its name does nothing to make it similar
+    to <code>new</code> and <code>delete</code> semantically.
+
+    <p>Replacement: Use <code>yy_create_buffer</code>.
+
 </ul>
 
 
@@ -4242,7 +4251,6 @@ Renaming summary:
 
 <ul>
 <li><code>yy_create_buffer</code>
-<li><code>yy_new_buffer</code>
 <li><code>yy_switch_to_buffer</code>
 <li><code>yy_delete_buffer</code>
 <li><code>yy_flush_buffer</code>
