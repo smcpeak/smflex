@@ -1850,7 +1850,7 @@ interactive = ! option_sense;
 case 39:
 YY_RULE_SETUP
 #line 273 "input-scan.lex"
-C_plus_plus = option_sense;
+cpp_interface = option_sense;
 #line 1855 "input-scan.lex.c"
   YY_BREAK
 case 40:

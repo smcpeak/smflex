@@ -270,7 +270,7 @@ LEXOPT          [aceknopr]
         align           long_align = option_sense;
         backup          backing_up_report = option_sense;
         batch           interactive = ! option_sense;
-        "c++"           C_plus_plus = option_sense;
+        "c++"           cpp_interface = option_sense;
         caseful|case-sensitive          caseins = ! option_sense;
         caseless|case-insensitive       caseins = option_sense;
         debug           ddebug = option_sense;

@@ -1141,7 +1141,7 @@ void make_tables()
    * definition of the YY_INPUT macro. */
   skelout_upto("yy_input_defn");
 
-  if (!C_plus_plus) {
+  if (!cpp_interface) {
     /* Provide the body of YY_INPUT.
      *
      * TODO: It would be nice to put this into the skeleton since
@@ -1259,7 +1259,7 @@ void make_tables()
     indent_lbrace();
     indent_puts("if ( yy_act == 0 )");
     indent_up();
-    indent_puts(C_plus_plus ?
+    indent_puts(cpp_interface ?
                 "cerr << \"--scanner backing up\\n\";" :
                 "fprintf( stderr, \"--scanner backing up\\n\" );");
     indent_down();
@@ -1268,7 +1268,7 @@ void make_tables()
     out_dec("else if ( yy_act < %d )\n", num_rules);
     indent_up();
 
-    if (C_plus_plus) {
+    if (cpp_interface) {
       indent_puts
         ("cerr << \"--accepting rule at line \" << yy_rule_linenum[yy_act] <<");
       indent_puts("         \"(\\\"\" << yy_lexer->yy_text << \"\\\")\\n\";");
@@ -1286,7 +1286,7 @@ void make_tables()
     out_dec("else if ( yy_act == %d )\n", num_rules);
     indent_up();
 
-    if (C_plus_plus) {
+    if (cpp_interface) {
       indent_puts
         ("cerr << \"--accepting default rule (\\\"\" << yy_lexer->yy_text << \"\\\")\\n\";");
     }
@@ -1302,7 +1302,7 @@ void make_tables()
     out_dec("else if ( yy_act == %d )\n", num_rules + 1);
     indent_up();
 
-    indent_puts(C_plus_plus ?
+    indent_puts(cpp_interface ?
                 "cerr << \"--(end of buffer or a NUL)\\n\";" :
                 "fprintf( stderr, \"--(end of buffer or a NUL)\\n\" );");
 
@@ -1312,7 +1312,7 @@ void make_tables()
     outn("else");
     indent_up();
 
-    if (C_plus_plus) {
+    if (cpp_interface) {
       indent_puts
         ("cerr << \"--EOF (start condition \" << YY_START << \")\\n\";");
     }
@@ -1703,7 +1703,7 @@ int emit_skeleton_lines_upto(
           exit(2);
         }
         in_if++;
-        emitting_if[in_if] = !!C_plus_plus;
+        emitting_if[in_if] = !!cpp_interface;
       }
 
       else if (line[1] == '-') {
@@ -1714,7 +1714,7 @@ int emit_skeleton_lines_upto(
           exit(2);
         }
         in_if++;
-        emitting_if[in_if] = !C_plus_plus;
+        emitting_if[in_if] = !cpp_interface;
       }
 
       else if (line[1] == '*') {

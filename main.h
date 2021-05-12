@@ -44,7 +44,7 @@ void usage(void);
  *   problems, too
  * backing_up_report - if true (i.e., -b flag), generate "lex.backup" file
  *   listing backing-up states
- * C_plus_plus - if true (i.e., -+ flag), generate a C++ scanner class;
+ * cpp_interface - if true (i.e., -+ flag), generate a C++ scanner class;
  *   otherwise, a standard C scanner
  * long_align - if true (-Ca flag), favor long-word alignment.
  * use_read - if true (-Cr) then use read() for scanner input;
@@ -69,7 +69,7 @@ extern int printstats, syntaxerror, eofseen, ddebug, trace, nowarn, spprdflt;
 extern int interactive, caseins, do_yylineno;
 extern int useecs, fulltbl, usemecs, jacobson;
 extern int gen_line_dirs, performance_report, backing_up_report;
-extern int C_plus_plus, long_align, use_read, do_yywrap;
+extern int cpp_interface, long_align, use_read, do_yywrap;
 extern int csize;
 extern int yymore_used, reject, real_reject, continued_action, in_rule;
 extern int yymore_really_used, reject_really_used;

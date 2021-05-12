@@ -82,7 +82,7 @@ static char smflex_version[] = SMFLEX_VERSION;
 int printstats, syntaxerror, eofseen, ddebug, trace, nowarn, spprdflt;
 int interactive, caseins, do_yylineno, useecs, fulltbl, usemecs;
 int jacobson, gen_line_dirs, performance_report, backing_up_report;
-int C_plus_plus, long_align, use_read, do_yywrap, csize;
+int cpp_interface, long_align, use_read, do_yywrap, csize;
 int yymore_used, reject, real_reject, continued_action, in_rule;
 int yymore_really_used, reject_really_used;
 
@@ -263,7 +263,7 @@ void check_options()
     if (!did_outfilename) {
       char *suffix;
 
-      if (C_plus_plus)
+      if (cpp_interface)
         suffix = "cc";
       else
         suffix = "c";
@@ -326,7 +326,7 @@ void flexend(int exit_status)
 
     fprintf(stderr, _("  scanner options: -"));
 
-    if (C_plus_plus)
+    if (cpp_interface)
       putc('+', stderr);
     if (backing_up_report)
       putc('b', stderr);
@@ -476,7 +476,7 @@ void flexinit(int argc, char **argv)
   char *arg;
 
   printstats = syntaxerror = trace = spprdflt = caseins = false;
-  C_plus_plus = backing_up_report = ddebug = fulltbl = false;
+  cpp_interface = backing_up_report = ddebug = fulltbl = false;
   jacobson = long_align = nowarn = yymore_used = continued_action = false;
   do_yylineno = in_rule = reject = do_stdinit = false;
   yymore_really_used = reject_really_used = unspecified;
@@ -528,7 +528,7 @@ void flexinit(int argc, char **argv)
     for (i = 1; arg[i] != '\0'; ++i)
       switch (arg[i]) {
         case '+':
-          C_plus_plus = true;
+          cpp_interface = true;
           break;
 
         case 'B':
@@ -863,7 +863,7 @@ void readin()
   if (ddebug)
     outn("\n#define SMFLEX_DEBUG");
 
-  if (yyclass && !C_plus_plus) {
+  if (yyclass && !cpp_interface) {
     flexerror(_("%option yyclass only meaningful for C++-interface scanners"));
   }
 
@@ -981,7 +981,7 @@ void usage()
   fprintf(f, _("\t-s  suppress default rule to ECHO unmatched text\n"));
 
   if (!did_outfilename) {
-    sprintf(outfile_path, outfile_template, prefix, C_plus_plus ? "cc" : "c");
+    sprintf(outfile_path, outfile_template, prefix, cpp_interface ? "cc" : "c");
     outfilename = outfile_path;
   }
 
