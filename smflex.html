@@ -1420,10 +1420,6 @@ assignments to <code>comment_caller</code> could instead be written
     comment_caller = YY_START;
 </code></pre>
 
-<p><code>smflex</code> provides <code>YYSTATE</code> as an alias for
-<code>YY_START</code> (since that is what's used by AT&amp;T
-<code>lex</code>).
-
 <p>Beware that start conditions do not have their own name-space;
 <code>%s</code>'s and <code>%x</code>'s declare names in the same
 fashion as <code>#define</code>'s.
@@ -4189,6 +4185,16 @@ run-time support library.  That has been removed as detailed below.
     to <code>new</code> and <code>delete</code> semantically.
 
     <p>Replacement: Use <code>yy_create_buffer</code>.
+
+<li><p><code>YYSTATE</code>: <code>flex-2.5.4</code> accepted
+    <code>YYSTATE</code> as an alias for <code>YY_START</code>.
+    That alias has been removed.
+
+    <p>Rationale: The reason given for <code>YYSTATE</code> was
+    compatibility with AT&amp;T <code>lex</code>, which I do not
+    care about.
+
+    <p>Replacement: Use <code>YY_START</code>.
 
 </ul>
 

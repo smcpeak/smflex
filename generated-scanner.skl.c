@@ -57,7 +57,6 @@ const char *scanner_skl_contents[] = {
   " * compatibility.",
   " */",
   "#define YY_START ((yy_lexer->yy_start - 1) / 2)",
-  "#define YYSTATE YY_START",
   "",
   "/* Action number for EOF rule of a given start state. */",
   "#define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)",
