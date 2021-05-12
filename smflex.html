@@ -4509,6 +4509,12 @@ I have also found and fixed a few pre-existing bugs:
     with a fatal error message, which isn't great, but is better than
     silence.)  Commit <code>6908f0604c</code> has the fix.
 
+<li><p>
+    In <code>flex-2.5.4</code>, using a C++-interface scanner with
+    <code>%option main</code> did not work because the generated
+    <code>main()</code> function used the C interface.  Commit
+    <code>0e4eb70de3</code> has the fix.
+
 </ul>
 
 
