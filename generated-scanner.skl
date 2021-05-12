@@ -147,7 +147,7 @@ struct yy_buffer_state_struct {
   /* Size of input buffer in bytes, not including room for EOB
    * characters.
    */
-  yy_size_t yy_buf_size;
+  size_t yy_buf_size;
 
   /* Number of characters read into yy_ch_buf, not including EOB
    * characters.
@@ -203,8 +203,8 @@ struct yy_buffer_state_struct {
 
 #define YY_FLUSH_BUFFER yy_flush_buffer(yy_lexer, yy_lexer->yy_current_buffer)
 
-static void *yy_flex_alloc(yy_size_t);
-static void *yy_flex_realloc(void *, yy_size_t);
+static void *yy_flex_alloc(size_t);
+static void *yy_flex_realloc(void *, size_t);
 static void yy_flex_free(void *);
 
 #define yy_new_buffer yy_create_buffer
@@ -1169,7 +1169,7 @@ void yyFlexLexer::yym_flush_buffer(YY_BUFFER_STATE b)
 
 #ifndef YY_NO_SCAN_BUFFER
 YY_BUFFER_STATE yy_scan_buffer(yy_lexer_t *yy_lexer,
-                               char *base, yy_size_t size)
+                               char *base, size_t size)
 {
   YY_BUFFER_STATE b;
 
@@ -1217,7 +1217,7 @@ YY_BUFFER_STATE yy_scan_bytes(yy_lexer_t *yy_lexer,
 {
   YY_BUFFER_STATE b;
   char *buf;
-  yy_size_t n;
+  size_t n;
   int i;
 
   /* Get memory for full buffer, including space for trailing EOB's. */
@@ -1252,7 +1252,7 @@ YY_BUFFER_STATE yy_scan_bytes(yy_lexer_t *yy_lexer,
 static void yy_push_state(yy_lexer_t *yy_lexer, int new_state)
 {
   if (yy_lexer->yy_start_stack_ptr >= yy_lexer->yy_start_stack_depth) {
-    yy_size_t new_size;
+    size_t new_size;
 
     yy_lexer->yy_start_stack_depth += YY_START_STACK_INCR;
     new_size = yy_lexer->yy_start_stack_depth * sizeof(int);
@@ -1361,12 +1361,12 @@ static void yy_flex_strncpy(char *s1, const char *s2, int n)
 }
 #endif
 
-static void *yy_flex_alloc(yy_size_t size)
+static void *yy_flex_alloc(size_t size)
 {
   return (void*)malloc(size);
 }
 
-static void *yy_flex_realloc(void *ptr, yy_size_t size)
+static void *yy_flex_realloc(void *ptr, size_t size)
 {
   /* The cast to (char *) in the following accommodates both
    * implementations that use char* generic pointers, and those

@@ -32,6 +32,7 @@
  * user has defined, all names contributed to the global namespace
  * must begin with "yy" or "YY". */
 
+#include <stddef.h>                    /* size_t */
 #include <stdio.h>                     /* FILE */
 typedef FILE INPUT_SCAN_INPUT_STREAM_TYPE;
 typedef FILE INPUT_SCAN_OUTPUT_STREAM_TYPE;
@@ -144,9 +145,6 @@ typedef struct input_scan_lexer_state_struct input_scan_lexer_t;
 /* TODO: Explain. */
 typedef input_scan_buffer_state *INPUT_SCAN_BUFFER_STATE;
 
-/* TODO: Eliminate. */
-typedef unsigned int input_scan_size_t;
-
 void input_scan_restart(input_scan_lexer_t *yy_lexer, INPUT_SCAN_INPUT_STREAM_TYPE *input_file);
 
 void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE new_buffer);
@@ -156,7 +154,7 @@ void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_ST
 void input_scan_init_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE b, INPUT_SCAN_INPUT_STREAM_TYPE *file);
 void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE b);
 
-INPUT_SCAN_BUFFER_STATE input_scan_scan_buffer(input_scan_lexer_t *yy_lexer, char *base, input_scan_size_t size);
+INPUT_SCAN_BUFFER_STATE input_scan_scan_buffer(input_scan_lexer_t *yy_lexer, char *base, size_t size);
 INPUT_SCAN_BUFFER_STATE input_scan_scan_string(input_scan_lexer_t *yy_lexer, const char *yy_str);
 INPUT_SCAN_BUFFER_STATE input_scan_scan_bytes(input_scan_lexer_t *yy_lexer, const char *bytes, int len);
 

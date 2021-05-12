@@ -127,7 +127,7 @@ struct input_scan_buffer_state_struct {
   /* Size of input buffer in bytes, not including room for EOB
    * characters.
    */
-  input_scan_size_t yy_buf_size;
+  size_t yy_buf_size;
 
   /* Number of characters read into yy_ch_buf, not including EOB
    * characters.
@@ -183,8 +183,8 @@ struct input_scan_buffer_state_struct {
 
 #define YY_FLUSH_BUFFER input_scan_flush_buffer(yy_lexer, yy_lexer->yy_current_buffer)
 
-static void *yy_flex_alloc(input_scan_size_t);
-static void *yy_flex_realloc(void *, input_scan_size_t);
+static void *yy_flex_alloc(size_t);
+static void *yy_flex_realloc(void *, size_t);
 static void yy_flex_free(void *);
 
 #define yy_new_buffer input_scan_create_buffer
@@ -3533,7 +3533,7 @@ void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STA
 
 #ifndef YY_NO_SCAN_BUFFER
 INPUT_SCAN_BUFFER_STATE input_scan_scan_buffer(input_scan_lexer_t *yy_lexer,
-                               char *base, input_scan_size_t size)
+                               char *base, size_t size)
 {
   INPUT_SCAN_BUFFER_STATE b;
 
@@ -3581,7 +3581,7 @@ INPUT_SCAN_BUFFER_STATE input_scan_scan_bytes(input_scan_lexer_t *yy_lexer,
 {
   INPUT_SCAN_BUFFER_STATE b;
   char *buf;
-  input_scan_size_t n;
+  size_t n;
   int i;
 
   /* Get memory for full buffer, including space for trailing EOB's. */
@@ -3616,7 +3616,7 @@ INPUT_SCAN_BUFFER_STATE input_scan_scan_bytes(input_scan_lexer_t *yy_lexer,
 static void yy_push_state(input_scan_lexer_t *yy_lexer, int new_state)
 {
   if (yy_lexer->yy_start_stack_ptr >= yy_lexer->yy_start_stack_depth) {
-    input_scan_size_t new_size;
+    size_t new_size;
 
     yy_lexer->yy_start_stack_depth += YY_START_STACK_INCR;
     new_size = yy_lexer->yy_start_stack_depth * sizeof(int);
@@ -3701,12 +3701,12 @@ static void yy_flex_strncpy(char *s1, const char *s2, int n)
 }
 #endif
 
-static void *yy_flex_alloc(input_scan_size_t size)
+static void *yy_flex_alloc(size_t size)
 {
   return (void*)malloc(size);
 }
 
-static void *yy_flex_realloc(void *ptr, input_scan_size_t size)
+static void *yy_flex_realloc(void *ptr, size_t size)
 {
   /* The cast to (char *) in the following accommodates both
    * implementations that use char* generic pointers, and those
