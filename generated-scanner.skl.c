@@ -30,7 +30,7 @@ const char *scanner_skl_contents[] = {
   "#define YY_SMFLEX_MINOR_VERSION 0",
   "",
   "",
-  "%% include_header: Include the generated header.",
+  "#include \"yy_header_file_name\"     /* yy_lexer_t */",
   "",
   "#include <stdlib.h>          /* malloc, free, realloc, exit */",
   "#include <string.h>          /* strlen */",

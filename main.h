@@ -348,4 +348,8 @@ extern int tmpuses, totnst, peakpairs, numuniq, numdup, hshsave;
 extern int num_backing_up, bol_needed;
 
 
+/* Name of the C++ scanner header file. */
+extern char header_file_name[MAXLINE];
+
+
 #endif /* MAIN_H */

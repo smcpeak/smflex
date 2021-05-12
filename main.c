@@ -167,8 +167,7 @@ static char *backing_name = "lex.bck";
 static char outfile_path[MAXLINE];
 static int outfile_created = 0;
 
-/* Name of the C++ scanner header file. */
-static char header_file_name[MAXLINE];
+char header_file_name[MAXLINE];
 
 
 int main(int argc, char **argv)
@@ -725,25 +724,6 @@ static void compute_header_file_name()
 }
 
 
-/* Given a file name, return its "base name", i.e., the name without
- * any path components.  Return 'fname' itself if there are no path
- * separators.  Either way, the return value points into 'fname'. */
-static char *basename(char *fname)
-{
-  /* Find the last slash. */
-  char *last_slash = strrchr(fname, '/');
-  if (!last_slash) {
-    /* Maybe we are on Windows, using backslash? */
-    last_slash = strrchr(fname, '\\');
-  }
-
-  if (last_slash)
-    return last_slash + 1;
-  else
-    return fname;
-}
-
-
 /* readin - read in the rules section of the input file(s) */
 void readin()
 {
@@ -823,20 +803,17 @@ void readin()
   if (did_outfilename)
     line_directive_out(scanner_c_file, 0);
 
+  /* Set 'header_file_name' so it can be used by the skeleton.
+   *
+   * This is not the best place to do this, but the logic around setting
+   * 'outfilename' is strangely complicated, so I am not sure where the
+   * best place is. */
+  compute_header_file_name();
+
   /* Copy the first chunk from the skeleton.  From here on, extending
    * into 'make_tables()', we alternate between inserting fragments of
    * code and calling 'skelout_upto()' to copy successive chunks.  The logic
    * here is tightly synchronized with the skeleton file organization. */
-  skelout_upto("include_header");
-
-  compute_header_file_name();
-
-  /* Emit an include directive for the generated header.  We remove
-   * path components from the name because the main file and the
-   * header file are in the same directory. */
-  out_str("\n#include \"%s\"  /* yy_lexer_t */\n",
-          basename(header_file_name));
-
   skelout_upto("yy_text_def");
 
   if (reject)

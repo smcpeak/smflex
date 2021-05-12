@@ -1484,6 +1484,27 @@ static char const *lower_prefix_names[] = {
 };
 
 
+/* Given a file name, return its "base name", i.e., the name without
+ * any path components.  Return 'fname' itself if there are no path
+ * separators.  Either way, the return value points into 'fname'. */
+static char *basename(char *fname)
+{
+  /* Find the last slash. */
+  char *last_slash = strrchr(fname, '/');
+  if (!last_slash) {
+    /* Maybe we are on Windows, using backslash? */
+    last_slash = strrchr(fname, '\\');
+  }
+
+  if (last_slash) {
+    return last_slash + 1;
+  }
+  else {
+    return fname;
+  }
+}
+
+
 /* Look up 'id[0,len-1]' as a skeleton identifier.  If a substitution
  * is found, return a pointer to statically-allocated storage containing
  * the replacement.  Otherwise return NULL. */
@@ -1528,6 +1549,14 @@ static char const *look_up_skel_identifier(char const *id, int len)
     else {
       return "FILE";
     }
+  }
+
+  if (str_eq_substr("yy_header_file_name", id, len)) {
+    /* This is for use in an #include directive that pulls in the header
+     * from the generated scanner implementation file.  We remove path
+     * components from the name because the main file and the header
+     * file are in the same directory. */
+    return basename(header_file_name);
   }
 
   return NULL;
