@@ -208,6 +208,7 @@ DISTFILES += flexdef.h
 DISTFILES += gen.h
 DISTFILES += generated-header.skl
 DISTFILES += generated-scanner.skl
+DISTFILES += historical
 DISTFILES += input-parse.h
 DISTFILES += input-parse.y
 DISTFILES += input-parse.y.h
