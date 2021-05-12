@@ -109,6 +109,7 @@ static int runPerftest(int argc, char **argv)
 /* What 'strncpy' should have been: write up to 'len-1' characters
  * of 'src' into 'dest', stopping after writing a NUL, and always
  * writing a NUL.  Do nothing if 'len' is 0. */
+YY_POSSIBLY_UNUSED_FUNCTION
 static void my_strncpy(char *dest, char const *src, size_t len)
 {
   if (len > 0) {
