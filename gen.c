@@ -1651,6 +1651,34 @@ static int all_true(int *vals, int count)
 }
 
 
+/* Report a fatal error with a skeleton file, where 'fmt' is a
+ * format string that has one "%s" and 'str' is the string to
+ * substitute in that location. */
+static void skel_error_s(FILE *dest, int line_number,
+                         char const *fmt, char const *str)
+{
+  /* Determine which file is the issue by comparing 'dest' to one
+   * of them.  This is somewhat unprincipled. */
+  char const *skel_file =
+    (dest == scanner_c_file?
+      "generated-scanner.skl" :
+      "generated-header.skl");
+
+  fprintf(stderr, "%s:%d: smflex internal error: ",
+          skel_file, line_number);
+  fprintf(stderr, fmt, str);
+  fprintf(stderr, "\n");
+  exit(2);
+}
+
+/* Report a fatal error with a skeleton file. */
+static void skel_error(FILE *dest, int line_number,
+                       char const *msg)
+{
+  skel_error_s(dest, line_number, "%s", msg);
+}
+
+
 /* Emit skeleton lines, starting at 'skeleton_lines[skeleton_index]',
  * to 'dest'.  Process skeleton conditionals and substitutions.
  *
@@ -1672,15 +1700,14 @@ int emit_skeleton_lines_upto(
    * those outer conditionals. */
   int emitting_if[MAX_IF_NESTING] = {1};
 
+# define SKEL_ERROR(msg) skel_error(dest, skeleton_index, msg)
+
   char const *line;
   while ( (line = skeleton_lines[skeleton_index++]) != NULL ) {
     if (line[0] == '%') {
       if (starts_with(line+1, "if ")) {
         if (in_if >= MAX_IF_NESTING) {
-          fprintf(stderr,
-            _("%s: line %d: cannot nest %%if that deeply: \"%s\""),
-            program_name, skeleton_index, line);
-          exit(2);
+          SKEL_ERROR("%if is nested too deply");
         }
         in_if++;
         emitting_if[in_if] = evaluate_skel_condition(line+4);
@@ -1688,14 +1715,14 @@ int emit_skeleton_lines_upto(
 
       else if (starts_with(line+1, "else")) {
         if (!in_if) {
-          flexfatal("%%else when not in %%if");
+          SKEL_ERROR("%else when not in %if");
         }
         emitting_if[in_if] = !emitting_if[in_if];
       }
 
       else if (starts_with(line+1, "endif")) {
         if (!in_if) {
-          flexfatal("%%endif when not in %%if");
+          SKEL_ERROR("%endif when not in %if");
         }
         in_if--;
       }
@@ -1708,17 +1735,11 @@ int emit_skeleton_lines_upto(
         int colonIndex;
 
         if (in_if) {
-          fprintf(stderr,
-            _("%s: line %d: \"%%%%\" in while still inside %%if\n"),
-            program_name, skeleton_index);
-          exit(2);
+          SKEL_ERROR("\"%%\" in while still inside %if");
         }
 
         if (line[2] != ' ') {
-          fprintf(stderr,
-            _("%s: line %d: \"%%%%\" in skeleton must be immediately followed by a space\n"),
-            program_name, skeleton_index);
-          exit(2);
+          SKEL_ERROR("\"%%\" in skeleton must be immediately followed by a space");
         }
 
         /* Look for the following colon. */
@@ -1727,25 +1748,21 @@ int emit_skeleton_lines_upto(
              colonIndex++)
           {}
         if (line[colonIndex] != ':') {
-          fprintf(stderr,
-            _("%s: line %d: \"%%%%\" in skeleton must be followed by a colon\n"),
-            program_name, skeleton_index);
-          exit(2);
+          SKEL_ERROR("\"%%\" in skeleton must be followed by a colon");
         }
 
         /* Make sure the label is right. */
         if (!name_matches(expected_label, line+3, colonIndex-3)) {
-          fprintf(stderr,
-            _("%s: line %d: skeleton \"%%%%\" line has wrong label; expected \"%s\"\n"),
-            program_name, skeleton_index, expected_label);
-          exit(2);
+          skel_error_s(dest, skeleton_index,
+            "\"%%%%\" line has wrong label; expected \"%s\"",
+            expected_label);
         }
 
         return skeleton_index;
       }
 
       else {
-        flexfatal_s(_("bad skeleton directive: %s"), line);
+        SKEL_ERROR("bad skeleton directive");
       }
     }
     else {
@@ -1756,18 +1773,16 @@ int emit_skeleton_lines_upto(
   }
 
   if (in_if) {
-    fprintf(stderr,
-      _("%s: line %d: EOF while still inside %%if\n"),
-      program_name, skeleton_index);
-    exit(2);
+    SKEL_ERROR("EOF while still inside %%if");
   }
 
   if (!str_eq(expected_label, "end_of_skeleton")) {
-    fprintf(stderr,
-      _("%s: reached end of skeleton file but expected label \"%s\"\n"),
-      program_name, expected_label);
-    exit(2);
+    skel_error_s(dest, skeleton_index,
+      "reached end of skeleton file but expected label \"%s\"",
+      expected_label);
   }
+
+# undef SKEL_ERROR
 
   return skeleton_index;
 }
