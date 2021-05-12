@@ -148,7 +148,7 @@ endif
 #
 bigcheck1:
 	rm -f input-scan.lex.c
-	$(MAKE) input-scan.lex.c
+	$(MAKE) input-scan.lex.c ENABLE_INPUT_SCAN_RULE=1
 	$(MAKE) $(SMFLEX)
 	$(MAKE) check
 
@@ -311,15 +311,6 @@ input-parse.y.c: input-parse.y
 # makes 'input-parse.y.h'.
 input-parse.y.h: input-parse.y.c
 
-# 'input-scan.lex.c' is the output of running smflex on 'input-scan.lex'.
-# It is used by smflex to read it input file.  Hence, smflex is partially
-# written in its own language.
-input-scan.lex.c: input-scan.lex
-	$(SMFLEX_EXEC) $(SMFLEX_FLAGS) $(COMPRESSION) input-scan.lex
-
-# Inform 'make' that it has to create the .c file to get the .h file.
-input-scan.lex.h: input-scan.lex.c
-
 # 'generated-scanner.skl.c' contains the contents of
 # 'generated-scanner.skl' as a C string.
 generated-scanner.skl.c: generated-scanner.skl encode.sh
@@ -339,5 +330,29 @@ config.status: configure
 configure: configure.in
 	autoconf
 
+ENABLE_INPUT_SCAN_RULE := 1
+
 
 endif # MAINTAINER_MODE
+
+
+# This section is separate from MAINTAINER_MODE because it is needed for
+# the 'bigcheck' target but I do not want to activate all of the
+# maintainer rules for that.
+ifeq ($(ENABLE_INPUT_SCAN_RULE),1)
+
+
+# 'input-scan.lex.c' is the output of running smflex on 'input-scan.lex'.
+# It is used by smflex to read its input file.  Hence, smflex is partially
+# written in its own language.
+input-scan.lex.c: input-scan.lex
+	$(SMFLEX_EXEC) $(SMFLEX_FLAGS) $(COMPRESSION) input-scan.lex
+
+# Inform 'make' that it has to create the .c file to get the .h file.
+input-scan.lex.h: input-scan.lex.c
+
+
+endif # ENABLE_INPUT_SCAN_RULE
+
+
+# EOF
