@@ -223,7 +223,6 @@ static enum TokenType tokFunc(enum TokenType t, char const *text, int leng);
 static enum TokenType svalTokFunc(enum TokenType t, char const *text, int leng);
 static enum TokenType alternateKeyword_tokFunc(enum TokenType t, char const *text, int leng);
 static void err(char const *);
-static void warning(char const *);
 static void whitespace();
 
 #define tok(t) tokFunc(t, yytext, yyleng)
@@ -646,7 +645,6 @@ static int lastTokenLen = 0;
 static char lastMsg[80];
 
 static int numErrors = 0;
-static int numWarnings = 0;
 static int numWhitespaces = 0;
 
 static enum TokenType tokFunc(enum TokenType t, char const *text, int leng)
@@ -672,12 +670,6 @@ static void err(char const *msg)
 {
   my_strncpy(lastMsg, msg, sizeof(lastMsg));
   numErrors++;
-}
-
-static void warning(char const *msg)
-{
-  my_strncpy(lastMsg, msg, sizeof(lastMsg));
-  numWarnings++;
 }
 
 static void whitespace()
