@@ -28,12 +28,9 @@
 #ifndef input_scan_lexer_t_DEFINED
 #define input_scan_lexer_t_DEFINED
 
-/* Note: To avoid collisions with other libraries or with names the
- * user has defined, all names contributed to the global namespace
- * must begin with "yy" or "YY". */
-
 #include <stddef.h>                    /* size_t */
 #include <stdio.h>                     /* FILE */
+
 typedef FILE INPUT_SCAN_INPUT_STREAM_TYPE;
 typedef FILE INPUT_SCAN_OUTPUT_STREAM_TYPE;
 
@@ -71,6 +68,7 @@ struct input_scan_lexer_state_struct {
    * NOTE: As with 'yy_text', this field has an associated 'yyleng'
    * macro active in section 2 actions. */
   int yy_leng;
+
 
   /* TODO: Only needed if: ddebug */
   int yy_flex_debug;      /* only has effect with -d or "%option debug" */
@@ -142,24 +140,65 @@ struct input_scan_lexer_state_struct {
 typedef struct input_scan_lexer_state_struct input_scan_lexer_t;
 
 
-/* TODO: Explain. */
-typedef input_scan_buffer_state *INPUT_SCAN_BUFFER_STATE;
+/* Initialize 'yy_lexer'.  This begins the lifecycle of a lexer
+ * object. */
+void input_scan_construct(input_scan_lexer_t *yy_lexer);
 
+/* Destroy the contents of 'yy_lexer'.  This deallocates any
+ * dynamically-allocated memory acquired by the scanner engine.  The
+ * object itself is not deallocated; that is the client's
+ * responsibility. */
+void input_scan_destroy(input_scan_lexer_t *yy_lexer);
+
+/* Given a lexer object initialized with 'input_scan_construct', and possibly
+ * with its input specified with 'input_scan_restart', begin scanning it.
+ * If this returns 0, it means the end of the input was reached.
+ * Otherwise, it returns an integer whose meaning is determined by
+ * the scanner rules, but typically indicates the kind of token that
+ * was found (e.g., identifier, number, string, etc.). */
+int input_scan_lex(input_scan_lexer_t *yy_lexer);
+
+/* Abandon whatever input (if any) 'yy_lexer' was scanning, and start
+ * scanning 'input_file'. */
 void input_scan_restart(input_scan_lexer_t *yy_lexer, INPUT_SCAN_INPUT_STREAM_TYPE *input_file);
 
+/* Pointer to an opaque type that represents an input source along
+ * with a read buffer for that source.  See the manual section
+ * "Multiple Input Buffers" for more details. */
+typedef input_scan_buffer_state *INPUT_SCAN_BUFFER_STATE;
+
+/* Create a new buffer for use with 'yy_lexer' that reads from 'file'.
+ * The 'size' is the size of the read buffer; 8192 is a reasonable
+ * value to use. */
+/* TODO: The manual advises using YY_BUF_SIZE, but that value is not
+ * currently exported. */
+INPUT_SCAN_BUFFER_STATE input_scan_create_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_INPUT_STREAM_TYPE *file,
+                                 int size);
+
+/* Make 'new_buffer' the active input source for 'yy_lexer'. */
 void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE new_buffer);
-void input_scan_load_buffer_state(input_scan_lexer_t *yy_lexer);
-INPUT_SCAN_BUFFER_STATE input_scan_create_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_INPUT_STREAM_TYPE *file, int size);
+
+/* Deallocate 'b' and release any resources associated with it. */
 void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE b);
-void input_scan_init_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE b, INPUT_SCAN_INPUT_STREAM_TYPE *file);
+
+/* Discard any already-read data from the input source associated with
+ * 'b'.  Future attempts to read will start by reading new data from
+ * that source. */
 void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE b);
 
-INPUT_SCAN_BUFFER_STATE input_scan_scan_buffer(input_scan_lexer_t *yy_lexer, char *base, size_t size);
+/* Allocate a new buffer (which must be deallocated with
+ * 'input_scan_delete_buffer') to scan the contents of NUL-terminated 'yy_str'.
+ * Switch to that buffer. */
 INPUT_SCAN_BUFFER_STATE input_scan_scan_string(input_scan_lexer_t *yy_lexer, const char *yy_str);
+
+/* Like 'input_scan_scan_string', but without the presumption of NUL
+ * termination. */
 INPUT_SCAN_BUFFER_STATE input_scan_scan_bytes(input_scan_lexer_t *yy_lexer, const char *bytes, int len);
 
-void input_scan_construct(input_scan_lexer_t *yy_lexer);
-void input_scan_destroy(input_scan_lexer_t *yy_lexer);
+/* Whereas the preceding two functions make a copy of the source data,
+ * this one scans it without making a copy.  The last two bytes *must*
+ * be 0.  See the description in the manual. */
+INPUT_SCAN_BUFFER_STATE input_scan_scan_buffer(input_scan_lexer_t *yy_lexer, char *base, size_t size);
 
 /* Set the start state of 'yy_lexer' to 'state'.  This function must be
  * used instead of BEGIN when not within a rule action. */
@@ -177,8 +216,6 @@ void yy_set_bol(input_scan_lexer_t *yy_lexer, int at_bol);
  * calling 'input_scan_restart' to begin processing another file, or return 1 to
  * indicate there are no more files to process. */
 int input_scan_wrap(input_scan_lexer_t *yy_lexer);
-
-int input_scan_lex(input_scan_lexer_t *yy_lexer);
 
 #ifdef __cplusplus
 }

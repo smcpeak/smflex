@@ -209,6 +209,10 @@ static void yy_flex_free(void *);
 
 #define yy_new_buffer yy_create_buffer
 
+static void yy_load_buffer_state(yy_lexer_t *yy_lexer);
+static void yy_init_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE b,
+                           YY_INPUT_STREAM_TYPE *file);
+
 /* If 'yy_lexer' does not have a current buffer, create one. */
 static void yy_create_buffer_if_needed(yy_lexer_t *yy_lexer)
 {
@@ -1037,7 +1041,7 @@ void yyFlexLexer::yym_switch_to_buffer(YY_BUFFER_STATE new_buffer)
 %*
 
 
-void yy_load_buffer_state(yy_lexer_t *yy_lexer)
+static void yy_load_buffer_state(yy_lexer_t *yy_lexer)
 {
   yy_lexer->yy_n_chars = yy_lexer->yy_current_buffer->yy_n_chars;
   yy_lexer->yy_text_ptr = yy_lexer->yy_c_buf_p = yy_lexer->yy_current_buffer->yy_buf_pos;
@@ -1108,8 +1112,8 @@ void yyFlexLexer::yym_delete_buffer(YY_BUFFER_STATE b)
 %*
 
 
-void yy_init_buffer(yy_lexer_t *yy_lexer,
-                    YY_BUFFER_STATE b, YY_INPUT_STREAM_TYPE *file)
+static void yy_init_buffer(yy_lexer_t *yy_lexer,
+                           YY_BUFFER_STATE b, YY_INPUT_STREAM_TYPE *file)
 {
   yy_flush_buffer(yy_lexer, b);
 
@@ -1124,14 +1128,6 @@ void yy_init_buffer(yy_lexer_t *yy_lexer,
   YY_DEBUG_LOG_CALL("default case, so yy_is_interactive is", b->yy_is_interactive);
 #endif
 }
-
-%+
-void yyFlexLexer::yym_init_buffer(YY_BUFFER_STATE b,
-                                  YY_INPUT_STREAM_TYPE *file)
-{
-  yy_init_buffer(&yym_lexer_state, b, file);
-}
-%*
 
 
 void yy_flush_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE b)
