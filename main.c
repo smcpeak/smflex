@@ -827,9 +827,6 @@ void readin()
   else
     outn("typedef char YY_CHAR;");
 
-  if (ddebug)
-    outn("\n#define SMFLEX_DEBUG");
-
   if (yyclass && !cpp_interface) {
     flexerror(_("%option yyclass only meaningful for C++-interface scanners"));
   }
