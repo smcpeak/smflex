@@ -33,7 +33,7 @@
 %# must begin with "yy" or "YY".
 %#
 #include <stddef.h>                    /* size_t */
-%+
+%if cpp_interface
 #include <iostream>                    /* istream, ostream */
 
 typedef std::istream YY_INPUT_STREAM_TYPE;
@@ -43,7 +43,7 @@ typedef std::ostream YY_OUTPUT_STREAM_TYPE;
 
 typedef FILE YY_INPUT_STREAM_TYPE;
 typedef FILE YY_OUTPUT_STREAM_TYPE;
-%*
+%endif
 
 %# If we are not generating the C++ interface, but using a C++ compiler,
 %# make sure all of the functions have C linkage so they can be used
@@ -51,11 +51,11 @@ typedef FILE YY_OUTPUT_STREAM_TYPE;
 %# generating a C++ interface, then a C++ compiler must be used to
 %# parse this file, and hence the functions are not callable from C
 %# code, so we keep the C++ linkage.
-%-
+%if !cpp_interface
 #ifdef __cplusplus
 extern "C" {
 #endif
-%*
+%endif
 
 /* Opaque types defined in the generated scanner code. */
 typedef struct yy_buffer_state_struct yy_buffer_state;
@@ -72,13 +72,13 @@ typedef yy_trans_info const *yy_state_type;
 typedef int yy_state_type;
 %endif
 
-%+
+%if cpp_interface
 class yyFlexLexer;           /* Defined below. */
-%*
+%endif
 
 /* This struct encapsulates the scanner state. */
 struct yy_lexer_state_struct {
-%-
+%if !cpp_interface
   /* Application-specific data.  The client of this interface is free
    * to use this value however they want.  'yy_construct' sets it to
    * NULL. */
@@ -86,7 +86,7 @@ struct yy_lexer_state_struct {
 %else
   /* Pointer to the C++ wrapper object. */
   yyFlexLexer *yy_wrapper_object;
-%*
+%endif
 
   /* After a rule pattern has been matched, this is set to point at the
    * matched text within 'yy_current_buffer', temporarily
@@ -189,7 +189,7 @@ void yy_construct(yy_lexer_t *yy_lexer);
  * responsibility. */
 void yy_destroy(yy_lexer_t *yy_lexer);
 
-%+
+%if cpp_interface
 /* This scanner is meant to be using the C++ wrapper class below.
  * Consequently, there is no 'yy_lex' global function.  Instead,
  * the there is a 'yym_lex' method on yyFlexLexer. */
@@ -201,7 +201,7 @@ void yy_destroy(yy_lexer_t *yy_lexer);
  * the scanner rules, but typically indicates the kind of token that
  * was found (e.g., identifier, number, string, etc.). */
 int yy_lex(yy_lexer_t *yy_lexer);
-%*
+%endif
 
 /* Abandon whatever input (if any) 'yy_lexer' was scanning, and start
  * scanning 'input_file'. */
@@ -258,7 +258,7 @@ void yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive);
 void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol);
 
 %if do_yywrap
-%+
+%if cpp_interface
 /* This just delegates to the C++ class 'yym_wrap' method. */
 %else
 /* The 'smflex' user must define this function.  It can return 0 after
@@ -268,14 +268,14 @@ void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol);
 int yy_wrap(yy_lexer_t *yy_lexer);
 %endif
 
-%-
+%if !cpp_interface
 #ifdef __cplusplus
 }
 #endif
-%*
+%endif
 
 
-%+
+%if cpp_interface
 /* Indicate that the C++ interface is in use. */
 #define yyFlexLexer_CLASS_DEFINED
 
@@ -371,6 +371,6 @@ protected:   /* data */
   /* Underlying lexer state, around which this class is a wrapper. */
   yy_lexer_t yym_lexer_state;
 };
-%*
+%endif
 
 #endif /* yy_lexer_t_DEFINED */

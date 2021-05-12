@@ -9,7 +9,7 @@
 %#   3. C++ interface scanner, compiled with a C++ compiler.
 %#
 %# The choice of scanner interface is controlled by "%option c++",
-%# which in the skeleton affects which of "%-" or "%+" is emitted.
+%# which in the skeleton affects whether "%if cpp_interface" is emitted.
 %#
 %# The choice of compiler determines whether __cplusplus is defined
 %# while the scanner output is being compiled, but is not known to
@@ -80,13 +80,13 @@
  * 'YY_ENABLE_DEBUG_LOG_CALL' must be passed as a -D argument on the
  * compiler command line to activate this. */
 #ifdef YY_ENABLE_DEBUG_LOG_CALL
-%-
+%if !cpp_interface
 #  define YY_DEBUG_LOG_CALL(call, val) \
      printf("[%s: %d]\n", call, val)
 %else
 #  define YY_DEBUG_LOG_CALL(call, val) \
      (std::cout << '[' << (call) << ": " << (int)(val) << "]\n")
-%*
+%endif
 #else
 #  define YY_DEBUG_LOG_CALL(str, val) ((void)0)
 #endif
@@ -262,14 +262,14 @@ static void yy_fatal_error(yy_lexer_t *yy_lexer, char const *msg);
 
 
 %if do_yywrap
-%+
+%if cpp_interface
 /* When using the C++ interface, 'yy_wrap' delegates to the C++ method,
  * which the 'smflex' user must define. */
 int yy_wrap(yy_lexer_t *yy_lexer)
 {
   return yy_lexer->yy_wrapper_object->yym_wrap();
 }
-%*
+%endif
 %else
 /* Since '%option yywrap' was not specified, disable it. */
 #define yy_wrap(yy_lexer) 1
@@ -313,14 +313,14 @@ static int yy_top_state(yy_lexer_t *yy_lexer);
 /* Copy whatever the last rule matched to the standard output. */
 
 #ifndef ECHO
-%- Standard (non-C++) definition
+%if !cpp_interface
 /* This used to be an fputs(), but since the string might contain NUL's,
  * we now use fwrite().
  */
 #  define ECHO (void) fwrite(yy_lexer->yy_text, yy_lexer->yy_leng, 1, yy_lexer->yy_output_stream)
 %else C++ definition
 #  define ECHO yym_LexerOutput(yy_lexer->yy_text, yy_lexer->yy_leng)
-%*
+%endif
 #endif
 
 /* Gets input and stuffs it into "buf".  number of characters read, or YY_NULL,
@@ -329,10 +329,10 @@ static int yy_top_state(yy_lexer_t *yy_lexer);
 #ifndef YY_INPUT
 #  define YY_INPUT(buf,result,max_size) \
 %% yy_input_defn: fread()/read() definition of YY_INPUT goes here unless we're doing C++
-%+ C++ definition
+%if cpp_interface
     if ( (result = yy_lexer->yy_wrapper_object->yym_LexerInput((char*)buf, max_size)) < 0 ) \
       YY_FATAL_ERROR("input in smflex scanner failed");
-%*
+%endif
 #endif
 
 /* No semi-colon after return; correct usage is to write "yyterminate();" -
@@ -367,7 +367,7 @@ static int yy_top_state(yy_lexer_t *yy_lexer);
 
 %% YY_RULE_SETUP: YY_RULE_SETUP definition goes here
 
-%-
+%if !cpp_interface
 int yy_lex(yy_lexer_t * const yy_lexer)
 %else
 %if yyclass
@@ -375,14 +375,14 @@ int yyclass_name::yym_lex()
 %else
 int yyFlexLexer::yym_lex()
 %endif
-%*
+%endif
 {
-%+
+%if cpp_interface
   /* Define a local 'yy_lexer' that plays the same role as the parameter
    * 'yy_lexer' in the C interface.  By making this 'const' the compiler
    * will hopefully understand it is just an alias for a member. */
   yy_lexer_t * const yy_lexer = &(this->yym_lexer_state);
-%*
+%endif
 
   yy_state_type yy_current_state;
   char *yy_cp, *yy_bp;
@@ -401,18 +401,18 @@ int yyFlexLexer::yym_lex()
       yy_lexer->yy_start = 1;   /* first start state */
 
     if (!yy_lexer->yy_input_stream)
-%-
+%if !cpp_interface
       yy_lexer->yy_input_stream = stdin;
 %else
       yy_lexer->yy_input_stream = &std::cin;
-%*
+%endif
 
     if (!yy_lexer->yy_output_stream)
-%-
+%if !cpp_interface
       yy_lexer->yy_output_stream = stdout;
 %else
       yy_lexer->yy_output_stream = &std::cout;
-%*
+%endif
 
     if (!yy_lexer->yy_current_buffer)
       yy_lexer->yy_current_buffer =
@@ -603,11 +603,11 @@ do_action:      /* This label is used only to access EOF actions. */
 
 void yy_construct(yy_lexer_t *yy_lexer)
 {
-%-
+%if !cpp_interface
   yy_lexer->yy_client_data = NULL;
 %else
   yy_lexer->yy_wrapper_object = NULL;
-%*
+%endif
   yy_lexer->yy_input_stream = NULL;
   yy_lexer->yy_output_stream = NULL;
   yy_lexer->yy_c_buf_p = NULL;
@@ -638,7 +638,7 @@ void yy_construct(yy_lexer_t *yy_lexer)
 #endif
 }
 
-%+
+%if cpp_interface
 yyFlexLexer::yyFlexLexer(YY_INPUT_STREAM_TYPE *arg_yyin, YY_OUTPUT_STREAM_TYPE *arg_yyout)
 {
   yy_construct(&yym_lexer_state);
@@ -646,7 +646,7 @@ yyFlexLexer::yyFlexLexer(YY_INPUT_STREAM_TYPE *arg_yyin, YY_OUTPUT_STREAM_TYPE *
   yym_lexer_state.yy_output_stream = arg_yyout;
   yym_lexer_state.yy_wrapper_object = this;
 }
-%*
+%endif
 
 void yy_destroy(yy_lexer_t *yy_lexer)
 {
@@ -654,7 +654,7 @@ void yy_destroy(yy_lexer_t *yy_lexer)
   yy_delete_buffer(yy_lexer, yy_lexer->yy_current_buffer);
 }
 
-%+
+%if cpp_interface
 yyFlexLexer::~yyFlexLexer()
 {
   yy_destroy(&yym_lexer_state);
@@ -720,7 +720,7 @@ void yyFlexLexer::yym_LexerOutput(const char *buf, int size)
 {
   (void) yym_lexer_state.yy_output_stream->write(buf, size);
 }
-%*
+%endif
 
 /* yy_get_next_buffer - try to read in a new buffer
  *
@@ -1001,12 +1001,12 @@ void yy_restart(yy_lexer_t *yy_lexer, YY_INPUT_STREAM_TYPE *input_file)
   yy_load_buffer_state(yy_lexer);
 }
 
-%+
+%if cpp_interface
 void yyFlexLexer::yym_restart(YY_INPUT_STREAM_TYPE *input_file)
 {
   yy_restart(&yym_lexer_state, input_file);
 }
-%*
+%endif
 
 
 void yy_switch_to_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE new_buffer)
@@ -1033,12 +1033,12 @@ void yy_switch_to_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE new_buffer)
   yy_lexer->yy_did_buffer_switch_on_eof = 1;
 }
 
-%+
+%if cpp_interface
 void yyFlexLexer::yym_switch_to_buffer(YY_BUFFER_STATE new_buffer)
 {
   yy_switch_to_buffer(&yym_lexer_state, new_buffer);
 }
-%*
+%endif
 
 
 static void yy_load_buffer_state(yy_lexer_t *yy_lexer)
@@ -1077,13 +1077,13 @@ YY_BUFFER_STATE yy_create_buffer(yy_lexer_t *yy_lexer,
   return b;
 }
 
-%+
+%if cpp_interface
 YY_BUFFER_STATE yyFlexLexer::yym_create_buffer(YY_INPUT_STREAM_TYPE *file,
                                                int size)
 {
   return yy_create_buffer(&yym_lexer_state, file, size);
 }
-%*
+%endif
 
 
 void yy_delete_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE b)
@@ -1104,12 +1104,12 @@ void yy_delete_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE b)
   yy_flex_free((void*)b);
 }
 
-%+
+%if cpp_interface
 void yyFlexLexer::yym_delete_buffer(YY_BUFFER_STATE b)
 {
   yy_delete_buffer(&yym_lexer_state, b);
 }
-%*
+%endif
 
 
 static void yy_init_buffer(yy_lexer_t *yy_lexer,
@@ -1155,12 +1155,12 @@ void yy_flush_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE b)
   }
 }
 
-%+
+%if cpp_interface
 void yyFlexLexer::yym_flush_buffer(YY_BUFFER_STATE b)
 {
   yy_flush_buffer(&yym_lexer_state, b);
 }
-%*
+%endif
 
 
 #ifndef YY_NO_SCAN_BUFFER
@@ -1271,12 +1271,12 @@ static void yy_push_state(yy_lexer_t *yy_lexer, int new_state)
   BEGIN(new_state);
 }
 
-%+
+%if cpp_interface
 void yyFlexLexer::yym_push_state(int new_state)
 {
   yy_push_state(&yym_lexer_state, new_state);
 }
-%*
+%endif
 #endif
 
 
@@ -1290,12 +1290,12 @@ static void yy_pop_state(yy_lexer_t *yy_lexer)
   BEGIN(yy_lexer->yy_start_stack[yy_lexer->yy_start_stack_ptr]);
 }
 
-%+
+%if cpp_interface
 void yyFlexLexer::yym_pop_state()
 {
   yy_pop_state(&yym_lexer_state);
 }
-%*
+%endif
 #endif
 
 
@@ -1305,12 +1305,12 @@ static int yy_top_state(yy_lexer_t *yy_lexer)
   return yy_lexer->yy_start_stack[yy_lexer->yy_start_stack_ptr - 1];
 }
 
-%+
+%if cpp_interface
 int yyFlexLexer::yym_top_state()
 {
   return yy_top_state(&yym_lexer_state);
 }
-%*
+%endif
 #endif
 
 
@@ -1324,12 +1324,12 @@ static void yy_fatal_error(yy_lexer_t *yy_lexer, char const *msg)
   exit(YY_EXIT_FAILURE);
 }
 
-%+
+%if cpp_interface
 void yyFlexLexer::yym_LexerError(char const *msg)
 {
   yy_fatal_error(&yym_lexer_state, msg);
 }
-%*
+%endif
 
 
 /* Redefine yyless() so it works in section 3 code. */
@@ -1380,7 +1380,7 @@ static void yy_flex_free(void *ptr)
 }
 
 #if YY_MAIN
-%-
+%if !cpp_interface
 int main()
 {
   /* Keep retrieving tokens and discarding them until EOF. */
@@ -1406,7 +1406,7 @@ int main()
 
   return 0;
 }
-%*
+%endif
 #endif
 
 

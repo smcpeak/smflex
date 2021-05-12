@@ -1611,6 +1611,10 @@ void emit_with_name_substitution(FILE *fp, char const *line)
 /* Evaluate the skeleton conditional 'cond'. */
 static int evaluate_skel_condition(char const *cond)
 {
+  if (*cond == '!') {
+    return !evaluate_skel_condition(cond+1);
+  }
+
 # define COND_FLAG(flag)            \
     else if (str_eq(cond, #flag)) { \
       return !!(flag);              \
@@ -1621,6 +1625,7 @@ static int evaluate_skel_condition(char const *cond)
   COND_FLAG(yyclass)
   COND_FLAG(do_yywrap)
   COND_FLAG(do_yylineno)
+  COND_FLAG(cpp_interface)
   else {
     flexfatal_s(_("bad skeleton condition: \"%s\""), cond);
     return false;     // not reached
@@ -1691,35 +1696,6 @@ int emit_skeleton_lines_upto(
       else if (starts_with(line+1, "endif")) {
         if (!in_if) {
           flexfatal("%%endif when not in %%if");
-        }
-        in_if--;
-      }
-
-      else if (line[1] == '+') {
-        if (in_if >= MAX_IF_NESTING) {
-          fprintf(stderr,
-            _("%s: line %d: cannot nest %%if that deeply: \"%s\""),
-            program_name, skeleton_index, line);
-          exit(2);
-        }
-        in_if++;
-        emitting_if[in_if] = !!cpp_interface;
-      }
-
-      else if (line[1] == '-') {
-        if (in_if >= MAX_IF_NESTING) {
-          fprintf(stderr,
-            _("%s: line %d: cannot nest %%if that deeply: \"%s\""),
-            program_name, skeleton_index, line);
-          exit(2);
-        }
-        in_if++;
-        emitting_if[in_if] = !cpp_interface;
-      }
-
-      else if (line[1] == '*') {
-        if (!in_if) {
-          flexfatal("%%* when not in %%if or %%- or %%+");
         }
         in_if--;
       }
