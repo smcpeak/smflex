@@ -128,13 +128,18 @@ out/%.exe: out/%.yy.oo
 
 # Run one test, producing an "ok" file to mark success.
 #
+# The "actual" output file is the stdout from the scanner program,
+# followed by the stderr (if any).  This should be reliable and
+# portable, although we lose sensitivity to interleaving.
+#
 # If UPDATE_EXPECT=1, then automatically update the expected output
 # to match the actual output.  Be sure to review the changes with
 # 'git diff' before checking in!
 #
 out/%.ok: out/%.exe %.input %.expect
 	rm -f $@
-	out/$*.exe < $*.input > out/$*.actual
+	out/$*.exe < $*.input > out/$*.actual 2>out/$*.stderr
+	cat out/$*.stderr >> out/$*.actual
 	@echo diff -b -u $*.expect out/$*.actual
 ifeq ($(UPDATE_EXPECT),1)
 	@if diff -b -u $*.expect out/$*.actual; then true; else \
@@ -213,6 +218,7 @@ all-df: out/noreject-frob.ok
 all-df: out/normalize-whitespace.ok
 all-df: out/notrailing-context.ok
 all-df: out/noyylineno.ok
+all-df: out/option-debug.ok
 all-df: out/outfile-specified.ok
 all-d : out/reject-abcd.ok
 all-d : out/reject-frob.ok
