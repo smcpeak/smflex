@@ -919,7 +919,10 @@ later characters in the input stream).
 not do so if the action also includes use of <code>yymore()</code>
 (see below).
 
-<p>There are a number of special directives which can be included within
+
+<h2 id="action-macros">Action Macros</h2>
+
+<p>There are a number of macros that can be called from within
 an action:
 
 <ul>
@@ -1109,6 +1112,14 @@ an action:
     may be redefined.
 
 </ul>
+
+<p>
+Be aware that the above macros <em>only</em> work from actions in
+section 2 of the scanner definition.  Some have equivalent functions
+that can be called from elsewhere, but those have a different name
+(generally starting with "<code>yy_</code>" instead of just
+"<code>yy</code>"), and accept an additional <code>yy_lexer_t*</code>
+parameter.
 
 
 <!-- ======================================================= -->
