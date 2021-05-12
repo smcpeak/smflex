@@ -161,7 +161,7 @@ option          :  OPT_OUTFILE '=' NAME
                           }
                         }
                 |  OPT_PREFIX '=' NAME
-                        { prefix = copy_string(nmstr); }
+                        { set_prefix(copy_string(nmstr)); }
                 |  OPT_YYCLASS '=' NAME
                         { yyclass = copy_string(nmstr); }
                 ;

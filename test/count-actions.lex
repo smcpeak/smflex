@@ -22,10 +22,15 @@ bar        ECHO;             /* rule 2 */
 int main()
 {
   int i;
-  while (yylex())
+  yy_lexer_t lexer;
+
+  yy_construct(&lexer);
+  while (yylex(&lexer))
     {}
   for (i=1; i <= YY_NUM_RULES; i++) {
     printf("rule %d executed %d times\n", i, ctr[i]);
   }
+
+  yy_destroy(&lexer);
   return 0;
 }

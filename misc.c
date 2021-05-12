@@ -29,7 +29,7 @@
 #include "misc.h"                      /* this module */
 
 #include "flexchar.h"                  /* smflex_isascii */
-#include "gen.h"                       /* emit_with_class_name_substitution */
+#include "gen.h"                       /* emit_skeleton_lines_upto */
 #include "input-parse.h"               /* format_pinpoint_message */
 #include "input-scan.h"                /* flex_alloc, flex_realloc */
 #include "main.h"                      /* flexend */
@@ -687,6 +687,15 @@ void out_str_dec(const char fmt[], const char str[], int n)
   out_line_count(str);
 }
 
+/* Two strings, one integer. */
+void out_str2_dec(char const *fmt, char const *s1, char const *s2, int n)
+{
+  fprintf(scanner_c_file, fmt, s1, s2, n);
+  out_line_count(fmt);
+  out_line_count(s1);
+  out_line_count(s2);
+}
+
 void outc(int c)
 {
   fputc(c, scanner_c_file);
@@ -785,83 +794,15 @@ void *reallocate_array(void *array, int size, size_t element_size)
  *    Copies scanner_skl_contents array to scanner_c_file
  *    until a line beginning with "%%" or EOF is found.
  *
- * 'expectedLabel' says which "%%" we expect to be next.  This ensures
+ * 'expected_label' says which "%%" we expect to be next.  This ensures
  * we stay synchronized and makes it easier to cross-reference the
  * skeleton and the code generator.
  */
-void skelout_upto(char const *expectedLabel)
+void skelout_upto(char const *expected_label)
 {
-  char buf_storage[MAXLINE];
-  char *buf = buf_storage;
-  int do_copy = 1;
-
-  /* Loop pulling lines either from the scanner_skl_contents[] array. */
-  while ((buf = (char*)scanner_skl_contents[scanner_skl_ind++]) != 0) {
-    if (buf[0] == '%') {        /* control line */
-      switch (buf[1]) {
-        case '%': {
-          int colonIndex;
-
-          if (buf[2] != ' ') {
-            fprintf(stderr,
-              _("%s: line %d: \"%%%%\" in skeleton must be immediately followed by a space\n"),
-              program_name, scanner_skl_ind);
-            exit(2);
-          }
-
-          /* Look for the following colon. */
-          for (colonIndex = 3;
-               buf[colonIndex] != '\0' && buf[colonIndex] != ':';
-               colonIndex++)
-            {}
-          if (buf[colonIndex] != ':') {
-            fprintf(stderr,
-              _("%s: line %d: \"%%%%\" in skeleton must be followed by a colon\n"),
-              program_name, scanner_skl_ind);
-            exit(2);
-          }
-
-          /* Make sure the label is right. */
-          if (0!=strncmp(expectedLabel, buf+3, colonIndex-3)) {
-            fprintf(stderr,
-              _("%s: line %d: skeleton \"%%%%\" line has wrong label; expected \"%s\"\n"),
-              program_name, scanner_skl_ind, expectedLabel);
-            exit(2);
-          }
-
-          return;
-        }
-
-        case '+':
-          do_copy = C_plus_plus;
-          break;
-
-        case '-':
-          do_copy = !C_plus_plus;
-          break;
-
-        case '*':
-          do_copy = 1;
-          break;
-
-        default:
-          flexfatal(_("bad line in skeleton"));
-      }
-    }
-
-    else if (do_copy) {
-      emit_with_class_name_substitution(scanner_c_file, buf);
-    }
-  }
-
-  if (buf == NULL) {
-    if (0!=strcmp(expectedLabel, "end_of_skeleton")) {
-      fprintf(stderr,
-        _("%s: reached end of skeleton file but expected label \"%s\"\n"),
-        program_name, expectedLabel);
-      exit(2);
-    }
-  }
+  scanner_skl_ind = emit_skeleton_lines_upto(
+    scanner_c_file, scanner_skl_contents, scanner_skl_ind,
+    expected_label);
 }
 
 

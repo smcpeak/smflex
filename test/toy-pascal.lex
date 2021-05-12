@@ -43,7 +43,10 @@ if|then|begin|end|procedure|function|program        {
 
 int main(int argc, char **argv)
 {
-  yyin = (argc >= 2)? fopen(argv[1], "r") : stdin;
-  yylex();
+  yy_lexer_t lexer;
+  yy_construct(&lexer);
+  lexer.yy_input_stream = (argc >= 2)? fopen(argv[1], "r") : stdin;
+  yylex(&lexer);
+  yy_destroy(&lexer);
   return 0;
 }

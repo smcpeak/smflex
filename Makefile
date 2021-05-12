@@ -109,19 +109,22 @@ check: $(SMFLEX)
 	@# Check to see if the current smflex produces the same output
 	@# as it did before.
 	@#
-	$(SMFLEX_EXEC) $(SMFLEX_FLAGS) $(COMPRESSION) -oscan.tmp input-scan.lex
+	$(SMFLEX_EXEC) $(SMFLEX_FLAGS) $(COMPRESSION) -oscan.tmp.c input-scan.lex
 	@#
-	@# Fix the file names in #line directives so they match.
+	@# Fix the file names in #line directives and comments so
+	@# they match.
 	@#
-	sed -e 's,"scan.tmp","input-scan.lex.c",' < scan.tmp > scan.actual
-	rm scan.tmp
+	sed -e 's,scan\.tmp,input-scan.lex,' < scan.tmp.h > scan.actual.h
+	sed -e 's,scan\.tmp,input-scan.lex,' < scan.tmp.c > scan.actual.c
+	rm scan.tmp.h scan.tmp.c
 	@#
 	@# This comparison does not ignore whitespace since the
 	@# default is for smflex to always use LF line endings, even
 	@# on Windows.
 	@#
-	diff input-scan.lex.c scan.actual
-	rm scan.actual
+	diff input-scan.lex.h scan.actual.h
+	diff input-scan.lex.c scan.actual.c
+	rm scan.actual.h scan.actual.c
 ifeq ($(MAINTAINER_MODE),1)
 	@#
 	@# Make sure I do not have "scan.tmp" in input-scan.lex.c.
@@ -210,6 +213,7 @@ DISTFILES += input-parse.y
 DISTFILES += input-parse.y.h
 DISTFILES += input-scan.h
 DISTFILES += input-scan.lex
+DISTFILES += input-scan.lex.h
 DISTFILES += install.sh
 DISTFILES += main.h
 DISTFILES += misc.h
@@ -311,6 +315,9 @@ input-parse.y.h: input-parse.y.c
 # written in its own language.
 input-scan.lex.c: input-scan.lex
 	$(SMFLEX_EXEC) $(SMFLEX_FLAGS) $(COMPRESSION) input-scan.lex
+
+# Inform 'make' that it has to create the .c file to get the .h file.
+input-scan.lex.h: input-scan.lex.c
 
 # 'generated-scanner.skl.c' contains the contents of
 # 'generated-scanner.skl' as a C string.

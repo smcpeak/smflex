@@ -102,8 +102,11 @@ static char *my_strndup(char const *src, int len)
 int main(int argc, char **argv)
 {
   int i, j;
+  yy_lexer_t lexer;
 
-  yylex();
+  yy_construct(&lexer);
+  yylex(&lexer);
+  yy_destroy(&lexer);
 
   for (i=0; i < numLinks; i++) {
     /* Inefficient linear search. */

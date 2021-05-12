@@ -1459,7 +1459,7 @@ yyreduce:
 
   case 17:
 #line 164 "input-parse.y" /* yacc.c:1646  */
-    { prefix = copy_string(nmstr); }
+    { set_prefix(copy_string(nmstr)); }
 #line 1464 "input-parse.y.c" /* yacc.c:1646  */
     break;
 

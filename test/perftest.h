@@ -18,9 +18,7 @@ using std::cerr;
 using std::cout;
 #else
 
-/* We are using the C interface.  'yylex' has not been declared
- * yet, but we want to call it below, so declare it now. */
-int yylex();
+#include <stdio.h>                     /* FIlE */
 
 #endif
 
@@ -40,10 +38,13 @@ static void scanFile(char const *fname)
   }
 
   yyFlexLexer lexer(&in);
-  while (lexer.yylex())
+  while (lexer.yym_lex())
     {}
 
 #else
+  yy_lexer_t lexer;
+  yy_construct(&lexer);
+
   /* Open a named file, which is how I expect a real scanner would
    * usually operate. */
   FILE *fp = fopen(fname, "rb");
@@ -52,13 +53,12 @@ static void scanFile(char const *fname)
     exit(2);
   }
 
-  yyrestart(fp);
-
-  while (yylex())
+  yyrestart(&lexer, fp);
+  while (yylex(&lexer))
     {}
 
   fclose(fp);
-
+  yy_destroy(&lexer);
 #endif
 }
 
@@ -87,16 +87,18 @@ static int runPerftest(int argc, char **argv)
      * see if it makes any speed difference. */
 #ifdef USING_CPP_INTERFACE
     yyFlexLexer lexer;
-    while (lexer.yylex())
+    while (lexer.yym_lex())
       {}
 
     // Make sure everything is flushed from cout before we go back to
     // using stdio printf.
     cout.flush();
 #else
-    while (yylex())
+    yy_lexer_t lexer;
+    yy_construct(&lexer);
+    while (yylex(&lexer))
       {}
-
+    yy_destroy(&lexer);
 #endif
   }
 

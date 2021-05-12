@@ -5,16 +5,17 @@
 #ifndef INPUT_SCAN_H
 #define INPUT_SCAN_H
 
+#include "input-scan.lex.h"            /* input_scan_lexer_t */
+
 #include <stddef.h>                    /* size_t */
 
-/* The smflex-generated scanner for smflex.  Usually, this is called
- * 'yylex', but input-scan.lex uses YY_DECL to change that.  Then,
- * the file yylex.c defines 'yylex()' as a wrapper around
- * 'flexscan()' for debug purposes. */
+/* The state for our input scanner. */
+extern input_scan_lexer_t input_lexer;
+
+/* Invoke the smflex-generated input scanner. */
 int flexscan(void);
 
 /* See definitions in input-scan.lex for documentation. */
-int yywrap(void);
 void set_input_file(char *file);
 void *flex_alloc(size_t size);
 void *flex_realloc(void *, size_t size);

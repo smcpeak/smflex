@@ -24,7 +24,10 @@ void gentabs(void);
 void indent_put2s(char const *fmt, char const *arg);
 void indent_puts(char str[]);
 void make_tables(void);
-void emit_with_class_name_substitution(FILE *fp, char const *line);
+void emit_with_name_substitution(FILE *fp, char const *line);
+int emit_skeleton_lines_upto(
+  FILE *dest, char const **skeleton_lines, int skeleton_index,
+  char const *expected_label);
 void emit_header_file(char const *header_file_name);
 
 #endif /* GEN_H */

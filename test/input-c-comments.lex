@@ -1,5 +1,5 @@
 /* input-c-comments.lex */
-/* Demonstrate use of input(). */
+/* Demonstrate use of yyinput(). */
 
 %option main
 
@@ -21,11 +21,11 @@ static void error(char const *msg)
 "/*"      {
             int c;
             for (;;) {
-              while ( (c = input()) != '*' && c != EOF )
+              while ( (c = yyinput()) != '*' && c != EOF )
                 {}    /* eat up text of comment */
 
               if (c == '*') {
-                while ( (c = input()) == '*' )
+                while ( (c = yyinput()) == '*' )
                   {}
                 if (c == '/') {
                   break;    /* found the end */

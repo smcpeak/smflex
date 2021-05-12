@@ -38,8 +38,8 @@ include[ ]+         BEGIN(incl);
           }
           include_stack[include_stack_len++] = YY_CURRENT_BUFFER;
 
-          YY_BUFFER_STATE newbuf = yy_create_buffer(fp, YY_BUF_SIZE);
-          yy_switch_to_buffer(newbuf);
+          YY_BUFFER_STATE newbuf = yy_create_buffer(yy_lexer, fp, YY_BUF_SIZE);
+          yy_switch_to_buffer(yy_lexer, newbuf);
 
           /* Start condition for processing the new file. */
           BEGIN(INITIAL);
@@ -49,12 +49,12 @@ include[ ]+         BEGIN(incl);
           /* We are done with the current buffer. */
           if (include_stack_len >= 1) {
             /* The current buffer is one we made, so clean it up. */
-            yy_delete_buffer(YY_CURRENT_BUFFER);
+            yy_delete_buffer(yy_lexer, YY_CURRENT_BUFFER);
             fclose(yyin);
 
             /* Return to the buffer on the top of the stack.  Note
              * that this sets 'yyin'. */
-            yy_switch_to_buffer(include_stack[--include_stack_len]);
+            yy_switch_to_buffer(yy_lexer, include_stack[--include_stack_len]);
           }
 
           else {

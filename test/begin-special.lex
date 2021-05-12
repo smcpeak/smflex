@@ -25,14 +25,19 @@ token           {
 
 int main()
 {
+  yy_lexer_t lexer;
+  yy_construct(&lexer);
+
   /* Repeatedly toggle 'enter_special' until EOF. */
   enter_special = 0;
-  while (yylex()) {
+  while (yylex(&lexer)) {
     enter_special = !enter_special;
 
     /* Start each time in INITIAL, so that 'enter_special' can either
      * change it or not. */
-    BEGIN(INITIAL);
+    yy_begin(&lexer, INITIAL);
   }
+
+  yy_destroy(&lexer);
   return 0;
 }

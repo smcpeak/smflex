@@ -37,13 +37,11 @@
 #include <ctype.h>                     /* isprint */
 
 
-/* yylex - scan for a regular expression token */
-
+/* Return one token of the smflex input file to the parser. */
 int yylex()
 {
   int toktype;
   static int beglin = false;
-  extern char *yytext;
 
   if (eofseen)
     toktype = EOF;
@@ -173,7 +171,7 @@ int yylex()
         break;
 
       case OPTION_OP:
-        fprintf(stderr, "%s ", yytext);
+        fprintf(stderr, "%s ", input_lexer.yy_text);
         break;
 
       case OPT_OUTFILE:
@@ -190,7 +188,7 @@ int yylex()
       case CCE_SPACE:
       case CCE_UPPER:
       case CCE_XDIGIT:
-        fprintf(stderr, "%s", yytext);
+        fprintf(stderr, "%s", input_lexer.yy_text);
         break;
 
       case 0:

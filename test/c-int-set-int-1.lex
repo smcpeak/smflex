@@ -13,10 +13,15 @@ exit               printf("exiting...\n"); exit(0);
 
 int main()
 {
-  yyin = stdin;
-  yy_set_interactive(1);
-  while (yylex())
+  yy_lexer_t lexer;
+  yy_construct(&lexer);
+
+  lexer.yy_input_stream = stdin;
+  yy_set_interactive(&lexer, 1);
+  while (yylex(&lexer))
     {}
+
+  yy_destroy(&lexer);
   return 0;
 }
 

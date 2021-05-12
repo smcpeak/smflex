@@ -233,11 +233,11 @@ void finish_rule(int mach, int variable_trail_rule,
       /* Do trailing context magic to not match the trailing
        * characters.
        */
-      char *scanner_cp = "yy_c_buf_p = yy_cp";
+      char *scanner_cp = "yy_lexer->yy_c_buf_p = yy_cp";
       char *scanner_bp = "yy_bp";
 
       add_action
-        ("*yy_cp = yy_hold_char; /* undo effects of setting up yytext */\n");
+        ("*yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */\n");
 
       if (headcnt > 0) {
         sprintf(action_text, "%s = %s + %d;\n",
@@ -250,11 +250,11 @@ void finish_rule(int mach, int variable_trail_rule,
         add_action(action_text);
       }
 
-      add_action("YY_DO_BEFORE_ACTION; /* set up yytext again */\n");
+      add_action("YY_DO_BEFORE_ACTION; /* set up yy_text again */\n");
     }
   }
 
-  /* Okay, in the action code at this point yytext and yyleng have
+  /* Okay, in the action code at this point yy_text and yy_leng have
    * their proper final values for this rule, so here's the point
    * to do any user action.  But don't do it for continued actions,
    * as that'll result in multiple YY_RULE_SETUP's.

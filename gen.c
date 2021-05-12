@@ -63,12 +63,10 @@ static int indent_level = 0;    /* each level is 8 spaces */
  * to this is that the fast table representation generally uses the
  * 0 elements of its arrays, too.)
  */
-static char C_int_decl[] = "static const int %s[%d] =\n    {   0,\n";
-static char C_short_decl[] =
-  "static const short int %s[%d] =\n    {   0,\n";
-static char C_long_decl[] = "static const long int %s[%d] =\n    {   0,\n";
-static char C_state_decl[] =
-  "static const yy_state_type %s[%d] =\n    {   0,\n";
+static char C_int_decl[] =   "static const int %s[%d] =\n    {   0,\n";
+static char C_short_decl[] = "static const short int %s[%d] =\n    {   0,\n";
+static char C_long_decl[] =  "static const long int %s[%d] =\n    {   0,\n";
+static char C_state_decl[] = "static const %s_state_type %s[%d] =\n    {   0,\n";
 
 
 /* Indent to the current level. */
@@ -113,8 +111,8 @@ void gen_backing_up()
     indent_puts("if ( yy_accept[yy_current_state] )");
 
   indent_lbrace();
-  indent_puts("yy_last_accepting_state = yy_current_state;");
-  indent_puts("yy_last_accepting_cpos = yy_cp;");
+  indent_puts("yy_lexer->yy_last_accepting_state = yy_current_state;");
+  indent_puts("yy_lexer->yy_last_accepting_cpos = yy_cp;");
   indent_rbrace();
 }
 
@@ -129,17 +127,17 @@ void gen_bu_action()
 
   indent_puts("case 0: /* must back up */");
   indent_puts("/* undo the effects of YY_DO_BEFORE_ACTION */");
-  indent_puts("*yy_cp = yy_hold_char;");
+  indent_puts("*yy_cp = yy_lexer->yy_hold_char;");
 
   if (jacobson || fulltbl)
-    indent_puts("yy_cp = yy_last_accepting_cpos + 1;");
+    indent_puts("yy_cp = yy_lexer->yy_last_accepting_cpos + 1;");
   else
     /* Backing-up info for compressed tables is taken \after/
      * yy_cp has been incremented for the next state.
      */
-    indent_puts("yy_cp = yy_last_accepting_cpos;");
+    indent_puts("yy_cp = yy_lexer->yy_last_accepting_cpos;");
 
-  indent_puts("yy_current_state = yy_last_accepting_state;");
+  indent_puts("yy_current_state = yy_lexer->yy_last_accepting_state;");
   indent_puts("goto yy_find_action;");
   outc('\n');
 
@@ -284,8 +282,8 @@ void gen_find_action()
     indent_puts("yy_act = yy_accept[yy_current_state];");
 
   else if (reject) {
-    indent_puts("yy_current_state = *--yy_state_ptr;");
-    indent_puts("yy_lp = yy_accept[yy_current_state];");
+    indent_puts("yy_current_state = *--(yy_lexer->yy_state_ptr);");
+    indent_puts("yy_lexer->yy_lp = yy_accept[yy_current_state];");
 
     /* One way this is unused is '%option yylineno', which claims
      * to use REJECT (presumably because it needs similar table
@@ -296,18 +294,18 @@ void gen_find_action()
 
     indent_lbrace();
 
-    indent_puts("if ( yy_lp && yy_lp < yy_accept[yy_current_state + 1] )");
+    indent_puts("if ( yy_lexer->yy_lp && yy_lexer->yy_lp < yy_accept[yy_current_state + 1] )");
     indent_lbrace();
-    indent_puts("yy_act = yy_acclist[yy_lp];");
+    indent_puts("yy_act = yy_acclist[yy_lexer->yy_lp];");
 
     if (variable_trailing_context_rules) {
       indent_puts("if ( yy_act & YY_TRAILING_HEAD_MASK ||");
-      indent_puts("     yy_looking_for_trail_begin )");
+      indent_puts("     yy_lexer->yy_looking_for_trail_begin )");
       indent_lbrace();
 
-      indent_puts("if ( yy_act == yy_looking_for_trail_begin )");
+      indent_puts("if ( yy_act == yy_lexer->yy_looking_for_trail_begin )");
       indent_lbrace();
-      indent_puts("yy_looking_for_trail_begin = 0;");
+      indent_puts("yy_lexer->yy_looking_for_trail_begin = 0;");
       indent_puts("yy_act &= ~YY_TRAILING_HEAD_MASK;");
       indent_puts("break;");
       indent_rbrace();
@@ -316,29 +314,29 @@ void gen_find_action()
 
       indent_puts("else if ( yy_act & YY_TRAILING_MASK )");
       indent_lbrace();
-      indent_puts("yy_looking_for_trail_begin = yy_act & ~YY_TRAILING_MASK;");
-      indent_puts("yy_looking_for_trail_begin |= YY_TRAILING_HEAD_MASK;");
+      indent_puts("yy_lexer->yy_looking_for_trail_begin = yy_act & ~YY_TRAILING_MASK;");
+      indent_puts("yy_lexer->yy_looking_for_trail_begin |= YY_TRAILING_HEAD_MASK;");
 
       if (real_reject) {
         /* Remember matched text in case we back up
          * due to REJECT.
          */
-        indent_puts("yy_full_match = yy_cp;");
-        indent_puts("yy_full_state = yy_state_ptr;");
-        indent_puts("yy_full_lp = yy_lp;");
+        indent_puts("yy_lexer->yy_full_match = yy_cp;");
+        indent_puts("yy_lexer->yy_full_state = yy_lexer->yy_state_ptr;");
+        indent_puts("yy_lexer->yy_full_lp = yy_lexer->yy_lp;");
       }
 
       indent_rbrace();
 
       indent_puts("else");
       indent_lbrace();
-      indent_puts("yy_full_match = yy_cp;");
-      indent_puts("yy_full_state = yy_state_ptr;");
-      indent_puts("yy_full_lp = yy_lp;");
+      indent_puts("yy_lexer->yy_full_match = yy_cp;");
+      indent_puts("yy_lexer->yy_full_state = yy_lexer->yy_state_ptr;");
+      indent_puts("yy_lexer->yy_full_lp = yy_lexer->yy_lp;");
       indent_puts("break;");
       indent_rbrace();
 
-      indent_puts("++yy_lp;");
+      indent_puts("++(yy_lexer->yy_lp);");
       indent_puts("goto find_rule;");
     }
 
@@ -347,7 +345,7 @@ void gen_find_action()
        * trailing context plus REJECT.
        */
       indent_lbrace();
-      indent_puts("yy_full_match = yy_cp;");
+      indent_puts("yy_lexer->yy_full_match = yy_cp;");
       indent_puts("break;");
       indent_rbrace();
     }
@@ -360,8 +358,8 @@ void gen_find_action()
      * the beginning, but at the cost of complaints that we're
      * branching inside a loop.
      */
-    indent_puts("yy_current_state = *--yy_state_ptr;");
-    indent_puts("yy_lp = yy_accept[yy_current_state];");
+    indent_puts("yy_current_state = *--(yy_lexer->yy_state_ptr);");
+    indent_puts("yy_lexer->yy_lp = yy_accept[yy_current_state];");
 
     indent_rbrace();
   }
@@ -376,8 +374,8 @@ void gen_find_action()
       indent_puts("if ( yy_act == 0 )");
       indent_up();
       indent_puts("{ /* have to back up */");
-      indent_puts("yy_cp = yy_last_accepting_cpos;");
-      indent_puts("yy_current_state = yy_last_accepting_state;");
+      indent_puts("yy_cp = yy_lexer->yy_last_accepting_cpos;");
+      indent_puts("yy_current_state = yy_lexer->yy_last_accepting_state;");
       indent_puts("yy_act = yy_accept[yy_current_state];");
       indent_rbrace();
     }
@@ -571,8 +569,8 @@ void gen_next_match()
       /* Do the guaranteed-needed backing up to figure out
        * the match.
        */
-      indent_puts("yy_cp = yy_last_accepting_cpos;");
-      indent_puts("yy_current_state = yy_last_accepting_state;");
+      indent_puts("yy_cp = yy_lexer->yy_last_accepting_cpos;");
+      indent_puts("yy_current_state = yy_lexer->yy_last_accepting_state;");
     }
   }
 }
@@ -629,7 +627,7 @@ void gen_next_state(int worry_about_NULs)
     gen_backing_up();
 
   if (reject)
-    indent_puts("*yy_state_ptr++ = yy_current_state;");
+    indent_puts("*(yy_lexer->yy_state_ptr)++ = yy_current_state;");
 }
 
 
@@ -647,7 +645,7 @@ void gen_NUL_trans()
     /* We're going to need yy_cp lying around for the call
      * below to gen_backing_up().
      */
-    indent_puts("char *yy_cp = yy_c_buf_p;");
+    indent_puts("char *yy_cp = yy_lexer->yy_c_buf_p;");
 
   outc('\n');
 
@@ -689,7 +687,7 @@ void gen_NUL_trans()
        */
       indent_puts("if ( ! yy_is_jam )");
       indent_up();
-      indent_puts("*yy_state_ptr++ = yy_current_state;");
+      indent_puts("*(yy_lexer->yy_state_ptr)++ = yy_current_state;");
       indent_down();
     }
   }
@@ -714,22 +712,22 @@ void gen_start_state()
   if (jacobson) {
     if (bol_needed) {
       indent_puts
-        ("yy_current_state = yy_start_state_list[yy_start + YY_AT_BOL()];");
+        ("yy_current_state = yy_start_state_list[yy_lexer->yy_start + YY_AT_BOL()];");
     }
     else
-      indent_puts("yy_current_state = yy_start_state_list[yy_start];");
+      indent_puts("yy_current_state = yy_start_state_list[yy_lexer->yy_start];");
   }
 
   else {
-    indent_puts("yy_current_state = yy_start;");
+    indent_puts("yy_current_state = yy_lexer->yy_start;");
 
     if (bol_needed)
       indent_puts("yy_current_state += YY_AT_BOL();");
 
     if (reject) {
       /* Set up for storing up states. */
-      indent_puts("yy_state_ptr = yy_state_buf;");
-      indent_puts("*yy_state_ptr++ = yy_current_state;");
+      indent_puts("yy_lexer->yy_state_ptr = yy_lexer->yy_state_buf;");
+      indent_puts("*(yy_lexer->yy_state_ptr)++ = yy_current_state;");
     }
   }
 }
@@ -1006,7 +1004,7 @@ void make_tables()
   int i;
   int did_eof_rule = false;
 
-  skelout_upto("yymore_yytext");
+  skelout_upto("yymore_yy_text");
 
   /* First, take care of YY_DO_BEFORE_ACTION depending on yymore
    * being used.
@@ -1014,15 +1012,16 @@ void make_tables()
   set_indent(1);
 
   if (yymore_used) {
-    indent_puts("yytext_ptr -= yy_more_len; \\");
-    indent_puts("yyleng = (int) (yy_cp - yytext_ptr); \\");
+    indent_puts("yy_lexer->yy_text_ptr -= yy_lexer->yy_more_len; \\");
+    indent_puts("yy_lexer->yy_leng = (int) (yy_cp - yy_lexer->yy_text_ptr); \\");
   }
 
-  else
-    indent_puts("yyleng = (int) (yy_cp - yy_bp); \\");
+  else {
+    indent_puts("yy_lexer->yy_leng = (int) (yy_cp - yy_bp); \\");
+  }
 
-  /* Now also deal with copying yytext_ptr to yytext if needed. */
-  skelout_upto("array_yytext");
+  /* Now also deal with copying yy_text_ptr to yy_text if needed. */
+  skelout_upto("array_yy_text");
 
   set_indent(0);
 
@@ -1041,14 +1040,7 @@ void make_tables()
       (total_table_size >= MAX_SHORT || long_align) ? "long" : "short";
 
     set_indent(0);
-    if (C_plus_plus) {
-      /* Define the nested structure. */
-      indent_puts("typedef struct yyFlexLexer::yy_trans_info_struct");
-    }
-    else {
-      /* Define the global structure. */
-      indent_puts("typedef struct yy_trans_info_struct");
-    }
+    indent_put2s("typedef struct %s_trans_info_struct", prefix);
     indent_lbrace();
 
     if (long_align)
@@ -1076,19 +1068,8 @@ void make_tables()
   else
     gentabs();
 
-  /* Definitions for backing up.  We don't need them if REJECT
-   * is being used because then we use an alternative backin-up
-   * technique instead.
-   */
-  if (num_backing_up > 0 && !reject) {
-    if (!C_plus_plus) {
-      indent_puts("static yy_state_type yy_last_accepting_state;");
-      indent_puts("static char *yy_last_accepting_cpos;\n");
-    }
-  }
-
   if (nultrans) {
-    out_str_dec(C_state_decl, "yy_NUL_trans", lastdfa + 1);
+    out_str2_dec(C_state_decl, prefix, "yy_NUL_trans", lastdfa + 1);
 
     for (i = 1; i <= lastdfa; ++i) {
       if (jacobson)
@@ -1102,11 +1083,6 @@ void make_tables()
 
   if (ddebug) {
     /* Spit out table mapping rules to line numbers. */
-    if (!C_plus_plus) {
-      indent_puts("extern int yy_flex_debug;");
-      indent_puts("int yy_flex_debug = 1;\n");
-    }
-
     out_str_dec(long_align ? C_long_decl : C_short_decl,
                 "yy_rule_linenum", num_rules);
     for (i = 1; i < num_rules; ++i)
@@ -1115,21 +1091,7 @@ void make_tables()
   }
 
   if (reject) {
-    /* Declare state buffer variables. */
-    if (!C_plus_plus) {
-      outn
-        ("static yy_state_type yy_state_buf[YY_BUF_SIZE + 2], *yy_state_ptr;");
-      outn("static char *yy_full_match;");
-      outn("static int yy_lp;");
-    }
-
     if (variable_trailing_context_rules) {
-      if (!C_plus_plus) {
-        outn("static int yy_looking_for_trail_begin = 0;");
-        outn("static int yy_full_lp;");
-        outn("static int *yy_full_state;");
-      }
-
       out_hex("#define YY_TRAILING_MASK 0x%x\n",
               (unsigned int) YY_TRAILING_MASK);
       out_hex("#define YY_TRAILING_HEAD_MASK 0x%x\n",
@@ -1138,16 +1100,16 @@ void make_tables()
 
     outn("#define REJECT \\");
     outn("{ \\");
-    outn("*yy_cp = yy_hold_char; /* undo effects of setting up yytext */ \\");
-    outn("yy_cp = yy_full_match; /* restore poss. backed-over text */ \\");
+    outn("*yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */ \\");
+    outn("yy_cp = yy_lexer->yy_full_match; /* restore poss. backed-over text */ \\");
 
     if (variable_trailing_context_rules) {
-      outn("yy_lp = yy_full_lp; /* restore orig. accepting pos. */ \\");
-      outn("yy_state_ptr = yy_full_state; /* restore orig. state */ \\");
-      outn("yy_current_state = *yy_state_ptr; /* restore curr. state */ \\");
+      outn("yy_lexer->yy_lp = yy_lexer->yy_full_lp; /* restore orig. accepting pos. */ \\");
+      outn("yy_lexer->yy_state_ptr = yy_lexer->yy_full_state; /* restore orig. state */ \\");
+      outn("yy_current_state = *(yy_lexer->yy_state_ptr); /* restore curr. state */ \\");
     }
 
-    outn("++yy_lp; \\");
+    outn("++(yy_lexer->yy_lp); \\");
     outn("goto find_rule; \\");
     outn("}");
   }
@@ -1160,13 +1122,8 @@ void make_tables()
   }
 
   if (yymore_used) {
-    if (!C_plus_plus) {
-      indent_puts("static int yy_more_flag = 0;");
-      indent_puts("static int yy_more_len = 0;");
-    }
-
-    indent_puts("#define yymore() (yy_more_flag = 1)");
-    indent_puts("#define YY_MORE_ADJ yy_more_len");
+    indent_puts("#define yymore() (yy_lexer->yy_more_flag = 1)");
+    indent_puts("#define YY_MORE_ADJ yy_lexer->yy_more_len");
     indent_puts("#define YY_RESTORE_YY_MORE_OFFSET");
   }
 
@@ -1174,10 +1131,6 @@ void make_tables()
     indent_puts("#define yymore() yymore_used_but_not_detected");
     indent_puts("#define YY_MORE_ADJ 0");
     indent_puts("#define YY_RESTORE_YY_MORE_OFFSET");
-  }
-
-  if (!C_plus_plus) {
-    outn("char *yytext;");
   }
 
   out_with_line_directive_substitution(&action_array[defs1_offset]);
@@ -1195,7 +1148,7 @@ void make_tables()
      * editing these strings here is a pain. */
     if (use_read) {
       outn("  if (0) {} else { \\");
-      outn("    result = read(fileno(yyin), (char*)buf, max_size); \\");
+      outn("    result = read(fileno(yy_lexer->yy_input_stream), (char*)buf, max_size); \\");
       outn("    YY_DEBUG_LOG_CALL(\"read()\", result); \\");
       outn("    if (result < 0) { \\");
       outn("      YY_FATAL_ERROR(\"input in smflex scanner failed\"); \\");
@@ -1204,10 +1157,10 @@ void make_tables()
     }
 
     else {
-      outn("  if (yy_current_buffer->yy_is_interactive) { \\");
+      outn("  if (yy_lexer->yy_current_buffer->yy_is_interactive) { \\");
       outn("    int c = '*', n; \\");
       outn("    for (n = 0; \\");
-      outn("         n < max_size && (c = getc(yyin)) != EOF && c != '\\n'; \\");
+      outn("         n < max_size && (c = getc(yy_lexer->yy_input_stream)) != EOF && c != '\\n'; \\");
       outn("         ++n) { \\");
       outn("      YY_DEBUG_LOG_CALL(\"getc()\", c); \\");
       outn("      buf[n] = (char) c; \\");
@@ -1219,16 +1172,16 @@ void make_tables()
       outn("    } \\");
       outn("    if (c == EOF) { \\");
       outn("      YY_DEBUG_LOG_CALL(\"getc()\", c); \\");
-      outn("      if (ferror(yyin)) { \\");
+      outn("      if (ferror(yy_lexer->yy_input_stream)) { \\");
       outn("        YY_FATAL_ERROR(\"input in smflex scanner failed\"); \\");
       outn("      } \\");
       outn("    } \\");
       outn("    result = n; \\");
       outn("  } \\");
       outn("  else { \\");
-      outn("    result = fread(buf, 1, max_size, yyin); \\");
+      outn("    result = fread(buf, 1, max_size, yy_lexer->yy_input_stream); \\");
       outn("    YY_DEBUG_LOG_CALL(\"fread()\", result); \\");
-      outn("    if (result == 0 && ferror(yyin)) { \\");
+      outn("    if (result == 0 && ferror(yy_lexer->yy_input_stream)) { \\");
       outn("      YY_FATAL_ERROR(\"input in smflex scanner failed\"); \\");
       outn("    } \\");
       outn("  }");
@@ -1243,10 +1196,10 @@ void make_tables()
   indent_puts("#define YY_RULE_SETUP \\");
   indent_up();
   if (bol_needed) {
-    indent_puts("if ( yyleng > 0 ) \\");
+    indent_puts("if ( yy_lexer->yy_leng > 0 ) \\");
     indent_up();
-    indent_puts("yy_current_buffer->yy_at_bol = \\");
-    indent_puts("    (yytext[yyleng - 1] == '\\n'); \\");
+    indent_puts("yy_lexer->yy_current_buffer->yy_at_bol = \\");
+    indent_puts("    (yy_lexer->yy_text[yy_lexer->yy_leng - 1] == '\\n'); \\");
     indent_down();
   }
   indent_puts("YY_USER_ACTION");
@@ -1264,11 +1217,11 @@ void make_tables()
   set_indent(2);
 
   if (yymore_used) {
-    indent_puts("yy_more_len = 0;");
-    indent_puts("if ( yy_more_flag )");
+    indent_puts("yy_lexer->yy_more_len = 0;");
+    indent_puts("if (yy_lexer->yy_more_flag)");
     indent_lbrace();
-    indent_puts("yy_more_len = yy_c_buf_p - yytext_ptr;");
-    indent_puts("yy_more_flag = 0;");
+    indent_puts("yy_lexer->yy_more_len = yy_lexer->yy_c_buf_p - yy_lexer->yy_text_ptr;");
+    indent_puts("yy_lexer->yy_more_flag = 0;");
     indent_rbrace();
   }
 
@@ -1284,16 +1237,16 @@ void make_tables()
   set_indent(2);
   gen_find_action();
 
-  skelout_upto("yylineno_update");
+  skelout_upto("yy_lineno_update");
   if (do_yylineno) {
     indent_puts("if ( yy_act != YY_END_OF_BUFFER )");
     indent_lbrace();
     indent_puts("int yyl;");
-    indent_puts("for ( yyl = 0; yyl < yyleng; ++yyl )");
+    indent_puts("for ( yyl = 0; yyl < yy_lexer->yy_leng; ++yyl )");
     indent_up();
-    indent_puts("if ( yytext[yyl] == '\\n' )");
+    indent_puts("if ( yy_lexer->yy_text[yyl] == '\\n' )");
     indent_up();
-    indent_puts("++yylineno;");
+    indent_puts("++(yy_lexer->yy_lineno);");
     indent_down();
     indent_down();
     indent_rbrace();
@@ -1301,7 +1254,7 @@ void make_tables()
 
   skelout_upto("action_debug_code");
   if (ddebug) {
-    indent_puts("if ( yy_flex_debug )");
+    indent_puts("if (yy_lexer->yy_flex_debug)");
 
     indent_lbrace();
     indent_puts("if ( yy_act == 0 )");
@@ -1318,13 +1271,13 @@ void make_tables()
     if (C_plus_plus) {
       indent_puts
         ("cerr << \"--accepting rule at line \" << yy_rule_linenum[yy_act] <<");
-      indent_puts("         \"(\\\"\" << yytext << \"\\\")\\n\";");
+      indent_puts("         \"(\\\"\" << yy_lexer->yy_text << \"\\\")\\n\";");
     }
     else {
       indent_puts
         ("fprintf( stderr, \"--accepting rule at line %d (\\\"%s\\\")\\n\",");
 
-      indent_puts("         yy_rule_linenum[yy_act], yytext );");
+      indent_puts("         yy_rule_linenum[yy_act], yy_lexer->yy_text );");
     }
 
     indent_down();
@@ -1335,12 +1288,12 @@ void make_tables()
 
     if (C_plus_plus) {
       indent_puts
-        ("cerr << \"--accepting default rule (\\\"\" << yytext << \"\\\")\\n\";");
+        ("cerr << \"--accepting default rule (\\\"\" << yy_lexer->yy_text << \"\\\")\\n\";");
     }
     else {
       indent_puts
         ("fprintf( stderr, \"--accepting default rule (\\\"%s\\\")\\n\",");
-      indent_puts("         yytext );");
+      indent_puts("         yy_lexer->yy_text );");
     }
 
     indent_down();
@@ -1414,15 +1367,15 @@ void make_tables()
   set_indent(6);
 
   if (jacobson || fulltbl)
-    indent_puts("yy_cp = yy_c_buf_p;");
+    indent_puts("yy_cp = yy_lexer->yy_c_buf_p;");
 
   else {                        /* compressed table */
     if (!reject && !interactive) {
       /* Do the guaranteed-needed backing up to figure
        * out the match.
        */
-      indent_puts("yy_cp = yy_last_accepting_cpos;");
-      indent_puts("yy_current_state = yy_last_accepting_state;");
+      indent_puts("yy_cp = yy_lexer->yy_last_accepting_cpos;");
+      indent_puts("yy_current_state = yy_lexer->yy_last_accepting_state;");
     }
 
     else
@@ -1430,7 +1383,7 @@ void make_tables()
        * yy_current_state was set up by
        * yy_get_previous_state().
        */
-      indent_puts("yy_cp = yy_c_buf_p;");
+      indent_puts("yy_cp = yy_lexer->yy_c_buf_p;");
   }
 
 
@@ -1448,23 +1401,23 @@ void make_tables()
   skelout_upto("nul_trans_next_state");
   gen_NUL_trans();
 
-  skelout_upto("yyunput_update_yylineno");
+  skelout_upto("yyunput_update_yy_lineno");
   if (do_yylineno) {
     /* update yylineno inside of unput() */
     indent_puts("if ( c == '\\n' )");
     indent_up();
-    indent_puts("--yylineno;");
+    indent_puts("--(yy_lexer->yy_lineno);");
     indent_down();
   }
 
-  skelout_upto("yyinput_update_BOL");
-  /* Update BOL and yylineno inside of input(). */
+  skelout_upto("yy_read_character_update_BOL");
+  /* Update BOL and yy_lineno inside of input(). */
   if (bol_needed) {
-    indent_puts("yy_current_buffer->yy_at_bol = (c == '\\n');");
+    indent_puts("yy_lexer->yy_current_buffer->yy_at_bol = (c == '\\n');");
     if (do_yylineno) {
-      indent_puts("if ( yy_current_buffer->yy_at_bol )");
+      indent_puts("if (yy_lexer->yy_current_buffer->yy_at_bol)");
       indent_up();
-      indent_puts("++yylineno;");
+      indent_puts("++(yy_lexer->yy_lineno);");
       indent_down();
     }
   }
@@ -1472,7 +1425,7 @@ void make_tables()
   else if (do_yylineno) {
     indent_puts("if ( c == '\\n' )");
     indent_up();
-    indent_puts("++yylineno;");
+    indent_puts("++(yy_lexer->yy_lineno);");
     indent_down();
   }
 
@@ -1487,9 +1440,105 @@ void make_tables()
 }
 
 
-/* Return true if 'c' is a character that can be part of an identifier
- * in C++. */
-static int is_identifier_char(char c)
+/* Static storage for the result of identifier lookup.  The extra 100
+ * is to allow space for the part of the name after the prefix. */
+static char lookup_result[MAX_PREFIX_LEN + 100];
+
+
+/* Names to substitute using 'all_caps_prefix'.
+ *
+ * Along with the next list, this is an exhaustive list of all of
+ * the names that are contributed to the global namespace, either by
+ * including the generated header or by linking with the generated
+ * scanner. */
+static char const *all_caps_prefix_names[] = {
+  "YY_BUFFER_STATE",
+  "YY_INPUT_STREAM_TYPE",
+  "YY_OUTPUT_STREAM_TYPE",
+};
+
+/* Names to substitute using 'prefix'. */
+static char const *lower_prefix_names[] = {
+  "yyFlexLexer",
+  "yyFlexLexer_CLASS_DEFINED",
+  "yy_lexer_t",
+  "yy_lexer_t_DEFINED",
+  "yy_lexer_state_struct",
+  "yy_begin",
+  "yy_buffer_state",
+  "yy_buffer_state_struct",
+  "yy_construct",
+  "yy_create_buffer",
+  "yy_delete_buffer",
+  "yy_destroy",
+  "yy_flush_buffer",
+  "yy_init_buffer",
+  "yy_load_buffer_state",
+  "yy_scan_buffer",
+  "yy_scan_bytes",
+  "yy_scan_string",
+  "yy_set_interactive",
+  "yy_size_t",
+  "yy_state_type",
+  "yy_switch_to_buffer",
+  "yy_trans_info",
+  "yy_trans_info_struct",
+  "yylex",
+  "yyrestart",
+  "yywrap",
+};
+
+
+/* Return true if 'text[0,len-1]' matches the entire 'name' string. */
+static int name_matches(char const *name, char const *text, int len)
+{
+  return 0==strncmp(name, text, len) &&
+         strlen(name) == len;
+}
+
+
+/* Look up 'id[0,len-1]' as a skeleton identifier.  If a substitution
+ * is found, return a pointer to statically-allocated storage containing
+ * the replacement.  Otherwise return NULL. */
+static char const *look_up_skel_identifier(char const *id, int len)
+{
+  int i;
+
+  /* For now, use inefficient linear search. */
+
+  for (i=0; i < TABLESIZE(all_caps_prefix_names); i++) {
+    if (name_matches(all_caps_prefix_names[i], id, len)) {
+      sprintf(lookup_result, "%s%.*s", all_caps_prefix, len-2, id+2);
+      return lookup_result;
+    }
+  }
+
+  for (i=0; i < TABLESIZE(lower_prefix_names); i++) {
+    if (name_matches(lower_prefix_names[i], id, len)) {
+      sprintf(lookup_result, "%s%.*s", prefix, len-2, id+2);
+      return lookup_result;
+    }
+  }
+
+  if (name_matches("yyclass_name", id, len) && yyclass!=NULL) {
+    return yyclass;
+  }
+
+  return NULL;
+}
+
+
+/* Return true if 'c' is a character that can be the start of an
+ * identifier in C/C++. */
+static int is_identifier_start(char c)
+{
+  return c == '_' ||
+         ('A' <= c && c <= 'Z') ||
+         ('a' <= c && c <= 'z');
+}
+
+/* Return true if 'c' can be an identifier continuation. */
+static int is_identifier_continuation(char c)
 {
   return c == '_' ||
          ('0' <= c && c <= '9') ||
@@ -1499,48 +1548,64 @@ static int is_identifier_char(char c)
 
 
 /* Write 'line' and a newline to 'fp', except if it contains any
- * occurrences of "yyFlexLexer", replace the "yy" part with 'prefix'.
+ * occurrences of skeleton substitution identifiers, replace them.
  *
  * If 'fp' is 'scanner_c_file', then increment 'out_linenum'. */
-void emit_with_class_name_substitution(FILE *fp, char const *line)
+void emit_with_name_substitution(FILE *fp, char const *line)
 {
-  char const *p = line;
+  /* Remaining text to print. */
+  char const *cur = line;
 
   if (fp == scanner_c_file) {
     out_line_count(line);
     ++out_linenum;        /* For the final newline, below. */
   }
 
-  /* Look for the default class name so we can change it. */
-  char const *yyFlexLexer;
-  while ((yyFlexLexer = strstr(p, "yyFlexLexer")) != NULL) {
-    /* Check that what we found is surrounded by word boundaries. */
-    if ( ((yyFlexLexer == line) || !is_identifier_char(yyFlexLexer[-1])) &&
-         !is_identifier_char(yyFlexLexer[11]) ) {
-      /* Replace the "yy" in 'yyFlexLexer' with 'prefix'.  By default,
-       * 'prefix' is "yy", but we still use the general mechanism. */
-      fprintf(fp, "%.*s%s",
-              (int)(yyFlexLexer - p), p,     /* up to "yy" */
-              prefix);                       /* replacement for "yy" */
+  /* Scan the line for identifiers, similar to how the C preprocessor
+   * does it.  This code is oblivious to string literals and comments,
+   * but that should be fine for my purposes. */
+  while (*cur) {
+    /* Skip non-identifier characters. */
+    char const *id_start = cur;
+    while (*id_start && !is_identifier_start(*id_start)) {
+      id_start++;
+    }
+
+    if (*id_start) {
+      char const *replacement;
+
+      /* Scan to the end of the current identifier. */
+      char const *id_end = id_start+1;
+      while (is_identifier_continuation(*id_end)) {
+        id_end++;
+      }
+
+      /* Look up a replacement. */
+      replacement = look_up_skel_identifier(id_start, id_end-id_start);
+      if (replacement) {
+        /* Print everything before the identifier, then the
+         * replacement. */
+        fprintf(fp, "%.*s%s",
+                (int)(id_start - cur), cur,    /* before */
+                replacement);
+      }
+      else {
+        /* Print up to the end of the identifier. */
+        fprintf(fp, "%.*s", (int)(id_end - cur), cur);
+      }
+
+      cur = id_end;
     }
     else {
-      /* At least one side is not a word boundary.  Emit unchanged.
-       *
-       * This never happens in the current system because this name
-       * substitution stuff is only applied to the skeleton files,
-       * and they do not have any occurrences of "yyFlexLexer" that
-       * are part of another identifier.  But I have manually tested
-       * that this works, and it could be useful in the future. */
-      fprintf(fp, "%.*syy",
-              (int)(yyFlexLexer - p), p);    /* up to "yy" */
-    }
+      /* No identifier remains; print rest of line. */
+      fprintf(fp, "%s", cur);
 
-    /* Resume after the "yy". */
-    p = yyFlexLexer + 2;
+      cur = id_start;
+    }
   }
 
-  /* Print the remaining line with no substitution. */
-  fprintf(fp, "%s\n", p);
+  /* Final newline. */
+  fprintf(fp, "\n");
 }
 
 
@@ -1550,10 +1615,186 @@ static int evaluate_skel_condition(char const *cond)
   if (str_eq(cond, "jacobson")) {
     return !!jacobson;
   }
+  else if (str_eq(cond, "yyclass")) {
+    return !!yyclass;
+  }
+  else if (str_eq(cond, "yywrap")) {
+    return !!do_yywrap;
+  }
+  else if (str_eq(cond, "yylineno")) {
+    return !!do_yylineno;
+  }
   else {
     flexfatal_s(_("bad skeleton condition: \"%s\""), cond);
     return false;     // not reached
   }
+}
+
+
+#define MAX_IF_NESTING 10
+
+
+/* Return true if all of 'vals[0,count-1]' are true. */
+static int all_true(int *vals, int count)
+{
+  int i;
+  for (i=0; i < count; i++) {
+    if (vals[i] == 0) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+
+/* Emit skeleton lines, starting at 'skeleton_lines[skeleton_index]',
+ * to 'dest'.  Process skeleton conditionals and substitutions.
+ *
+ * Stop when we reach the end of the skeleton (indicated by a NULL
+ * entry) or we hit a "%%" line.  Check that 'expected_label' agrees
+ * with where we stopped.
+ *
+ * Return the index in 'skeleton_lines' where we stopped, i.e., the
+ * next entry to emit when we resume. */
+int emit_skeleton_lines_upto(
+  FILE *dest, char const **skeleton_lines, int skeleton_index,
+  char const *expected_label)
+{
+  /* When greater than 0, we are inside that many '%if' levels. */
+  int in_if = 0;
+
+  /* The entry at 'in_if' says if we are currently emitting the lines
+   * we see.  Entries at lesser values indicate whether we are emitting
+   * those outer conditionals. */
+  int emitting_if[MAX_IF_NESTING] = {1};
+
+  char const *line;
+  while ( (line = skeleton_lines[skeleton_index++]) != NULL ) {
+    if (line[0] == '%') {
+      if (starts_with(line+1, "if ")) {
+        if (in_if >= MAX_IF_NESTING) {
+          fprintf(stderr,
+            _("%s: line %d: cannot nest %%if that deeply: \"%s\""),
+            program_name, skeleton_index, line);
+          exit(2);
+        }
+        in_if++;
+        emitting_if[in_if] = evaluate_skel_condition(line+4);
+      }
+
+      else if (starts_with(line+1, "else")) {
+        if (!in_if) {
+          flexfatal("%%else when not in %%if");
+        }
+        emitting_if[in_if] = !emitting_if[in_if];
+      }
+
+      else if (starts_with(line+1, "endif")) {
+        if (!in_if) {
+          flexfatal("%%endif when not in %%if");
+        }
+        in_if--;
+      }
+
+      else if (line[1] == '+') {
+        if (in_if >= MAX_IF_NESTING) {
+          fprintf(stderr,
+            _("%s: line %d: cannot nest %%if that deeply: \"%s\""),
+            program_name, skeleton_index, line);
+          exit(2);
+        }
+        in_if++;
+        emitting_if[in_if] = !!C_plus_plus;
+      }
+
+      else if (line[1] == '-') {
+        if (in_if >= MAX_IF_NESTING) {
+          fprintf(stderr,
+            _("%s: line %d: cannot nest %%if that deeply: \"%s\""),
+            program_name, skeleton_index, line);
+          exit(2);
+        }
+        in_if++;
+        emitting_if[in_if] = !C_plus_plus;
+      }
+
+      else if (line[1] == '*') {
+        if (!in_if) {
+          flexfatal("%%* when not in %%if or %%- or %%+");
+        }
+        in_if--;
+      }
+
+      else if (line[1] == '#') {
+        /* Comment in the skeleton, discard. */
+      }
+
+      else if (line[1] == '%') {
+        int colonIndex;
+
+        if (in_if) {
+          fprintf(stderr,
+            _("%s: line %d: \"%%%%\" in while still inside %%if\n"),
+            program_name, skeleton_index);
+          exit(2);
+        }
+
+        if (line[2] != ' ') {
+          fprintf(stderr,
+            _("%s: line %d: \"%%%%\" in skeleton must be immediately followed by a space\n"),
+            program_name, skeleton_index);
+          exit(2);
+        }
+
+        /* Look for the following colon. */
+        for (colonIndex = 3;
+             line[colonIndex] != '\0' && line[colonIndex] != ':';
+             colonIndex++)
+          {}
+        if (line[colonIndex] != ':') {
+          fprintf(stderr,
+            _("%s: line %d: \"%%%%\" in skeleton must be followed by a colon\n"),
+            program_name, skeleton_index);
+          exit(2);
+        }
+
+        /* Make sure the label is right. */
+        if (!name_matches(expected_label, line+3, colonIndex-3)) {
+          fprintf(stderr,
+            _("%s: line %d: skeleton \"%%%%\" line has wrong label; expected \"%s\"\n"),
+            program_name, skeleton_index, expected_label);
+          exit(2);
+        }
+
+        return skeleton_index;
+      }
+
+      else {
+        flexfatal_s(_("bad skeleton directive: %s"), line);
+      }
+    }
+    else {
+      if (all_true(emitting_if, in_if+1)) {
+        emit_with_name_substitution(dest, line);
+      }
+    }
+  }
+
+  if (in_if) {
+    fprintf(stderr,
+      _("%s: line %d: EOF while still inside %%if\n"),
+      program_name, skeleton_index);
+    exit(2);
+  }
+
+  if (!str_eq(expected_label, "end_of_skeleton")) {
+    fprintf(stderr,
+      _("%s: reached end of skeleton file but expected label \"%s\"\n"),
+      program_name, expected_label);
+    exit(2);
+  }
+
+  return skeleton_index;
 }
 
 
@@ -1571,53 +1812,13 @@ void emit_header_file(char const *header_file_name)
   }
 
   /* Begin with a title and description. */
-  fprintf(header_file, "// %s\n", header_file_name);
-  fprintf(header_file, "// Scanner class definition generated by smflex.\n");
-  fprintf(header_file, "// DO NOT EDIT MANUALLY.\n\n");
+  fprintf(header_file, "/* %s */\n", header_file_name);
+  fprintf(header_file, "/* Scanner interface definition generated by smflex. */\n");
+  fprintf(header_file, "/* DO NOT EDIT MANUALLY. */\n");
 
   /* Copy the header contents into it. */
-  {
-    int in_if = false;
-    int emitting_if = false;
-
-    char const **lineptr;
-    for (lineptr = header_skl_contents; *lineptr != NULL; lineptr++) {
-      char const *line = *lineptr;
-      if (line[0] == '%') {
-        if (starts_with(line+1, "if ")) {
-          if (in_if) {
-            flexfatal_s("cannot nest %%if: \"%s\"", line);
-          }
-          in_if = true;
-          emitting_if = evaluate_skel_condition(line+4);
-        }
-
-        else if (starts_with(line+1, "else")) {
-          if (!in_if) {
-            flexfatal("%%else when not in %%if");
-          }
-          emitting_if = !emitting_if;
-        }
-
-        else if (starts_with(line+1, "endif")) {
-          if (!in_if) {
-            flexfatal("%%endif when not in %%if");
-          }
-          in_if = false;
-          emitting_if = false;
-        }
-
-        else {
-          flexfatal_s(_("bad skeleton directive: %s"), line);
-        }
-      }
-      else {
-        if (!in_if || emitting_if) {
-          emit_with_class_name_substitution(header_file, line);
-        }
-      }
-    }
-  }
+  emit_skeleton_lines_upto(
+    header_file, header_skl_contents, 0, "end_of_skeleton");
 
   /* Finish up. */
   if (fclose(header_file) != 0) {

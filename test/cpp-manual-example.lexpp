@@ -56,7 +56,7 @@ int main()
     ExampleFlexLexer lexer;
 
     // Read tokens until EOF, doing only what the scanner actions do.
-    while (lexer.yylex() != 0)
+    while (lexer.yym_lex() != 0)
         {}
 
     return 0;

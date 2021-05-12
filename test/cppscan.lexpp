@@ -5,7 +5,7 @@
 %option main
 
 %%
-username           cout << "USERNAME";
+username           std::cout << "USERNAME";
 
 %%
 /* EOF */

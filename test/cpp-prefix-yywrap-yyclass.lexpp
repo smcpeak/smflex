@@ -10,12 +10,16 @@
 
 %{
 #include <fstream>           // ifstream
+#include <iostream>          // cout
+
+using std::cout;
 using std::ifstream;
+using std::istream;
 
 class MyClass : public MyLexerFlexLexer {
 public:
-  int yylex();
-  int yywrap();
+  int yym_lex();
+  int yym_wrap();
 };
 %}
 
@@ -27,7 +31,7 @@ username           cout << "USERNAME";
 /* Non-NULL once we have read the second input. */
 static istream *secondFile = NULL;
 
-int MyClass::yywrap()
+int MyClass::yym_wrap()
 {
   if (!secondFile) {
     secondFile = new ifstream("cppscan-yywrap.input2");

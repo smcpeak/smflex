@@ -60,6 +60,7 @@ void out_str(const char fmt[], const char str[]);
 void out_str3(const char fmt[], const char s1[],
               const char s2[], const char s3[]);
 void out_str_dec(const char fmt[], const char str[], int n);
+void out_str2_dec(char const *fmt, char const *s1, char const *s2, int n);
 void outc(int c);
 void outn(const char str[]);
 void out_with_limit(char const *str, size_t length);

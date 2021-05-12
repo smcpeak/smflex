@@ -43,6 +43,7 @@ char copyright[] =
 #include "sym.h"                       /* scinstal */
 #include "version.h"                   /* SMFLEX_VERSION */
 
+#include <ctype.h>                     /* toupper */
 #include <stdio.h>                     /* remove */
 #include <string.h>                    /* strcpy, etc. */
 #include <stdlib.h>                    /* exit */
@@ -90,7 +91,9 @@ int scanner_skl_ind = 0;
 FILE *backing_up_file;
 char *infilename = NULL, *outfilename = NULL;
 int did_outfilename;
-char *prefix, *yyclass;
+char const *prefix;
+char const *all_caps_prefix;
+char *yyclass;
 int do_stdinit;
 char **input_files;
 int num_input_files;
@@ -190,10 +193,8 @@ int main(int argc, char **argv)
    * generated scanner code to the primary output file. */
   make_tables();
 
-  if (C_plus_plus) {
-    /* Emit the header file with class definitions. */
-    emit_header_file(header_file_name);
-  }
+  /* Emit the header file with interface definitions. */
+  emit_header_file(header_file_name);
 
   /* Note, flexend does not return.  It exits with its argument
    * as status.
@@ -279,35 +280,6 @@ void check_options()
       lerrsf(_("could not create %s"), outfilename);
 
     outfile_created = 1;
-  }
-
-  if (strcmp(prefix, "yy")) {
-#define GEN_PREFIX(name) out_str3( "#define yy%s %s%s\n", name, prefix, name )
-    if (!C_plus_plus) {
-      GEN_PREFIX("_create_buffer");
-      GEN_PREFIX("_delete_buffer");
-      GEN_PREFIX("_scan_buffer");
-      GEN_PREFIX("_scan_string");
-      GEN_PREFIX("_scan_bytes");
-      GEN_PREFIX("_flex_debug");
-      GEN_PREFIX("_init_buffer");
-      GEN_PREFIX("_flush_buffer");
-      GEN_PREFIX("_load_buffer_state");
-      GEN_PREFIX("_switch_to_buffer");
-      GEN_PREFIX("in");
-      GEN_PREFIX("leng");
-      GEN_PREFIX("lex");
-      GEN_PREFIX("out");
-      GEN_PREFIX("restart");
-      GEN_PREFIX("text");
-
-      if (do_yylineno)
-        GEN_PREFIX("lineno");
-      if (do_yywrap)
-        GEN_PREFIX("wrap");
-
-      outn("");
-    }
   }
 }
 
@@ -411,7 +383,7 @@ void flexend(int exit_status)
     if (did_outfilename)
       fprintf(stderr, " -o%s", outfilename);
 
-    if (strcmp(prefix, "yy"))
+    if (!str_eq(prefix, "yy"))
       fprintf(stderr, " -P%s", prefix);
 
     putc('\n', stderr);
@@ -515,7 +487,8 @@ void flexinit(int argc, char **argv)
   did_outfilename = 0;
   write_native_line_endings = 0;
   prefix = "yy";
-  yyclass = 0;
+  all_caps_prefix = "YY";
+  yyclass = NULL;
   use_read = false;
 
   /* smcpeak 2021-04-30: Changed the default value to false. */
@@ -659,7 +632,7 @@ void flexinit(int argc, char **argv)
           if (i != 1)
             flexerror(_("-P flag must be given separately"));
 
-          prefix = arg + i + 1;
+          set_prefix(arg + i + 1);
           goto get_next_arg;
 
         case 'p':
@@ -709,6 +682,10 @@ void flexinit(int argc, char **argv)
 
   num_input_files = argc;
   input_files = argv;
+
+  /* Do this before setting the input file.  We never destroy this. */
+  input_scan_construct(&input_lexer);
+
   set_input_file(num_input_files > 0 ? input_files[0] : NULL);
 
   lastccl = lastsc = lastdfa = lastnfa = 0;
@@ -731,7 +708,7 @@ void flexinit(int argc, char **argv)
 }
 
 
-/* Construct the name of the header file from the C++ output file name
+/* Construct the name of the header file from the output file name
  * by replacing the extension with "h".  Put it in 'header_file_name'. */
 static void compute_header_file_name()
 {
@@ -770,10 +747,6 @@ static char *basename(char *fname)
 /* readin - read in the rules section of the input file(s) */
 void readin()
 {
-  static char yy_stdinit[] = "FILE *yyin = stdin, *yyout = stdout;";
-  static char yy_nostdinit[] =
-    "FILE *yyin = (FILE *) 0, *yyout = (FILE *) 0;";
-
   /* Create default DFA start condition. */
   scinstal("INITIAL", false);
 
@@ -854,33 +827,25 @@ void readin()
    * into 'make_tables()', we alternate between inserting fragments of
    * code and calling 'skelout_upto()' to copy successive chunks.  The logic
    * here is tightly synchronized with the skeleton file organization. */
-  skelout_upto("cpp_header");
+  skelout_upto("include_header");
 
-  if (C_plus_plus) {
-    compute_header_file_name();
+  compute_header_file_name();
 
-    /* Emit an include directive for the generated header.  We remove
-     * path components from the name because the main file and the
-     * header file are in the same directory. */
-    out_str("\n#include \"%s\"  /* Lexer class */\n",
-            basename(header_file_name));
-  }
-  else if (use_read) {
+  /* Emit an include directive for the generated header.  We remove
+   * path components from the name because the main file and the
+   * header file are in the same directory. */
+  out_str("\n#include \"%s\"  /* yy_lexer_t */\n",
+          basename(header_file_name));
+
+  if (use_read) {
     /* If using 'read', we need its declaration. */
     out("\n#include <unistd.h>          /* read, needed for -Cr option */");
   }
 
-  skelout_upto("yytext_def");
+  skelout_upto("yy_text_def");
 
   if (reject)
     outn("\n#define YY_USES_REJECT");
-
-  if (!do_yywrap)
-    outn("\n#define YY_SKIP_YYWRAP");
-
-  if (C_plus_plus && yyclass)
-    out_str("\n#define YY_DERIVED_CLASS %s /*from option yyclass*/\n",
-            yyclass);
 
   if (ddebug)
     outn("\n#define SMFLEX_DEBUG");
@@ -893,64 +858,13 @@ void readin()
   if (interactive)
     outn("#define YY_INTERACTIVE");
 
-  if (C_plus_plus) {
-    outn("#define yytext_ptr yytext");
-  }
-
-  else {
-    if (do_stdinit) {
-      outn("#ifdef VMS");
-      outn("#ifndef __VMS_POSIX");
-      outn(yy_nostdinit);
-      outn("#else");
-      outn(yy_stdinit);
-      outn("#endif");
-      outn("#else");
-      outn(yy_stdinit);
-      outn("#endif");
-    }
-
-    else
-      outn(yy_nostdinit);
-  }
-
-  if (!C_plus_plus) {
-    if (jacobson) {
-      outn("typedef const struct yy_trans_info_struct *yy_state_type;");
-    }
-    else {
-      outn("typedef int yy_state_type;");
-    }
-  }
+  outn("#define yy_text_ptr yy_text");
 
   if (ddebug)
     outn("\n#define SMFLEX_DEBUG");
 
-  if (do_yylineno && !C_plus_plus) {
-    outn("extern int yylineno;");
-    outn("int yylineno = 1;");
-  }
-
-  if (C_plus_plus) {
-    if (yyclass) {
-      emit_with_class_name_substitution(scanner_c_file,
-                                        "int yyFlexLexer::yylex()");
-      outn("{");
-      emit_with_class_name_substitution(scanner_c_file,
-        "  LexerError(\"yyFlexLexer::yylex invoked but %option yyclass used\");");
-      outn("  return 0;");
-      outn("}");
-
-      out_str("\n#define YY_DECL int %s::yylex()\n", yyclass);
-    }
-  }
-
-  else {
-    outn("extern char *yytext;");
-    outn("#define yytext_ptr yytext");
-
-    if (yyclass)
-      flexerror(_("%option yyclass only meaningful for C++ scanners"));
+  if (yyclass && !C_plus_plus) {
+    flexerror(_("%option yyclass only meaningful for C++-interface scanners"));
   }
 
   if (useecs)
@@ -964,6 +878,31 @@ void readin()
 
   if (useecs)
     ccl2ecl();
+}
+
+
+/* Like 'copy_string' but uppercase the contents. */
+static char *copy_string_toupper(char const *src)
+{
+  char *ret = copy_string(src);
+  char *p = ret;
+  for (; *p; p++) {
+    *p = toupper(*p);
+  }
+  return ret;
+}
+
+
+/* Set 'prefix' to 'new_prefix', and set 'all_caps_prefix' to the
+ * all-caps version. */
+void set_prefix(char const *new_prefix)
+{
+  prefix = new_prefix;
+  if (strlen(prefix) > MAX_PREFIX_LEN) {
+    flexerror(_("-P argument too big"));
+  }
+
+  all_caps_prefix = copy_string_toupper(prefix);
 }
 
 

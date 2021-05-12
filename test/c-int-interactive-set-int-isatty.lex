@@ -22,12 +22,17 @@ exit               printf("exiting...\n"); exit(0);
 
 int main()
 {
+  yy_lexer_t lexer;
+  yy_construct(&lexer);
+
   /* BEGIN: example fragment */
-  yyin = stdin;
-  yy_set_interactive(isatty(fileno(yyin)) > 0);
-  while (yylex())
+  lexer.yy_input_stream = stdin;
+  yy_set_interactive(&lexer, isatty(fileno(stdin)) > 0);
+  while (yylex(&lexer))
     {}
   /* END: example fragment */
+
+  yy_destroy(&lexer);
   return 0;
 }
 

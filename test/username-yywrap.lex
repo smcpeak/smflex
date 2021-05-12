@@ -24,13 +24,13 @@ username           printf("USERNAME");
 /* True once we have read the second input. */
 static int readSecondFile = 0;
 
-int yywrap()
+int yywrap(yy_lexer_t *yy_lexer)
 {
   if (!readSecondFile) {
     readSecondFile = 1;
 
-    yyin = fopen("username-yywrap.input2", "r");
-    if (!yyin) {
+    yy_lexer->yy_input_stream = fopen("username-yywrap.input2", "r");
+    if (!yy_lexer->yy_input_stream) {
       perror("fopen(username-yywrap.input2)");
       exit(2);
     }
@@ -39,7 +39,7 @@ int yywrap()
     return 0;
   }
   else {
-    fclose(yyin);
+    fclose(yy_lexer->yy_input_stream);
 
     /* All done. */
     return 1;

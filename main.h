@@ -16,6 +16,7 @@ void check_options(void);
 void flexend(int exit_status);
 void flexinit(int argc, char **argv);
 void readin(void);
+void set_prefix(char const *new_prefix);
 void set_up_initial_allocations(void);
 void usage(void);
 
@@ -87,8 +88,9 @@ extern int yymore_really_used, reject_really_used;
  * outfilename - name of output file
  * did_outfilename - whether outfilename was explicitly set
  * prefix - the prefix used for externally visible names ("yy" by default)
- * yyclass - yyFlexLexer subclass to use for YY_DECL
- * do_stdinit - whether to initialize yyin/yyout to stdin/stdout
+ * all_caps_prefix - same as 'prefix' but in all caps
+ * yyclass - if not NULL, yyFlexLexer subclass to use for 'lex' method
+ * do_stdinit - whether to initialize yy_input_stream/yy_output_stream to stdin/stdout
  * input_files - array holding names of input files
  * num_input_files - size of input_files array
  * program_name - name with which program was invoked
@@ -108,7 +110,9 @@ extern int scanner_skl_ind;
 extern FILE *backing_up_file;
 extern char *infilename, *outfilename;
 extern int did_outfilename;
-extern char *prefix, *yyclass;
+extern char const *prefix;
+extern char const *all_caps_prefix;
+extern char *yyclass;
 extern int do_stdinit;
 extern char **input_files;
 extern int num_input_files;

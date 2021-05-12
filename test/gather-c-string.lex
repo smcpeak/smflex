@@ -66,8 +66,11 @@
 
 int main()
 {
-  while (yylex()) {
+  yy_lexer_t lexer;
+  yy_construct(&lexer);
+  while (yylex(&lexer)) {
     printf("string literal: %s\n", string_buf);
   }
+  yy_destroy(&lexer);
   return 0;
 }

@@ -4,7 +4,7 @@
 %option c++
 
 %%
-username           cout << "USERNAME";
+username           std::cout << "USERNAME";
 
 %%
 
@@ -14,7 +14,7 @@ int main()
   yyFlexLexer lexer;
 
   // Read tokens until EOF, doing only what the scanner actions do.
-  while (lexer.yylex() != 0)
+  while (lexer.yym_lex() != 0)
     {}
 
   return 0;

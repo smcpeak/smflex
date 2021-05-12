@@ -1,0 +1,127 @@
+historical/c-cpp-unification.txt
+================================
+
+This document describes what was changed to unify the C and C++
+interfaces in smflex.  It plays the role of a commit comment, except it
+is so large that that would be unwieldly there.
+
+
+Overview
+--------
+
+The existing system would emit a scanner with either a C or a C++
+interface.  This was bad because there were many idiosynchratic
+differences between them.  Furthermore, the C interface kept all its
+state in global variables, making it impossible to instantiate more than
+one copy.  (Also described as being not "re-entrant".)
+
+At a high level, the idea here is to first move all scanner state into a
+C struct, 'yy_lexer_t', and modify the C interface to accept an instance
+of this type with all functions.  Then, we layer the C++ interface on
+top of the new C interface to provide some conveniences, most notably,
+implicit calls to constructors and destructors.
+
+At the same time, we need to take care about how actions work.  Most
+actions should work unchanged in the new system, aided by some macros
+(only active in section 2) that primarily provide convenience, but also
+compatibility.  We also want actions to be mostly portable between users
+of the C and C++ interfaces; this necessitates ensuring there is a
+'yy_lexer_t *yy_lexer' in scope both ways.
+
+Another advantage of the old C++ system is you could declare a derived
+class, add members to it, and access them from actions.  In the new
+system that is still possible, but again requires a bit of care to
+achieve.  When using the new C interface, you can't do that, but
+'yy_lexer_t' has 'yy_client_data' that can be used to carry extra data
+into the lexing routine.
+
+I should also note that the specific set of changes I am describing is
+not "done".  Rather, this is the minimal set that gets me from a working
+program to a working program with all tests passing.  There is more to
+be done.
+
+
+Major individual file changes that implement the above
+------------------------------------------------------
+
+generated-header.skl: The changes to this file in some sense drive the
+changes to all others.  All of the data that was in 'yyFlexLexer' has
+been moved into the new 'yy_lexer_t' structure.  There are now
+declarations of all of the API functions, including 'yylex', in this
+header, so they can be called from places other than section 3 without
+having to conjure a declaration out of thin air.  This is followed, when
+the C++ interface is active, by class 'yyFlexLexer', which is now a
+wrapper around 'yy_lexer_t'.
+
+generated-scanner.skl: Most of the changes involve explicitly using
+'yy_lexer', the new parameter to 'yylex', instead of accessing globals.
+The globals themselves have been removed.  There are also now uses of
+the new "%if" directive, which I plan to use to get rid of most if not
+all of the directly generated code in gen.c.
+
+gen.c: In the hardcoded code fragments, again most of the changes are
+adding "yy_lexer->" to data accesses.  Near the end is the new
+'emit_skeleton_lines_upto', which adds "%if", and
+'emit_with_name_substitution', which replaces the stack of #defines
+previously used to implement -P (prefix).
+
+main.c: Emit the header file unconditionally.  Remove the big pile of
+#defines that implemented prefix.  Don't emit global declarations of
+'yyin', etc.  Don't emit yyFlexLexer::yylex().
+
+misc.c: Implement 'out_str2_dec'.  Have 'skelout_upto' delegate to
+'emit_skeleton_lines_upto', unifying what had previously been two
+different mechanisms for skeleton emission.
+
+nfa.c: Emit "yy_lexer->".
+
+
+Minor file changes
+------------------
+
+main.h: Declare 'all_caps_prefix' and 'set_prefix'.
+
+misc.h: Declare 'out_str2_dec'.
+
+input-parse.y: Use 'set_prefix()' instead of changing it directly.
+
+
+Changes that allow smflex to use itself for input scanning
+----------------------------------------------------------
+
+Whereas everything above is about changing the way smflex behaves, the
+changes in this section are about *not* changing its behavior, despite
+the change to the smflex interface that smflex itself is a client of.
+
+Makefile: Accomodate 'input-scan.lex.h', which is now generated along
+with the .c file.
+
+input-scan.lex: Use %option prefix to prepend "input_scan" to scanner
+data and function names.  The main reason for this is I removed support
+for YY_DECL but still need the generated scanner to be called something
+other than 'yylex'.  Add 'yy_lexer' to calls to push and pop states.
+
+input-scan.h: Declare 'input_lexer', the single global instance of
+smflex's input scanner lexer.
+
+yylex.c: Change "yytext" to "input_lexer.yy_text".
+
+
+Documentation
+-------------
+
+smflex.html: Partially update for the changes described above.  There
+is much more to be done; these were just opportunistic updates.
+
+
+Tests
+-----
+
+All tests have been updated to use the new API.  For C tests, that means
+constructing a 'yy_lexer_t', and for C++ tests, it means calling
+'yym_lex' instead of 'yylex'.  A few tests call other API functions, and
+they now pass a lexer pointer.  A few needed std:: qualifiers since I
+removed some 'using' statements from the generated scanner.
+
+
+EOF

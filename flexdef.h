@@ -40,6 +40,14 @@
 #define MAXLINE 2048
 
 
+/* Maximum allowable length of 'prefix' (-P). */
+#define MAX_PREFIX_LEN 512
+
+
+/* Number of elements of a statically defined table. */
+#define TABLESIZE(tbl) (sizeof(tbl)/sizeof((tbl)[0]))
+
+
 #ifndef MIN
 #  define MIN(x,y) ((x) < (y) ? (x) : (y))
 #endif

@@ -378,9 +378,12 @@ of the rules.
 
     %%
     int main() {
-      yylex();
+      yy_lexer_t lexer;
+      yy_construct(&amp;lexer);
+      yylex(&amp;lexer);
       printf("# of lines = %d, # of chars = %d\n",
              num_lines, num_chars);
+      yy_destroy(&amp;lexer);
       return 0;
     }
 </code><!-- END example --></pre>
@@ -441,8 +444,11 @@ other than a newline (indicated by the "." regular expression).
 
     int main(int argc, char **argv)
     {
-      yyin = (argc &gt;= 2)? fopen(argv[1], "r") : stdin;
-      yylex();
+      yy_lexer_t lexer;
+      yy_construct(&amp;lexer);
+      lexer.yy_input_stream = (argc &gt;= 2)? fopen(argv[1], "r") : stdin;
+      yylex(&amp;lexer);
+      yy_destroy(&amp;lexer);
       return 0;
     }
 </code><!-- END example --></pre>
@@ -1056,7 +1062,7 @@ an action:
     <p>Finally, note that you cannot put back <code>EOF</code> to attempt
     to mark the input stream with an end-of-file.
 
-<li><p><code>input()</code>
+<li><p><code>yyinput()</code>
     reads the next character from the input.  Once a character is read in
     this way, it is considered "consumed", and will not be subsequently
     matched by scanner rules.  For example, the
@@ -1067,11 +1073,11 @@ an action:
         "/*"      {
                     int c;
                     for (;;) {
-                      while ( (c = input()) != '*' &amp;&amp; c != EOF )
+                      while ( (c = yyinput()) != '*' &amp;&amp; c != EOF )
                         {}    /* eat up text of comment */
 
                       if (c == '*') {
-                        while ( (c = input()) == '*' )
+                        while ( (c = yyinput()) == '*' )
                           {}
                         if (c == '/') {
                           break;    /* found the end */
@@ -1085,12 +1091,6 @@ an action:
                     }
                   }
     </code><!-- END example --></pre>
-
-    <p>If the generated scanner is compiled with a C++ compiler
-    (with or without <code>%option c++</code>),
-    <code>input()</code> is instead called <code>yyinput()</code>
-    in order to avoid a name clash with the C++ stream by the
-    name of <code>input</code>.
 
 <li><p><code>YY_FLUSH_BUFFER</code>
     flushes the scanner's internal buffer so that the next time the
@@ -1125,16 +1125,6 @@ and macros. By default, <code>yylex()</code> is defined as follows:
       ... various definitions and the actions in here ...
     }
 </code></pre>
-
-<p>This definition may be changed by defining the
-<code>YY_DECL</code> macro. For example, you could use:
-
-<pre><code>
-    #define YY_DECL float lexscan(float a, float b)
-</code></pre>
-
-<p>to give the scanning routine the name <code>lexscan</code>, returning a
-float, and taking two floats as arguments.
 
 <p>Whenever <code>yylex()</code> is called, it scans tokens from the
 global input file <code>yyin</code> (which defaults to stdin). It
@@ -1524,18 +1514,18 @@ conditions:
 
 <dl>
 
-<dt><code>void yy_push_state(int new_state)</code>
+<dt><code>void yy_push_state(yy_lexer_t *yy_lexer, int new_state)</code>
 
 <dd><p>pushes the current start condition onto the top of the start
     condition stack and switches to <code>new_state</code> as though you had
     used <code>BEGIN new_state</code> (recall that start condition names
     are also integers).
 
-<dt><code>void yy_pop_state()</code>
+<dt><code>void yy_pop_state(yy_lexer_t *yy_lexer)</code>
 
 <dd><p>pops the top of the stack and switches to it via <code>BEGIN</code>.
 
-<dt><code>int yy_top_state()</code>
+<dt><code>int yy_top_state(yy_lexer_t *yy_lexer)</code>
 
 <dd><p>returns the top of the stack without altering the stack's contents.
 
@@ -1556,12 +1546,12 @@ scopes, by using them to keep track of nested comments in ML:
     %option stack
     %x comment foo
     %%
-    &lt;*&gt;"(*"                 yy_push_state(comment);
+    &lt;*&gt;"(*"                 yy_push_state(yy_lexer, comment);
     &lt;comment&gt;{
       [^*(]+                /* eat anything that's not a '*' or '(' */
       "*"+/[^)]             /* eat '*'s not followed by ')' */
       "("/[^*]              /* eat '(' not followed by '*' */
-      "*"+")"               yy_pop_state();
+      "*"+")"               yy_pop_state(yy_lexer);
     }
 </code><!-- END example --></pre>
 
@@ -1583,7 +1573,7 @@ mechanism for creating and switching between multiple input buffers. An
 input buffer is created by using:
 
 <pre><code>
-    YY_BUFFER_STATE yy_create_buffer(FILE *file, int size)
+    YY_BUFFER_STATE yy_create_buffer(yy_lexer_t *yy_lexer, FILE *file, int size)
 </code></pre>
 
 <p>which takes a <code>FILE</code> pointer and a size and creates a buffer
@@ -1612,7 +1602,7 @@ below) to close the file.
 You select a particular buffer to be the active input source with:
 
 <pre><code>
-    void yy_switch_to_buffer(YY_BUFFER_STATE new_buffer)
+    void yy_switch_to_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE new_buffer)
 </code></pre>
 
 <p>This switches the scanner's input buffer so subsequent tokens will come
@@ -1624,7 +1614,7 @@ this function does <em>not</em> change the start condition.
 <p>When finished scanning from a buffer, call:
 
 <pre><code>
-    void yy_delete_buffer(YY_BUFFER_STATE buffer)
+    void yy_delete_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE buffer)
 </code></pre>
 
 <p>to reclaim the storage associated with it.  If <code>buffer</code> is
@@ -1634,7 +1624,7 @@ this function does <em>not</em> change the start condition.
 particular source, call:
 
 <pre><code>
-    void yy_flush_buffer(YY_BUFFER_STATE buffer)
+    void yy_flush_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE buffer)
 </code></pre>
 
 <p>After calling this function, the next time the
@@ -1683,8 +1673,8 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
               }
               include_stack[include_stack_len++] = YY_CURRENT_BUFFER;
 
-              YY_BUFFER_STATE newbuf = yy_create_buffer(fp, YY_BUF_SIZE);
-              yy_switch_to_buffer(newbuf);
+              YY_BUFFER_STATE newbuf = yy_create_buffer(yy_lexer, fp, YY_BUF_SIZE);
+              yy_switch_to_buffer(yy_lexer, newbuf);
 
               /* Start condition for processing the new file. */
               BEGIN(INITIAL);
@@ -1694,12 +1684,12 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
               /* We are done with the current buffer. */
               if (include_stack_len &gt;= 1) {
                 /* The current buffer is one we made, so clean it up. */
-                yy_delete_buffer(YY_CURRENT_BUFFER);
+                yy_delete_buffer(yy_lexer, YY_CURRENT_BUFFER);
                 fclose(yyin);
 
                 /* Return to the buffer on the top of the stack.  Note
                  * that this sets 'yyin'. */
-                yy_switch_to_buffer(include_stack[--include_stack_len]);
+                yy_switch_to_buffer(yy_lexer, include_stack[--include_stack_len]);
               }
 
               else {
@@ -1719,11 +1709,11 @@ call to <code>yylex()</code> will start scanning the string.
 
 <dl>
 
-<dt><code>yy_scan_string(const char *str)</code>
+<dt><code>yy_scan_string(yy_lexer_t *yy_lexer, const char *str)</code>
 
 <dd><p>scans a NUL-terminated string.
 
-<dt><code>yy_scan_bytes(const char *bytes, int len)</code>
+<dt><code>yy_scan_bytes(yy_lexer_t *yy_lexer, const char *bytes, int len)</code>
 
 <dd><p>scans <code>len</code> bytes (including possibly NUL's) starting at
     location <code>bytes</code>.
@@ -1737,7 +1727,7 @@ copy by using:
 
 <dl>
 
-<dt><code>yy_scan_buffer(char *base, yy_size_t size)</code>
+<dt><code>yy_scan_buffer(yy_lexer_t *yy_lexer, char *base, yy_size_t size)</code>
 
 <dd><p>scans in place the buffer starting at <code>base</code>, consisting
     of <code>size</code> bytes, the last two bytes of which <em>must</em> be
@@ -1854,17 +1844,17 @@ action which is always executed before the first scan (and before the
 scanner's internal initializations are done). For example, it could be
 used to call a routine to read in a data table or open a logging file.
 
-<dt><code>yy_set_interactive()</code>
+<dt><code>yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive)</code>
 
 <dd>
-<p>The macro <code id="yy_set_interactive">yy_set_interactive(is_interactive)</code>
+<p>The function <code id="yy_set_interactive">yy_set_interactive</code>
 can be used to control whether the current buffer is considered
 <em>interactive</em>. An interactive buffer is processed much more
 slowly (around 10x) due to reading one character at a time, but must be
 used when the scanner's input source is indeed
 interactive to avoid problems due to waiting to fill buffers. A non-zero argument
 marks the buffer as interactive, a zero value as
-non-interactive.  This macro should only be used when the scanner is
+non-interactive.  This function should only be used when the scanner is
 built with the <a href="#interactive-option"><code>-I</code></a> flag
 because otherwise lazy action evaluation due to the default <a
 href="#batch-option"><code>-B</code></a> option will cause poor
@@ -1877,16 +1867,16 @@ interactive, as demonstrated by
 <a href="test/c-int-interactive-set-int-isatty.lex"><code>test/c-int-interactive-set-int-isatty.lex</code></a>:
 
 <pre><!-- BEGIN example: "c-int-interactive-set-int-isatty.lex" fragment=true indent=2 --><code>
-    yyin = stdin;
-    yy_set_interactive(isatty(fileno(yyin)) &gt; 0);
-    while (yylex())
+    lexer.yy_input_stream = stdin;
+    yy_set_interactive(&amp;lexer, isatty(fileno(stdin)) &gt; 0);
+    while (yylex(&amp;lexer))
       {}
 </code><!-- END example --></pre>
 
-<dt><code>yy_set_bol(at_bol)</code>
+<dt><code>yy_set_bol(yy_lexer_t *yy_lexer, int at_bol)</code>
 
 <dd>
-<p>The macro <code>yy_set_bol(at_bol)</code> can be used to control
+<p>The function <code>yy_set_bol</code> can be used to control
 whether the current buffer's scanning context for the next token match
 is done as though at the beginning of a line. A non-zero macro argument
 makes rules anchored with
@@ -3884,7 +3874,7 @@ of a simple C++ scanner:
         ExampleFlexLexer lexer;
 
         // Read tokens until EOF, doing only what the scanner actions do.
-        while (lexer.yylex() != 0)
+        while (lexer.yym_lex() != 0)
             {}
 
         return 0;
@@ -4161,6 +4151,84 @@ run-time support library.  That has been removed as detailed below.
 </ul>
 
 
+<h2 id="removed-features">Removed Features</h2>
+
+<p>Some features have been removed:
+
+<ul>
+
+<li><p><code>YY_DECL</code>: In <code>flex-2.5.4</code>, you could
+    <code>#define YY_DECL</code> to change the name and signature of the
+    generated lexer function.  This is no longer possible.
+
+    <p>Rationale: For re-entrancy, this had to break at least a little,
+    because the lexer must accept a <code>yy_lexer_t*</code> parameter.
+    Furthermore, crudely replacing the declaration like that does not
+    work when <code>smflex</code> also wants to generate a header file
+    with the scanner's API.
+
+    <p>Replacement: To rename the lexer function, use the
+    <code>-P</code> (prefix) option.  To make additional data
+    available within actions (which previously would have been done
+    by adding parameters), set the <code>yy_client_data</code> field
+    of the <code>yy_lexer_t</code> object.
+
+</ul>
+
+
+<h2 id="renamed-functions">Renamed Functions</h2>
+
+<p>Several functions have been renamed:
+
+<ul>
+
+<li><p>The <code>input()</code> function has been renamed to
+    <code>yyinput()</code>.
+
+    <p>Rationale: The old name was inconsistent due to not using the
+    "yy" prefix.  It was also strange because it would be called
+    <code>yyinput()</code> when generating a C++ interface, causing a
+    needless difference between the two.
+
+</ul>
+
+
+<h2 id="changed-function-signatures">Changed Function Signatures</h2>
+
+<p>The following functions all take an additional
+   <code>yy_lexer_t*</code> parameter in order to support having
+   multiple scanner state instances:
+
+<ul>
+<li><code>yy_create_buffer</code>
+<li><code>yy_new_buffer</code>
+<li><code>yy_switch_to_buffer</code>
+<li><code>yy_delete_buffer</code>
+<li><code>yy_flush_buffer</code>
+<li><code>yy_scan_string</code>
+<li><code>yy_scan_bytes</code>
+<li><code>yy_scan_buffer</code>
+<li><code>yy_push_state</code>
+<li><code>yy_pop_state</code>
+<li><code>yy_top_state</code>
+<li><code>yy_set_interactive</code>
+<li><code>yy_set_bol</code>
+</ul>
+
+
+<h2 id="functions-that-were-macros">Functions that Were Macros</h2>
+
+<p>Although it should not matter, a few functions in
+<code>smflex</code> were defined as macros in older <code>flex</code>.
+They were changed due to internal engineering reasons and listed here
+only for completeness:
+
+<ul>
+<li><code>yy_set_interactive</code>
+<li><code>yy_set_bol</code>
+</ul>
+
+
 <h2 id="changes-to-the-cpp-interface">Changes to the C++ Interface</h2>
 
 <p>There are several changes to the C++ interface
@@ -4203,6 +4271,20 @@ compared to <code>flex-2.5.4</code>:
     <p>Replacement: Use <code>%option c++</code> or the
     <code>-+</code> command line option.
 
+<li><p>Methods starting with "yy" or "yy_" have been renamed to use the prefix
+    "yym_" instead.  For example, the main lexing method is called
+    <code>yym_lex()</code> rather than <code>yylex()</code>.
+
+    <p>Rationale: Under the previous naming scheme, methods shared names
+    with global functions with which they could be easily confused, both
+    during maintenance and by <code>smflex</code> users.  It also causes
+    problems in the generated code, where a "::" qualifier would be
+    needed to call the functions when the C++ interface is active, which
+    is annoying and adds a lot of clutter.  The older design relied on
+    that collision since it only emitted C <em>or</em> C++; but in
+    <code>smflex</code>, the C++ is a wrapper around the C, so
+    collisions between them are undesirable.
+
 <li><p>The <code>int yylex(istream *new_in, ostream *new_out = 0)</code>
     method is gone.
 
@@ -4211,7 +4293,7 @@ compared to <code>flex-2.5.4</code>:
 
     <p>Replacement: The replacement for <code>yylex(i,o)</code> is
     to call <code>switch_streams(i,o)</code> and then
-    <code>yylex()</code>, which is precisely what the old method
+    <code>yym_lex()</code>, which is precisely what the old method
     did.
 
 </ul>

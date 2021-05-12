@@ -56,9 +56,6 @@
 
 #define MARK_END_OF_PROLOG mark_prolog();
 
-#define YY_DECL \
-  int flexscan()
-
 #define RETURNCHAR \
   yylval = (unsigned char) yytext[0]; \
   return CHAR;
@@ -82,6 +79,7 @@
 
 %option caseless nodefault outfile="input-scan.lex.c" stack noyy_top_state
 %option nostdinit yywrap
+%option prefix="input_scan"
 
 %x SECT2 SECT2PROLOG SECT3 CODEBLOCK PICKUPDEF SC CARETISBOL NUM QUOTE
 %x FIRSTCCL CCL ACTION RECOVER COMMENT ACTION_STRING PERCENT_BRACE_ACTION
@@ -119,8 +117,8 @@ LEXOPT          [aceknopr]
 
 <INITIAL>{
         ^{WS}           indented_code = true; BEGIN(CODEBLOCK);
-        ^"/*"           ACTION_ECHO; yy_push_state( COMMENT );
-        ^#{OPTWS}line{WS}       yy_push_state( LINEDIR );
+        ^"/*"           ACTION_ECHO; yy_push_state(yy_lexer, COMMENT);
+        ^#{OPTWS}line{WS}       yy_push_state(yy_lexer, LINEDIR);
         ^"%s"{NAME}?    {
                           /* About to emit SC #defines, which must be
                            * in output file context. */
@@ -189,14 +187,14 @@ LEXOPT          [aceknopr]
 
 
 <COMMENT>{
-        "*/"            ACTION_ECHO; yy_pop_state();
+        "*/"            ACTION_ECHO; yy_pop_state(yy_lexer);
         "*"             ACTION_ECHO;
         [^*\n]+         ACTION_ECHO;
         [^*\n]*{NL}     ++linenum; ACTION_ECHO;
 }
 
 <LINEDIR>{
-        \n              yy_pop_state();
+        \n              yy_pop_state(yy_lexer);
         [[:digit:]]+    linenum = myctoi( yytext );
 
         \"[^"\n]*\"     {
@@ -341,7 +339,7 @@ LEXOPT          [aceknopr]
         ^{NOT_WS}.*     {       /* non-indented code */
                           if (bracelevel <= 0) {   /* not in %{ ... %} */
                             yyless(0);             /* put it all back */
-                            yy_set_bol(1);
+                            yy_set_bol(yy_lexer, 1);
                             mark_prolog();
                             BEGIN(SECT2);
                           }
@@ -463,7 +461,7 @@ LEXOPT          [aceknopr]
                            * ccl.
                            */
                           if ((cclval = ccllookup((Char *) nmstr)) != 0) {
-                            if (input() != ']')
+                            if (yyinput() != ']')
                               synerr(_("bad character class"));
 
                             yylval = cclval;
@@ -615,7 +613,7 @@ LEXOPT          [aceknopr]
 <PERCENT_BRACE_ACTION>{
         {OPTWS}"%}".*           bracelevel = 0;
 
-        <ACTION>"/*"            ACTION_ECHO; yy_push_state( COMMENT );
+        <ACTION>"/*"            ACTION_ECHO; yy_push_state(yy_lexer, COMMENT);
 
         <CODEBLOCK,ACTION>{
                 "reject"        {
@@ -710,9 +708,12 @@ LEXOPT          [aceknopr]
 %%
 
 
+input_scan_lexer_t input_lexer;
+
+
 /* Wrapup a file in the lexical analyzer and possibly move on to
  * the next file. */
-int yywrap()
+int input_scanwrap(input_scan_lexer_t *lexer)
 {
   if (--num_input_files > 0) {
     set_input_file(*++input_files);
@@ -729,18 +730,24 @@ void set_input_file(char *file)
 {
   if (file && strcmp(file, "-")) {
     infilename = copy_string(file);
-    yyin = fopen(infilename, "r");
+    input_lexer.yy_input_stream = fopen(infilename, "r");
 
-    if (yyin == NULL)
+    if (input_lexer.yy_input_stream == NULL)
       lerrsf(_("can't open %s"), file);
   }
 
   else {
-    yyin = stdin;
+    input_lexer.yy_input_stream = stdin;
     infilename = copy_string("<stdin>");
   }
 
   linenum = 1;
+}
+
+
+int flexscan()
+{
+  return input_scanlex(&input_lexer);
 }
 
 
