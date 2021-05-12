@@ -103,7 +103,7 @@ static void indent_rbrace()
 /* Generate the code to keep backing-up information. */
 void gen_backing_up()
 {
-  if (reject || num_backing_up == 0)
+  if (reject_used || num_backing_up == 0)
     return;
 
   if (jacobson)
@@ -121,7 +121,7 @@ void gen_backing_up()
 /* Generate the code to perform the backing up. */
 void gen_bu_action()
 {
-  if (reject || num_backing_up == 0)
+  if (reject_used || num_backing_up == 0)
     return;
 
   set_indent(3);
@@ -282,7 +282,7 @@ void gen_find_action()
   else if (fulltbl)
     indent_puts("yy_act = yy_accept[yy_current_state];");
 
-  else if (reject) {
+  else if (reject_used) {
     indent_puts("yy_current_state = *--(yy_lexer->yy_state_ptr);");
     indent_puts("yy_lexer->yy_lp = yy_accept[yy_current_state];");
 
@@ -368,7 +368,7 @@ void gen_find_action()
   else {                        /* compressed */
     indent_puts("yy_act = yy_accept[yy_current_state];");
 
-    if (interactive && !reject) {
+    if (interactive && !reject_used) {
       /* Do the guaranteed-needed backing up to figure out
        * the match.
        */
@@ -566,7 +566,7 @@ void gen_next_match()
     else
       out_dec("while ( yy_current_state != %d );\n", jamstate);
 
-    if (!reject && !interactive) {
+    if (!reject_used && !interactive) {
       /* Do the guaranteed-needed backing up to figure out
        * the match.
        */
@@ -627,7 +627,7 @@ void gen_next_state(int worry_about_NULs)
   if (jacobson || fulltbl)
     gen_backing_up();
 
-  if (reject)
+  if (reject_used)
     indent_puts("*(yy_lexer->yy_state_ptr)++ = yy_current_state;");
 }
 
@@ -640,7 +640,7 @@ void gen_NUL_trans()
   /* Only generate a definition for "yy_cp" if we'll generate code
    * that uses it.  Otherwise lint and the like complain.
    */
-  int need_backing_up = (num_backing_up > 0 && !reject);
+  int need_backing_up = (num_backing_up > 0 && !reject_used);
 
   if (need_backing_up && (!nultrans || jacobson || fulltbl))
     /* We're going to need yy_cp lying around for the call
@@ -681,7 +681,7 @@ void gen_NUL_trans()
     do_indent();
     out_dec("yy_is_jam = (yy_current_state == %d);\n", jamstate);
 
-    if (reject) {
+    if (reject_used) {
       /* Only stack this state if it's a transition we
        * actually make.  If we stack it on a jam, then
        * the state stack and yy_c_buf_p get out of sync.
@@ -725,7 +725,7 @@ void gen_start_state()
     if (bol_needed)
       indent_puts("yy_current_state += YY_AT_BOL();");
 
-    if (reject) {
+    if (reject_used) {
       /* Set up for storing up states. */
       indent_puts("yy_lexer->yy_state_ptr = yy_lexer->yy_state_buf;");
       indent_puts("*(yy_lexer->yy_state_ptr)++ = yy_current_state;");
@@ -750,7 +750,7 @@ void gentabs()
    */
   ++num_backing_up;
 
-  if (reject) {
+  if (reject_used) {
     /* Write out accepting list and pointer list.
      *
      * First we generate the "yy_acclist" array.  In the process,
@@ -826,7 +826,7 @@ void gentabs()
     acc_array[i] = 0;
   }
 
-  /* Spit out "yy_accept" array.  If we're doing "reject", it'll be
+  /* Spit out "yy_accept" array.  If we're doing "reject_used", it'll be
    * pointers into the "yy_acclist" array.  Otherwise it's actual
    * accepting numbers.  In either case, we just dump the numbers.
    */
@@ -836,7 +836,7 @@ void gentabs()
    */
   k = lastdfa + 2;
 
-  if (reject)
+  if (reject_used)
     /* We put a "cap" on the table associating lists of accepting
      * numbers with state numbers.  This is needed because we tell
      * where the end of an accepting list is by looking at where
@@ -849,14 +849,14 @@ void gentabs()
   for (i = 1; i <= lastdfa; ++i) {
     mkdata(acc_array[i]);
 
-    if (!reject && trace && acc_array[i])
+    if (!reject_used && trace && acc_array[i])
       fprintf(stderr, _("state # %d accepts: [%d]\n"), i, acc_array[i]);
   }
 
   /* Add entry for "jam" state. */
   mkdata(acc_array[i]);
 
-  if (reject)
+  if (reject_used)
     /* Add "cap" for the list. */
     mkdata(acc_array[i]);
 
@@ -1088,7 +1088,7 @@ void make_tables()
     dataend();
   }
 
-  if (reject) {
+  if (reject_used) {
     if (variable_trailing_context_rules) {
       out_hex("#define YY_TRAILING_MASK 0x%x\n",
               (unsigned int) YY_TRAILING_MASK);
@@ -1368,7 +1368,7 @@ void make_tables()
     indent_puts("yy_cp = yy_lexer->yy_c_buf_p;");
 
   else {                        /* compressed table */
-    if (!reject && !interactive) {
+    if (!reject_used && !interactive) {
       /* Do the guaranteed-needed backing up to figure
        * out the match.
        */

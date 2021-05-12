@@ -70,7 +70,7 @@
 
 #define CHECK_REJECT(str) \
   if (all_upper(str)) \
-    reject = true;
+    reject_used = true;
 
 #define CHECK_YYMORE(str) \
   if (all_lower(str)) \

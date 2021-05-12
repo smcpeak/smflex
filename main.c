@@ -83,7 +83,7 @@ int printstats, syntaxerror, eofseen, ddebug, trace, nowarn, spprdflt;
 int interactive, caseins, do_yylineno, useecs, fulltbl, usemecs;
 int jacobson, gen_line_dirs, performance_report, backing_up_report;
 int cpp_interface, long_align, use_read, do_yywrap, csize;
-int yymore_used, reject, real_reject, continued_action, in_rule;
+int yymore_used, reject_used, real_reject, continued_action, in_rule;
 int yymore_really_used, reject_really_used;
 
 int datapos, dataline, linenum, out_linenum;
@@ -184,7 +184,7 @@ int main(int argc, char **argv)
     if (!rule_useful[i] && i != default_rule)
       line_warning(_("rule cannot be matched"), rule_linenum[i]);
 
-  if (spprdflt && !reject && rule_useful[default_rule])
+  if (spprdflt && !reject_used && rule_useful[default_rule])
     line_warning(_("-s option given but default rule can be matched"),
                  rule_linenum[default_rule]);
 
@@ -477,7 +477,7 @@ void flexinit(int argc, char **argv)
   printstats = syntaxerror = trace = spprdflt = caseins = false;
   cpp_interface = backing_up_report = ddebug = fulltbl = false;
   jacobson = long_align = nowarn = yymore_used = continued_action = false;
-  do_yylineno = in_rule = reject = do_stdinit = false;
+  do_yylineno = in_rule = reject_used = do_stdinit = false;
   yymore_really_used = reject_really_used = unspecified;
   csize = unspecified;
   interactive = false;
@@ -758,9 +758,9 @@ void readin()
     yymore_used = false;
 
   if (reject_really_used == true)
-    reject = true;
+    reject_used = true;
   else if (reject_really_used == false)
-    reject = false;
+    reject_used = false;
 
   if (performance_report > 0) {
     if (interactive)
@@ -777,20 +777,20 @@ void readin()
         fprintf(stderr, _("yymore() entails a minor performance penalty\n"));
     }
 
-    if (reject)
+    if (reject_used)
       fprintf(stderr, _("REJECT entails a large performance penalty (maybe; see manual)\n"));
 
     if (variable_trailing_context_rules)
       fprintf(stderr, _("Variable trailing context rules entail a large performance penalty\n"));
   }
 
-  if (reject)
+  if (reject_used)
     real_reject = true;
 
   if (variable_trailing_context_rules)
-    reject = true;
+    reject_used = true;
 
-  if ((fulltbl || jacobson) && reject) {
+  if ((fulltbl || jacobson) && reject_used) {
     if (real_reject)
       flexerror(_("REJECT cannot be used with -Cf or -CJ"));
     else if (do_yylineno)
@@ -816,7 +816,7 @@ void readin()
    * here is tightly synchronized with the skeleton file organization. */
   skelout_upto("yy_text_def");
 
-  if (reject)
+  if (reject_used)
     outn("\n#define YY_USES_REJECT");
 
   if (ddebug)

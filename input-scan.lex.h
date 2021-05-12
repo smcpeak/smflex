@@ -104,17 +104,17 @@ struct input_scan_lexer_state_struct {
   /* The following are not always needed, but may be depending
    * on use of certain smflex features (like REJECT or yymore()). */
 
-  /* TODO: Only needed when: num_backing_up > 0 && !reject */
+  /* TODO: Only needed when: num_backing_up > 0 && !reject_used */
   input_scan_state_type yy_last_accepting_state;
   char *yy_last_accepting_cpos;
 
-  /* TODO: Only needed when: reject */
+  /* TODO: Only needed when: reject_used */
   input_scan_state_type *yy_state_buf;
   input_scan_state_type *yy_state_ptr;
   char *yy_full_match;
   int yy_lp;
 
-  /* TODO: Only needed when: reject && variable_trailing_context_rules */
+  /* TODO: Only needed when: reject_used && variable_trailing_context_rules */
   int yy_looking_for_trail_begin;
   int yy_full_lp;
   int *yy_full_state;
