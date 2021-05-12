@@ -1454,8 +1454,6 @@ static char lookup_result[MAX_PREFIX_LEN + 100];
  * scanner. */
 static char const *all_caps_prefix_names[] = {
   "YY_BUFFER_STATE",
-  "YY_INPUT_STREAM_TYPE",
-  "YY_OUTPUT_STREAM_TYPE",
 };
 
 /* Names to substitute using 'prefix'. */
@@ -1514,6 +1512,25 @@ static char const *look_up_skel_identifier(char const *id, int len)
 
   if (str_eq_substr("yyclass_name", id, len) && yyclass!=NULL) {
     return yyclass;
+  }
+
+  if (str_eq_substr("YY_INPUT_STREAM_TYPE", id, len)) {
+    /* TODO: This choice should be independent of 'cpp_interface'. */
+    if (cpp_interface) {
+      return "std::istream";
+    }
+    else {
+      return "FILE";
+    }
+  }
+
+  if (str_eq_substr("YY_OUTPUT_STREAM_TYPE", id, len)) {
+    if (cpp_interface) {
+      return "std::ostream";
+    }
+    else {
+      return "FILE";
+    }
   }
 
   return NULL;

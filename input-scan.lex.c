@@ -119,7 +119,7 @@
  * that source one at a time; its principal operations are to get the
  * next character and to put a character back. */
 struct input_scan_buffer_state_struct {
-  INPUT_SCAN_INPUT_STREAM_TYPE *yy_input_file;
+  FILE *yy_input_file;
 
   char *yy_ch_buf;                /* input buffer */
   char *yy_buf_pos;               /* current position in input buffer */
@@ -191,7 +191,7 @@ static void yy_flex_free(void *);
 
 static void input_scan_load_buffer_state(input_scan_lexer_t *yy_lexer);
 static void input_scan_init_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE b,
-                           INPUT_SCAN_INPUT_STREAM_TYPE *file);
+                           FILE *file);
 
 /* If 'yy_lexer' does not have a current buffer, create one. */
 static void yy_create_buffer_if_needed(input_scan_lexer_t *yy_lexer)
@@ -3392,7 +3392,7 @@ static int yy_read_character(input_scan_lexer_t *yy_lexer)
 }
 
 
-void input_scan_restart(input_scan_lexer_t *yy_lexer, INPUT_SCAN_INPUT_STREAM_TYPE *input_file)
+void input_scan_restart(input_scan_lexer_t *yy_lexer, FILE *input_file)
 {
   if (!yy_lexer->yy_current_buffer) {
     yy_lexer->yy_current_buffer =
@@ -3441,7 +3441,7 @@ static void input_scan_load_buffer_state(input_scan_lexer_t *yy_lexer)
 
 
 INPUT_SCAN_BUFFER_STATE input_scan_create_buffer(input_scan_lexer_t *yy_lexer,
-                                 INPUT_SCAN_INPUT_STREAM_TYPE *file, int size)
+                                 FILE *file, int size)
 {
   INPUT_SCAN_BUFFER_STATE b;
 
@@ -3490,7 +3490,7 @@ void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_ST
 
 
 static void input_scan_init_buffer(input_scan_lexer_t *yy_lexer,
-                           INPUT_SCAN_BUFFER_STATE b, INPUT_SCAN_INPUT_STREAM_TYPE *file)
+                           INPUT_SCAN_BUFFER_STATE b, FILE *file)
 {
   input_scan_flush_buffer(yy_lexer, b);
 

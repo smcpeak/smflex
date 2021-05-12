@@ -31,9 +31,6 @@
 #include <stddef.h>                    /* size_t */
 #include <stdio.h>                     /* FILE */
 
-typedef FILE INPUT_SCAN_INPUT_STREAM_TYPE;
-typedef FILE INPUT_SCAN_OUTPUT_STREAM_TYPE;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -74,10 +71,10 @@ struct input_scan_lexer_state_struct {
   int yy_flex_debug;      /* only has effect with -d or "%option debug" */
 
   /* Input source for default YY_INPUT. */
-  INPUT_SCAN_INPUT_STREAM_TYPE *yy_input_stream;
+  FILE *yy_input_stream;
 
   /* Output sink for default ECHO. */
-  INPUT_SCAN_OUTPUT_STREAM_TYPE *yy_output_stream;
+  FILE *yy_output_stream;
 
   /* The input source we are currently reading from, and a buffer
    * in front of it. */
@@ -160,7 +157,7 @@ int input_scan_lex(input_scan_lexer_t *yy_lexer);
 
 /* Abandon whatever input (if any) 'yy_lexer' was scanning, and start
  * scanning 'input_file'. */
-void input_scan_restart(input_scan_lexer_t *yy_lexer, INPUT_SCAN_INPUT_STREAM_TYPE *input_file);
+void input_scan_restart(input_scan_lexer_t *yy_lexer, FILE *input_file);
 
 /* Pointer to an opaque type that represents an input source along
  * with a read buffer for that source.  See the manual section
@@ -172,7 +169,7 @@ typedef input_scan_buffer_state *INPUT_SCAN_BUFFER_STATE;
  * value to use. */
 /* TODO: The manual advises using YY_BUF_SIZE, but that value is not
  * currently exported. */
-INPUT_SCAN_BUFFER_STATE input_scan_create_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_INPUT_STREAM_TYPE *file,
+INPUT_SCAN_BUFFER_STATE input_scan_create_buffer(input_scan_lexer_t *yy_lexer, FILE *file,
                                  int size);
 
 /* Make 'new_buffer' the active input source for 'yy_lexer'. */
