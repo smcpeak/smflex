@@ -53,7 +53,7 @@ static void scanFile(char const *fname)
     exit(2);
   }
 
-  yyrestart(&lexer, fp);
+  yy_restart(&lexer, fp);
   while (yylex(&lexer))
     {}
 

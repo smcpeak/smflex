@@ -28,6 +28,10 @@
 #ifndef input_scan_lexer_t_DEFINED
 #define input_scan_lexer_t_DEFINED
 
+/* Note: To avoid collisions with other libraries or with names the
+ * user has defined, all names contributed to the global namespace
+ * must begin with "yy" or "YY". */
+
 #include <stdio.h>                     /* FILE */
 typedef FILE INPUT_SCAN_INPUT_STREAM_TYPE;
 typedef FILE INPUT_SCAN_OUTPUT_STREAM_TYPE;
@@ -143,8 +147,7 @@ typedef input_scan_buffer_state *INPUT_SCAN_BUFFER_STATE;
 /* TODO: Eliminate. */
 typedef unsigned int input_scan_size_t;
 
-/* TODO: Rename to 'yy_restart'. */
-void input_scanrestart(input_scan_lexer_t *yy_lexer, INPUT_SCAN_INPUT_STREAM_TYPE *input_file);
+void input_scan_restart(input_scan_lexer_t *yy_lexer, INPUT_SCAN_INPUT_STREAM_TYPE *input_file);
 
 void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE new_buffer);
 void input_scan_load_buffer_state(input_scan_lexer_t *yy_lexer);
@@ -173,7 +176,7 @@ void input_scan_set_interactive(input_scan_lexer_t *yy_lexer, int is_interactive
 void yy_set_bol(input_scan_lexer_t *yy_lexer, int at_bol);
 
 /* The 'smflex' user must define this function.  It can return 0 after
- * calling 'input_scanrestart' to begin processing another file, or return 1 to
+ * calling 'input_scan_restart' to begin processing another file, or return 1 to
  * indicate there are no more files to process. */
 int input_scanwrap(input_scan_lexer_t *yy_lexer);
 

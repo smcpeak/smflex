@@ -102,7 +102,7 @@ struct yy_lexer_state_struct {
 
 %if yylineno
   /* Line number within the currently scanned file.  TODO: Does this
-   * work after 'yyrestart', etc.? */
+   * work after 'yy_restart', etc.? */
   int yy_lineno;
 
 %endif
@@ -182,8 +182,7 @@ typedef yy_buffer_state *YY_BUFFER_STATE;
 /* TODO: Eliminate. */
 typedef unsigned int yy_size_t;
 
-/* TODO: Rename to 'yy_restart'. */
-void yyrestart(yy_lexer_t *yy_lexer, YY_INPUT_STREAM_TYPE *input_file);
+void yy_restart(yy_lexer_t *yy_lexer, YY_INPUT_STREAM_TYPE *input_file);
 
 void yy_switch_to_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE new_buffer);
 void yy_load_buffer_state(yy_lexer_t *yy_lexer);
@@ -216,7 +215,7 @@ void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol);
 /* This just delegates to the C++ class 'wrap' method. */
 %else
 /* The 'smflex' user must define this function.  It can return 0 after
- * calling 'yyrestart' to begin processing another file, or return 1 to
+ * calling 'yy_restart' to begin processing another file, or return 1 to
  * indicate there are no more files to process. */
 %endif
 int yywrap(yy_lexer_t *yy_lexer);

@@ -51,7 +51,7 @@
 #define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
 
 /* Special action meaning "start processing a new file". */
-#define YY_NEW_FILE input_scanrestart(yy_lexer, yy_lexer->yy_input_stream)
+#define YY_NEW_FILE input_scan_restart(yy_lexer, yy_lexer->yy_input_stream)
 
 #define YY_END_OF_BUFFER_CHAR 0
 
@@ -168,7 +168,7 @@ struct input_scan_buffer_state_struct {
    * possible backing-up.
    *
    * When we actually see the EOF, we change the status to "new"
-   * (via input_scanrestart()), so that the user can continue scanning by
+   * (via input_scan_restart()), so that the user can continue scanning by
    * just pointing 'yy_input_stream' at a new input file.
    */
 #define YY_BUFFER_EOF_PENDING 2
@@ -3198,7 +3198,7 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
   if (yy_lexer->yy_n_chars == 0) {
     if (number_to_move == YY_MORE_ADJ) {
       ret_val = EOB_ACT_END_OF_FILE;
-      input_scanrestart(yy_lexer, yy_lexer->yy_input_stream);
+      input_scan_restart(yy_lexer, yy_lexer->yy_input_stream);
     }
 
     else {
@@ -3357,7 +3357,7 @@ static int yy_read_character(input_scan_lexer_t *yy_lexer)
            */
 
           /* Reset buffer status. */
-          input_scanrestart(yy_lexer, yy_lexer->yy_input_stream);
+          input_scan_restart(yy_lexer, yy_lexer->yy_input_stream);
 
           /* fall through */
 
@@ -3388,7 +3388,7 @@ static int yy_read_character(input_scan_lexer_t *yy_lexer)
 }
 
 
-void input_scanrestart(input_scan_lexer_t *yy_lexer, INPUT_SCAN_INPUT_STREAM_TYPE *input_file)
+void input_scan_restart(input_scan_lexer_t *yy_lexer, INPUT_SCAN_INPUT_STREAM_TYPE *input_file)
 {
   if (!yy_lexer->yy_current_buffer) {
     yy_lexer->yy_current_buffer =

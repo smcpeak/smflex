@@ -1134,19 +1134,19 @@ statement.
 
 <p>If the scanner reaches an end-of-file, subsequent calls are undefined
 unless either <code>yyin</code> is pointed at a new input file (in which
-case scanning continues from that file), or <code>yyrestart()</code>
-is called. <code>yyrestart()</code> takes one argument, a <code>FILE *</code>
+case scanning continues from that file), or <code>yy_restart()</code>
+is called. <code>yy_restart()</code> takes one argument, a <code>FILE *</code>
 pointer (which can be nil, if you've set up <code>YY_INPUT</code>
 to scan from a source other than <code>yyin</code>), and initializes
 <code>yyin</code> for scanning from that file. Essentially there is no
 difference between just assigning <code>yyin</code> to a new input file
-or using <code>yyrestart()</code> to do so; the latter is available
+or using <code>yy_restart()</code> to do so; the latter is available
 for compatibility with previous versions of <code>flex</code>,
 and because it can be used to switch input files in the middle
 of scanning. It can also be used to throw away the current input
 buffer, by calling it with an argument of <code>yyin</code>; but
 better is to use <code>YY_FLUSH_BUFFER</code> (see above). Note that
-<code>yyrestart()</code> does <em>not</em> reset the start condition to
+<code>yy_restart()</code> does <em>not</em> reset the start condition to
 <code>INITIAL</code> (see <a href="#start-conditions">Start Conditions</a>).
 
 <p>If <code>yylex()</code> stops scanning due to executing a
@@ -1922,15 +1922,15 @@ the rule actions.
     redefined but doing so only makes sense before scanning begins or
     after an EOF has been encountered. Changing it in the midst of
     scanning will have unexpected results since <code>smflex</code>
-    buffers its input; use <code>yyrestart()</code> instead. Once
+    buffers its input; use <code>yy_restart()</code> instead. Once
     scanning terminates because an end-of-file has been seen, you can
     assign <code>yyin</code> at the new input file and then call the
     scanner again to continue scanning.
 
-<li><p><code>void yyrestart(FILE *new_file)</code>
+<li><p><code>void yy_restart(FILE *new_file)</code>
     may be called to point <code>yyin</code> at the new input file. The
     switch-over to the new file is immediate (any previously buffered-up
-    input is lost). Note that calling <code>yyrestart()</code> with
+    input is lost). Note that calling <code>yy_restart()</code> with
     <code>yyin</code> as an argument thus throws away the current input
     buffer and continues scanning the same input file.
 
@@ -2333,7 +2333,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
         yylex
         yylineno
         yyout
-        yyrestart
+        yy_restart
         yytext
         yywrap
 </code></pre>
@@ -4190,6 +4190,13 @@ run-time support library.  That has been removed as detailed below.
     <code>yyinput()</code> when generating a C++ interface, causing a
     needless difference between the two.
 
+<li><p>The <code>yyrestart</code> function has been renamed to
+    <code>yy_restart</code>.
+
+    <p>Rationale: I want to encourage the use of <code>-P</code>
+    (prefix).  That option only produces good-looking names if there
+    is an underscore separating the "yy" from the rest of the name.
+
 </ul>
 
 
@@ -4336,7 +4343,7 @@ members:
     <td><code>yy_delete_buffer</code>
     <td><code>yym_delete_buffer</code>
   <tr>
-    <td><code>yyrestart</code>
+    <td><code>yy_restart</code>
     <td><code>yym_restart</code>
   <tr>
     <td><code>YYText</code>
@@ -4548,7 +4555,7 @@ jumped out (or over) the scanner's activation frame. Before reentering
 the scanner, use:
 
 <pre><code>
-    yyrestart( yyin );
+    yy_restart( yyin );
 </code></pre>
 
 or, as noted above, switch to using the C++ scanner class.
