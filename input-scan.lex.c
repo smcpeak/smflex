@@ -104,7 +104,7 @@
     YY_DO_BEFORE_ACTION; /* set up yy_text again */ \
   }
 
-#define unput(c) yy_unput(yy_lexer, c, yy_lexer->yy_text)
+#define unput(c) yy_unput(yy_lexer, c)
 
 /* This structure contains the buffer state for a particular input
  * source.  By buffering, it allows efficient access to the bytes in
@@ -1276,7 +1276,7 @@ static const short int yy_chk[2658] =
  * it in order to cause this definition to not appear in order to
  * silence compiler warnings. */
 #ifndef YY_NO_UNPUT
-static void yy_unput(input_scan_lexer_t *yy_lexer, int c, char *buf_ptr);
+static void yy_unput(input_scan_lexer_t *yy_lexer, int c);
 #endif
 
 #ifndef YY_NO_INPUT
@@ -3276,8 +3276,9 @@ static input_scan_state_type yy_try_NUL_trans(input_scan_lexer_t *yy_lexer, inpu
 
 
 #ifndef YY_NO_UNPUT
-static void yy_unput(input_scan_lexer_t *yy_lexer, int c, char *yy_bp)
+static void yy_unput(input_scan_lexer_t *yy_lexer, int c)
 {
+  char *yy_bp = yy_lexer->yy_text;
   char *yy_cp = yy_lexer->yy_c_buf_p;
 
   /* undo effects of setting up yy_text */
