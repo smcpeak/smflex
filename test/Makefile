@@ -226,6 +226,7 @@ all-d : out/username-jacobson.ok
 all-d : out/username-jacobson-prefix.ok
 all-df: out/username-main.c_as_cc.ok
 all-df: out/username-main.ok
+all-df: out/username-read.ok
 all-df: out/username-yywrap.ok
 all-df: out/username.ok
 all-df: out/vert-bar-action.ok
