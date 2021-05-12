@@ -1399,7 +1399,7 @@ void make_tables()
   skelout_upto("nul_trans_next_state");
   gen_NUL_trans();
 
-  skelout_upto("yyunput_update_yy_lineno");
+  skelout_upto("yy_unread_character_update_yy_lineno");
   if (do_yylineno) {
     /* update yylineno inside of unput() */
     indent_puts("if ( c == '\\n' )");
