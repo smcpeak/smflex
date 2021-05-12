@@ -261,7 +261,7 @@ static void yy_fatal_error(yy_lexer_t *yy_lexer, char const *msg);
  */
 
 
-%if yywrap
+%if do_yywrap
 %+
 /* When using the C++ interface, 'yy_wrap' delegates to the C++ method,
  * which the 'smflex' user must define. */
@@ -456,7 +456,7 @@ do_action:      /* This label is used only to access EOF actions. */
 #     define yyinput() (yy_read_character(yy_lexer))
 #     define yyin (yy_lexer->yy_input_stream)
 #     define yyout (yy_lexer->yy_output_stream)
-%if yylineno
+%if do_yylineno
 #     define yylineno (yy_lexer->yy_lineno)
 %endif
 
@@ -470,7 +470,7 @@ do_action:      /* This label is used only to access EOF actions. */
 #     undef yyinput
 #     undef yyin
 #     undef yyout
-%if yylineno
+%if do_yylineno
 #     undef yylineno
 %endif
 
@@ -614,7 +614,7 @@ void yy_construct(yy_lexer_t *yy_lexer)
   yy_lexer->yy_init = 1;
   yy_lexer->yy_start = 0;
   yy_lexer->yy_flex_debug = 1;
-%if yylineno
+%if do_yylineno
   yy_lexer->yy_lineno = 1;
 %endif
 

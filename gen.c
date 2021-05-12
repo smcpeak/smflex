@@ -1611,22 +1611,22 @@ void emit_with_name_substitution(FILE *fp, char const *line)
 /* Evaluate the skeleton conditional 'cond'. */
 static int evaluate_skel_condition(char const *cond)
 {
-  if (str_eq(cond, "jacobson")) {
-    return !!jacobson;
-  }
-  else if (str_eq(cond, "yyclass")) {
-    return !!yyclass;
-  }
-  else if (str_eq(cond, "yywrap")) {
-    return !!do_yywrap;
-  }
-  else if (str_eq(cond, "yylineno")) {
-    return !!do_yylineno;
-  }
+# define COND_FLAG(flag)            \
+    else if (str_eq(cond, #flag)) { \
+      return !!(flag);              \
+    }
+
+  if (0) {}
+  COND_FLAG(jacobson)
+  COND_FLAG(yyclass)
+  COND_FLAG(do_yywrap)
+  COND_FLAG(do_yylineno)
   else {
     flexfatal_s(_("bad skeleton condition: \"%s\""), cond);
     return false;     // not reached
   }
+
+# undef COND_NAME
 }
 
 
