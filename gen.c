@@ -1559,6 +1559,10 @@ static char const *look_up_skel_identifier(char const *id, int len)
     return basename(header_file_name);
   }
 
+  if (str_eq_substr("yy_scanner_file_name", id, len)) {
+    return basename(outfilename);
+  }
+
   return NULL;
 }
 
