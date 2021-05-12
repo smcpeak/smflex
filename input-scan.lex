@@ -713,7 +713,7 @@ input_scan_lexer_t input_lexer;
 
 /* Wrapup a file in the lexical analyzer and possibly move on to
  * the next file. */
-int input_scanwrap(input_scan_lexer_t *lexer)
+int input_scan_wrap(input_scan_lexer_t *lexer)
 {
   if (--num_input_files > 0) {
     set_input_file(*++input_files);

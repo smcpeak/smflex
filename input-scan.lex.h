@@ -100,7 +100,7 @@ struct input_scan_lexer_state_struct {
   /* Current start state number. */
   int yy_start;
 
-  /* Flag which is used to allow input_scanwrap()'s to do buffer switches
+  /* Flag which is used to allow input_scan_wrap()'s to do buffer switches
    * instead of setting up a fresh 'yy_input_stream'.
    * A bit of a hack ... */
   int yy_did_buffer_switch_on_eof;
@@ -178,7 +178,7 @@ void yy_set_bol(input_scan_lexer_t *yy_lexer, int at_bol);
 /* The 'smflex' user must define this function.  It can return 0 after
  * calling 'input_scan_restart' to begin processing another file, or return 1 to
  * indicate there are no more files to process. */
-int input_scanwrap(input_scan_lexer_t *yy_lexer);
+int input_scan_wrap(input_scan_lexer_t *yy_lexer);
 
 int input_scanlex(input_scan_lexer_t *yy_lexer);
 

@@ -135,7 +135,7 @@ struct yy_lexer_state_struct {
   /* Current start state number. */
   int yy_start;
 
-  /* Flag which is used to allow yywrap()'s to do buffer switches
+  /* Flag which is used to allow yy_wrap()'s to do buffer switches
    * instead of setting up a fresh 'yy_input_stream'.
    * A bit of a hack ... */
   int yy_did_buffer_switch_on_eof;
@@ -212,13 +212,13 @@ void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol);
 
 %if yywrap
 %+
-/* This just delegates to the C++ class 'wrap' method. */
+/* This just delegates to the C++ class 'yym_wrap' method. */
 %else
 /* The 'smflex' user must define this function.  It can return 0 after
  * calling 'yy_restart' to begin processing another file, or return 1 to
  * indicate there are no more files to process. */
 %endif
-int yywrap(yy_lexer_t *yy_lexer);
+int yy_wrap(yy_lexer_t *yy_lexer);
 %endif
 
 %# For the C++ interface, we do not define the global 'yylex'.  Instead,

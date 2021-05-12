@@ -1,5 +1,5 @@
 /* username-yywrap.lex */
-/* Like username.lex, but use 'yywrap()'. */
+/* Like username.lex, but use 'yy_wrap()'. */
 
 %{
 
@@ -8,7 +8,7 @@
 
 %}
 
-/* This test uses yywrap, and that feature now has to be explicitly
+/* This test uses yy_wrap, and that feature now has to be explicitly
  * requested. */
 %option yywrap
 
@@ -24,7 +24,7 @@ username           printf("USERNAME");
 /* True once we have read the second input. */
 static int readSecondFile = 0;
 
-int yywrap(yy_lexer_t *yy_lexer)
+int yy_wrap(yy_lexer_t *yy_lexer)
 {
   if (!readSecondFile) {
     readSecondFile = 1;

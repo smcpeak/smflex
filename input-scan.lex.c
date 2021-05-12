@@ -2999,7 +2999,7 @@ case YY_STATE_EOF(LINEDIR):
             case EOB_ACT_END_OF_FILE: {
               yy_lexer->yy_did_buffer_switch_on_eof = 0;
 
-              if (input_scanwrap(yy_lexer)) {
+              if (input_scan_wrap(yy_lexer)) {
                 /* Note: because we've taken care in
                  * yy_get_next_buffer() to have set up
                  * yy_text, we can now set up
@@ -3362,7 +3362,7 @@ static int yy_read_character(input_scan_lexer_t *yy_lexer)
           /* fall through */
 
         case EOB_ACT_END_OF_FILE: {
-          if (input_scanwrap(yy_lexer))
+          if (input_scan_wrap(yy_lexer))
             return EOF;
 
           if (!yy_lexer->yy_did_buffer_switch_on_eof)
@@ -3418,8 +3418,8 @@ void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER
   input_scan_load_buffer_state(yy_lexer);
 
   /* We don't actually know whether we did this switch during
-   * EOF (input_scanwrap()) processing, but the only time this flag
-   * is looked at is after input_scanwrap() is called, so it's safe
+   * EOF (input_scan_wrap()) processing, but the only time this flag
+   * is looked at is after input_scan_wrap() is called, so it's safe
    * to go ahead and always set it.
    */
   yy_lexer->yy_did_buffer_switch_on_eof = 1;
@@ -3757,7 +3757,7 @@ input_scan_lexer_t input_lexer;
 
 /* Wrapup a file in the lexical analyzer and possibly move on to
  * the next file. */
-int input_scanwrap(input_scan_lexer_t *lexer)
+int input_scan_wrap(input_scan_lexer_t *lexer)
 {
   if (--num_input_files > 0) {
     set_input_file(*++input_files);

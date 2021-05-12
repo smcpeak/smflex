@@ -1607,7 +1607,7 @@ You select a particular buffer to be the active input source with:
 
 <p>This switches the scanner's input buffer so subsequent tokens will come
 from <code>new_buffer</code>.  <code>yy_switch_to_buffer()</code>
-may be used by <code>yywrap()</code> to set things up for continued scanning instead
+may be used by <code>yy_wrap()</code> to set things up for continued scanning instead
 of opening a new file and pointing <code>yyin</code> at it.  Calling
 this function does <em>not</em> change the start condition.
 
@@ -1753,7 +1753,7 @@ for an example demonstrating each of these functions.
 <h1 id="end-of-file-rules">END-OF-FILE RULES</h1>
 
 <p>The special rule "<code>&lt;&lt;EOF&gt;&gt;</code>" indicates actions which are to
-be taken when an end-of-file is encountered and <code>yywrap()</code> returns non-zero
+be taken when an end-of-file is encountered and <code>yy_wrap()</code> returns non-zero
 (i.e., indicates no further files to process). The action must finish
 by doing one of four things:
 
@@ -2335,7 +2335,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
         yyout
         yy_restart
         yytext
-        yywrap
+        yy_wrap
 </code></pre>
 
     <p>If you are using <code>-+</code>, then only
@@ -2448,20 +2448,21 @@ number are equivalent to <code>smflex</code> flags or their negation:
 
 <dt id="option-yywrap"><code>yywrap</code>
 
-<dd><p>Make the scanner call <code>yywrap()</code> upon an end-of-file.
+<dd><p>Make the scanner call <code>yy_wrap()</code> upon an end-of-file.
     Otherwise, the scanner simply terminates.
 
     <p>If set, you must provide a definition of the
-    <code>int yywrap(void)</code> function (either in your scanner
+    <code>int yy_wrap(void)</code> function (either in your scanner
     definition, or in another file that it links with).  In that case,
     when the scanner reaches the end of one file, it calls
-    <code>yywrap()</code>.  If <code>yywrap()</code> returns false
+    <code>yy_wrap()</code>.  If <code>yy_wrap()</code> returns false
     (zero), then it is assumed that the function has set
     <code>yyin</code> to point to another input file, and scanning
     continues.  If it returns true (non-zero), then the scanner
     terminates, returning 0 to its caller.
 
-    <p>When using <code>%option c++</code>, <code>yywrap()</code> is
+    <p>When using <code>%option c++</code>, the name is
+    <code>yym_wrap()</code> (note the "m"), and it is
     a method of the <code>yyFlexLexer</code> class.
 
 </dl>
@@ -4121,9 +4122,9 @@ run-time support library.  That has been removed as detailed below.
     explicit definition: <code>int main() { yylex(); return 0; }</code>.
 
 <li><p>In <code>flex-2.5.4</code>, the default behavior was to
-    enable <code>yywrap()</code>.  Now it is disabled by default.
+    enable <code>yy_wrap()</code>.  Now it is disabled by default.
 
-    <p>Rationale: Most users do not want <code>yywrap()</code>.  Those
+    <p>Rationale: Most users do not want <code>yy_wrap()</code>.  Those
     that do can easiily set the option asking for it.  By making it
     default to off, I can eliminate <code>libfl.a</code> without
     breaking scanners that previously implicitly relied on it.
@@ -4133,7 +4134,8 @@ run-time support library.  That has been removed as detailed below.
 <li><p><code>flex-2.5.4</code> provided <code>libfl.a</code>, which
     contained definitions of <code>main()</code> (which called
     <code>yylex()</code> in a loop) and <code>yywrap()</code> (which
-    returned 1).  I have removed <code>libfl.a</code> entirely.
+    returned 1, and did not have an underscore in its name).
+    I have removed <code>libfl.a</code> entirely.
 
     <p>Rationale: The existence of a library compiled on the build
     machine but that executes on the host machine is a significant
@@ -4145,8 +4147,8 @@ run-time support library.  That has been removed as detailed below.
     <p>Replacement: Set <code>%option main</code> to get an equivalent
     <code>main()</code> emitted into the generated scanner.
     <code>%option noyywrap</code> is now the default, so there should
-    be no issue with trying to link with <code>yywrap()</code>.  (If
-    there is, just define it yourself: <code>int yywrap() { return 1; }</code>.)
+    be no issue with trying to link with <code>yy_wrap()</code>.  (If
+    there is, just define it yourself: <code>int yy_wrap() { return 1; }</code>.)
 
 </ul>
 
@@ -4191,7 +4193,8 @@ run-time support library.  That has been removed as detailed below.
     needless difference between the two.
 
 <li><p>The <code>yyrestart</code> function has been renamed to
-    <code>yy_restart</code>.
+    <code>yy_restart</code>.  <code>yywrap</code> has been renamed
+    to <code>yy_wrap</code>.
 
     <p>Rationale: I want to encourage the use of <code>-P</code>
     (prefix).  That option only produces good-looking names if there

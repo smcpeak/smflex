@@ -49,7 +49,7 @@ void usage(void);
  * long_align - if true (-Ca flag), favor long-word alignment.
  * use_read - if true (-Cr) then use read() for scanner input;
  *   otherwise, use fread().
- * do_yywrap - do yywrap() processing on EOF.  If false, EOF treated as
+ * do_yywrap - do yy_wrap() processing on EOF.  If false, EOF treated as
  *   "no more files".
  * csize - size of character set for the scanner we're generating;
  *   128 for 7-bit chars and 256 for 8-bit
