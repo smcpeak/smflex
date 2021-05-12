@@ -304,10 +304,10 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
 
 static int tokenCount[NUM_L1_TOKENS] = {0};
 
-static char const *lastTokenText = "";
+static char lastTokenText[5];
 static int lastTokenLen = 0;
 
-static char const *lastCollectedText = "";
+static char lastCollectedText[5];
 static int lastCollectedLen = 0;
 
 
@@ -315,16 +315,16 @@ static void lexer_emit(enum Lexer1TokenType type, char const *text, int len)
 {
   tokenCount[type]++;
 
-  /* Copy the pointer and length just the prevent the compiler from *
+  /* Copy some text and then length just the prevent the compiler from *
    * optimizing them away completely. */
-  lastTokenText = text;
+  my_strncpy(lastTokenText, text, sizeof(lastTokenText));
   lastTokenLen = len;
 }
 
 
 static void collector_append(char const *text, int len)
 {
-  lastCollectedText = text;
+  my_strncpy(lastCollectedText, text, sizeof(lastCollectedText));
   lastCollectedLen = len;
 }
 

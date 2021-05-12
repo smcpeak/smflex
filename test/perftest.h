@@ -104,4 +104,24 @@ static int runPerftest(int argc, char **argv)
 }
 
 
+/* What 'strncpy' should have been: write up to 'len-1' characters
+ * of 'src' into 'dest', stopping after writing a NUL, and always
+ * writing a NUL.  Do nothing if 'len' is 0. */
+static void my_strncpy(char *dest, char const *src, size_t len)
+{
+  if (len > 0) {
+    /* Last character in 'dest' we can write to. */
+    char *destLast = dest+len-1;
+
+    while (*src != '\0' && dest < destLast) {
+      *(dest++) = *(src++);
+    }
+
+    /* Either '*src==0' or 'dest==destLast' (or both).  Write the
+     * final NUL. */
+    *dest = '\0';
+  }
+}
+
+
 #endif /* PERFTEST_H */

@@ -640,10 +640,10 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
 
 static int tokenCount[NUM_TOKEN_TYPES] = {0};
 
-static char const *lastTokenText = "";
+static char lastTokenText[5];
 static int lastTokenLen = 0;
 
-static char const *lastMsg = "";
+static char lastMsg[80];
 
 static int numErrors = 0;
 static int numWarnings = 0;
@@ -652,7 +652,7 @@ static int numWhitespaces = 0;
 static enum TokenType tokFunc(enum TokenType t, char const *text, int leng)
 {
   tokenCount[t]++;
-  lastTokenText = text;
+  my_strncpy(lastTokenText, text, sizeof(lastTokenText));
   lastTokenLen = leng;
   return t;
 }
@@ -670,13 +670,13 @@ static enum TokenType alternateKeyword_tokFunc(enum TokenType t,
 
 static void err(char const *msg)
 {
-  lastMsg = msg;
+  my_strncpy(lastMsg, msg, sizeof(lastMsg));
   numErrors++;
 }
 
 static void warning(char const *msg)
 {
-  lastMsg = msg;
+  my_strncpy(lastMsg, msg, sizeof(lastMsg));
   numWarnings++;
 }
 
