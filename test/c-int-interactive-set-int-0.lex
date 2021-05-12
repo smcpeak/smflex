@@ -22,7 +22,7 @@ int main()
   yy_construct(&lexer);
   lexer.yy_input_stream = stdin;
   yy_set_interactive(&lexer, 0);
-  while (yylex(&lexer))
+  while (yy_lex(&lexer))
     {}
   yy_destroy(&lexer);
   return 0;

@@ -180,7 +180,7 @@ void yy_set_bol(input_scan_lexer_t *yy_lexer, int at_bol);
  * indicate there are no more files to process. */
 int input_scan_wrap(input_scan_lexer_t *yy_lexer);
 
-int input_scanlex(input_scan_lexer_t *yy_lexer);
+int input_scan_lex(input_scan_lexer_t *yy_lexer);
 
 #ifdef __cplusplus
 }

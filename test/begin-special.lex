@@ -1,5 +1,5 @@
 /* begin-special.lex */
-/* Illustrate calling BEGIN on entry to yylex(). */
+/* Illustrate calling BEGIN on entry to yy_lex(). */
 
                 /* BEGIN: example fragment */
                 int enter_special;
@@ -30,7 +30,7 @@ int main()
 
   /* Repeatedly toggle 'enter_special' until EOF. */
   enter_special = 0;
-  while (yylex(&lexer)) {
+  while (yy_lex(&lexer)) {
     enter_special = !enter_special;
 
     /* Start each time in INITIAL, so that 'enter_special' can either

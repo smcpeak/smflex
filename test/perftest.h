@@ -54,7 +54,7 @@ static void scanFile(char const *fname)
   }
 
   yy_restart(&lexer, fp);
-  while (yylex(&lexer))
+  while (yy_lex(&lexer))
     {}
 
   fclose(fp);
@@ -96,7 +96,7 @@ static int runPerftest(int argc, char **argv)
 #else
     yy_lexer_t lexer;
     yy_construct(&lexer);
-    while (yylex(&lexer))
+    while (yy_lex(&lexer))
       {}
     yy_destroy(&lexer);
 #endif

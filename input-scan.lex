@@ -747,7 +747,7 @@ void set_input_file(char *file)
 
 int flexscan()
 {
-  return input_scanlex(&input_lexer);
+  return input_scan_lex(&input_lexer);
 }
 
 

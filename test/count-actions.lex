@@ -25,7 +25,7 @@ int main()
   yy_lexer_t lexer;
 
   yy_construct(&lexer);
-  while (yylex(&lexer))
+  while (yy_lex(&lexer))
     {}
   for (i=1; i <= YY_NUM_RULES; i++) {
     printf("rule %d executed %d times\n", i, ctr[i]);

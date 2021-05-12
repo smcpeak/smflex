@@ -28,7 +28,7 @@ int main()
   /* BEGIN: example fragment */
   lexer.yy_input_stream = stdin;
   yy_set_interactive(&lexer, isatty(fileno(stdin)) > 0);
-  while (yylex(&lexer))
+  while (yy_lex(&lexer))
     {}
   /* END: example fragment */
 

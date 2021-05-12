@@ -20,7 +20,7 @@ int main()
 
   lexer.yy_input_stream = stdin;
   yy_set_interactive(&lexer, isatty(fileno(lexer.yy_input_stream)) > 0);
-  while (yylex(&lexer))
+  while (yy_lex(&lexer))
     {}
 
   yy_destroy(&lexer);

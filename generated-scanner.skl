@@ -364,7 +364,7 @@ static int yy_top_state(yy_lexer_t *yy_lexer);
 %% YY_RULE_SETUP: YY_RULE_SETUP definition goes here
 
 %-
-int yylex(yy_lexer_t * const yy_lexer)
+int yy_lex(yy_lexer_t * const yy_lexer)
 %else
 %if yyclass
 int yyclass_name::yym_lex()
@@ -483,7 +483,7 @@ do_action:      /* This label is used only to access EOF actions. */
           /* We're scanning a new file or input source.  It's
            * possible that this happened because the user
            * just pointed yy_input_stream at a new source and called
-           * yylex().  If so, then we have to assure
+           * yy_lex().  If so, then we have to assure
            * consistency between yy_current_buffer and our
            * globals.  Here is the right place to do so, because
            * this is the first action (other than possibly a
@@ -594,7 +594,7 @@ do_action:      /* This label is used only to access EOF actions. */
         break;
     } /* end of action switch */
   } /* end of scanning one token */
-} /* end of yylex */
+} /* end of yy_lex */
 
 
 void yy_construct(yy_lexer_t *yy_lexer)
@@ -1390,7 +1390,7 @@ int main()
   /* Keep retrieving tokens and discarding them until EOF. */
   yy_lexer_t lexer;
   yy_construct(&lexer);
-  while (yylex(&lexer) != 0)
+  while (yy_lex(&lexer) != 0)
     {} /* nothing */
   yy_destroy(&lexer);
 

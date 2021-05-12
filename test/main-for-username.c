@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 
   /* Keep retrieving tokens and discarding them, only performing
    * the actions specified in the .lex file, until EOF. */
-  while (yylex(&lexer) != 0) {
+  while (yy_lex(&lexer) != 0) {
     /* nothing */
   }
 

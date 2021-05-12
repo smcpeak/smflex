@@ -1391,7 +1391,7 @@ static int yy_top_state(input_scan_lexer_t *yy_lexer);
         (yy_lexer->yy_text[yy_lexer->yy_leng - 1] == '\n'); \
   YY_USER_ACTION
 
-int input_scanlex(input_scan_lexer_t * const yy_lexer)
+int input_scan_lex(input_scan_lexer_t * const yy_lexer)
 {
 
   input_scan_state_type yy_current_state;
@@ -2940,7 +2940,7 @@ case YY_STATE_EOF(LINEDIR):
           /* We're scanning a new file or input source.  It's
            * possible that this happened because the user
            * just pointed yy_input_stream at a new source and called
-           * input_scanlex().  If so, then we have to assure
+           * input_scan_lex().  If so, then we have to assure
            * consistency between yy_current_buffer and our
            * globals.  Here is the right place to do so, because
            * this is the first action (other than possibly a
@@ -3052,7 +3052,7 @@ case YY_STATE_EOF(LINEDIR):
         break;
     } /* end of action switch */
   } /* end of scanning one token */
-} /* end of input_scanlex */
+} /* end of input_scan_lex */
 
 
 void input_scan_construct(input_scan_lexer_t *yy_lexer)
@@ -3729,7 +3729,7 @@ int main()
   /* Keep retrieving tokens and discarding them until EOF. */
   input_scan_lexer_t lexer;
   input_scan_construct(&lexer);
-  while (input_scanlex(&lexer) != 0)
+  while (input_scan_lex(&lexer) != 0)
     {} /* nothing */
   input_scan_destroy(&lexer);
 
@@ -3791,7 +3791,7 @@ void set_input_file(char *file)
 
 int flexscan()
 {
-  return input_scanlex(&input_lexer);
+  return input_scan_lex(&input_lexer);
 }
 
 

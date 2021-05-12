@@ -340,7 +340,7 @@ given input files, or its standard input if no file names are given, for
 a description of a scanner to generate. The description is in the form
 of pairs of regular expressions and C code, called <em>rules</em>.  <code>smflex</code>
 generates as output a C source file, <code>lex.yy.c</code>, which
-defines a routine <code>yylex()</code>. This file is compiled and linked
+defines a routine <code>yy_lex()</code>. This file is compiled and linked
 with the <code>-lfl</code> library to produce an executable. When the
 executable is run, it analyzes its input for occurrences of the regular
 expressions. Whenever it finds one, it executes the corresponding C code.
@@ -380,7 +380,7 @@ of the rules.
     int main() {
       yy_lexer_t lexer;
       yy_construct(&amp;lexer);
-      yylex(&amp;lexer);
+      yy_lex(&amp;lexer);
       printf("# of lines = %d, # of chars = %d\n",
              num_lines, num_chars);
       yy_destroy(&amp;lexer);
@@ -391,7 +391,7 @@ of the rules.
 <p>This scanner counts the number of characters and the number of
 lines in its input (it produces no output other than the final report
 on the counts). The first line declares two globals, "num_lines" and
-"num_chars", which are accessible both inside <code>yylex()</code> and
+"num_chars", which are accessible both inside <code>yy_lex()</code> and
 in the <code>main()</code> routine declared after the second "%%". There
 are two rules, one which matches a newline ("\n") and increments both the
 line count and the character count, and one which matches any character
@@ -447,7 +447,7 @@ other than a newline (indicated by the "." regular expression).
       yy_lexer_t lexer;
       yy_construct(&amp;lexer);
       lexer.yy_input_stream = (argc &gt;= 2)? fopen(argv[1], "r") : stdin;
-      yylex(&amp;lexer);
+      yy_lex(&amp;lexer);
       yy_destroy(&amp;lexer);
       return 0;
     }
@@ -907,7 +907,7 @@ the action for the next rule." See below for an illustration.
 
 <p>Actions can include arbitrary C code, including <code>return</code>
 statements to return a value to whatever routine called
-<code>yylex()</code>. Each time <code>yylex()</code> is called it
+<code>yy_lex()</code>. Each time <code>yy_lex()</code> is called it
 continues processing tokens from where it last left off until it either
 reaches the end of the file or executes a return.
 
@@ -1115,19 +1115,19 @@ an action:
 <h1 id="the-generated-scanner">THE GENERATED SCANNER</h1>
 
 <p>The output of <code>smflex</code> is the file <code>lex.yy.c</code>,
-which contains the scanning routine <code>yylex()</code>, a number of
+which contains the scanning routine <code>yy_lex()</code>, a number of
 tables used by it for matching tokens, and a number of auxiliary routines
-and macros. By default, <code>yylex()</code> is defined as follows:
+and macros. By default, <code>yy_lex()</code> is defined as follows:
 
 <pre><code>
-    int yylex()
+    int yy_lex(yy_lexer_t *yy_lexer)
     {
       ... various definitions and the actions in here ...
     }
 </code></pre>
 
-<p>Whenever <code>yylex()</code> is called, it scans tokens from the
-global input file <code>yyin</code> (which defaults to stdin). It
+<p>Whenever <code>yy_lex()</code> is called, it scans tokens from the
+input file <code>yy_lexer-&gt;yy_input_stream</code> (which defaults to stdin). It
 continues until it either reaches an end-of-file (at which point it
 returns the value 0) or one of its actions executes a <code>return</code>
 statement.
@@ -1149,7 +1149,7 @@ better is to use <code>YY_FLUSH_BUFFER</code> (see above). Note that
 <code>yy_restart()</code> does <em>not</em> reset the start condition to
 <code>INITIAL</code> (see <a href="#start-conditions">Start Conditions</a>).
 
-<p>If <code>yylex()</code> stops scanning due to executing a
+<p>If <code>yy_lex()</code> stops scanning due to executing a
 <code>return</code> statement in one of the actions, the scanner may
 then be called again and it will resume scanning where it left off.
 
@@ -1306,7 +1306,7 @@ condition name are not required but are considered good style.)
 at the beginning of the rules section. For example, the
 <a href="test/begin-special.lex">following</a>
 will cause the scanner to enter the "SPECIAL" start condition
-whenever <code>yylex()</code> is called and the global variable
+whenever <code>yy_lex()</code> is called and the global variable
 <code>enter_special</code> is true:
 
 <pre><!-- BEGIN example: "begin-special.lex" fragment=true indent=4 --><code>
@@ -1705,7 +1705,7 @@ new input buffer for scanning the string, and return a corresponding
 <code>YY_BUFFER_STATE</code> handle (which you should delete with
 <code>yy_delete_buffer()</code> when done with it). They also switch
 to the new buffer using <code>yy_switch_to_buffer()</code>, so the next
-call to <code>yylex()</code> will start scanning the string.
+call to <code>yy_lex()</code> will start scanning the string.
 
 <dl>
 
@@ -1721,7 +1721,7 @@ call to <code>yylex()</code> will start scanning the string.
 </dl>
 
 <p>Note that both of these functions create and scan a <em>copy</em> of
-the string or bytes. (This may be desirable, since <code>yylex()</code>
+the string or bytes. (This may be desirable, since <code>yy_lex()</code>
 modifies the contents of the buffer it is scanning.) You can avoid the
 copy by using:
 
@@ -1869,7 +1869,7 @@ interactive, as demonstrated by
 <pre><!-- BEGIN example: "c-int-interactive-set-int-isatty.lex" fragment=true indent=2 --><code>
     lexer.yy_input_stream = stdin;
     yy_set_interactive(&amp;lexer, isatty(fileno(stdin)) &gt; 0);
-    while (yylex(&amp;lexer))
+    while (yy_lex(&amp;lexer))
       {}
 </code><!-- END example --></pre>
 
@@ -1955,7 +1955,7 @@ the rule actions.
 
 <p>One of the main uses of <code>smflex</code> is as a companion to
 the <code>yacc</code> parser-generator. <code>yacc</code> parsers expect
-to call a routine named <code>yylex()</code> to find the next
+to call a routine named <code>yy_lex()</code> to find the next
 input token. The routine is supposed to return the type of the
 next token as well as putting any associated value in the global
 <code>yylval</code>. To use <code>smflex</code> with <code>yacc</code>, one
@@ -2330,7 +2330,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
         yy_switch_to_buffer
         yyin
         yyleng
-        yylex
+        yy_lex
         yylineno
         yyout
         yy_restart
@@ -2405,11 +2405,15 @@ number are equivalent to <code>smflex</code> flags or their negation:
       int main()
       {
         /* Keep retrieving tokens and discarding them until EOF. */
-        while (yylex() != 0)
+        yy_lexer_t lexer;
+        yy_construct(&amp;lexer);
+        while (yy_lex(&amp;lexer) != 0)
           {} /* nothing */
+        yy_destroy(&amp;lexer);
+
         return 0;
       }
-</code></pre>
+    </code></pre>
 
 <dt><code>reject</code>
 
@@ -2489,10 +2493,8 @@ number are equivalent to <code>smflex</code> flags or their negation:
 option). It informs <code>smflex</code> that you have derived
 <code>foo</code> as a subclass of <code>yyFlexLexer</code>, so
 <code>smflex</code> will place your actions in the member function
-<code>foo::yylex()</code> instead of <code>yyFlexLexer::yylex()</code>. It
-also generates a <code>yyFlexLexer::yylex()</code>
-member function that emits a run-time error (by invoking
-<code>yyFlexLexer::LexerError()</code>) if called. See
+<code>foo::yym_lex()</code> instead of <code>yyFlexLexer::yym_lex()</code>.
+See
 <a href="#generating-cpp-scanners">Generating C++ Scanners</a>
 for additional information.
 
@@ -3655,13 +3657,7 @@ for use with C++. The first way is to simply compile a C-interface scanner gener
 by <code>smflex</code> using a C++ compiler instead of a C compiler. You
 should not encounter any compilations errors (please report any you
 find). You can
-then use C++ code in your rule actions instead of C code.  However,
-the scanner otherwise has the traditional C interface: its data is stored in
-global variables (so cannot be instantiated more than once), it is
-accessed with global functions such as <code>yylex()</code>, and
-the default input and output objects, <code>yyin</code> and
-<code>yyout</code>, remain <code>FILE *</code> variables and not C++
-<code>iostream</code>s.
+then use C++ code in your rule actions instead of C code.
 
 <p>Alternatively, you can use <code>smflex</code> to generate a
 C++-interface scanner class by using the <code>-+</code> option (or,
@@ -3684,9 +3680,9 @@ use <code>%option yyclass</code>, then you can define a class that
 inherits <code>yyFlexLexer</code> in order to add additional members.
 
 <p>The C++ file implements the methods of the scanner class, the most
-important being the <code>yylex()</code> method, which returns scanned
+important being the <code>yym_lex()</code> method, which returns scanned
 tokens one at a time.  When <code>option %yyclass</code> is used, the
-<code>yylex()</code> method is a member of the derived class, so the
+<code>yym_lex()</code> method is a member of the derived class, so the
 actions you write can access all of its members.
 
 <p>The following scanner class methods manage the process of running the
@@ -3702,7 +3698,7 @@ scanner over input:
 
 <dt><code>int yym_lex()</code>
 
-<dd><p>performs the same role as <code>yylex()</code> does for ordinary <code>smflex</code>
+<dd><p>performs the same role as <code>yy_lex()</code> does for ordinary <code>smflex</code>
     scanners: it scans the input stream, consuming tokens, until a rule's
     action returns a value.
 
@@ -4109,8 +4105,9 @@ run-time support library.  That has been removed as detailed below.
 <li><p>In <code>flex-2.5.4</code>, the <code>main()</code>
     function generated with
     <a href="#option-main"><code>%option main</code></a>
-    called <code>yylex()</code> just once.  Now it calls
-    <code>yylex()</code> in a loop until it returns 0.
+    called <code>yy_lex()</code> (then called <code>yylex()</code>
+    just once.  Now it calls
+    <code>yy_lex()</code> in a loop until it returns 0.
 
     <p>Rationale: The old behavior was useful only in the case of a
     scanner that never returned any token codes, instead only executing
@@ -4119,7 +4116,7 @@ run-time support library.  That has been removed as detailed below.
     eliminate <code>libfl.a</code> without losing functionality.
 
     <p>Replacement: Remove <code>%option main</code> and provide an
-    explicit definition: <code>int main() { yylex(); return 0; }</code>.
+    explicit definition: <code>int main() { yy_lex(); return 0; }</code>.
 
 <li><p>In <code>flex-2.5.4</code>, the default behavior was to
     enable <code>yy_wrap()</code>.  Now it is disabled by default.
@@ -4133,8 +4130,9 @@ run-time support library.  That has been removed as detailed below.
 
 <li><p><code>flex-2.5.4</code> provided <code>libfl.a</code>, which
     contained definitions of <code>main()</code> (which called
-    <code>yylex()</code> in a loop) and <code>yywrap()</code> (which
-    returned 1, and did not have an underscore in its name).
+    <code>yy_lex()</code>, then called <code>yylex()</code>,
+    in a loop) and <code>yy_wrap()</code> (which
+    returned 1, then called <code>yywrap()</code>).
     I have removed <code>libfl.a</code> entirely.
 
     <p>Rationale: The existence of a library compiled on the build
@@ -4184,6 +4182,19 @@ run-time support library.  That has been removed as detailed below.
 
 <ul>
 
+<li><p>The <code>yyrestart</code>, <code>yywrap</code>, and
+    <code>yylex</code> functions have been renamed to
+    <code>yy_restart</code>, <code>yy_wrap</code>, and
+    <code>yy_lex</code>, respectively.
+
+    <p>Rationale: I want to encourage the use of <code>-P</code>
+    (prefix).  That option only produces good-looking names if there
+    is an underscore separating the "yy" from the rest of the name
+    (and the prefix cannot end with an underscore, because that would
+    produce identifiers with two underscores in a row, which are
+    reserved in C++).
+    This also makes these functions consistent with the rest.
+
 <li><p>The <code>input()</code> function has been renamed to
     <code>yyinput()</code>.
 
@@ -4192,16 +4203,28 @@ run-time support library.  That has been removed as detailed below.
     <code>yyinput()</code> when generating a C++ interface, causing a
     needless difference between the two.
 
-<li><p>The <code>yyrestart</code> function has been renamed to
-    <code>yy_restart</code>.  <code>yywrap</code> has been renamed
-    to <code>yy_wrap</code>.
-
-    <p>Rationale: I want to encourage the use of <code>-P</code>
-    (prefix).  That option only produces good-looking names if there
-    is an underscore separating the "yy" from the rest of the name.
-
 </ul>
 
+<p>
+Renaming summary:
+
+<table>
+  <tr>
+    <th>Old name
+    <th>New name
+  <tr>
+    <td><code>yylex</code>
+    <td><code>yy_lex</code>
+  <tr>
+    <td><code>yywrap</code>
+    <td><code>yy_wrap</code>
+  <tr>
+    <td><code>yyrestart</code>
+    <td><code>yy_restart</code>
+  <tr>
+    <td><code>input</code>
+    <td><code>yyinput</code>
+</table>
 
 <h2 id="changed-function-signatures">Changed Function Signatures</h2>
 

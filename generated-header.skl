@@ -221,10 +221,10 @@ void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol);
 int yy_wrap(yy_lexer_t *yy_lexer);
 %endif
 
-%# For the C++ interface, we do not define the global 'yylex'.  Instead,
+%# For the C++ interface, we do not define the global 'yy_lex'.  Instead,
 %# there is a 'yym_lex' method on yyFlexLexer that must be used.
 %-
-int yylex(yy_lexer_t *yy_lexer);
+int yy_lex(yy_lexer_t *yy_lexer);
 %*
 
 %-
@@ -255,7 +255,7 @@ int yylex(yy_lexer_t *yy_lexer);
 class yyFlexLexer {
 public:      /* methods */
   /* arg_yyin and arg_yyout default to the cin and cout, but we
-   * only make that assignment when initializing in yylex(). */
+   * only make that assignment when initializing in yy_lex(). */
   yyFlexLexer(YY_INPUT_STREAM_TYPE *arg_yyin = NULL,
               YY_OUTPUT_STREAM_TYPE *arg_yyout = NULL);
 

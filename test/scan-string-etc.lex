@@ -27,13 +27,13 @@ int main()
 
   printf("Scanning with 'yy_scan_string'...\n");
   YY_BUFFER_STATE buf = yy_scan_string(&lexer, data);
-  while (yylex(&lexer))
+  while (yy_lex(&lexer))
     {}
   yy_delete_buffer(&lexer, buf);
 
   printf("Scanning with 'yy_scan_bytes'...\n");
   buf = yy_scan_bytes(&lexer, data, size);
-  while (yylex(&lexer))
+  while (yy_lex(&lexer))
     {}
   yy_delete_buffer(&lexer, buf);
 
@@ -42,7 +42,7 @@ int main()
   printf("Scanning with 'yy_scan_buffer'...\n");
   buf = yy_scan_buffer(&lexer, data, size+2);
   assert(buf);
-  while (yylex(&lexer))
+  while (yy_lex(&lexer))
     {}
   yy_delete_buffer(&lexer, buf);
 

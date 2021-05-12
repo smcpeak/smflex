@@ -105,7 +105,7 @@ int main(int argc, char **argv)
   yy_lexer_t lexer;
 
   yy_construct(&lexer);
-  yylex(&lexer);
+  yy_lex(&lexer);
   yy_destroy(&lexer);
 
   for (i=0; i < numLinks; i++) {

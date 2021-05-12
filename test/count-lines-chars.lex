@@ -10,7 +10,7 @@
 int main() {
   yy_lexer_t lexer;
   yy_construct(&lexer);
-  yylex(&lexer);
+  yy_lex(&lexer);
   printf("# of lines = %d, # of chars = %d\n",
          num_lines, num_chars);
   yy_destroy(&lexer);
