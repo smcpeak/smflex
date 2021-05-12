@@ -257,6 +257,11 @@ ifeq ($(TEST_DIST),1)
 	  make && \
 	  make check && \
 	  make install
+ifeq ($(THOROUGH_TEST_DIST),1)
+	cd $(DIST_NAME) && \
+	  make -C test && \
+	  make bigcheck
+endif
 	@echo "--------- BEGIN: Distribution files ---------"
 	@cat distro-files.txt
 	@echo "---------- END: Distribution files ----------"
@@ -274,6 +279,10 @@ endif
 # Build and test a distribution, then clean up afterward.
 dist-test-clean:
 	$(MAKE) TEST_DIST=1 CLEAN_DIST=1 dist
+
+# Like above, but running the "thorough" tests too.
+dist-thorough-test-clean:
+	$(MAKE) TEST_DIST=1 THOROUGH_TEST_DIST=1 CLEAN_DIST=1 dist
 
 # If 'config.mk.in' has changed, regenerate 'config.mk'.
 config.mk: config.mk.in config.status
