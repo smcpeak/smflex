@@ -20,11 +20,9 @@ include ../config.mk
 CXX := g++
 
 # C compilation options for correctness test executables.
-CFLAGS := -g -Wall -I.
-
-# smflex produces scanners that define 'yy_unput' and 'input' even when
-# they are not used.
-CFLAGS += -Wno-unused-function
+#
+# WERROR is something that can be set to -Werror in personal.mk.
+CFLAGS := -g -Wall -I. $(WERROR)
 
 # C++ compilation options.
 CXXFLAGS := $(CFLAGS)
