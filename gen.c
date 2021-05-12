@@ -1654,6 +1654,7 @@ static int eval_skel_identifier(void *extra_, char const *id, int len)
   COND_FLAG(do_yywrap)
   COND_FLAG(interactive)
   COND_FLAG(jacobson)
+  COND_FLAG(use_read)
   COND_FLAG(yyclass)
 
   else {

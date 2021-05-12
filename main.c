@@ -837,11 +837,6 @@ void readin()
   out_str("\n#include \"%s\"  /* yy_lexer_t */\n",
           basename(header_file_name));
 
-  if (use_read) {
-    /* If using 'read', we need its declaration. */
-    out("\n#include <unistd.h>          /* read, needed for -Cr option */");
-  }
-
   skelout_upto("yy_text_def");
 
   if (reject)

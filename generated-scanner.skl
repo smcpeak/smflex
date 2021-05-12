@@ -29,6 +29,9 @@
 
 #include <stdlib.h>          /* malloc, free, realloc, exit */
 #include <string.h>          /* strlen */
+%if use_read
+#include <unistd.h>          /* read, needed for -Cr option */
+%endif
 
 
 /* Returned upon end-of-file. */
