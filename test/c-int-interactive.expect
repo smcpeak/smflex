@@ -1,4 +1,4 @@
-[due to YY_INTERACTIVE, yy_is_interactive is: 1]
+[due to option interactive, yy_is_interactive is: 1]
 [getc(): 104]
 [getc(): 105]
 [getc(): 32]
@@ -36,4 +36,4 @@ blah
 [getc(): 10]
 USERNAME!
 [getc(): -1]
-[due to YY_INTERACTIVE, yy_is_interactive is: 1]
+[due to option interactive, yy_is_interactive is: 1]

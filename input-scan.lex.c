@@ -3497,13 +3497,8 @@ static void input_scan_init_buffer(input_scan_lexer_t *yy_lexer,
   b->yy_input_file = file;
   b->yy_fill_buffer = 1;
 
-#ifdef YY_INTERACTIVE
-  b->yy_is_interactive = 1;
-  YY_DEBUG_LOG_CALL("due to YY_INTERACTIVE, yy_is_interactive is", b->yy_is_interactive);
-#else
   b->yy_is_interactive = 0;
-  YY_DEBUG_LOG_CALL("default case, so yy_is_interactive is", b->yy_is_interactive);
-#endif
+  YY_DEBUG_LOG_CALL("default behavior, so yy_is_interactive is", b->yy_is_interactive);
 }
 
 

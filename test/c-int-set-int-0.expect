@@ -1,8 +1,8 @@
-[default case, so yy_is_interactive is: 0]
+[default behavior, so yy_is_interactive is: 0]
 [setting yy_is_interactive due to yy_set_interactive: 0]
 [fread(): 33]
 hi USERNAME there
 blah
 USERNAME![fread(): 0]
 
-[default case, so yy_is_interactive is: 0]
+[default behavior, so yy_is_interactive is: 0]

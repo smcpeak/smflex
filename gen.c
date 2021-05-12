@@ -1652,11 +1652,12 @@ static int eval_skel_identifier(void *extra_, char const *id, int len)
 
   if (0) {}
 
+  COND_FLAG(cpp_interface)
+  COND_FLAG(do_yylineno)
+  COND_FLAG(do_yywrap)
+  COND_FLAG(interactive)
   COND_FLAG(jacobson)
   COND_FLAG(yyclass)
-  COND_FLAG(do_yywrap)
-  COND_FLAG(do_yylineno)
-  COND_FLAG(cpp_interface)
 
   else {
     fprintf(stderr, "%s:%d: smflex internal error: ",

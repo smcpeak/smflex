@@ -1,8 +1,8 @@
-[due to YY_INTERACTIVE, yy_is_interactive is: 1]
+[due to option interactive, yy_is_interactive is: 1]
 [setting yy_is_interactive due to yy_set_interactive: 0]
 [fread(): 33]
 hi USERNAME there
 blah
 USERNAME!
 [fread(): 0]
-[due to YY_INTERACTIVE, yy_is_interactive is: 1]
+[due to option interactive, yy_is_interactive is: 1]

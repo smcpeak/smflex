@@ -855,9 +855,6 @@ void readin()
   else
     outn("typedef char YY_CHAR;");
 
-  if (interactive)
-    outn("#define YY_INTERACTIVE");
-
   outn("#define yy_text_ptr yy_text");
 
   if (ddebug)
