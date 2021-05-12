@@ -40,13 +40,13 @@ number  {num1}|{num2}
             }
         }
 
-{number}  std::cout << "number " << YYText() << '\n';
+{number}  std::cout << "number " << yym_text() << '\n';
 
 \n        mylineno++;
 
-{name}    std::cout << "name " << YYText() << '\n';
+{name}    std::cout << "name " << yym_text() << '\n';
 
-{string}  std::cout << "string " << YYText() << '\n';
+{string}  std::cout << "string " << yym_text() << '\n';
 
 %%
 

@@ -3699,13 +3699,13 @@ scanner over input:
     streams for input and output. If not specified, the streams default to
     <code>cin</code> and <code>cout</code>, respectively.
 
-<dt><code>int yylex()</code>
+<dt><code>int yym_lex()</code>
 
 <dd><p>performs the same role as <code>yylex()</code> does for ordinary <code>smflex</code>
     scanners: it scans the input stream, consuming tokens, until a rule's
     action returns a value.
 
-<dt><code>void switch_streams(istream *new_in = NULL, ostream *new_out = NULL)</code>
+<dt><code>void yym_switch_streams(istream *new_in = NULL, ostream *new_out = NULL)</code>
 
 <dd><p>reassigns <code>yyin</code> to <code>new_in</code> (if not NULL)
     and <code>yyout</code> to <code>new_out</code> (ditto), deleting the
@@ -3714,19 +3714,20 @@ scanner over input:
     buffer objects, it does <em>not</em> deallocate any stream objects,
     so you have to arrange for that yourself.
 
-<dt><code>virtual int yywrap()</code>
+<dt><code>virtual int yym_wrap()</code>
 
 <dd><p>If <a href="#option-yywrap"><code>%option yywrap</code></a>
-    is specified, then this will be invoked before <code>yylex()</code>
+    is specified, then this will be invoked before <code>yym_lex()</code>
     returns EOF.  If not using <code>%option yyclass</code>, then
     define this as a method of <code>yyFlexLexer</code>, using the
     existing declaration in the generated header file.  Otherwise,
     declare and define it as a method of your derived class.
 
-<dt><code>yy_switch_to_buffer()</code>,
-    <code>yy_create_buffer()</code>,
-    <code>yy_flush_buffer()</code>,
-    <code>yy_delete_buffer()</code>, and <code>yyrestart()</code>
+<dt><code>yym_switch_to_buffer()</code>,
+    <code>yym_create_buffer()</code>,
+    <code>yym_flush_buffer()</code>,
+    <code>yym_delete_buffer()</code>, and
+    <code>yym_restart()</code>
 
 <dd><p>These work like their C-interface counterparts except that the
     data sources and sinks are <code>i/ostream</code> pointers rather
@@ -3734,26 +3735,25 @@ scanner over input:
 
 </dl>
 
-<p>When <code>yylex()</code> returns a non-zero value, these methods
+<p>When <code>yym_lex()</code> returns a non-zero value, these methods
 can be used to inspect the token:
 
 <dl>
 
-<dt><code>const char *YYText()</code>
+<dt><code>const char *yym_text()</code>
 
 <dd><p>returns the text of the most recently matched token, the equivalent
     of <code>yytext</code>.
 
-<dt><code>int YYLeng()</code>
+<dt><code>int yym_leng()</code>
 
 <dd><p>returns the length of the most recently matched token, the equivalent
     of <code>yyleng</code>.
 
-<dt><code>int lineno() const</code>
+<dt><code>int yym_lineno() const</code>
 
-<dd><p>returns the current input line number
-    (see <code>%option yylineno</code>), or <code>1</code> if
-    <code>%option yylineno</code> was not used.
+<dd><p>returns the current input line number.  This method only exists
+    if <code>%option yylineno</code> has been used.
 
 </dl>
 
@@ -3761,14 +3761,14 @@ can be used to inspect the token:
 
 <dl>
 
-<dt><code>void set_debug(int flag)</code>
+<dt><code>void yym_set_debug(int flag)</code>
 
 <dd><p>sets the debugging flag for the scanner, equivalent to assigning to
     <code>yy_flex_debug</code>. Note that you must build the scanner using
     <a href="#debug-option"><code>%option debug</code></a> to include
     debugging information in it.
 
-<dt><code>int debug() const</code>
+<dt><code>int yym_debug() const</code>
 
 <dd><p>returns the current setting of the debugging flag.
 
@@ -3781,7 +3781,7 @@ how the scanner gets access to its input.  By overriding these,
 
 <dl>
 
-<dt><code>virtual int LexerInput(char *buf, int max_size)</code>
+<dt><code>virtual int yym_LexerInput(char *buf, int max_size)</code>
 
 <dd><p>reads up to <code>max_size</code> characters into <code>buf</code> and
     returns the number of characters read. To indicate end-of-input, return 0
@@ -3792,13 +3792,13 @@ how the scanner gets access to its input.  By overriding these,
     to decide whether to read input one character at a time.  If you
     override this method, you may wish to do likewise.
 
-<dt><code>virtual void LexerOutput(const char *buf, int size)</code>
+<dt><code>virtual void yym_LexerOutput(const char *buf, int size)</code>
 
 <dd><p>writes out <code>size</code> characters from the buffer
     <code>buf</code>, which, while NUL-terminated, may also contain "internal"
     NUL's if the scanner's rules can match text with NUL's in them.
 
-<dt><code>virtual void LexerError(const char *msg)</code>
+<dt><code>virtual void yym_LexerError(const char *msg)</code>
 
 <dd><p>reports a fatal error message. The default version of this function
     writes the message to the stream <code>cerr</code> and exits.
@@ -3858,13 +3858,13 @@ of a simple C++ scanner:
                 }
             }
 
-    {number}  std::cout &lt;&lt; "number " &lt;&lt; YYText() &lt;&lt; '\n';
+    {number}  std::cout &lt;&lt; "number " &lt;&lt; yym_text() &lt;&lt; '\n';
 
     \n        mylineno++;
 
-    {name}    std::cout &lt;&lt; "name " &lt;&lt; YYText() &lt;&lt; '\n';
+    {name}    std::cout &lt;&lt; "name " &lt;&lt; yym_text() &lt;&lt; '\n';
 
-    {string}  std::cout &lt;&lt; "string " &lt;&lt; YYText() &lt;&lt; '\n';
+    {string}  std::cout &lt;&lt; "string " &lt;&lt; yym_text() &lt;&lt; '\n';
 
     %%
 
@@ -4271,8 +4271,8 @@ compared to <code>flex-2.5.4</code>:
     <p>Replacement: Use <code>%option c++</code> or the
     <code>-+</code> command line option.
 
-<li><p>Methods starting with "yy" or "yy_" have been renamed to use the prefix
-    "yym_" instead.  For example, the main lexing method is called
+<li><p>All members <code>yyFlexLexer</code> have been renamed to use the
+    prefix "yym_" instead.  For example, the main lexing method is called
     <code>yym_lex()</code> rather than <code>yylex()</code>.
 
     <p>Rationale: Under the previous naming scheme, methods shared names
@@ -4285,6 +4285,11 @@ compared to <code>flex-2.5.4</code>:
     <code>smflex</code>, the C++ is a wrapper around the C, so
     collisions between them are undesirable.
 
+    <p>There were also some members, like <code>switch_streams</code>,
+    that had no prefix.  These are a problem for compatibility between
+    versions since they can collide with user-defined members of a
+    derived class.
+
 <li><p>The <code>int yylex(istream *new_in, ostream *new_out = 0)</code>
     method is gone.
 
@@ -4292,11 +4297,105 @@ compared to <code>flex-2.5.4</code>:
     of an important method, which is confusing.
 
     <p>Replacement: The replacement for <code>yylex(i,o)</code> is
-    to call <code>switch_streams(i,o)</code> and then
+    to call <code>yym_switch_streams(i,o)</code> and then
     <code>yym_lex()</code>, which is precisely what the old method
     did.
 
+<li><p>Several protected members that were not part of the documented
+    API have been removed.  For example,
+    <code>yy_load_buffer_state</code> was present as a protected member
+    but its behavior was not documented since it was an implementation
+    detail that ought to have been <code>private</code>.
+
 </ul>
+
+
+<p>Here is a table summarizing the changes to <code>yyFlexLexer</code>
+members:
+
+<table>
+  <tr>
+    <th>Old name
+    <th>New name
+  <tr>
+    <td><code>yylex</code>
+    <td><code>yym_lex</code>
+  <tr>
+    <td><code>switch_streams</code>
+    <td><code>yym_switch_streams</code>
+  <tr>
+    <td><code>yywrap</code>
+    <td><code>yym_wrap</code>
+  <tr>
+    <td><code>yy_switch_to_buffer</code>
+    <td><code>yym_switch_to_buffer</code>
+  <tr>
+    <td><code>yy_create_buffer</code>
+    <td><code>yym_create_buffer</code>
+  <tr>
+    <td><code>yy_delete_buffer</code>
+    <td><code>yym_delete_buffer</code>
+  <tr>
+    <td><code>yyrestart</code>
+    <td><code>yym_restart</code>
+  <tr>
+    <td><code>YYText</code>
+    <td><code>yym_text</code>
+  <tr>
+    <td><code>YYLeng</code>
+    <td><code>yym_leng</code>
+  <tr>
+    <td><code>lineno</code>
+    <td><code>yym_lineno</code>
+  <tr>
+    <td><code>debug</code>
+    <td><code>yym_debug</code>
+  <tr>
+    <td><code>set_debug</code>
+    <td><code>yym_set_debug</code>
+  <tr>
+    <td><code>LexerInput</code>
+    <td><code>yym_LexerInput</code>
+  <tr>
+    <td><code>LexerOutput</code>
+    <td><code>yym_LexerOutput</code>
+  <tr>
+    <td><code>LexerError</code>
+    <td><code>yym_LexerError</code>
+  <tr>
+    <td><code>yyunput</code>
+    <td>(removed)
+  <tr>
+    <td><code>yyinput</code>
+    <td>(removed)
+  <tr>
+    <td><code>yy_load_buffer_state</code>
+    <td>(removed)
+  <tr>
+    <td><code>yy_init_buffer</code>
+    <td><code>yym_init_buffer</code>
+  <tr>
+    <td><code>yy_flush_buffer</code>
+    <td><code>yym_flush_buffer</code>
+  <tr>
+    <td><code>yy_push_state</code>
+    <td><code>yym_push_state</code>
+  <tr>
+    <td><code>yy_pop_state</code>
+    <td><code>yym_pop_state</code>
+  <tr>
+    <td><code>yy_top_state</code>
+    <td><code>yym_top_state</code>
+  <tr>
+    <td><code>yy_get_previous_state</code>
+    <td>(removed)
+  <tr>
+    <td><code>yy_try_NUL_trans</code>
+    <td>(removed)
+  <tr>
+    <td><code>yy_get_next_buffer</code>
+    <td>(removed)
+</table>
 
 
 <h2 id="new-features">New Features</h2>

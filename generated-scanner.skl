@@ -315,7 +315,7 @@ static int yy_top_state(yy_lexer_t *yy_lexer);
  */
 #  define ECHO (void) fwrite(yy_lexer->yy_text, yy_lexer->yy_leng, 1, yy_lexer->yy_output_stream)
 %else C++ definition
-#  define ECHO LexerOutput(yy_lexer->yy_text, yy_lexer->yy_leng)
+#  define ECHO yym_LexerOutput(yy_lexer->yy_text, yy_lexer->yy_leng)
 %*
 #endif
 
@@ -326,7 +326,7 @@ static int yy_top_state(yy_lexer_t *yy_lexer);
 #  define YY_INPUT(buf,result,max_size) \
 %% yy_input_defn: fread()/read() definition of YY_INPUT goes here unless we're doing C++
 %+ C++ definition
-    if ( (result = yy_lexer->yy_wrapper_object->LexerInput((char*)buf, max_size)) < 0 ) \
+    if ( (result = yy_lexer->yy_wrapper_object->yym_LexerInput((char*)buf, max_size)) < 0 ) \
       YY_FATAL_ERROR("input in smflex scanner failed");
 %*
 #endif
@@ -656,7 +656,7 @@ yyFlexLexer::~yyFlexLexer()
   yy_destroy(&yym_lexer_state);
 }
 
-void yyFlexLexer::switch_streams(YY_INPUT_STREAM_TYPE *new_in, YY_OUTPUT_STREAM_TYPE *new_out)
+void yyFlexLexer::yym_switch_streams(YY_INPUT_STREAM_TYPE *new_in, YY_OUTPUT_STREAM_TYPE *new_out)
 {
   if (new_in) {
     yym_delete_buffer(yym_lexer_state.yy_current_buffer);
@@ -668,7 +668,7 @@ void yyFlexLexer::switch_streams(YY_INPUT_STREAM_TYPE *new_in, YY_OUTPUT_STREAM_
   }
 }
 
-int yyFlexLexer::LexerInput(char* buf, int max_size)
+int yyFlexLexer::yym_LexerInput(char* buf, int max_size)
 {
   if (yym_lexer_state.yy_input_stream->eof()) {
     YY_DEBUG_LOG_CALL("first istream::eof()", 1);
@@ -712,7 +712,7 @@ int yyFlexLexer::LexerInput(char* buf, int max_size)
   }
 }
 
-void yyFlexLexer::LexerOutput(const char *buf, int size)
+void yyFlexLexer::yym_LexerOutput(const char *buf, int size)
 {
   (void) yym_lexer_state.yy_output_stream->write(buf, size);
 }
@@ -1329,7 +1329,7 @@ static void yy_fatal_error(yy_lexer_t *yy_lexer, char const *msg)
 }
 
 %+
-void yyFlexLexer::LexerError(char const *msg)
+void yyFlexLexer::yym_LexerError(char const *msg)
 {
   yy_fatal_error(&yym_lexer_state, msg);
 }

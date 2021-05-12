@@ -32,7 +32,7 @@ int yyFlexLexer::yym_wrap()
       exit(2);
     }
 
-    switch_streams(secondFile);
+    yym_switch_streams(secondFile);
 
     /* Not done, keep going. */
     return 0;
