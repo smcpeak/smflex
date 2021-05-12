@@ -1,0 +1,11 @@
+/* option-debug-cpp.lex */
+/* Exercise "%option debug" and "%option c++". */
+
+%option main
+%option debug
+%option c++
+%%
+
+one      printf("ONE");
+two      printf("TWO");
+three    printf("THREE");

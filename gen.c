@@ -1259,51 +1259,46 @@ void make_tables()
     indent_puts("if ( yy_act == 0 )");
     indent_up();
     indent_puts(cpp_interface ?
-                "cerr << \"--scanner backing up\\n\";" :
-                "fprintf( stderr, \"--scanner backing up\\n\" );");
+                "std::cerr << \"--scanner backing up\\n\";" :
+                "fprintf(stderr, \"--scanner backing up\\n\");");
     indent_down();
 
     do_indent();
-    out_dec("else if ( yy_act < %d )\n", num_rules);
+    out_dec("else if (yy_act < %d)\n", num_rules);
     indent_up();
 
     if (cpp_interface) {
-      indent_puts
-        ("cerr << \"--accepting rule at line \" << yy_rule_linenum[yy_act] <<");
-      indent_puts("         \"(\\\"\" << yy_lexer->yy_text << \"\\\")\\n\";");
+      indent_puts("std::cerr << \"--accepting rule at line \" << yy_rule_linenum[yy_act] <<");
+      indent_puts("             \" (\\\"\" << yy_lexer->yy_text << \"\\\")\\n\";");
     }
     else {
-      indent_puts
-        ("fprintf( stderr, \"--accepting rule at line %d (\\\"%s\\\")\\n\",");
-
-      indent_puts("         yy_rule_linenum[yy_act], yy_lexer->yy_text );");
+      indent_puts("fprintf(stderr, \"--accepting rule at line %d (\\\"%s\\\")\\n\",");
+      indent_puts("        yy_rule_linenum[yy_act], yy_lexer->yy_text);");
     }
 
     indent_down();
 
     do_indent();
-    out_dec("else if ( yy_act == %d )\n", num_rules);
+    out_dec("else if (yy_act == %d)\n", num_rules);
     indent_up();
 
     if (cpp_interface) {
-      indent_puts
-        ("cerr << \"--accepting default rule (\\\"\" << yy_lexer->yy_text << \"\\\")\\n\";");
+      indent_puts("std::cerr << \"--accepting default rule (\\\"\" << yy_lexer->yy_text << \"\\\")\\n\";");
     }
     else {
-      indent_puts
-        ("fprintf( stderr, \"--accepting default rule (\\\"%s\\\")\\n\",");
-      indent_puts("         yy_lexer->yy_text );");
+      indent_puts("fprintf(stderr, \"--accepting default rule (\\\"%s\\\")\\n\",");
+      indent_puts("        yy_lexer->yy_text);");
     }
 
     indent_down();
 
     do_indent();
-    out_dec("else if ( yy_act == %d )\n", num_rules + 1);
+    out_dec("else if (yy_act == %d)\n", num_rules + 1);
     indent_up();
 
     indent_puts(cpp_interface ?
-                "cerr << \"--(end of buffer or a NUL)\\n\";" :
-                "fprintf( stderr, \"--(end of buffer or a NUL)\\n\" );");
+                "std::cerr << \"--(end of buffer or a NUL)\\n\";" :
+                "fprintf(stderr, \"--(end of buffer or a NUL)\\n\");");
 
     indent_down();
 
@@ -1312,12 +1307,10 @@ void make_tables()
     indent_up();
 
     if (cpp_interface) {
-      indent_puts
-        ("cerr << \"--EOF (start condition \" << YY_START << \")\\n\";");
+      indent_puts("std::cerr << \"--EOF (start condition \" << YY_START << \")\\n\";");
     }
     else {
-      indent_puts
-        ("fprintf( stderr, \"--EOF (start condition %d)\\n\", YY_START );");
+      indent_puts("fprintf(stderr, \"--EOF (start condition %d)\\n\", YY_START);");
     }
 
     indent_down();

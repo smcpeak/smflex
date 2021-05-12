@@ -219,6 +219,7 @@ all-df: out/normalize-whitespace.ok
 all-df: out/notrailing-context.ok
 all-df: out/noyylineno.ok
 all-df: out/option-debug.ok
+all-df: out/option-debug-cpp.ok
 all-df: out/outfile-specified.ok
 all-d : out/reject-abcd.ok
 all-d : out/reject-frob.ok
