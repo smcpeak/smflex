@@ -1855,7 +1855,7 @@ caseins = option_sense;
 case 42:
 YY_RULE_SETUP
 #line 276 "input-scan.lex"
-ddebug = option_sense;
+option_debug = option_sense;
 #line 1860 "input-scan.lex.c"
   YY_BREAK
 case 43:

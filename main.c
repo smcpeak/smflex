@@ -79,7 +79,7 @@ static char smflex_version[] = SMFLEX_VERSION;
 /* ----------- BEGIN: big block of globals ---------------- */
 /* These globals are all declared and documented in main.h. */
 
-int printstats, syntaxerror, eofseen, ddebug, trace, nowarn, spprdflt;
+int printstats, syntaxerror, eofseen, option_debug, trace, nowarn, spprdflt;
 int interactive, caseins, do_yylineno, useecs, fulltbl, usemecs;
 int jacobson, gen_line_dirs, performance_report, backing_up_report;
 int cpp_interface, long_align, use_read, do_yywrap, csize;
@@ -329,7 +329,7 @@ void flexend(int exit_status)
       putc('+', stderr);
     if (backing_up_report)
       putc('b', stderr);
-    if (ddebug)
+    if (option_debug)
       putc('d', stderr);
     if (caseins)
       putc('i', stderr);
@@ -475,7 +475,7 @@ void flexinit(int argc, char **argv)
   char *arg;
 
   printstats = syntaxerror = trace = spprdflt = caseins = false;
-  cpp_interface = backing_up_report = ddebug = fulltbl = false;
+  cpp_interface = backing_up_report = option_debug = fulltbl = false;
   jacobson = long_align = nowarn = yymore_used = continued_action = false;
   do_yylineno = in_rule = reject_used = do_stdinit = false;
   yymore_really_used = reject_really_used = unspecified;
@@ -587,7 +587,7 @@ void flexinit(int argc, char **argv)
           goto get_next_arg;
 
         case 'd':
-          ddebug = true;
+          option_debug = true;
           break;
 
         case 'f':
@@ -819,7 +819,7 @@ void readin()
   if (reject_used)
     outn("\n#define YY_USES_REJECT");
 
-  if (ddebug)
+  if (option_debug)
     outn("\n#define SMFLEX_DEBUG");
 
   if (csize == 256)

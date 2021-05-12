@@ -67,7 +67,7 @@ struct input_scan_lexer_state_struct {
   int yy_leng;
 
 
-  /* TODO: Only needed if: ddebug */
+  /* TODO: Only needed if: option_debug */
   int yy_flex_debug;      /* only has effect with -d or "%option debug" */
 
   /* Input source for default YY_INPUT. */

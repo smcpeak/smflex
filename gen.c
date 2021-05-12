@@ -1080,7 +1080,7 @@ void make_tables()
     dataend();
   }
 
-  if (ddebug) {
+  if (option_debug) {
     /* Spit out table mapping rules to line numbers. */
     out_str_dec(long_align ? C_long_decl : C_short_decl,
                 "yy_rule_linenum", num_rules);
@@ -1252,7 +1252,7 @@ void make_tables()
   }
 
   skelout_upto("action_debug_code");
-  if (ddebug) {
+  if (option_debug) {
     indent_puts("if (yy_lexer->yy_flex_debug)");
 
     indent_lbrace();

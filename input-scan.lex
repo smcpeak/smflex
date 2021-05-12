@@ -273,7 +273,7 @@ LEXOPT          [aceknopr]
         "c++"           cpp_interface = option_sense;
         caseful|case-sensitive          caseins = ! option_sense;
         caseless|case-insensitive       caseins = option_sense;
-        debug           ddebug = option_sense;
+        debug           option_debug = option_sense;
         default         spprdflt = ! option_sense;
         ecs             useecs = option_sense;
         fast            synerr(_("\"fast\" has been renamed to \"jacobson\""));

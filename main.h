@@ -27,7 +27,7 @@ void usage(void);
  * printstats - if true (-v), dump statistics
  * syntaxerror - true if a syntax error has been found
  * eofseen - true if we've seen an eof in the input file
- * ddebug - if true (-d), make a "debug" scanner
+ * option_debug - if true (-d), make a "debug" scanner
  * trace - if true (-T), trace processing
  * nowarn - if true (-w), do not generate warnings
  * spprdflt - if true (-s), suppress the default rule
@@ -65,7 +65,7 @@ void usage(void);
  * reject_really_used - same for REJECT
  */
 
-extern int printstats, syntaxerror, eofseen, ddebug, trace, nowarn, spprdflt;
+extern int printstats, syntaxerror, eofseen, option_debug, trace, nowarn, spprdflt;
 extern int interactive, caseins, do_yylineno;
 extern int useecs, fulltbl, usemecs, jacobson;
 extern int gen_line_dirs, performance_report, backing_up_report;

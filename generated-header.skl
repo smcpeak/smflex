@@ -104,7 +104,7 @@ struct yy_lexer_state_struct {
   int yy_lineno;
 %endif
 
-  /* TODO: Only needed if: ddebug */
+  /* TODO: Only needed if: option_debug */
   int yy_flex_debug;      /* only has effect with -d or "%option debug" */
 
   /* Input source for default YY_INPUT. */
@@ -341,7 +341,7 @@ public:      /* methods */
   int yym_lineno() const          { return yym_lexer_state.yy_lineno; }
 
 %endif
-  /* TODO: Only enable if: ddebug */
+  /* TODO: Only enable if: option_debug */
   int yym_debug() const           { return yym_lexer_state.yy_flex_debug; }
   void yym_set_debug( int flag )  { yym_lexer_state.yy_flex_debug = flag; }
 
