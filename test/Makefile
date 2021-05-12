@@ -22,7 +22,7 @@ CXX := g++
 # C compilation options for correctness test executables.
 CFLAGS := -g -Wall -I.
 
-# smflex produces scanners that define 'yyunput' and 'input' even when
+# smflex produces scanners that define 'yy_unput' and 'input' even when
 # they are not used.
 CFLAGS += -Wno-unused-function
 
