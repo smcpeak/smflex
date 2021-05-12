@@ -25,8 +25,8 @@
  * WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. */
 
-#ifndef input_scan_lexer_t_DEFINED
-#define input_scan_lexer_t_DEFINED
+#ifndef INPUT_SCAN_LEX_H
+#define INPUT_SCAN_LEX_H
 
 #include <stddef.h>                    /* size_t */
 #include <stdio.h>                     /* FILE */
@@ -220,4 +220,4 @@ int input_scan_wrap(input_scan_lexer_t *yy_lexer);
 
 
 
-#endif /* input_scan_lexer_t_DEFINED */
+#endif /* INPUT_SCAN_LEX_H */

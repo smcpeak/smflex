@@ -23,10 +23,8 @@
  * WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. */
 
-%# We do not have a machanism for emitting an include guard name that
-%# depends on the header name, so use the type name.
-#ifndef yy_lexer_t_DEFINED
-#define yy_lexer_t_DEFINED
+#ifndef yy_header_include_guard_name
+#define yy_header_include_guard_name
 
 %# Note: To avoid collisions with other libraries or with names the
 %# user has defined, all names contributed to the global namespace
@@ -370,4 +368,4 @@ protected:   /* data */
 };
 %endif
 
-#endif /* yy_lexer_t_DEFINED */
+#endif /* yy_header_include_guard_name */

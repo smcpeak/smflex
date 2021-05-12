@@ -35,6 +35,7 @@
 #include "misc.h"                      /* outc, outn, etc. */
 #include "tblcmp.h"                    /* expand_nxt_chk */
 
+#include <ctype.h>                     /* toupper */
 #include <errno.h>                     /* errno */
 #include <stdlib.h>                    /* exit */
 #include <string.h>                    /* strerror, strcpy, strrchr */
@@ -1561,6 +1562,29 @@ static char const *look_up_skel_identifier(char const *id, int len)
 
   if (str_eq_substr("yy_scanner_file_name", id, len)) {
     return basename(outfilename);
+  }
+
+  if (str_eq_substr("yy_header_include_guard_name", id, len)) {
+    /* Compute the header file name, without path components, converted
+     * to all-caps, and with non-identifier characters converted to
+     * underscores. */
+    char *p;
+    char const *base = basename(header_file_name);
+    if (strlen(base) >= sizeof(lookup_result)) {
+      flexerror("header file name too long");
+    }
+    strcpy(lookup_result, base);
+    for (p=lookup_result; *p; p++) {
+      if (p==lookup_result /*first character*/?
+            is_identifier_start(*p) :
+            is_identifier_continuation(*p)) {
+        *p = toupper(*p);
+      }
+      else {
+        *p = '_';
+      }
+    }
+    return lookup_result;
   }
 
   return NULL;

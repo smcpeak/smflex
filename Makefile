@@ -112,10 +112,11 @@ check: $(SMFLEX)
 	@#
 	$(SMFLEX_EXEC) $(SMFLEX_FLAGS) $(COMPRESSION) -oscan.tmp.c input-scan.lex
 	@#
-	@# Fix the file names in #line directives and comments so
-	@# they match.
+	@# Fix the file names in #line directives and comments, as well
+	@# as the include guard name, so they match.
 	@#
-	sed -e 's,scan\.tmp,input-scan.lex,' < scan.tmp.h > scan.actual.h
+	sed -e 's,scan\.tmp,input-scan.lex,' \
+	    -e 's,SCAN_TMP,INPUT_SCAN_LEX,'  < scan.tmp.h > scan.actual.h
 	sed -e 's,scan\.tmp,input-scan.lex,' < scan.tmp.c > scan.actual.c
 	rm scan.tmp.h scan.tmp.c
 	@#
