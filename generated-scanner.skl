@@ -124,7 +124,7 @@
     YY_DO_BEFORE_ACTION; /* set up yy_text again */ \
   }
 
-#define unput(c) yy_unput(yy_lexer, c, yy_lexer->yy_text_ptr)
+#define unput(c) yy_unput(yy_lexer, c, yy_lexer->yy_text)
 
 /* This structure contains the buffer state for a particular input
  * source.  By buffering, it allows efficient access to the bytes in
@@ -239,11 +239,10 @@ static void yy_fatal_error(yy_lexer_t *yy_lexer, char const *msg);
  * corresponding action - sets up yy_text.
  */
 #define YY_DO_BEFORE_ACTION \
-  yy_lexer->yy_text_ptr = yy_bp; \
+  yy_lexer->yy_text = yy_bp; \
 %% yymore_yy_text: code to fiddle yy_text and yy_leng for yymore() goes here
   yy_lexer->yy_hold_char = *yy_cp; \
   *yy_cp = '\0'; \
-%% array_yy_text: code to copy yy_text_ptr to yy_text[] goes here, if %array
   yy_lexer->yy_c_buf_p = yy_cp;
 
 %% dfa_tables: data tables for the DFA and the user's section 1 definitions go here
@@ -273,10 +272,6 @@ int yy_wrap(yy_lexer_t *yy_lexer)
  * silence compiler warnings. */
 #ifndef YY_NO_UNPUT
 static void yy_unput(yy_lexer_t *yy_lexer, int c, char *buf_ptr);
-#endif
-
-#ifndef yy_text_ptr
-static void yy_flex_strncpy(char *, const char *, int);
 #endif
 
 #ifndef YY_NO_INPUT
@@ -472,7 +467,7 @@ do_action:      /* This label is used only to access EOF actions. */
 
       case YY_END_OF_BUFFER: {
         /* Amount of text matched not including the EOB char. */
-        int yy_amount_of_matched_text = (int)(yy_cp - yy_lexer->yy_text_ptr) - 1;
+        int yy_amount_of_matched_text = (int)(yy_cp - yy_lexer->yy_text) - 1;
 
         /* Undo the effects of YY_DO_BEFORE_ACTION. */
         *yy_cp = yy_lexer->yy_hold_char;
@@ -505,7 +500,7 @@ do_action:      /* This label is used only to access EOF actions. */
           /* This was really a NUL. */
           yy_state_type yy_next_state;
 
-          yy_lexer->yy_c_buf_p = yy_lexer->yy_text_ptr + yy_amount_of_matched_text;
+          yy_lexer->yy_c_buf_p = yy_lexer->yy_text + yy_amount_of_matched_text;
 
           yy_current_state = yy_get_previous_state(yy_lexer);
 
@@ -520,7 +515,7 @@ do_action:      /* This label is used only to access EOF actions. */
 
           yy_next_state = yy_try_NUL_trans(yy_lexer, yy_current_state);
 
-          yy_bp = yy_lexer->yy_text_ptr + YY_MORE_ADJ;
+          yy_bp = yy_lexer->yy_text + YY_MORE_ADJ;
 
           if (yy_next_state) {
             /* Consume the NUL. */
@@ -550,7 +545,7 @@ do_action:      /* This label is used only to access EOF actions. */
                  * YY_NULL, it'll still work - another
                  * YY_NULL will get returned.
                  */
-                yy_lexer->yy_c_buf_p = yy_lexer->yy_text_ptr + YY_MORE_ADJ;
+                yy_lexer->yy_c_buf_p = yy_lexer->yy_text + YY_MORE_ADJ;
 
                 yy_act = YY_STATE_EOF(YY_START);
                 goto do_action;
@@ -565,12 +560,12 @@ do_action:      /* This label is used only to access EOF actions. */
             }
 
             case EOB_ACT_CONTINUE_SCAN:
-              yy_lexer->yy_c_buf_p = yy_lexer->yy_text_ptr + yy_amount_of_matched_text;
+              yy_lexer->yy_c_buf_p = yy_lexer->yy_text + yy_amount_of_matched_text;
 
               yy_current_state = yy_get_previous_state(yy_lexer);
 
               yy_cp = yy_lexer->yy_c_buf_p;
-              yy_bp = yy_lexer->yy_text_ptr + YY_MORE_ADJ;
+              yy_bp = yy_lexer->yy_text + YY_MORE_ADJ;
               goto yy_match;
 
             case EOB_ACT_LAST_MATCH:
@@ -580,7 +575,7 @@ do_action:      /* This label is used only to access EOF actions. */
               yy_current_state = yy_get_previous_state(yy_lexer);
 
               yy_cp = yy_lexer->yy_c_buf_p;
-              yy_bp = yy_lexer->yy_text_ptr + YY_MORE_ADJ;
+              yy_bp = yy_lexer->yy_text + YY_MORE_ADJ;
               goto yy_find_action;
           } /* switch (yy_get_next_buffer()) */
         }
@@ -727,7 +722,7 @@ void yyFlexLexer::yym_LexerOutput(const char *buf, int size)
 static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
 {
   char *dest = yy_lexer->yy_current_buffer->yy_ch_buf;
-  char *source = yy_lexer->yy_text_ptr;
+  char *source = yy_lexer->yy_text;
   int number_to_move, i;
   int ret_val;
 
@@ -736,7 +731,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
   }
 
   if (yy_lexer->yy_current_buffer->yy_fill_buffer == 0) { /* Don't try to fill the buffer, so this is an EOF. */
-    if (yy_lexer->yy_c_buf_p - yy_lexer->yy_text_ptr - YY_MORE_ADJ == 1) {
+    if (yy_lexer->yy_c_buf_p - yy_lexer->yy_text - YY_MORE_ADJ == 1) {
       /* We matched a single character, the EOB, so
        * treat this as a final EOF.
        */
@@ -754,7 +749,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
   /* Try to read more data. */
 
   /* First move last chars to start of buffer. */
-  number_to_move = (int) (yy_lexer->yy_c_buf_p - yy_lexer->yy_text_ptr) - 1;
+  number_to_move = (int) (yy_lexer->yy_c_buf_p - yy_lexer->yy_text) - 1;
 
   for (i = 0; i < number_to_move; ++i) {
     *(dest++) = *(source++);
@@ -839,7 +834,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
   yy_lexer->yy_current_buffer->yy_ch_buf[yy_lexer->yy_n_chars] = YY_END_OF_BUFFER_CHAR;
   yy_lexer->yy_current_buffer->yy_ch_buf[yy_lexer->yy_n_chars + 1] = YY_END_OF_BUFFER_CHAR;
 
-  yy_lexer->yy_text_ptr = &yy_lexer->yy_current_buffer->yy_ch_buf[0];
+  yy_lexer->yy_text = &yy_lexer->yy_current_buffer->yy_ch_buf[0];
 
   return ret_val;
 }
@@ -853,7 +848,7 @@ static yy_state_type yy_get_previous_state(yy_lexer_t *yy_lexer)
 
 %% prev_start_to_current: code to get the start state into yy_current_state goes here
 
-  for (yy_cp = yy_lexer->yy_text_ptr + YY_MORE_ADJ;
+  for (yy_cp = yy_lexer->yy_text + YY_MORE_ADJ;
        yy_cp < yy_lexer->yy_c_buf_p;
        ++yy_cp) {
 %% prev_find_next_state: code to find the next state goes here
@@ -912,7 +907,7 @@ static void yy_unput(yy_lexer_t *yy_lexer, int c, char *yy_bp)
 
 %% yyunput_update_yy_lineno: update yy_lineno here
 
-  yy_lexer->yy_text_ptr = yy_bp;
+  yy_lexer->yy_text = yy_bp;
   yy_lexer->yy_hold_char = *yy_cp;
   yy_lexer->yy_c_buf_p = yy_cp;
 }
@@ -938,7 +933,7 @@ static int yy_read_character(yy_lexer_t *yy_lexer)
     }
 
     else { /* need more input */
-      int offset = yy_lexer->yy_c_buf_p - yy_lexer->yy_text_ptr;
+      int offset = yy_lexer->yy_c_buf_p - yy_lexer->yy_text;
       ++(yy_lexer->yy_c_buf_p);
 
       switch (yy_get_next_buffer(yy_lexer)) {
@@ -969,7 +964,7 @@ static int yy_read_character(yy_lexer_t *yy_lexer)
         }
 
         case EOB_ACT_CONTINUE_SCAN:
-          yy_lexer->yy_c_buf_p = yy_lexer->yy_text_ptr + offset;
+          yy_lexer->yy_c_buf_p = yy_lexer->yy_text + offset;
           break;
       }
     }
@@ -1039,7 +1034,7 @@ void yyFlexLexer::yym_switch_to_buffer(YY_BUFFER_STATE new_buffer)
 static void yy_load_buffer_state(yy_lexer_t *yy_lexer)
 {
   yy_lexer->yy_n_chars = yy_lexer->yy_current_buffer->yy_n_chars;
-  yy_lexer->yy_text_ptr = yy_lexer->yy_c_buf_p = yy_lexer->yy_current_buffer->yy_buf_pos;
+  yy_lexer->yy_text = yy_lexer->yy_c_buf_p = yy_lexer->yy_current_buffer->yy_buf_pos;
   yy_lexer->yy_input_stream = yy_lexer->yy_current_buffer->yy_input_file;
   yy_lexer->yy_hold_char = *(yy_lexer->yy_c_buf_p);
 }
@@ -1342,15 +1337,6 @@ void yyFlexLexer::yym_LexerError(char const *msg)
 
 
 /* Internal utility routines. */
-
-#ifndef yy_text_ptr
-static void yy_flex_strncpy(char *s1, const char *s2, int n)
-{
-  int i;
-  for (i = 0; i < n; ++i)
-    s1[i] = s2[i];
-}
-#endif
 
 static void *yy_flex_alloc(size_t size)
 {

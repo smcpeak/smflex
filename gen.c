@@ -1013,16 +1013,13 @@ void make_tables()
   set_indent(1);
 
   if (yymore_used) {
-    indent_puts("yy_lexer->yy_text_ptr -= yy_lexer->yy_more_len; \\");
-    indent_puts("yy_lexer->yy_leng = (int) (yy_cp - yy_lexer->yy_text_ptr); \\");
+    indent_puts("yy_lexer->yy_text -= yy_lexer->yy_more_len; \\");
+    indent_puts("yy_lexer->yy_leng = (int) (yy_cp - yy_lexer->yy_text); \\");
   }
 
   else {
     indent_puts("yy_lexer->yy_leng = (int) (yy_cp - yy_bp); \\");
   }
-
-  /* Now also deal with copying yy_text_ptr to yy_text if needed. */
-  skelout_upto("array_yy_text");
 
   set_indent(0);
 
@@ -1221,7 +1218,7 @@ void make_tables()
     indent_puts("yy_lexer->yy_more_len = 0;");
     indent_puts("if (yy_lexer->yy_more_flag)");
     indent_lbrace();
-    indent_puts("yy_lexer->yy_more_len = yy_lexer->yy_c_buf_p - yy_lexer->yy_text_ptr;");
+    indent_puts("yy_lexer->yy_more_len = yy_lexer->yy_c_buf_p - yy_lexer->yy_text;");
     indent_puts("yy_lexer->yy_more_flag = 0;");
     indent_rbrace();
   }

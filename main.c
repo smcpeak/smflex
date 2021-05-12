@@ -855,8 +855,6 @@ void readin()
   else
     outn("typedef char YY_CHAR;");
 
-  outn("#define yy_text_ptr yy_text");
-
   if (ddebug)
     outn("\n#define SMFLEX_DEBUG");
 
