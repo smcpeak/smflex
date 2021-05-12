@@ -249,6 +249,15 @@ username-yywrap.ok: username-yywrap.input2
 cppscan-yywrap.ok: cppscan-yywrap.input2
 input-buffers.ok: input-buffers.input2 input-buffers.input3 input-buffers.input4
 
+# Unit test program.
+out/test-eval-skel-expr.exe: test-eval-skel-expr.c ../eval-skel-expr.h ../eval-skel-expr.c
+	$(CC) -o$@ $(CFLAGS) -I.. test-eval-skel-expr.c ../eval-skel-expr.c
+
+all: out/test-eval-skel-expr.ok
+out/test-eval-skel-expr.ok: out/test-eval-skel-expr.exe
+	out/test-eval-skel-expr.exe
+	touch $@
+
 # v.Nu does not validate links, so I wrote a little smflex program
 # to do it.  Use it to check the manual.
 #

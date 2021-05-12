@@ -29,6 +29,7 @@
 #include "gen.h"                       /* this module */
 
 #include "dfa.h"                       /* increase_max_dfas */
+#include "eval-skel-expr.h"            /* evaluate_skel_expr, etc. */
 #include "input-scan.h"                /* flexscan */
 #include "main.h"                      /* num_backing_up, etc. */
 #include "misc.h"                      /* outc, outn, etc. */
@@ -1488,14 +1489,6 @@ static char const *lower_prefix_names[] = {
 };
 
 
-/* Return true if 'text[0,len-1]' matches the entire 'name' string. */
-static int name_matches(char const *name, char const *text, int len)
-{
-  return 0==strncmp(name, text, len) &&
-         strlen(name) == len;
-}
-
-
 /* Look up 'id[0,len-1]' as a skeleton identifier.  If a substitution
  * is found, return a pointer to statically-allocated storage containing
  * the replacement.  Otherwise return NULL. */
@@ -1506,43 +1499,24 @@ static char const *look_up_skel_identifier(char const *id, int len)
   /* For now, use inefficient linear search. */
 
   for (i=0; i < TABLESIZE(all_caps_prefix_names); i++) {
-    if (name_matches(all_caps_prefix_names[i], id, len)) {
+    if (str_eq_substr(all_caps_prefix_names[i], id, len)) {
       sprintf(lookup_result, "%s%.*s", all_caps_prefix, len-2, id+2);
       return lookup_result;
     }
   }
 
   for (i=0; i < TABLESIZE(lower_prefix_names); i++) {
-    if (name_matches(lower_prefix_names[i], id, len)) {
+    if (str_eq_substr(lower_prefix_names[i], id, len)) {
       sprintf(lookup_result, "%s%.*s", prefix, len-2, id+2);
       return lookup_result;
     }
   }
 
-  if (name_matches("yyclass_name", id, len) && yyclass!=NULL) {
+  if (str_eq_substr("yyclass_name", id, len) && yyclass!=NULL) {
     return yyclass;
   }
 
   return NULL;
-}
-
-
-/* Return true if 'c' is a character that can be the start of an
- * identifier in C/C++. */
-static int is_identifier_start(char c)
-{
-  return c == '_' ||
-         ('A' <= c && c <= 'Z') ||
-         ('a' <= c && c <= 'z');
-}
-
-/* Return true if 'c' can be an identifier continuation. */
-static int is_identifier_continuation(char c)
-{
-  return c == '_' ||
-         ('0' <= c && c <= '9') ||
-         ('A' <= c && c <= 'Z') ||
-         ('a' <= c && c <= 'z');
 }
 
 
@@ -1608,33 +1582,7 @@ void emit_with_name_substitution(FILE *fp, char const *line)
 }
 
 
-/* Evaluate the skeleton conditional 'cond'. */
-static int evaluate_skel_condition(char const *cond)
-{
-  if (*cond == '!') {
-    return !evaluate_skel_condition(cond+1);
-  }
-
-# define COND_FLAG(flag)            \
-    else if (str_eq(cond, #flag)) { \
-      return !!(flag);              \
-    }
-
-  if (0) {}
-  COND_FLAG(jacobson)
-  COND_FLAG(yyclass)
-  COND_FLAG(do_yywrap)
-  COND_FLAG(do_yylineno)
-  COND_FLAG(cpp_interface)
-  else {
-    flexfatal_s(_("bad skeleton condition: \"%s\""), cond);
-    return false;     // not reached
-  }
-
-# undef COND_NAME
-}
-
-
+/* Maximum depth of nested %if directives in skeleton files. */
 #define MAX_IF_NESTING 10
 
 
@@ -1651,31 +1599,77 @@ static int all_true(int *vals, int count)
 }
 
 
+
+/* 'extra' context for expression evaluation. */
+typedef struct eval_extra_struct {
+  /* Skeleton file name. */
+  char const *skeleton_fname;
+
+  /* Current line number in that file. */
+  int line_number;
+} eval_extra_t;
+
+
+/* Report an error in a skeleton condition. */
+static void eval_fatal_error(void *extra_, char const *msg,
+                             char const *syntax)
+{
+  eval_extra_t *extra = (eval_extra_t*)extra_;
+
+  fprintf(stderr, "%s:%d: smflex internal error: ",
+          extra->skeleton_fname, extra->line_number);
+  fprintf(stderr, "at \"%s\": %s\n", syntax, msg);
+  exit(2);
+}
+
+
+/* Evaluate the skeleton identifier 'id'. */
+static int eval_skel_identifier(void *extra_, char const *id, int len)
+{
+  eval_extra_t *extra = (eval_extra_t*)extra_;
+
+# define COND_FLAG(flag)                      \
+    else if (str_eq_substr(#flag, id, len)) { \
+      return !!(flag);                        \
+    }
+
+  if (0) {}
+
+  COND_FLAG(jacobson)
+  COND_FLAG(yyclass)
+  COND_FLAG(do_yywrap)
+  COND_FLAG(do_yylineno)
+  COND_FLAG(cpp_interface)
+
+  else {
+    fprintf(stderr, "%s:%d: smflex internal error: ",
+            extra->skeleton_fname, extra->line_number);
+    fprintf(stderr, "unknown skeleton condition identifier \"%.*s\"\n",
+            len, id);
+    exit(2);
+  }
+
+# undef COND_NAME
+}
+
+
 /* Report a fatal error with a skeleton file, where 'fmt' is a
  * format string that has one "%s" and 'str' is the string to
  * substitute in that location. */
-static void skel_error_s(FILE *dest, int line_number,
+static void skel_error_s(eval_extra_t *extra,
                          char const *fmt, char const *str)
 {
-  /* Determine which file is the issue by comparing 'dest' to one
-   * of them.  This is somewhat unprincipled. */
-  char const *skel_file =
-    (dest == scanner_c_file?
-      "generated-scanner.skl" :
-      "generated-header.skl");
-
   fprintf(stderr, "%s:%d: smflex internal error: ",
-          skel_file, line_number);
+          extra->skeleton_fname, extra->line_number);
   fprintf(stderr, fmt, str);
   fprintf(stderr, "\n");
   exit(2);
 }
 
 /* Report a fatal error with a skeleton file. */
-static void skel_error(FILE *dest, int line_number,
-                       char const *msg)
+static void skel_error(eval_extra_t *extra, char const *msg)
 {
-  skel_error_s(dest, line_number, "%s", msg);
+  skel_error_s(extra, "%s", msg);
 }
 
 
@@ -1700,17 +1694,36 @@ int emit_skeleton_lines_upto(
    * those outer conditionals. */
   int emitting_if[MAX_IF_NESTING] = {1};
 
-# define SKEL_ERROR(msg) skel_error(dest, skeleton_index, msg)
-
+  /* Current skeleton line text. */
   char const *line;
+
+  /* Additional data for expression evaluation. */
+  eval_extra_t eval_extra;
+  eval_context_t eval_ctx;
+
+  /* Determine which file is the source by comparing 'dest' to one
+   * of them.  This is somewhat unprincipled. */
+  eval_extra.skeleton_fname =
+    (dest == scanner_c_file?
+      "generated-scanner.skl" :
+      "generated-header.skl");
+
+  eval_ctx.eval_identifier = &eval_skel_identifier;
+  eval_ctx.fatal_error = &eval_fatal_error;
+  eval_ctx.extra = &eval_extra;
+
+# define SKEL_ERROR(msg) skel_error(&eval_extra, msg)
+
   while ( (line = skeleton_lines[skeleton_index++]) != NULL ) {
+    eval_extra.line_number = skeleton_index;
+
     if (line[0] == '%') {
       if (starts_with(line+1, "if ")) {
         if (in_if >= MAX_IF_NESTING) {
           SKEL_ERROR("%if is nested too deply");
         }
         in_if++;
-        emitting_if[in_if] = evaluate_skel_condition(line+4);
+        emitting_if[in_if] = evaluate_skel_expr(&eval_ctx, line+4);
       }
 
       else if (starts_with(line+1, "else")) {
@@ -1752,8 +1765,8 @@ int emit_skeleton_lines_upto(
         }
 
         /* Make sure the label is right. */
-        if (!name_matches(expected_label, line+3, colonIndex-3)) {
-          skel_error_s(dest, skeleton_index,
+        if (!str_eq_substr(expected_label, line+3, colonIndex-3)) {
+          skel_error_s(&eval_extra,
             "\"%%%%\" line has wrong label; expected \"%s\"",
             expected_label);
         }
@@ -1777,7 +1790,7 @@ int emit_skeleton_lines_upto(
   }
 
   if (!str_eq(expected_label, "end_of_skeleton")) {
-    skel_error_s(dest, skeleton_index,
+    skel_error_s(&eval_extra,
       "reached end of skeleton file but expected label \"%s\"",
       expected_label);
   }
