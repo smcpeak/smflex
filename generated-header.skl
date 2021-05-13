@@ -150,12 +150,14 @@ struct yy_lexer_state_struct {
   char *yy_last_accepting_cpos;
 
 %endif
-  /* TODO: Only needed when: reject_used */
+%if reject_used
+  /* These are related to REJECT. */
   yy_state_type *yy_state_buf;
   yy_state_type *yy_state_ptr;
   char *yy_full_match;
   int yy_lp;
 
+%endif
   /* TODO: Only needed when: reject_used && variable_trailing_context_rules */
   int yy_looking_for_trail_begin;
   int yy_full_lp;

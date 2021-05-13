@@ -3068,18 +3068,11 @@ void input_scan_construct(input_scan_lexer_t *yy_lexer)
 
   yy_lexer->yy_current_buffer = NULL;
 
-#ifdef YY_USES_REJECT
-  yy_lexer->yy_state_buf =
-    (input_scan_state_type*)yy_flex_alloc(sizeof(input_scan_state_type) * (YY_BUF_SIZE+2));
-#else
-  yy_lexer->yy_state_buf = NULL;
-#endif
 }
 
 
 void input_scan_destroy(input_scan_lexer_t *yy_lexer)
 {
-  free(yy_lexer->yy_state_buf);
   input_scan_delete_buffer(yy_lexer, yy_lexer->yy_current_buffer);
 }
 
@@ -3138,11 +3131,6 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
     int num_to_read = yy_lexer->yy_current_buffer->yy_buf_size - number_to_move - 1;
 
     while (num_to_read <= 0) {  /* Not enough room in the buffer - grow it. */
-#ifdef YY_USES_REJECT
-      YY_FATAL_ERROR
-        ("input buffer overflow, can't enlarge buffer because scanner uses REJECT");
-#else
-
       /* just a shorter name for the current buffer */
       INPUT_SCAN_BUFFER_STATE b = yy_lexer->yy_current_buffer;
 
@@ -3172,7 +3160,6 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
       yy_lexer->yy_c_buf_p = &b->yy_ch_buf[yy_c_buf_p_offset];
 
       num_to_read = yy_lexer->yy_current_buffer->yy_buf_size - number_to_move - 1;
-#endif
     }
 
     if (num_to_read > YY_READ_BUF_SIZE) {

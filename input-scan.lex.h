@@ -104,12 +104,6 @@ struct input_scan_lexer_state_struct {
   input_scan_state_type yy_last_accepting_state;
   char *yy_last_accepting_cpos;
 
-  /* TODO: Only needed when: reject_used */
-  input_scan_state_type *yy_state_buf;
-  input_scan_state_type *yy_state_ptr;
-  char *yy_full_match;
-  int yy_lp;
-
   /* TODO: Only needed when: reject_used && variable_trailing_context_rules */
   int yy_looking_for_trail_begin;
   int yy_full_lp;

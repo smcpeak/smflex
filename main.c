@@ -816,9 +816,6 @@ void readin()
    * here is tightly synchronized with the skeleton file organization. */
   skelout_upto("yy_text_def");
 
-  if (reject_used)
-    outn("\n#define YY_USES_REJECT");
-
   if (option_debug)
     outn("\n#define SMFLEX_DEBUG");
 
