@@ -948,7 +948,7 @@ void usage()
 {
   FILE *f = stdout;
 
-  fprintf(f, _("%s [-bcdfhilnpstvwBFILTV78+? -C[aefFmr] -ooutput -Pprefix -Sskeleton]\n"),
+  fprintf(f, _("%s [-bdfhinpstvwBFILTV78+? -C[aefFmr] -ooutput -Pprefix]\n"),
           program_name);
   fprintf(f, _("\t[--flex-compat --help --version] [file ...]\n"));
 
@@ -957,7 +957,6 @@ void usage()
   fprintf(f, _("\t-d  turn on debug mode in generated scanner\n"));
   fprintf(f, _("\t-h  produce this help message\n"));
   fprintf(f, _("\t-i  generate case-insensitive scanner\n"));
-  fprintf(f, _("\t-l  maximal compatibility with original lex\n"));
   fprintf(f, _("\t-n  write output using platform native line endings\n"));
   fprintf(f, _("\t-p  generate performance report to stderr\n"));
   fprintf(f, _("\t-s  suppress default rule to ECHO unmatched text\n"));
@@ -987,7 +986,6 @@ void usage()
   fprintf(f, _("\t\t-Cr  use read() instead of stdio for scanner input\n"));
   fprintf(f, _("\t-o  specify output filename\n"));
   fprintf(f, _("\t-P  specify scanner prefix other than \"yy\"\n"));
-  fprintf(f, _("\t-S  specify skeleton file\n"));
   fprintf(f, _("\t--flex-compat  activate flex compatibility aliases\n"));
   fprintf(f, _("\t--help         produce this help message\n"));
   fprintf(f, _("\t--version      report %s version\n"), program_name);
