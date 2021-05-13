@@ -1,0 +1,12 @@
+Scanning with 'yym_scan_string'...
+hi USERNAME there
+blah
+USERNAME!
+Scanning with 'yym_scan_bytes'...
+hi USERNAME there
+blah
+USERNAME!
+Scanning with 'yym_scan_buffer'...
+hi USERNAME there
+blah
+USERNAME!

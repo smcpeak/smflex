@@ -1,5 +1,5 @@
 /* scan-string-etc.lex */
-/* Exercise 'scan_string' and friends. */
+/* Exercise 'yy_scan_string' and friends. */
 
 %{
 #include <assert.h>          /* assert */

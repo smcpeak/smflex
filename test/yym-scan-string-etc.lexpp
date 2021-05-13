@@ -1,0 +1,50 @@
+/* yym-scan-string-etc.lexpp */
+/* Exercise 'yym_scan_string' and friends. */
+
+%option c++
+
+%{
+#include <assert.h>          /* assert */
+#include <stdio.h>           /* fread */
+%}
+
+%%
+username    printf("USERNAME");
+
+%%
+
+int main()
+{
+  char data[4096];
+  yyFlexLexer lexer;
+
+  /* Read stdin into memory. */
+  size_t size = fread(data, 1, sizeof(data)-2, stdin);
+
+  /* Place the required sentinel for 'yym_scan_buffer'. */
+  data[size] = 0;
+  data[size+1] = 0;
+
+  printf("Scanning with 'yym_scan_string'...\n");
+  YY_BUFFER_STATE buf = lexer.yym_scan_string(data);
+  while (lexer.yym_lex())
+    {}
+  lexer.yym_delete_buffer(buf);
+
+  printf("Scanning with 'yym_scan_bytes'...\n");
+  buf = lexer.yym_scan_bytes(data, size);
+  while (lexer.yym_lex())
+    {}
+  lexer.yym_delete_buffer(buf);
+
+  /* This must be done last because it will destroy the contents of
+   * 'data'. */
+  printf("Scanning with 'yym_scan_buffer'...\n");
+  buf = lexer.yym_scan_buffer(data, size+2);
+  assert(buf);
+  while (lexer.yym_lex())
+    {}
+  lexer.yym_delete_buffer(buf);
+
+  return 0;
+}
