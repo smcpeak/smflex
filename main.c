@@ -944,49 +944,50 @@ void set_up_initial_allocations()
 }
 
 
+/* Text to print in response to --help. */
+static const char *usage_text[] = {
+  "Usage: smflex [options] [input.lex [...]]",
+  "",
+  "Options that affect what input smflex accepts:",
+  "",
+  "  --flex-compat    Activate aliases that provide partial flex compatibility.",
+  "",
+  "Options that affect what output smflex writes:",
+  "",
+  "  -b               Generate backing-up information.",
+  "  -h, --help       Print usage.",
+  "  -n               Write output with platform native line endings.",
+  "  -ooutput         Specify name of output file [\"lex.yy.c\" or \"lex.yy.cc\"].",
+  "  -p               Write performance report to stderr.",
+  "  -v               Write scanner statistics to stderr.",
+  "  -w               Suppress warnings.",
+  "  -L               Suppress #line directives.",
+  "  -T               Enable debug tracing of the table building process.",
+  "  -V, --version    Print version number and exit.",
+  "",
+  "Options that influence the interface (API) of the generated scanner:",
+  "",
+  "  -+               Generate a scanner with a C++ interface.",
+  "  -Pprefix         Specify symbol name prefix in generated scanner [\"yy\"].",
+  "",
+  "Options that influence the behavior of the generated scanner:",
+  "",
+  "  -7               Generate a 7-bit scanner [if -Cf or -CJ but not -Cfe or -CJe].",
+  "  -8               Generate an 8-bit scanner [opposite of -7].",
+  "  -d               Generate a debug mode scanner.",
+  "  -i               Generate a case-insensitive scanner.",
+  "  -s               Suppress the default \"echo\" rule.",
+  "  -B               Generate a batch (non-interactive) scanner [true].",
+  "  -C[aefFmr]*      Generate scanner with various table compression modes [-Cem].",
+  "  -I               Generate an interactive scanner.",
+  0
+};
+
+
 void usage()
 {
-  FILE *f = stdout;
-
-  fprintf(f, _("%s [-bdfhinpstvwBFILTV78+? -C[aefFmr] -ooutput -Pprefix]\n"),
-          program_name);
-  fprintf(f, _("\t[--flex-compat --help --version] [file ...]\n"));
-
-  fprintf(f, _("\t-b  generate backing-up information to %s\n"),
-          backing_name);
-  fprintf(f, _("\t-d  turn on debug mode in generated scanner\n"));
-  fprintf(f, _("\t-h  produce this help message\n"));
-  fprintf(f, _("\t-i  generate case-insensitive scanner\n"));
-  fprintf(f, _("\t-n  write output using platform native line endings\n"));
-  fprintf(f, _("\t-p  generate performance report to stderr\n"));
-  fprintf(f, _("\t-s  suppress default rule to ECHO unmatched text\n"));
-
-  if (!did_outfilename) {
-    sprintf(outfile_path, outfile_template, prefix, cpp_interface ? "cc" : "c");
-    outfilename = outfile_path;
+  char const **line = usage_text;
+  for (; *line; line++) {
+    printf("%s\n", *line);
   }
-
-  fprintf(f, _("\t-v  write summary of scanner statistics to f\n"));
-  fprintf(f, _("\t-w  do not generate warnings\n"));
-  fprintf(f, _("\t-B  generate batch scanner (opposite of -I)\n"));
-  fprintf(f, _("\t-I  generate interactive scanner (opposite of -B)\n"));
-  fprintf(f, _("\t-L  suppress #line directives in scanner\n"));
-  fprintf(f, _("\t-T  %s should run in trace mode\n"), program_name);
-  fprintf(f, _("\t-V  report %s version\n"), program_name);
-  fprintf(f, _("\t-7  generate 7-bit scanner\n"));
-  fprintf(f, _("\t-8  generate 8-bit scanner\n"));
-  fprintf(f, _("\t-+  generate C++ scanner class\n"));
-  fprintf(f, _("\t-?  produce this help message\n"));
-  fprintf(f, _("\t-C  specify degree of table compression (default is -Cem):\n"));
-  fprintf(f, _("\t\t-Ca  trade off larger tables for better memory alignment\n"));
-  fprintf(f, _("\t\t-Ce  construct equivalence classes\n"));
-  fprintf(f, _("\t\t-Cf  generate scanner with \"full\" tables; fast and large\n"));
-  fprintf(f, _("\t\t-CJ  generate scanner with \"Jacobson\" tables\n"));
-  fprintf(f, _("\t\t-Cm  construct meta-equivalence classes\n"));
-  fprintf(f, _("\t\t-Cr  use read() instead of stdio for scanner input\n"));
-  fprintf(f, _("\t-o  specify output filename\n"));
-  fprintf(f, _("\t-P  specify scanner prefix other than \"yy\"\n"));
-  fprintf(f, _("\t--flex-compat  activate flex compatibility aliases\n"));
-  fprintf(f, _("\t--help         produce this help message\n"));
-  fprintf(f, _("\t--version      report %s version\n"), program_name);
 }

@@ -140,6 +140,27 @@ int all_upper(char *str)
 }
 
 
+/* Given a file name, return its "base name", i.e., the name without
+ * any path components.  Return 'fname' itself if there are no path
+ * separators.  Either way, the return value points into 'fname'. */
+char *basename(char *fname)
+{
+  /* Find the last slash. */
+  char *last_slash = strrchr(fname, '/');
+  if (!last_slash) {
+    /* Maybe we are on Windows, using backslash? */
+    last_slash = strrchr(fname, '\\');
+  }
+
+  if (last_slash) {
+    return last_slash + 1;
+  }
+  else {
+    return fname;
+  }
+}
+
+
 /* bubble - bubble sort an integer array in increasing order
  *
  * synopsis
