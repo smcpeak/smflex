@@ -955,7 +955,7 @@ static const char *usage_text[] = {
   "Options that affect what output smflex writes:",
   "",
   "  -b               Generate backing-up information.",
-  "  -h, --help       Print usage.",
+  "  -h, --help, -?   Print usage.",
   "  -n               Write output with platform native line endings.",
   "  -ooutput         Specify name of output file [\"lex.yy.c\" or \"lex.yy.cc\"].",
   "  -p               Write performance report to stderr.",
