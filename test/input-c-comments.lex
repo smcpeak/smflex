@@ -3,6 +3,7 @@
 
 %option main
 %option flex-compat
+%option yy_read_character
 
 %{
 

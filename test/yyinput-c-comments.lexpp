@@ -4,6 +4,7 @@
 %option main
 %option c++
 %option flex-compat
+%option yy_read_character
 
 %{
 

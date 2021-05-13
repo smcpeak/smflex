@@ -89,6 +89,7 @@ int yymore_really_used, reject_really_used;
 int option_stack;
 
 int option_main = false;
+int option_yy_read_character = false;
 int option_yy_scan_string = false;
 int option_yy_scan_bytes = false;
 int option_yy_scan_buffer = false;

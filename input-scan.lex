@@ -80,6 +80,7 @@
 %option caseless nodefault outfile="input-scan.lex.c" stack
 %option nostdinit yywrap
 %option prefix="input_scan"
+%option yy_read_character
 
 %x SECT2 SECT2PROLOG SECT3 CODEBLOCK PICKUPDEF SC CARETISBOL NUM QUOTE
 %x FIRSTCCL CCL ACTION RECOVER COMMENT ACTION_STRING PERCENT_BRACE_ACTION
@@ -282,7 +283,6 @@ LEXOPT          [aceknopr]
                           useecs = usemecs = false;
                           fulltbl = true;
                         }
-        input           ACTION_IFDEF("YY_NO_INPUT", ! option_sense);
         interactive     interactive = option_sense;
         jacobson        {
                           useecs = usemecs = false;
@@ -302,11 +302,11 @@ LEXOPT          [aceknopr]
         yymore          yymore_really_used = option_sense;
         yywrap          do_yywrap = option_sense;
 
-        yy_top_state    option_yy_top_state   = option_sense;
-
-        yy_scan_string  option_yy_scan_string = option_sense;
-        yy_scan_bytes   option_yy_scan_bytes  = option_sense;
-        yy_scan_buffer  option_yy_scan_buffer = option_sense;
+        yy_read_character     option_yy_read_character   = option_sense;
+        yy_scan_string        option_yy_scan_string      = option_sense;
+        yy_scan_bytes         option_yy_scan_bytes       = option_sense;
+        yy_scan_buffer        option_yy_scan_buffer      = option_sense;
+        yy_top_state          option_yy_top_state        = option_sense;
 
         outfile         return OPT_OUTFILE;
         prefix          return OPT_PREFIX;

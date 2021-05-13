@@ -1099,6 +1099,9 @@ an action:
                   }
     </code><!-- END example --></pre>
 
+    <p>Use of this macro requires
+    <code>%option yy_read_character</code>.
+
 <li><p><code>YY_FLUSH_BUFFER</code>
     flushes the scanner's internal buffer so that the next time the
     scanner attempts to match a token, it will first refill the buffer
@@ -2025,7 +2028,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dt><code>--flex-compat</code>
 
-<dd><p>Activate some aliases in section 2 that provide partial
+<dd><p>Activate some aliases in section 2 (rules) that provide partial
     compatibility with <code>flex</code>:
 
     <table>
@@ -2045,8 +2048,9 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
     <p>The intent of this option is to make it a bit easier to test
     with <code>smflex</code> during a transition period, rather than
-    to use it indefinitely.  The new names are intended to be more
-    regular, comprehensible, and forward-compatible.
+    to use it indefinitely.  The aliases it provides can reduce the
+    amount of rule action code that has to change, but changes to
+    options are still typically required.
 
 <dt><code>-h</code>
 
@@ -2539,10 +2543,11 @@ for additional information.
 corresponding option is set.  These are:
 
 <pre><code>
+    yy_read_character
     yy_scan_string
     yy_scan_bytes
     yy_scan_buffer
-    yy_top_state        # Only has effect with %option stack.
+    yy_top_state           # Only has effect with %option stack.
 </code></pre>
 
 <p>A number of options are available for lint purists who want to suppress
@@ -2551,7 +2556,7 @@ the following, if unset (e.g., <code>%option nounput</code>), results
 in the corresponding routine not appearing in the generated scanner:
 
 <pre><code>
-    input, unput
+    unput
 </code></pre>
 
 
@@ -3859,6 +3864,7 @@ of a simple C++ scanner:
 
     %option c++
     %option prefix="Example"
+    %option yy_read_character
 
     %{
     int mylineno = 0;
@@ -4171,6 +4177,22 @@ to be of continued value.
     <p>Replacement: Explicitly set the options if you use the
     respective functions.
 
+<li><p>In <code>flex-2.5.4</code>, the <code>input()</code> macro
+    (or its C++ counterpart, <code>yyinput()</code>) was available by
+    default due to <code>%option input</code> being true by default.
+    In <code>smflex</code>, <code>%option input</code> has been
+    renamed to <code>%option yy_read_character</code>, which is false
+    by default.
+
+    <p>Rationale: Changing the default to false follows the same
+    principles as the previous bullet.  Renaming the option follows
+    renaming of the macros, which is explained below.
+
+    <p>Replacement: If you have <code>%option noinput</code> (which
+    would have been to silence compiler warnings), remove it.  If
+    you have <code>%option input</code>, change it to
+    <code>%option yy_read_character</code>.
+
 </ul>
 
 
@@ -4333,29 +4355,38 @@ Renaming summary:
   <tr>
     <th>Old name
     <th>New name
+    <th>Notes
   <tr>
     <td><code>yylex</code>
     <td><code>yy_lex</code>
+    <td>Now requires a <code>yy_lexer_t*</code> parameter.
   <tr>
     <td><code>yywrap</code>
     <td><code>yy_wrap</code>
+    <td>Now requires a <code>yy_lexer_t*</code> parameter.
   <tr>
     <td><code>yyrestart</code>
     <td><code>yy_restart</code>
+    <td>Now requires a <code>yy_lexer_t*</code> parameter.
   <tr>
     <td><code>input</code>
     <td><code>YY_READ_CHARACTER</code>
+    <td>Old name available with <code>%option flex-compat</code>.
   <tr>
     <td><code>yyinput</code>
     <td><code>YY_READ_CHARACTER</code>
+    <td>Old name available with <code>%option flex-compat</code>.
   <tr>
     <td><code>unput</code>
     <td><code>YY_UNREAD_CHARACTER</code>
+    <td>Old name available with <code>%option flex-compat</code>.
 </table>
+
 
 <h2 id="changed-function-signatures">Changed Function Signatures</h2>
 
-<p>The following functions all take an additional
+<p>In addition to the signatures changed as part of renaming, above,
+   the following functions all take an additional
    <code>yy_lexer_t*</code> parameter in order to support having
    multiple scanner state instances:
 

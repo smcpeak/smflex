@@ -287,10 +287,10 @@ YY_POSSIBLY_UNUSED_FUNCTION
 static void yy_unread_character(yy_lexer_t *yy_lexer, int c);
 #endif
 
-#ifndef YY_NO_INPUT /* Set by %option noinput. */
+%if option_yy_read_character
 YY_POSSIBLY_UNUSED_FUNCTION
 static int yy_read_character(yy_lexer_t *yy_lexer);
-#endif
+%endif
 
 %if option_stack
 static void yy_push_state(yy_lexer_t *yy_lexer, int new_state);
@@ -477,7 +477,9 @@ do_action:      /* This label is used only to access EOF actions. */
        * in other functions, even those defined in sections 1 or 3. */
 #     define yytext (yy_lexer->yy_text)
 #     define yyleng (yy_lexer->yy_leng)
+%if option_yy_read_character
 #     define YY_READ_CHARACTER() (yy_read_character(yy_lexer))
+%endif
 #     define YY_UNREAD_CHARACTER(c) yy_unread_character(yy_lexer, c)
 #     define yyin (yy_lexer->yy_input_stream)
 #     define yyout (yy_lexer->yy_output_stream)
@@ -487,8 +489,10 @@ do_action:      /* This label is used only to access EOF actions. */
 %if option_flex_compat
 
       /* flex compatibility aliases. */
+%if option_yy_read_character
 #     define input() YY_READ_CHARACTER()
 #     define yyinput() YY_READ_CHARACTER()
+%endif
 #     define unput(c) YY_UNREAD_CHARACTER(c)
 %endif
 
@@ -498,7 +502,9 @@ do_action:      /* This label is used only to access EOF actions. */
       /* Remove the section 2 aliases. */
 #     undef yytext
 #     undef yyleng
+%if option_yy_read_character
 #     undef YY_READ_CHARACTER
+%endif
 #     undef YY_UNREAD_CHARACTER
 #     undef yyin
 #     undef yyout
@@ -989,7 +995,7 @@ static void yy_unread_character(yy_lexer_t *yy_lexer, int c)
 #endif /* YY_NO_UNPUT */
 
 
-#ifndef YY_NO_INPUT
+%if option_yy_read_character
 /* Read one character from the current input source of 'yy_lexer'. */
 static int yy_read_character(yy_lexer_t *yy_lexer)
 {
@@ -1061,7 +1067,7 @@ static int yy_read_character(yy_lexer_t *yy_lexer)
 
   return c;
 }
-#endif /* YY_NO_INPUT */
+%endif # option_yy_read_character
 
 
 void yy_restart(yy_lexer_t *yy_lexer, YY_INPUT_STREAM_TYPE *input_file)

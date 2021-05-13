@@ -81,6 +81,7 @@ extern int option_stack;
 /* Initially false, each of these is set to true by their respective
  * %options, and controls emission of the respective functions. */
 extern int option_main;
+extern int option_yy_read_character;
 extern int option_yy_scan_string;
 extern int option_yy_scan_bytes;
 extern int option_yy_scan_buffer;

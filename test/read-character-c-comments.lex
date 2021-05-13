@@ -2,6 +2,7 @@
 /* Demonstrate use of 'YY_READ_CHARACTER'. */
 
 %option main
+%option yy_read_character
 
 %{
 
