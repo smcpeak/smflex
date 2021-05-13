@@ -1646,6 +1646,7 @@ static int eval_skel_identifier(void *extra_, char const *id, int len)
   COND_FLAG(use_read)
   COND_FLAG(variable_trailing_context_rules)
   COND_FLAG(yyclass)
+  COND_FLAG(yymore_used)
 
   COND_INTVAR(num_backing_up)
 
