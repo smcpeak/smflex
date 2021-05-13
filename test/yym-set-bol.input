@@ -1,0 +1,8 @@
+get_bol1
+get_bol2
+  leading
+not leading
+set_bol leading
+clear_bol
+  notleading
+more

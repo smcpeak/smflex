@@ -1,0 +1,13 @@
+/* yym-set-bol.lex */
+/* Exercise 'yym_set_bol' and 'YY_AT_BOL' with "%option c++". */
+
+%option c++
+%option main
+
+%%
+set_bol      ECHO; yym_set_bol(1);
+clear_bol\n  ECHO; yym_set_bol(0);
+^[ ]+        printf("[leading space: \"%s\"]", yytext);
+[ ]+         printf("[non-leading space: \"%s\"]", yytext);
+get_bol1     ECHO; printf("[AT_BOL1: %d]", YY_AT_BOL());
+get_bol2\n   ECHO; printf("[AT_BOL2: %d]", YY_AT_BOL());
