@@ -484,7 +484,9 @@ do_action:      /* This label is used only to access EOF actions. */
 %if do_yylineno
 #     define yylineno (yy_lexer->yy_lineno)
 %endif
-
+%if option_flex_compat
+      /* Placeholder for flex compatibility aliases. */
+%endif
 
 %% user_actions: user rule actions from section 2 go here
 

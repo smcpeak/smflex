@@ -86,6 +86,10 @@ extern int option_yy_scan_bytes;
 extern int option_yy_scan_buffer;
 extern int option_yy_top_state; /* Only effective if 'option_stack'. */
 
+/* Initially false, set to true with "%option flex-compat".  This
+ * activates some aliases for 'flex' compatibility. */
+extern int option_flex_compat;
+
 
 /* Variables used in the smflex input routines:
  * datapos - characters on current output line

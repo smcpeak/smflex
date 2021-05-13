@@ -211,6 +211,10 @@
    (see <a href="#options">Options</a> for more details):
 
 <pre><code>
+  Options that affect what input smflex accepts:
+
+    --flex-compat    Activate aliases that provide partial flex compatibility.
+
   Options that affect what output smflex writes:
 
     -b               Generate backing-up information.
@@ -2019,6 +2023,11 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     the two look the same as far as the scanner is concerned), or reaches
     an end-of-file.
 
+<dt><code>--flex-compat</code>
+
+<dd><p>Activate some aliases that provide partial compatibility with
+    <code>flex</code>.  This does not do anything yet.
+
 <dt><code>-h</code>
 
 <dd><p>Print a "help" summary of <code>smflex</code>'s options to
@@ -2388,6 +2397,7 @@ number are equivalent to <code>smflex</code> flags or their negation:
     <span id="debug-option">debug                          -d option</span>
     default                        opposite of -s option
     ecs                            -Ce option
+    flex-compat                    --flex-compat option
     full                           -Cf option
     interactive                    -I option
     jacobson                       -CJ option

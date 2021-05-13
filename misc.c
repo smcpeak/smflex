@@ -321,6 +321,17 @@ void flexerror(const char msg[])
 }
 
 
+/* Print error using a format string, which must have one "%s" in it,
+ * but no newline, and one string to substitute. */
+void flexerror_s(char const *fmt, char const *s)
+{
+  fprintf(stderr, "%s: ", program_name);
+  fprintf(stderr, fmt, s);
+  fprintf(stderr, "\n");
+  flexend(1);
+}
+
+
 /* Print error using a format string, which must have two "%s" in it,
  * but no newline, and two strings to substitute. */
 void flexerror_ss(char const *fmt, char const *s1, char const *s2)

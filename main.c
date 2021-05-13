@@ -94,6 +94,8 @@ int option_yy_scan_bytes = false;
 int option_yy_scan_buffer = false;
 int option_yy_top_state = false;
 
+int option_flex_compat = false;
+
 int datapos, dataline, linenum, out_linenum;
 int scanner_skl_ind = 0;
 FILE *backing_up_file;
@@ -512,7 +514,7 @@ void flexinit(int argc, char **argv)
 
   program_name = argv[0];
 
-  /* read flags */
+  /* Iterate over all program arguments. */
   for (--argc, ++argv; argc; --argc, ++argv) {
     arg = argv[0];
 
@@ -520,19 +522,29 @@ void flexinit(int argc, char **argv)
       break;
 
     if (arg[1] == '-') {        /* --option */
-      if (!strcmp(arg, "--help"))
+      if (str_eq(arg, "--flex-compat")) {
+        option_flex_compat = true;
+        continue;
+      }
+
+      else if (str_eq(arg, "--help"))
         arg = "-h";
 
-      else if (!strcmp(arg, "--version"))
+      else if (str_eq(arg, "--version"))
         arg = "-V";
 
-      else if (!strcmp(arg, "--")) {    /* end of options */
+      else if (str_eq(arg, "--")) {    /* end of options */
         --argc;
         ++argv;
         break;
       }
+
+      else {
+        flexerror_s(_("unknown option: %s"), arg);
+      }
     }
 
+    /* Iterate over the one-letter flags that come after '-'. */
     for (i = 1; arg[i] != '\0'; ++i)
       switch (arg[i]) {
         case '+':
@@ -938,7 +950,7 @@ void usage()
 
   fprintf(f, _("%s [-bcdfhilnpstvwBFILTV78+? -C[aefFmr] -ooutput -Pprefix -Sskeleton]\n"),
           program_name);
-  fprintf(f, _("\t[--help --version] [file ...]\n"));
+  fprintf(f, _("\t[--flex-compat --help --version] [file ...]\n"));
 
   fprintf(f, _("\t-b  generate backing-up information to %s\n"),
           backing_name);
@@ -976,6 +988,7 @@ void usage()
   fprintf(f, _("\t-o  specify output filename\n"));
   fprintf(f, _("\t-P  specify scanner prefix other than \"yy\"\n"));
   fprintf(f, _("\t-S  specify skeleton file\n"));
-  fprintf(f, _("\t--help     produce this help message\n"));
-  fprintf(f, _("\t--version  report %s version\n"), program_name);
+  fprintf(f, _("\t--flex-compat  activate flex compatibility aliases\n"));
+  fprintf(f, _("\t--help         produce this help message\n"));
+  fprintf(f, _("\t--version      report %s version\n"), program_name);
 }

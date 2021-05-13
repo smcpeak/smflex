@@ -277,6 +277,7 @@ LEXOPT          [aceknopr]
         default         spprdflt = ! option_sense;
         ecs             useecs = option_sense;
         fast            synerr(_("\"fast\" has been renamed to \"jacobson\""));
+        flex-compat     option_flex_compat = option_sense;
         full            {
                           useecs = usemecs = false;
                           fulltbl = true;
