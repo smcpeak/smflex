@@ -275,7 +275,7 @@ YY_POSSIBLY_UNUSED_FUNCTION
 static int yy_read_character(yy_lexer_t *yy_lexer);
 #endif
 
-#if YY_STACK_USED
+%if option_stack
 #  ifndef YY_NO_PUSH_STATE /* Set by %option noyy_push_state. */
 static void yy_push_state(yy_lexer_t *yy_lexer, int new_state);
 #  endif
@@ -284,16 +284,16 @@ static void yy_pop_state(yy_lexer_t *yy_lexer);
 #  endif
 #  ifndef YY_NO_TOP_STATE /* Set by %option noyy_top_state. */
 /* Even when the state stack is explicitly requested by the user,
- * they might not use 'yy_top_state'. */
+ * they often do not use 'yy_top_state'. */
 YY_POSSIBLY_UNUSED_FUNCTION
 static int yy_top_state(yy_lexer_t *yy_lexer);
 #  endif
-
-#else
+%else
+/* "%option stack" was not specified, so suppress these functions. */
 #  define YY_NO_PUSH_STATE 1
 #  define YY_NO_POP_STATE 1
 #  define YY_NO_TOP_STATE 1
-#endif
+%endif
 
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
@@ -652,9 +652,11 @@ void yy_construct(yy_lexer_t *yy_lexer)
   yy_lexer->yy_more_len = 0;
 
 %endif
+%if option_stack
   yy_lexer->yy_start_stack_ptr = yy_lexer->yy_start_stack_depth = 0;
   yy_lexer->yy_start_stack = NULL;
 
+%endif
   yy_lexer->yy_current_buffer = NULL;
 
 %if reject_used

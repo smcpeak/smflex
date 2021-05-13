@@ -86,6 +86,8 @@ int cpp_interface, long_align, use_read, do_yywrap, csize;
 int yymore_used, reject_used, real_reject, continued_action, in_rule;
 int yymore_really_used, reject_really_used;
 
+int option_stack;
+
 int datapos, dataline, linenum, out_linenum;
 int scanner_skl_ind = 0;
 FILE *backing_up_file;
@@ -479,6 +481,7 @@ void flexinit(int argc, char **argv)
   jacobson = long_align = nowarn = yymore_used = continued_action = false;
   do_yylineno = in_rule = reject_used = do_stdinit = false;
   yymore_really_used = reject_really_used = unspecified;
+  option_stack = false;
   csize = unspecified;
   interactive = false;
   gen_line_dirs = usemecs = useecs = true;

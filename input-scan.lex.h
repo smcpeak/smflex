@@ -97,15 +97,11 @@ struct input_scan_lexer_state_struct {
    * A bit of a hack ... */
   int yy_did_buffer_switch_on_eof;
 
-  /* The following are not always needed, but may be depending
-   * on use of certain smflex features (like REJECT or yymore()). */
-
   /* These are related to backing up when REJECT is *not* used. */
   input_scan_state_type yy_last_accepting_state;
   char *yy_last_accepting_cpos;
 
-  /* TODO: Create a variable to track when "%option stack" is used,
-   * and only define these in that case. */
+  /* These variables are used to implement "%option stack". */
   int yy_start_stack_ptr;
   int yy_start_stack_depth;
   int *yy_start_stack;

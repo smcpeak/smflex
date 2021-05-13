@@ -294,7 +294,7 @@ LEXOPT          [aceknopr]
         perf-report     performance_report += option_sense ? 1 : -1;
         read            use_read = option_sense;
         reject          reject_really_used = option_sense;
-        stack           action_define( "YY_STACK_USED", option_sense );
+        stack           option_stack = option_sense;
         stdinit         do_stdinit = option_sense;
         unput           ACTION_IFDEF("YY_NO_UNPUT", ! option_sense);
         verbose         printstats = option_sense;

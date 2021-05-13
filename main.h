@@ -74,6 +74,9 @@ extern int csize;
 extern int yymore_used, reject_used, real_reject, continued_action, in_rule;
 extern int yymore_really_used, reject_really_used;
 
+/* Initially false, set to true by "%option stack". */
+extern int option_stack;
+
 
 /* Variables used in the smflex input routines:
  * datapos - characters on current output line
