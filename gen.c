@@ -1326,15 +1326,6 @@ void make_tables()
   skelout_upto("nul_trans_next_state");
   gen_NUL_trans();
 
-  skelout_upto("yy_unread_character_update_yy_lineno");
-  if (do_yylineno) {
-    /* update yylineno inside of unput() */
-    indent_puts("if ( c == '\\n' )");
-    indent_up();
-    indent_puts("--(yy_lexer->yy_lineno);");
-    indent_down();
-  }
-
   skelout_upto("end_of_skeleton");
 
   /* Copy remainder of input to output. */

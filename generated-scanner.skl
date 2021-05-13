@@ -986,7 +986,11 @@ static void yy_unread_character(yy_lexer_t *yy_lexer, int c)
 
   *--yy_cp = (char)c;
 
-%% yy_unread_character_update_yy_lineno: update yy_lineno here
+%if do_yylineno
+  if (c == '\n') {
+    --(yy_lexer->yy_lineno);
+  }
+%endif
 
   yy_lexer->yy_text = yy_bp;
   yy_lexer->yy_hold_char = *yy_cp;
