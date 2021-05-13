@@ -240,9 +240,6 @@ static void whitespace();
 /* don't use the default-echo rules */
 %option nodefault
 
-/* I don't call unput */
-%option nounput
-
 /* start conditions */
 %x BUGGY_STRING_LIT
 

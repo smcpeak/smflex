@@ -80,7 +80,6 @@ static void collector_append(char const *text, int len);
 /****************/
 
 %option noyywrap
-%option nounput
 
 
 /***************/

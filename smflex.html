@@ -1069,6 +1069,9 @@ an action:
     <p>Finally, note that you cannot put back <code>EOF</code> to attempt
     to mark the input stream with an end-of-file.
 
+    <p>Use of this macro requires
+    <code>%option yy_unread_character</code>.
+
 <li><p><code>YY_READ_CHARACTER()</code>
     reads the next character from the input.  Once a character is read in
     this way, it is considered "consumed", and will not be subsequently
@@ -2548,15 +2551,7 @@ corresponding option is set.  These are:
     yy_scan_bytes
     yy_scan_buffer
     yy_top_state           # Only has effect with %option stack.
-</code></pre>
-
-<p>A number of options are available for lint purists who want to suppress
-the appearance of unneeded routines in the generated scanner. Each of
-the following, if unset (e.g., <code>%option nounput</code>), results
-in the corresponding routine not appearing in the generated scanner:
-
-<pre><code>
-    unput
+    yy_unread_character
 </code></pre>
 
 
@@ -3865,6 +3860,7 @@ of a simple C++ scanner:
     %option c++
     %option prefix="Example"
     %option yy_read_character
+    %option yy_unread_character
 
     %{
     int mylineno = 0;
@@ -4192,6 +4188,20 @@ to be of continued value.
     would have been to silence compiler warnings), remove it.  If
     you have <code>%option input</code>, change it to
     <code>%option yy_read_character</code>.
+
+<li><p>In <code>flex-2.5.4</code>, the <code>unput()</code> macro
+    was available by default due to <code>%option unput</code>
+    being true by default.
+    In <code>smflex</code>, <code>%option unput</code> has been
+    renamed to <code>%option yy_unread_character</code>, which is false
+    by default.
+
+    <p>Rationale: Same as in preceding bullet.
+
+    <p>Replacement: If you have <code>%option nounput</code> (which
+    would have been to silence compiler warnings), remove it.  If
+    you have <code>%option unput</code>, change it to
+    <code>%option yy_unread_character</code>.
 
 </ul>
 

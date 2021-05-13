@@ -3,6 +3,7 @@
 %option c++
 %option prefix="Example"
 %option yy_read_character
+%option yy_unread_character
 
 %{
 int mylineno = 0;

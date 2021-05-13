@@ -81,6 +81,7 @@
 %option nostdinit yywrap
 %option prefix="input_scan"
 %option yy_read_character
+%option yy_unread_character
 
 %x SECT2 SECT2PROLOG SECT3 CODEBLOCK PICKUPDEF SC CARETISBOL NUM QUOTE
 %x FIRSTCCL CCL ACTION RECOVER COMMENT ACTION_STRING PERCENT_BRACE_ACTION
@@ -295,7 +296,6 @@ LEXOPT          [aceknopr]
         reject          reject_really_used = option_sense;
         stack           option_stack = option_sense;
         stdinit         do_stdinit = option_sense;
-        unput           ACTION_IFDEF("YY_NO_UNPUT", ! option_sense);
         verbose         printstats = option_sense;
         warn            nowarn = ! option_sense;
         yylineno        do_yylineno = option_sense;
@@ -307,6 +307,7 @@ LEXOPT          [aceknopr]
         yy_scan_bytes         option_yy_scan_bytes       = option_sense;
         yy_scan_buffer        option_yy_scan_buffer      = option_sense;
         yy_top_state          option_yy_top_state        = option_sense;
+        yy_unread_character   option_yy_unread_character = option_sense;
 
         outfile         return OPT_OUTFILE;
         prefix          return OPT_PREFIX;

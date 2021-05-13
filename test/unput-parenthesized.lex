@@ -3,6 +3,7 @@
 
 %option main
 %option flex-compat
+%option yy_unread_character
 
 %{
 #include <string.h>          /* strdup */
