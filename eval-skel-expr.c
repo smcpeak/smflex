@@ -133,10 +133,30 @@ static int eval_not(eval_context_t *ctx, char const **expp)
 }
 
 
+/* Evaluate a relational comparison. */
+static int eval_relational(eval_context_t *ctx, char const **expp)
+{
+  int left = eval_not(ctx, expp);
+  int right;
+
+  skip_spaces(expp);
+  if (**expp == '>') {
+    (*expp)++;
+
+    /* I do not allow relational operators to be used associatively. */
+    right = eval_not(ctx, expp);
+    return left > right;
+  }
+  else {
+    return left;
+  }
+}
+
+
 /* Evaluate a conjunction, or delegate for higher precedence. */
 static int eval_and(eval_context_t *ctx, char const **expp)
 {
-  int left = eval_not(ctx, expp);
+  int left = eval_relational(ctx, expp);
   int right;
 
   skip_spaces(expp);
@@ -189,15 +209,15 @@ static int eval_or(eval_context_t *ctx, char const **expp)
  * 'eval_id' says how to evaluate identifiers.  The language
  * recognized by this evaluator is:
  *
- *   expr ::= expr || expr
+ *   expr ::= expr || expr             # lowest precedence
  *          | expr && expr
- *          | ! expr
+ *          | expr > expr
+ *          | ! expr                   # highest precedence
  *          | ( expr )
  *          | number
  *          | identifier
  *
- * where "||" has lowest precedence, then "&&", then "!", and tokens
- * are separated by spaces (only; no tabs or newlines).
+ * where tokens may be separated by spaces (only; no tabs or newlines).
  *
  * There is almost no error recovery.  Upon a syntax error, the
  * 'ctx->fatal_error' function is invoked, which should not return.

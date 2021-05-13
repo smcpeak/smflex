@@ -38,6 +38,8 @@ static int eval_test_identifier(void *extra, char const *id, int len)
     else if (str_eq_substr(str, id, len)) { return (val); }
 
   if (0) {}
+
+  CASE("zero", 0)
   CASE("one", 1)
   CASE("two", 2)
   CASE("three", 3)
@@ -130,9 +132,20 @@ int main()
   test_expr("one && !two && three", 0);
   test_expr("!one && two && three", 0);
   test_expr("!one && two || three", 1);
+  test_expr("zero || zero || zero", 0);
+  test_expr("one  || zero || zero", 1);
+  test_expr("zero || one  || zero", 1);
+  test_expr("zero || zero || one ", 1);
   if (sizeof(int) == 4) {
     test_expr("2147483647", 2147483647);
   }
+
+  /* Cases for "num_backing_up > 0 && !reject_used". */
+  test_expr("zero > 0 && !zero", 0);
+  test_expr("one > 0  && !zero", 1);
+  test_expr("two > 0  && !zero", 1);
+  test_expr("zero > 0 && !one",  0);
+  test_expr("one > 0  && !one",  0);
 
   /* Invalid expressions. */
   test_inval("", "invalid expression syntax");
