@@ -3058,8 +3058,6 @@ void input_scan_construct(input_scan_lexer_t *yy_lexer)
 
   yy_lexer->yy_did_buffer_switch_on_eof = 0;
 
-  yy_lexer->yy_more_offset = yy_lexer->yy_prev_more_offset = 0;
-
   yy_lexer->yy_start_stack_ptr = yy_lexer->yy_start_stack_depth = 0;
   yy_lexer->yy_start_stack = NULL;
 

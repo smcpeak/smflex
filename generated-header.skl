@@ -175,10 +175,6 @@ struct yy_lexer_state_struct {
   int yy_more_len;
 
 %endif
-  /* TODO: I do not think either of these is ever used. */
-  int yy_more_offset;
-  int yy_prev_more_offset;
-
   /* TODO: Create a variable to track when "%option stack" is used,
    * and only define these in that case. */
   int yy_start_stack_ptr;

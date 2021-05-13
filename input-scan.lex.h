@@ -104,10 +104,6 @@ struct input_scan_lexer_state_struct {
   input_scan_state_type yy_last_accepting_state;
   char *yy_last_accepting_cpos;
 
-  /* TODO: I do not think either of these is ever used. */
-  int yy_more_offset;
-  int yy_prev_more_offset;
-
   /* TODO: Create a variable to track when "%option stack" is used,
    * and only define these in that case. */
   int yy_start_stack_ptr;
