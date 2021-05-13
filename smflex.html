@@ -1069,22 +1069,22 @@ an action:
     <p>Finally, note that you cannot put back <code>EOF</code> to attempt
     to mark the input stream with an end-of-file.
 
-<li><p><code>yyinput()</code>
+<li><p><code>YY_READ_CHARACTER()</code>
     reads the next character from the input.  Once a character is read in
     this way, it is considered "consumed", and will not be subsequently
     matched by scanner rules.  For example, the
-    <a href="test/input-c-comments.lex">following</a> is one way to eat up C comments:
+    <a href="test/read-character-c-comments.lex">following</a> is one way to eat up C comments:
 
-    <pre><!-- BEGIN example: "input-c-comments.lex" fragment=true indent=8 --><code>
+    <pre><!-- BEGIN example: "read-character-c-comments.lex" fragment=true indent=8 --><code>
         %%
         "/*"      {
                     int c;
                     for (;;) {
-                      while ( (c = yyinput()) != '*' &amp;&amp; c != EOF )
+                      while ( (c = YY_READ_CHARACTER()) != '*' &amp;&amp; c != EOF )
                         {}    /* eat up text of comment */
 
                       if (c == '*') {
-                        while ( (c = yyinput()) == '*' )
+                        while ( (c = YY_READ_CHARACTER()) == '*' )
                           {}
                         if (c == '/') {
                           break;    /* found the end */
@@ -2025,8 +2025,25 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dt><code>--flex-compat</code>
 
-<dd><p>Activate some aliases that provide partial compatibility with
-    <code>flex</code>.  This does not do anything yet.
+<dd><p>Activate some aliases in section 2 that provide partial
+    compatibility with <code>flex</code>:
+
+    <table>
+      <tr>
+        <th>Compatibility alias
+        <th>New name
+      <tr>
+        <td><code>input</code>
+        <td><code>YY_READ_CHARACTER</code>
+      <tr>
+        <td><code>yyinput</code>
+        <td><code>YY_READ_CHARACTER</code>
+    </table>
+
+    <p>The intent of this option is to make it a bit easier to test
+    with <code>smflex</code> during a transition period, rather than
+    to use it indefinitely.  The new names are intended to be more
+    regular, comprehensible, and forward-compatible.
 
 <dt><code>-h</code>
 
@@ -3862,14 +3879,14 @@ of a simple C++ scanner:
     "/*"    {
             int c;
 
-            while((c = yyinput()) != 0)
+            while((c = YY_READ_CHARACTER()) != 0)
                 {
                 if(c == '\n')
                     ++mylineno;
 
                 else if(c == '*')
                     {
-                    if((c = yyinput()) == '/')
+                    if((c = YY_READ_CHARACTER()) == '/')
                         break;
                     else
                         unput(c);
@@ -4260,9 +4277,9 @@ run-time support library.  That has been removed as detailed below.
 </ul>
 
 
-<h2 id="renamed-functions">Renamed Functions</h2>
+<h2 id="renamed-functions-and-macros">Renamed Functions and Macros</h2>
 
-<p>Several functions have been renamed:
+<p>Several functions and macros have been renamed:
 
 <ul>
 
@@ -4279,13 +4296,20 @@ run-time support library.  That has been removed as detailed below.
     reserved in C++).
     This also makes these functions consistent with the rest.
 
-<li><p>The <code>input()</code> function has been renamed to
-    <code>yyinput()</code>.
+<li><p>The <code>input()</code> and <code>yyinput()</code> macros have
+    been renamed to <code>YY_READ_CHARACTER()</code>.
 
-    <p>Rationale: The old name was inconsistent due to not using the
+    <p>Rationale: The old name <code>input()</code> was inconsistent due to not using the
     "yy" prefix.  It was also strange because it would be called
     <code>yyinput()</code> when generating a C++ interface, causing a
-    needless difference between the two.
+    needless difference between the two.  The latter was then easily
+    confused with <code>YY_INPUT</code>, a completely different macro the user could
+    redefine to read blocks of data.  The new name uses the "YY_"
+    prefix for forward compatibility and has a clearer, more unique name.
+
+    <p>However, <code>%option flex-compat</code> will introduce both
+    <code>input</code> and <code>yyinput</code> as aliases for
+    <code>YY_READ_CHARACTER</code>.
 
 </ul>
 
@@ -4307,7 +4331,10 @@ Renaming summary:
     <td><code>yy_restart</code>
   <tr>
     <td><code>input</code>
+    <td><code>YY_READ_CHARACTER</code>
+  <tr>
     <td><code>yyinput</code>
+    <td><code>YY_READ_CHARACTER</code>
 </table>
 
 <h2 id="changed-function-signatures">Changed Function Signatures</h2>

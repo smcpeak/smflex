@@ -25,14 +25,14 @@ number  {num1}|{num2}
 "/*"    {
         int c;
 
-        while((c = yyinput()) != 0)
+        while((c = YY_READ_CHARACTER()) != 0)
             {
             if(c == '\n')
                 ++mylineno;
 
             else if(c == '*')
                 {
-                if((c = yyinput()) == '/')
+                if((c = YY_READ_CHARACTER()) == '/')
                     break;
                 else
                     unput(c);

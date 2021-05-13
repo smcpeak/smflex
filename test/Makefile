@@ -223,6 +223,7 @@ all-df: out/noyylineno.ok
 all-df: out/option-debug.ok
 all-df: out/option-debug-cpp.ok
 all-df: out/outfile-specified.ok
+all-df: out/read-character-c-comments.ok
 all-d : out/reject-abcd.ok
 all-d : out/reject-frob.ok
 all-df: out/toy-pascal.ok

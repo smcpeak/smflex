@@ -1,8 +1,7 @@
-/* input-c-comments.lex */
-/* Demonstrate use of yyinput(). */
+/* read-character-c-comments.lex */
+/* Demonstrate use of 'YY_READ_CHARACTER'. */
 
 %option main
-%option flex-compat
 
 %{
 
@@ -17,15 +16,16 @@ static void error(char const *msg)
 
 %}
 
+  /* BEGIN: example fragment */
 %%
 "/*"      {
             int c;
             for (;;) {
-              while ( (c = yyinput()) != '*' && c != EOF )
+              while ( (c = YY_READ_CHARACTER()) != '*' && c != EOF )
                 {}    /* eat up text of comment */
 
               if (c == '*') {
-                while ( (c = yyinput()) == '*' )
+                while ( (c = YY_READ_CHARACTER()) == '*' )
                   {}
                 if (c == '/') {
                   break;    /* found the end */

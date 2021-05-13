@@ -1453,12 +1453,12 @@ do_action:      /* This label is used only to access EOF actions. */
 
     switch (yy_act) { /* beginning of action switch */
 
-      /* Prepare convenience/compatibility aliases for important data.
+      /* Prepare convenience aliases for important data.
        * These aliases can only be used directly within actions, not
        * in other functions, even those defined in sections 1 or 3. */
 #     define yytext (yy_lexer->yy_text)
 #     define yyleng (yy_lexer->yy_leng)
-#     define yyinput() (yy_read_character(yy_lexer))
+#     define YY_READ_CHARACTER() (yy_read_character(yy_lexer))
 #     define unput(c) yy_unread_character(yy_lexer, c)
 #     define yyin (yy_lexer->yy_input_stream)
 #     define yyout (yy_lexer->yy_output_stream)
@@ -2297,7 +2297,7 @@ YY_RULE_SETUP
                            * ccl.
                            */
                           if ((cclval = ccllookup((Char *) nmstr)) != 0) {
-                            if (yyinput() != ']')
+                            if (YY_READ_CHARACTER() != ']')
                               synerr(_("bad character class"));
 
                             yylval = cclval;
@@ -2887,7 +2887,7 @@ case YY_STATE_EOF(LINEDIR):
       /* Remove the section 2 aliases. */
 #     undef yytext
 #     undef yyleng
-#     undef yyinput
+#     undef YY_READ_CHARACTER
 #     undef unput
 #     undef yyin
 #     undef yyout

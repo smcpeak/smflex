@@ -458,7 +458,7 @@ LEXOPT          [aceknopr]
                            * ccl.
                            */
                           if ((cclval = ccllookup((Char *) nmstr)) != 0) {
-                            if (yyinput() != ']')
+                            if (YY_READ_CHARACTER() != ']')
                               synerr(_("bad character class"));
 
                             yylval = cclval;
