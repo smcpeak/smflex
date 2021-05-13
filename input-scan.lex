@@ -305,9 +305,9 @@ LEXOPT          [aceknopr]
 
         yy_top_state    option_yy_top_state = option_sense;
 
-        yy_scan_buffer  ACTION_IFDEF("YY_NO_SCAN_BUFFER", !option_sense);
-        yy_scan_bytes   ACTION_IFDEF("YY_NO_SCAN_BYTES", !option_sense);
         yy_scan_string  ACTION_IFDEF("YY_NO_SCAN_STRING", !option_sense);
+        yy_scan_bytes   ACTION_IFDEF("YY_NO_SCAN_BYTES", !option_sense);
+        yy_scan_buffer  ACTION_IFDEF("YY_NO_SCAN_BUFFER", !option_sense);
 
         outfile         return OPT_OUTFILE;
         prefix          return OPT_PREFIX;
