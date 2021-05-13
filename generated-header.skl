@@ -304,8 +304,10 @@ int yy_wrap(yy_lexer_t *yy_lexer);
  */
 class yyFlexLexer {
 public:      /* methods */
-  /* arg_yyin and arg_yyout default to the cin and cout, but we
-   * only make that assignment when initializing in yy_lex(). */
+  /* If 'arg_yyin' is specified, it becomes the input stream;
+   * otherwise 'cin' (standard input) is used.  Similarly, if
+   * 'arg_yyout' is specified, it becomes the output stream; otherwise
+   * 'cout' is used. */
   yyFlexLexer(YY_INPUT_STREAM_TYPE *arg_yyin = NULL,
               YY_OUTPUT_STREAM_TYPE *arg_yyout = NULL);
 
@@ -319,14 +321,17 @@ public:      /* methods */
   int yym_lex();
 %endif
 
-  /* Switch to new input/output streams.  A NULL stream pointer
-   * indicates "keep the current one".
-   *
-   * The scanner core does *not* delete these objects; the client is
-   * responsible for deallocation if needed. */
-  /* TODO: I don't think this is a good interface. */
-  void yym_switch_streams(YY_INPUT_STREAM_TYPE *new_in = NULL,
-                          YY_OUTPUT_STREAM_TYPE *new_out = NULL);
+  /* The following "yym_" methods are all counterparts for the
+   * corresponding "yy_" global functions that comprise the C interface.
+   * See comments on their declarations, above, for details on what they
+   * do (and also the descriptions in the manual).  The only difference
+   * here is that the 'yy_lexer_t*' parameter is omitted, as it is
+   * implicitly carried by the object the method is invoked upon. */
+  void yym_restart(YY_INPUT_STREAM_TYPE *s);
+  YY_BUFFER_STATE yym_create_buffer(YY_INPUT_STREAM_TYPE *file, int size);
+  void yym_switch_to_buffer(yy_buffer_state *new_buffer);
+  void yym_delete_buffer(YY_BUFFER_STATE b);
+  void yym_flush_buffer(yy_buffer_state *b);
 
 %if do_yywrap
 %if yyclass
@@ -341,11 +346,20 @@ public:      /* methods */
 %endif
 %endif
 
-  /* Low-level buffer manipulation.  See manual for details. */
-  void yym_switch_to_buffer(yy_buffer_state *new_buffer);
-  YY_BUFFER_STATE yym_create_buffer(YY_INPUT_STREAM_TYPE *file, int size);
-  void yym_delete_buffer(YY_BUFFER_STATE b);
-  void yym_restart(YY_INPUT_STREAM_TYPE *s);
+
+  /* ---------------------------------------------------------- */
+  /* The class interface below this point is still in a somewhat
+   * haphazard state. */
+
+
+  /* Switch to new input/output streams.  A NULL stream pointer
+   * indicates "keep the current one".
+   *
+   * The scanner core does *not* delete these objects; the client is
+   * responsible for deallocation if needed. */
+  /* TODO: I don't think this is a good interface. */
+  void yym_switch_streams(YY_INPUT_STREAM_TYPE *new_in = NULL,
+                          YY_OUTPUT_STREAM_TYPE *new_out = NULL);
 
   /* Last-matched token text (NUL-terminated) and its length. */
   const char* yym_text()          { return yym_lexer_state.yy_text; }
@@ -357,7 +371,7 @@ public:      /* methods */
 %endif
 %if option_debug
   int yym_debug() const           { return yym_lexer_state.yy_flex_debug; }
-  void yym_set_debug( int flag )  { yym_lexer_state.yy_flex_debug = flag; }
+  void yym_set_debug(int flag)    { yym_lexer_state.yy_flex_debug = flag; }
 
 %endif
   /* These methods may be overridden to provide an alternate source and
@@ -370,9 +384,6 @@ public:      /* methods */
   virtual void yym_LexerError(const char *msg);
 
 protected:   /* methods */
-  /* TODO: Do I need all of these wrapper functions? */
-  void yym_flush_buffer(yy_buffer_state *b);
-
   void yym_push_state(int new_state);
   void yym_pop_state();
   int yym_top_state();
