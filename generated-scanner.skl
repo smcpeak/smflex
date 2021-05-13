@@ -1460,7 +1460,7 @@ void yyFlexLexer::yym_begin(int state)
 %endif
 
 
-#if YY_MAIN
+%if option_main
 %if !cpp_interface
 int main()
 {
@@ -1488,7 +1488,7 @@ int main()
   return 0;
 }
 %endif
-#endif
+%endif
 
 
 /* BEGIN cannot be used in section 3.  Instead, 'yy_begin' is used. */

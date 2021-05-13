@@ -287,9 +287,7 @@ LEXOPT          [aceknopr]
                           useecs = usemecs = false;
                           jacobson = true;
                         }
-        main            {
-                          action_define("YY_MAIN", option_sense);
-                        }
+        main            option_main = option_sense;
         meta-ecs        usemecs = option_sense;
         perf-report     performance_report += option_sense ? 1 : -1;
         read            use_read = option_sense;

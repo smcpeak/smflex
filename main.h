@@ -78,16 +78,13 @@ extern int yymore_really_used, reject_really_used;
  * whether we emit the functions for manipulating the state stack. */
 extern int option_stack;
 
-/* Initially false, even with "%option stack", this is set to true when
- * "%option yy_top_state" is used.  It controls the emission of
- * 'yy_top_state'. */
-extern int option_yy_top_state;
-
 /* Initially false, each of these is set to true by their respective
  * %options, and controls emission of the respective functions. */
+extern int option_main;
 extern int option_yy_scan_string;
 extern int option_yy_scan_bytes;
 extern int option_yy_scan_buffer;
+extern int option_yy_top_state; /* Only effective if 'option_stack'. */
 
 
 /* Variables used in the smflex input routines:
