@@ -293,12 +293,8 @@ static int yy_read_character(yy_lexer_t *yy_lexer);
 #endif
 
 %if option_stack
-#  ifndef YY_NO_PUSH_STATE /* Set by %option noyy_push_state. */
 static void yy_push_state(yy_lexer_t *yy_lexer, int new_state);
-#  endif
-#  ifndef YY_NO_POP_STATE /* Set by %option noyy_pop_state. */
 static void yy_pop_state(yy_lexer_t *yy_lexer);
-#  endif
 #  ifndef YY_NO_TOP_STATE /* Set by %option noyy_top_state. */
 /* Even when the state stack is explicitly requested by the user,
  * they often do not use 'yy_top_state'. */
@@ -307,8 +303,6 @@ static int yy_top_state(yy_lexer_t *yy_lexer);
 #  endif
 %else
 /* "%option stack" was not specified, so suppress these functions. */
-#  define YY_NO_PUSH_STATE 1
-#  define YY_NO_POP_STATE 1
 #  define YY_NO_TOP_STATE 1
 %endif
 
@@ -1333,7 +1327,7 @@ YY_BUFFER_STATE yyFlexLexer::yym_scan_bytes(const char *bytes, int len)
 #endif
 
 
-#ifndef YY_NO_PUSH_STATE
+%if option_stack
 static void yy_push_state(yy_lexer_t *yy_lexer, int new_state)
 {
   if (yy_lexer->yy_start_stack_ptr >= yy_lexer->yy_start_stack_depth) {
@@ -1366,10 +1360,8 @@ void yyFlexLexer::yym_push_state(int new_state)
   yy_push_state(&yym_lexer_state, new_state);
 }
 %endif
-#endif
 
 
-#ifndef YY_NO_POP_STATE
 static void yy_pop_state(yy_lexer_t *yy_lexer)
 {
   if (--(yy_lexer->yy_start_stack_ptr) < 0) {
@@ -1385,7 +1377,7 @@ void yyFlexLexer::yym_pop_state()
   yy_pop_state(&yym_lexer_state);
 }
 %endif
-#endif
+%endif # option_stack
 
 
 #ifndef YY_NO_TOP_STATE

@@ -303,8 +303,6 @@ LEXOPT          [aceknopr]
         yymore          yymore_really_used = option_sense;
         yywrap          do_yywrap = option_sense;
 
-        yy_push_state   ACTION_IFDEF("YY_NO_PUSH_STATE", !option_sense);
-        yy_pop_state    ACTION_IFDEF("YY_NO_POP_STATE", !option_sense);
         yy_top_state    ACTION_IFDEF("YY_NO_TOP_STATE", !option_sense);
 
         yy_scan_buffer  ACTION_IFDEF("YY_NO_SCAN_BUFFER", !option_sense);

@@ -2504,12 +2504,9 @@ in the corresponding routine not appearing in the generated scanner:
 
 <pre><code>
     input, unput
-    yy_push_state, yy_pop_state, yy_top_state
+    yy_top_state
     yy_scan_buffer, yy_scan_bytes, yy_scan_string
 </code></pre>
-
-<p>(though <code>yy_push_state()</code> and friends won't appear anyway
-unless you use <code>%option stack</code>).
 
 
 <!-- ======================================================= -->
@@ -4089,6 +4086,20 @@ to be of continued value.
     The effect of the two options was and is orthogonal.
 
     <p>Replacement: Explicitly set the relevant options.
+
+<li><p><code>flex-2.5.4</code> accepted
+    <code>%option noyy_push_state</code> and
+    <code>%option noyy_pop_state</code> in order to suppress the
+    definitions of <code>yy_push_state</code> and
+    <code>yy_pop_state</code>.  These options are no longer accepted.
+
+    <p>Rationale: They were useless.  Those functions are only emitted
+    if <code>%option stack</code> is used, in which case both
+    <code>push</code> and <code>pop</code> will be used; it is
+    nonsensical to use only one of them.
+
+    <p>Replacement: Do not set <code>option %stack</code> if you are
+    not using these functions.
 
 </ul>
 
