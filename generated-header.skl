@@ -332,8 +332,12 @@ public:      /* methods */
   void yym_switch_to_buffer(yy_buffer_state *new_buffer);
   void yym_delete_buffer(YY_BUFFER_STATE b);
   void yym_flush_buffer(yy_buffer_state *b);
+  YY_BUFFER_STATE yym_scan_string(const char *yy_str);
+  YY_BUFFER_STATE yym_scan_bytes(const char *bytes, int len);
+  YY_BUFFER_STATE yym_scan_buffer(char *base, size_t size);
   void yym_begin(int state);
   void yym_set_interactive(int is_interactive);
+  void yym_set_bol(int at_bol);
 
 %if do_yywrap
 %if yyclass

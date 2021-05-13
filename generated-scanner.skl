@@ -211,6 +211,7 @@ static void yy_create_buffer_if_needed(yy_lexer_t *yy_lexer)
   }
 }
 
+
 void yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive)
 {
   yy_create_buffer_if_needed(yy_lexer);
@@ -231,6 +232,14 @@ void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol)
   yy_create_buffer_if_needed(yy_lexer);
   yy_lexer->yy_current_buffer->yy_at_bol = at_bol;
 }
+
+%if cpp_interface
+void yyFlexLexer::yym_set_bol(int at_bol)
+{
+  yy_set_bol(&yym_lexer_state, at_bol);
+}
+%endif
+
 
 #define YY_AT_BOL() (yy_lexer->yy_current_buffer->yy_at_bol)
 
@@ -1255,6 +1264,13 @@ YY_BUFFER_STATE yy_scan_buffer(yy_lexer_t *yy_lexer,
 
   return b;
 }
+
+%if cpp_interface
+YY_BUFFER_STATE yyFlexLexer::yym_scan_buffer(char *base, size_t size)
+{
+  return yy_scan_buffer(&yym_lexer_state, base, size);
+}
+%endif
 #endif
 
 
@@ -1263,6 +1279,13 @@ YY_BUFFER_STATE yy_scan_string(yy_lexer_t *yy_lexer, const char *yy_str)
 {
   return yy_scan_bytes(yy_lexer, yy_str, strlen(yy_str));
 }
+
+%if cpp_interface
+YY_BUFFER_STATE yyFlexLexer::yym_scan_string(const char *yy_str)
+{
+  return yy_scan_string(&yym_lexer_state, yy_str);
+}
+%endif
 #endif
 
 
@@ -1300,6 +1323,13 @@ YY_BUFFER_STATE yy_scan_bytes(yy_lexer_t *yy_lexer,
 
   return b;
 }
+
+%if cpp_interface
+YY_BUFFER_STATE yyFlexLexer::yym_scan_bytes(const char *bytes, int len)
+{
+  return yy_scan_bytes(&yym_lexer_state, bytes, len);
+}
+%endif
 #endif
 
 
