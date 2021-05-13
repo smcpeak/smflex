@@ -77,6 +77,10 @@ extern int yymore_really_used, reject_really_used;
 /* Initially false, set to true by "%option stack". */
 extern int option_stack;
 
+/* Initially false, even with "%option stack", this is set to true when
+ * "%option yy_top_state" is used. */
+extern int option_yy_top_state;
+
 
 /* Variables used in the smflex input routines:
  * datapos - characters on current output line

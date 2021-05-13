@@ -295,15 +295,9 @@ static int yy_read_character(yy_lexer_t *yy_lexer);
 %if option_stack
 static void yy_push_state(yy_lexer_t *yy_lexer, int new_state);
 static void yy_pop_state(yy_lexer_t *yy_lexer);
-#  ifndef YY_NO_TOP_STATE /* Set by %option noyy_top_state. */
-/* Even when the state stack is explicitly requested by the user,
- * they often do not use 'yy_top_state'. */
-YY_POSSIBLY_UNUSED_FUNCTION
+%if option_yy_top_state
 static int yy_top_state(yy_lexer_t *yy_lexer);
-#  endif
-%else
-/* "%option stack" was not specified, so suppress these functions. */
-#  define YY_NO_TOP_STATE 1
+%endif
 %endif
 
 /* Amount of stuff to slurp up with each read. */
@@ -1377,10 +1371,9 @@ void yyFlexLexer::yym_pop_state()
   yy_pop_state(&yym_lexer_state);
 }
 %endif
-%endif # option_stack
 
 
-#ifndef YY_NO_TOP_STATE
+%if option_yy_top_state
 static int yy_top_state(yy_lexer_t *yy_lexer)
 {
   return yy_lexer->yy_start_stack[yy_lexer->yy_start_stack_ptr - 1];
@@ -1392,7 +1385,8 @@ int yyFlexLexer::yym_top_state()
   return yy_top_state(&yym_lexer_state);
 }
 %endif
-#endif
+%endif
+%endif # option_stack
 
 
 #ifndef YY_EXIT_FAILURE

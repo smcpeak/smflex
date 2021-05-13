@@ -87,6 +87,7 @@ int yymore_used, reject_used, real_reject, continued_action, in_rule;
 int yymore_really_used, reject_really_used;
 
 int option_stack;
+int option_yy_top_state = false;
 
 int datapos, dataline, linenum, out_linenum;
 int scanner_skl_ind = 0;

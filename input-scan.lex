@@ -77,7 +77,7 @@
     yymore_used = true;
 %}
 
-%option caseless nodefault outfile="input-scan.lex.c" stack noyy_top_state
+%option caseless nodefault outfile="input-scan.lex.c" stack
 %option nostdinit yywrap
 %option prefix="input_scan"
 
@@ -303,7 +303,7 @@ LEXOPT          [aceknopr]
         yymore          yymore_really_used = option_sense;
         yywrap          do_yywrap = option_sense;
 
-        yy_top_state    ACTION_IFDEF("YY_NO_TOP_STATE", !option_sense);
+        yy_top_state    option_yy_top_state = option_sense;
 
         yy_scan_buffer  ACTION_IFDEF("YY_NO_SCAN_BUFFER", !option_sense);
         yy_scan_bytes   ACTION_IFDEF("YY_NO_SCAN_BYTES", !option_sense);
