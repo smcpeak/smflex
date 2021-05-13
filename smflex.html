@@ -2366,42 +2366,27 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dd><p>Change the default <code>yy</code> prefix used by <code>smflex</code>
     for all globally-visible variable and function names to instead be
     <code>prefix</code>. For example, <code>-Pfoo</code> changes the name
-    of <code>yytext</code> to <code>footext</code>. It also changes
-    the name of the output file from <code>lex.yy.c</code> to
-    <code>lex.foo.c</code> (unless <code>-o</code> is also specified).
-    Here are all of the names affected:
+    of <code>yy_lex</code> to <code>foo_lex</code>. It also changes
+    the name of the output file froms
+    <code>lex.yy.c</code> and <code>lex.yy.h</code> to
+    <code>lex.foo.c</code> and <code>lex.foo.h</code>
+    (unless <code>-o</code> is also specified).
 
-    <pre><code>
-        yy_create_buffer
-        yy_delete_buffer
-        yy_flex_debug
-        yy_init_buffer
-        yy_flush_buffer
-        yy_load_buffer_state
-        yy_switch_to_buffer
-        yyin
-        yyleng
-        yy_lex
-        yylineno
-        yyout
-        yy_restart
-        yytext
-        yy_read_character
-        yy_set_bol
-        yy_wrap
-        yy_unread_character
-</code></pre>
-
-    <p>If you are using <code>-+</code>, then only
-    <code>yyFlexLexer</code> (the scanner class name) is affected.
-
-    <p>Within your scanner itself,
-    you can still refer to the global variables and functions using either
-    version of their name; but externally, they have the modified name.
-    (TODO: The use of yy_ names is broken right now.)
-
-    <p>This option lets you link together multiple <code>smflex</code>
+    <p>
+    The "yy" to "prefix" transformation is applied to all names that
+    are placed into the global namespace by the generated header file.
+    That includes all of the names the names with external linkage
+    in the generated scanner file.  Consequently, you can use this to
+    link together multiple <code>smflex</code>
     scanners into the same executable.
+
+    <p>The prefix transformation affects those names both as seen from
+    external modules, and as seen from within your own scanner.
+
+    <p><strong>Recommendation</strong>: Always use <code>-P</code>
+    or its equivalent <code>%option prefix</code>.  You never know
+    when you (or someone else) will want to combine two scanners in
+    one program, and renaming afterward can be a hassle.
 
 </dl>
 
@@ -4214,6 +4199,30 @@ to be of continued value.
     would have been to silence compiler warnings), remove it.  If
     you have <code>%option unput</code>, change it to
     <code>%option yy_unread_character</code>.
+
+<li><p>In <code>flex-2.5.4</code>, the <code>-P</code> or
+    <code>%option prefix</code> transformation would leave "yy"
+    aliases available for use within the scanner input file.  In
+    <code>smflex</code>, only the transformed names (with the prefix
+    applied) are available.
+
+    <p>Rationale: Aliases are confusing.  They would also prevent one
+    scanner's definition from using another scanner's exported API.
+
+    <p>Replacement: In a scanner definition using a prefix, always
+    use the prefixed name for externally visible symbols.  (TODO: How
+    do users easily tell which names are external?  Can I make it so
+    external names are all lowercase, and non-external are uppercase?)
+
+    <p>Discussion: I believe the reason for their original inclusion
+    (aside from being a side effect of the implementation technique) is
+    the historical tendency for people to not use prefixes initially,
+    and only specify one when forced to due to linking constraints.
+    Thus, to minimize renaming hassle, both names were left.  In
+    <code>smflex</code>, I want to strongly encourage using prefixes
+    from the start (and may mandate that, or perhaps merely provide a
+    warning).  If that is done, then there is little need for the
+    aliases.
 
 </ul>
 
