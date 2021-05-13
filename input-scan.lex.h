@@ -85,8 +85,13 @@ struct input_scan_lexer_state_struct {
   /* Points to current character in buffer. */
   char *yy_c_buf_p;
 
-  /* True if we need to initialize. */
-  /* TODO: Can I remove this now that I have 'input_scan_construct'? */
+  /* True if we need to initialize inside 'input_scan_lex()'.
+   *
+   * 'flex' has an undocumented (outside the NEWS file) feature where
+   * YY_USER_INIT can set this back to 1 to force another initializaton
+   * on a subsequent invocation of 'input_scan_lex()'.  I am very skeptical
+   * that that is a good idea, but I do not have a pressing need to
+   * remove that feature or this field, so for now they stay. */
   int yy_init;
 
   /* Current start state number. */
