@@ -1335,25 +1335,6 @@ void make_tables()
     indent_down();
   }
 
-  skelout_upto("yy_read_character_update_BOL");
-  /* Update BOL and yy_lineno inside of input(). */
-  if (bol_needed) {
-    indent_puts("yy_lexer->yy_current_buffer->yy_at_bol = (c == '\\n');");
-    if (do_yylineno) {
-      indent_puts("if (yy_lexer->yy_current_buffer->yy_at_bol)");
-      indent_up();
-      indent_puts("++(yy_lexer->yy_lineno);");
-      indent_down();
-    }
-  }
-
-  else if (do_yylineno) {
-    indent_puts("if ( c == '\\n' )");
-    indent_up();
-    indent_puts("++(yy_lexer->yy_lineno);");
-    indent_down();
-  }
-
   skelout_upto("end_of_skeleton");
 
   /* Copy remainder of input to output. */
@@ -1615,6 +1596,7 @@ static int eval_skel_identifier(void *extra_, char const *id, int len)
 
   if (0) {}
 
+  COND_FLAG(bol_needed)
   COND_FLAG(cpp_interface)
   COND_FLAG(do_yylineno)
   COND_FLAG(do_yywrap)
