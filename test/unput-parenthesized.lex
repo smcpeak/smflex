@@ -2,6 +2,7 @@
 /* Demonstrate use of unput(). */
 
 %option main
+%option flex-compat
 
 %{
 #include <string.h>          /* strdup */
@@ -12,7 +13,6 @@
 "(token)"    printf("[saw \"(token)\"]");
 
 "token" {
-    /* BEGIN: example fragment */
     {
       int i;
       /* Copy yytext because unput() trashes yytext */
@@ -24,5 +24,4 @@
       unput('(');
       free(yycopy);
     }
-    /* END: example fragment */
   }

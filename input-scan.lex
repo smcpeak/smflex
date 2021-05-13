@@ -66,7 +66,7 @@
 
 #define PUT_BACK_STRING(str, start) \
   for (i = strlen(str) - 1; i >= start; --i) \
-    unput((str)[i])
+    YY_UNREAD_CHARACTER((str)[i])
 
 #define CHECK_REJECT(str) \
   if (all_upper(str)) \
@@ -431,7 +431,7 @@ LEXOPT          [aceknopr]
                           bracelevel = 0;
                           continued_action = false;
                           BEGIN(ACTION);
-                          unput('\n');      /* so <ACTION> sees it */
+                          YY_UNREAD_CHARACTER('\n');      /* so <ACTION> sees it */
 
                           if (in_rule) {
                             doing_rule_action = true;
@@ -505,9 +505,9 @@ LEXOPT          [aceknopr]
                             }
 
                             else {
-                              unput(')');
+                              YY_UNREAD_CHARACTER(')');
                               PUT_BACK_STRING((char *) nmdefptr, 0);
-                              unput('(');
+                              YY_UNREAD_CHARACTER('(');
                             }
                           }
                         }

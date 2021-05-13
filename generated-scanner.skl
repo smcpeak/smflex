@@ -478,7 +478,7 @@ do_action:      /* This label is used only to access EOF actions. */
 #     define yytext (yy_lexer->yy_text)
 #     define yyleng (yy_lexer->yy_leng)
 #     define YY_READ_CHARACTER() (yy_read_character(yy_lexer))
-#     define unput(c) yy_unread_character(yy_lexer, c)
+#     define YY_UNREAD_CHARACTER(c) yy_unread_character(yy_lexer, c)
 #     define yyin (yy_lexer->yy_input_stream)
 #     define yyout (yy_lexer->yy_output_stream)
 %if do_yylineno
@@ -489,6 +489,7 @@ do_action:      /* This label is used only to access EOF actions. */
       /* flex compatibility aliases. */
 #     define input() YY_READ_CHARACTER()
 #     define yyinput() YY_READ_CHARACTER()
+#     define unput(c) YY_UNREAD_CHARACTER(c)
 %endif
 
 %% user_actions: user rule actions from section 2 go here
@@ -498,7 +499,7 @@ do_action:      /* This label is used only to access EOF actions. */
 #     undef yytext
 #     undef yyleng
 #     undef YY_READ_CHARACTER
-#     undef unput
+#     undef YY_UNREAD_CHARACTER
 #     undef yyin
 #     undef yyout
 %if do_yylineno
@@ -507,6 +508,7 @@ do_action:      /* This label is used only to access EOF actions. */
 %if option_flex_compat
 #     undef input
 #     undef yyinput
+#     undef unput
 %endif
 
 

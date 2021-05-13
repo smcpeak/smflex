@@ -35,7 +35,7 @@ number  {num1}|{num2}
                 if((c = YY_READ_CHARACTER()) == '/')
                     break;
                 else
-                    unput(c);
+                    YY_UNREAD_CHARACTER(c);
                 }
             }
         }

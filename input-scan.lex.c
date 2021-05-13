@@ -1194,7 +1194,7 @@ static const short int yy_chk[2650] =
 
 #define PUT_BACK_STRING(str, start) \
   for (i = strlen(str) - 1; i >= start; --i) \
-    unput((str)[i])
+    YY_UNREAD_CHARACTER((str)[i])
 
 #define CHECK_REJECT(str) \
   if (all_upper(str)) \
@@ -1459,7 +1459,7 @@ do_action:      /* This label is used only to access EOF actions. */
 #     define yytext (yy_lexer->yy_text)
 #     define yyleng (yy_lexer->yy_leng)
 #     define YY_READ_CHARACTER() (yy_read_character(yy_lexer))
-#     define unput(c) yy_unread_character(yy_lexer, c)
+#     define YY_UNREAD_CHARACTER(c) yy_unread_character(yy_lexer, c)
 #     define yyin (yy_lexer->yy_input_stream)
 #     define yyout (yy_lexer->yy_output_stream)
 
@@ -2254,7 +2254,7 @@ YY_RULE_SETUP
                           bracelevel = 0;
                           continued_action = false;
                           BEGIN(ACTION);
-                          unput('\n');      /* so <ACTION> sees it */
+                          YY_UNREAD_CHARACTER('\n');      /* so <ACTION> sees it */
 
                           if (in_rule) {
                             doing_rule_action = true;
@@ -2349,9 +2349,9 @@ YY_RULE_SETUP
                             }
 
                             else {
-                              unput(')');
+                              YY_UNREAD_CHARACTER(')');
                               PUT_BACK_STRING((char *) nmdefptr, 0);
-                              unput('(');
+                              YY_UNREAD_CHARACTER('(');
                             }
                           }
                         }
@@ -2888,7 +2888,7 @@ case YY_STATE_EOF(LINEDIR):
 #     undef yytext
 #     undef yyleng
 #     undef YY_READ_CHARACTER
-#     undef unput
+#     undef YY_UNREAD_CHARACTER
 #     undef yyin
 #     undef yyout
 

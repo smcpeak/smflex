@@ -1033,37 +1033,37 @@ an action:
     <p><code>yyless</code> is a macro; it can only be used in the
     <code>smflex</code> input file, not from other source files.
 
-<li><p><code>unput(c)</code>
+<li><p><code>YY_UNREAD_CHARACTER(c)</code>
     puts the character <code>c</code> back onto the input stream. It
     will be the next character scanned. The
-    <a href="test/unput-parenthesized.lex">following action</a> will take
+    <a href="test/unread-character-parenthesized.lex">following action</a> will take
     the current token and cause it to be rescanned enclosed in
     parentheses.
 
-    <pre><!-- BEGIN example: "unput-parenthesized.lex" fragment=true indent=0 --><code>
+    <pre><!-- BEGIN example: "unread-character-parenthesized.lex" fragment=true indent=0 --><code>
     {
       int i;
-      /* Copy yytext because unput() trashes yytext */
+      /* Copy yytext because YY_UNREAD_CHARACTER() trashes yytext */
       char *yycopy = strdup(yytext);
-      unput(')');
+      YY_UNREAD_CHARACTER(')');
       for (i = yyleng - 1; i &gt;= 0; --i) {
-        unput(yycopy[i]);
+        YY_UNREAD_CHARACTER(yycopy[i]);
       }
-      unput('(');
+      YY_UNREAD_CHARACTER('(');
       free(yycopy);
     }
     </code><!-- END example --></pre>
 
-    <p>Note that since each <code>unput()</code> puts the given character
+    <p>Note that since each <code>YY_UNREAD_CHARACTER()</code> puts the given character
     back at the <em>beginning</em> of the input stream, pushing back strings
     must be done back-to-front.
 
-    <p>An important potential problem when using <code>unput()</code>
+    <p>An important potential problem when using <code>YY_UNREAD_CHARACTER()</code>
     is that
-    a call to <code>unput()</code> <em>destroys</em> the contents of
+    a call to <code>YY_UNREAD_CHARACTER()</code> <em>destroys</em> the contents of
     <code>yytext</code>, starting with its rightmost character and devouring
     one character to the left with each call. If you need the value of yytext
-    preserved after a call to <code>unput()</code> (as in the above example),
+    preserved after a call to <code>YY_UNREAD_CHARACTER()</code> (as in the above example),
     you must first copy it elsewhere.
 
     <p>Finally, note that you cannot put back <code>EOF</code> to attempt
@@ -2038,6 +2038,9 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
       <tr>
         <td><code>yyinput</code>
         <td><code>YY_READ_CHARACTER</code>
+      <tr>
+        <td><code>unput</code>
+        <td><code>YY_UNREAD_CHARACTER</code>
     </table>
 
     <p>The intent of this option is to make it a bit easier to test
@@ -3313,7 +3316,7 @@ most expensive to least:
 </code></pre>
 
 <p>with the first three all being quite expensive and the last two
-being quite cheap. Note also that <code>unput()</code> is implemented
+being quite cheap. Note also that <code>YY_UNREAD_CHARACTER()</code> is implemented
 as a routine call that potentially does quite a bit of work, while
 <code>yyless()</code> is a quite-cheap macro; so if just putting back
 some excess text you scanned, use <code>yyless()</code>.
@@ -3889,7 +3892,7 @@ of a simple C++ scanner:
                     if((c = YY_READ_CHARACTER()) == '/')
                         break;
                     else
-                        unput(c);
+                        YY_UNREAD_CHARACTER(c);
                     }
                 }
             }
@@ -4311,6 +4314,16 @@ run-time support library.  That has been removed as detailed below.
     <code>input</code> and <code>yyinput</code> as aliases for
     <code>YY_READ_CHARACTER</code>.
 
+<li><p>The <code>unput()</code> macro has
+    been renamed to <code>YY_UNREAD_CHARACTER()</code>.
+
+    <p>Rationale: Similar to the preceding.  Plus, "unput" is a weird
+    name because it does not "undo put"; instead it is more like
+    "undo input", with needlessly confusing contraction.
+
+    <p>With <code>%option flex-compat</code>, <code>unput()</code> is
+    available as an alias for <code>YY_UNREAD_CHARACTER()</code>.
+
 </ul>
 
 <p>
@@ -4335,6 +4348,9 @@ Renaming summary:
   <tr>
     <td><code>yyinput</code>
     <td><code>YY_READ_CHARACTER</code>
+  <tr>
+    <td><code>unput</code>
+    <td><code>YY_UNREAD_CHARACTER</code>
 </table>
 
 <h2 id="changed-function-signatures">Changed Function Signatures</h2>
@@ -4686,7 +4702,7 @@ scanner defaulted to 7-bit because you used the <code>-Cf</code> or
 <dt><p><code>smflex scanner push-back overflow</code>
 
 <dd>you used
-<code>unput()</code> to push back so much text that the scanner's
+<code>YY_UNREAD_CHARACTER()</code> to push back so much text that the scanner's
 buffer could not hold both the pushed-back text and the current token
 in <code>yytext</code>. Ideally the scanner should dynamically resize
 the buffer in this case, but at present it does not.
@@ -4743,7 +4759,7 @@ in <em>fixed</em> trailing context being turned into the more expensive
     xyz/def
 </code></pre>
 
-<p>Use of <code>unput()</code> invalidates yytext and yyleng.
+<p>Use of <code>YY_UNREAD_CHARACTER()</code> invalidates yytext and yyleng.
 
 <p>Pattern-matching of NUL's is substantially slower than matching
 other characters.
