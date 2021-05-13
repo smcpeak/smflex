@@ -3055,7 +3055,6 @@ void input_scan_construct(input_scan_lexer_t *yy_lexer)
   yy_lexer->yy_c_buf_p = NULL;
   yy_lexer->yy_init = 1;
   yy_lexer->yy_start = 0;
-  yy_lexer->yy_flex_debug = 1;
 
   yy_lexer->yy_did_buffer_switch_on_eof = 0;
 

@@ -1251,73 +1251,6 @@ void make_tables()
     indent_rbrace();
   }
 
-  skelout_upto("action_debug_code");
-  if (option_debug) {
-    indent_puts("if (yy_lexer->yy_flex_debug)");
-
-    indent_lbrace();
-    indent_puts("if ( yy_act == 0 )");
-    indent_up();
-    indent_puts(cpp_interface ?
-                "std::cerr << \"--scanner backing up\\n\";" :
-                "fprintf(stderr, \"--scanner backing up\\n\");");
-    indent_down();
-
-    do_indent();
-    out_dec("else if (yy_act < %d)\n", num_rules);
-    indent_up();
-
-    if (cpp_interface) {
-      indent_puts("std::cerr << \"--accepting rule at line \" << yy_rule_linenum[yy_act] <<");
-      indent_puts("             \" (\\\"\" << yy_lexer->yy_text << \"\\\")\\n\";");
-    }
-    else {
-      indent_puts("fprintf(stderr, \"--accepting rule at line %d (\\\"%s\\\")\\n\",");
-      indent_puts("        yy_rule_linenum[yy_act], yy_lexer->yy_text);");
-    }
-
-    indent_down();
-
-    do_indent();
-    out_dec("else if (yy_act == %d)\n", num_rules);
-    indent_up();
-
-    if (cpp_interface) {
-      indent_puts("std::cerr << \"--accepting default rule (\\\"\" << yy_lexer->yy_text << \"\\\")\\n\";");
-    }
-    else {
-      indent_puts("fprintf(stderr, \"--accepting default rule (\\\"%s\\\")\\n\",");
-      indent_puts("        yy_lexer->yy_text);");
-    }
-
-    indent_down();
-
-    do_indent();
-    out_dec("else if (yy_act == %d)\n", num_rules + 1);
-    indent_up();
-
-    indent_puts(cpp_interface ?
-                "std::cerr << \"--(end of buffer or a NUL)\\n\";" :
-                "fprintf(stderr, \"--(end of buffer or a NUL)\\n\");");
-
-    indent_down();
-
-    do_indent();
-    outn("else");
-    indent_up();
-
-    if (cpp_interface) {
-      indent_puts("std::cerr << \"--EOF (start condition \" << YY_START << \")\\n\";");
-    }
-    else {
-      indent_puts("fprintf(stderr, \"--EOF (start condition %d)\\n\", YY_START);");
-    }
-
-    indent_down();
-
-    indent_rbrace();
-  }
-
   /* Copy actions to output file. */
   skelout_upto("user_actions");
   indent_up();
@@ -1704,6 +1637,7 @@ static int eval_skel_identifier(void *extra_, char const *id, int len)
   COND_FLAG(do_yywrap)
   COND_FLAG(interactive)
   COND_FLAG(jacobson)
+  COND_FLAG(option_debug)
   COND_FLAG(use_read)
   COND_FLAG(yyclass)
 
