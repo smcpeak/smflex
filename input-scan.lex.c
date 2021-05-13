@@ -3042,18 +3042,18 @@ case YY_STATE_EOF(LINEDIR):
 void input_scan_construct(input_scan_lexer_t *yy_lexer)
 {
   yy_lexer->yy_client_data = NULL;
+
   yy_lexer->yy_input_stream = NULL;
   yy_lexer->yy_output_stream = NULL;
+  yy_lexer->yy_current_buffer = NULL;
+
   yy_lexer->yy_c_buf_p = NULL;
   yy_lexer->yy_init = 1;
   yy_lexer->yy_start = 0;
-
   yy_lexer->yy_did_buffer_switch_on_eof = 0;
 
   yy_lexer->yy_start_stack_ptr = yy_lexer->yy_start_stack_depth = 0;
   yy_lexer->yy_start_stack = NULL;
-
-  yy_lexer->yy_current_buffer = NULL;
 
 }
 

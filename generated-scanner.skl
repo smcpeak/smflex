@@ -629,20 +629,24 @@ void yy_construct(yy_lexer_t *yy_lexer)
 %else
   yy_lexer->yy_wrapper_object = NULL;
 %endif
+
   yy_lexer->yy_input_stream = NULL;
   yy_lexer->yy_output_stream = NULL;
+  yy_lexer->yy_current_buffer = NULL;
+
   yy_lexer->yy_c_buf_p = NULL;
   yy_lexer->yy_init = 1;
   yy_lexer->yy_start = 0;
-%if option_debug
-  yy_lexer->yy_flex_debug = 1;
-%endif
-%if do_yylineno
-  yy_lexer->yy_lineno = 1;
-%endif
-
   yy_lexer->yy_did_buffer_switch_on_eof = 0;
 
+%if do_yylineno
+  yy_lexer->yy_lineno = 1;
+
+%endif
+%if option_debug
+  yy_lexer->yy_flex_debug = 1;
+
+%endif
 %if reject_used && variable_trailing_context_rules
   yy_lexer->yy_looking_for_trail_begin = 0;
 
@@ -657,8 +661,6 @@ void yy_construct(yy_lexer_t *yy_lexer)
   yy_lexer->yy_start_stack = NULL;
 
 %endif
-  yy_lexer->yy_current_buffer = NULL;
-
 %if reject_used
   yy_lexer->yy_state_buf =
     (yy_state_type*)yy_flex_alloc(sizeof(yy_state_type) * (YY_BUF_SIZE+2));
