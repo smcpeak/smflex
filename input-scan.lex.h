@@ -133,6 +133,14 @@ void input_scan_destroy(input_scan_lexer_t *yy_lexer);
  * was found (e.g., identifier, number, string, etc.). */
 int input_scan_lex(input_scan_lexer_t *yy_lexer);
 
+/* Read a single character from the current input buffer of 'yy_lexer'.
+ * Returns EOF (-1) on end of file. */
+int input_scan_read_character(input_scan_lexer_t *yy_lexer);
+
+/* Push a single character back into the input buffer of 'yy_lexer',
+ * such that it will be the next one read. */
+void input_scan_unread_character(input_scan_lexer_t *yy_lexer, int c);
+
 /* Abandon whatever input (if any) 'yy_lexer' was scanning, and start
  * scanning 'input_file'. */
 void input_scan_restart(input_scan_lexer_t *yy_lexer, FILE *input_file);

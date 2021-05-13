@@ -212,6 +212,18 @@ void yy_destroy(yy_lexer_t *yy_lexer);
 int yy_lex(yy_lexer_t *yy_lexer);
 %endif
 
+%if option_yy_read_character
+/* Read a single character from the current input buffer of 'yy_lexer'.
+ * Returns EOF (-1) on end of file. */
+int yy_read_character(yy_lexer_t *yy_lexer);
+
+%endif
+%if option_yy_unread_character
+/* Push a single character back into the input buffer of 'yy_lexer',
+ * such that it will be the next one read. */
+void yy_unread_character(yy_lexer_t *yy_lexer, int c);
+
+%endif
 /* Abandon whatever input (if any) 'yy_lexer' was scanning, and start
  * scanning 'input_file'. */
 void yy_restart(yy_lexer_t *yy_lexer, YY_INPUT_STREAM_TYPE *input_file);

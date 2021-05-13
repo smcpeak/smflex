@@ -1072,6 +1072,10 @@ an action:
     <p>Use of this macro requires
     <code>%option yy_unread_character</code>.
 
+    <p>Outside of rule actions, the <code>YY_UNREAD_CHARACTER</code>
+    macro is not available.  Instead, you can call the
+    <code>void yy_unread_character(yy_lexer_t *lexer, int c)</code> function.
+
 <li><p><code>YY_READ_CHARACTER()</code>
     reads the next character from the input.  Once a character is read in
     this way, it is considered "consumed", and will not be subsequently
@@ -1104,6 +1108,10 @@ an action:
 
     <p>Use of this macro requires
     <code>%option yy_read_character</code>.
+
+    <p>Outside of rule actions, the <code>YY_READ_CHARACTER</code>
+    macro is not available.  Instead, you can call the
+    <code>int yy_read_character(yy_lexer_t *lexer)</code> function.
 
 <li><p><code>YY_FLUSH_BUFFER</code>
     flushes the scanner's internal buffer so that the next time the
@@ -2378,7 +2386,9 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
         yyout
         yy_restart
         yytext
+        yy_read_character
         yy_wrap
+        yy_unread_character
 </code></pre>
 
     <p>If you are using <code>-+</code>, then only
