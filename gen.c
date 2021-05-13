@@ -1360,7 +1360,7 @@ static char const *lower_prefix_names[] = {
   "yy_lexer_t_DEFINED",
   "yy_lexer_state_struct",
   "yy_begin",
-  "yy_buffer_state",
+  "yy_buffer_state_t",
   "yy_buffer_state_struct",
   "yy_construct",
   "yy_create_buffer",

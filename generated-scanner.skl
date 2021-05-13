@@ -1134,7 +1134,7 @@ YY_BUFFER_STATE yy_create_buffer(yy_lexer_t *yy_lexer,
 {
   YY_BUFFER_STATE b;
 
-  b = (YY_BUFFER_STATE)yy_flex_alloc(sizeof(yy_buffer_state));
+  b = (YY_BUFFER_STATE)yy_flex_alloc(sizeof(yy_buffer_state_t));
   if (!b) {
     YY_FATAL_ERROR("out of dynamic memory in yy_create_buffer()");
   }
@@ -1314,7 +1314,7 @@ YY_BUFFER_STATE yy_scan_buffer(yy_lexer_t *yy_lexer,
     return 0;
   }
 
-  b = (YY_BUFFER_STATE)yy_flex_alloc(sizeof(yy_buffer_state));
+  b = (YY_BUFFER_STATE)yy_flex_alloc(sizeof(yy_buffer_state_t));
   if (!b) {
     YY_FATAL_ERROR("out of dynamic memory in yy_scan_buffer()");
   }

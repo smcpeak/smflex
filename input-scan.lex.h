@@ -36,7 +36,7 @@ extern "C" {
 #endif
 
 /* Opaque types defined in the generated scanner code. */
-typedef struct input_scan_buffer_state_struct input_scan_buffer_state;
+typedef struct input_scan_buffer_state_struct input_scan_buffer_state_t;
 
 /* This is the type of 'yy_current_state' (among other things), which
  * is the current state within the finite state automaton that is
@@ -74,7 +74,7 @@ struct input_scan_lexer_state_struct {
 
   /* The input source we are currently reading from, and a buffer
    * in front of it. */
-  input_scan_buffer_state *yy_current_buffer;
+  input_scan_buffer_state_t *yy_current_buffer;
 
   /* Holds the character overwritten by a NUL when 'yy_text' is formed. */
   char yy_hold_char;
@@ -148,7 +148,7 @@ void input_scan_restart(input_scan_lexer_t *yy_lexer, FILE *input_file);
 /* Pointer to an opaque type that represents an input source along
  * with a read buffer for that source.  See the manual section
  * "Multiple Input Buffers" for more details. */
-typedef input_scan_buffer_state *INPUT_SCAN_BUFFER_STATE;
+typedef input_scan_buffer_state_t *INPUT_SCAN_BUFFER_STATE;
 
 /* Create a new buffer for use with 'yy_lexer' that reads from 'file'.
  * The 'size' is the size of the read buffer; 8192 is a reasonable

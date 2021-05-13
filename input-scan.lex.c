@@ -3403,7 +3403,7 @@ INPUT_SCAN_BUFFER_STATE input_scan_create_buffer(input_scan_lexer_t *yy_lexer,
 {
   INPUT_SCAN_BUFFER_STATE b;
 
-  b = (INPUT_SCAN_BUFFER_STATE)yy_flex_alloc(sizeof(input_scan_buffer_state));
+  b = (INPUT_SCAN_BUFFER_STATE)yy_flex_alloc(sizeof(input_scan_buffer_state_t));
   if (!b) {
     YY_FATAL_ERROR("out of dynamic memory in input_scan_create_buffer()");
   }
