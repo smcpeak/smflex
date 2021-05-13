@@ -630,9 +630,15 @@ void yy_construct(yy_lexer_t *yy_lexer)
   yy_lexer->yy_wrapper_object = NULL;
 %endif
 
+  yy_lexer->yy_text = NULL;
+  yy_lexer->yy_leng = 0;
+
   yy_lexer->yy_input_stream = NULL;
   yy_lexer->yy_output_stream = NULL;
   yy_lexer->yy_current_buffer = NULL;
+
+  yy_lexer->yy_hold_char = 0;
+  yy_lexer->yy_n_chars = 0;
 
   yy_lexer->yy_c_buf_p = NULL;
   yy_lexer->yy_init = 1;
@@ -647,8 +653,23 @@ void yy_construct(yy_lexer_t *yy_lexer)
   yy_lexer->yy_flex_debug = 1;
 
 %endif
+%if num_backing_up > 0 && !reject_used
+  yy_lexer->yy_last_accepting_state = 0; /* This can be a pointer. */
+  yy_lexer->yy_last_accepting_cpos = NULL;
+
+%endif
+%if reject_used
+  yy_lexer->yy_state_buf =
+    (yy_state_type*)yy_flex_alloc(sizeof(yy_state_type) * (YY_BUF_SIZE+2));
+  yy_lexer->yy_state_ptr = NULL;
+  yy_lexer->yy_full_match = NULL;
+  yy_lexer->yy_lp = 0;
+
+%endif
 %if reject_used && variable_trailing_context_rules
   yy_lexer->yy_looking_for_trail_begin = 0;
+  yy_lexer->yy_full_lp = 0;
+  yy_lexer->yy_full_state = NULL;
 
 %endif
 %if yymore_used
@@ -657,13 +678,10 @@ void yy_construct(yy_lexer_t *yy_lexer)
 
 %endif
 %if option_stack
-  yy_lexer->yy_start_stack_ptr = yy_lexer->yy_start_stack_depth = 0;
+  yy_lexer->yy_start_stack_ptr = 0;
+  yy_lexer->yy_start_stack_depth = 0;
   yy_lexer->yy_start_stack = NULL;
 
-%endif
-%if reject_used
-  yy_lexer->yy_state_buf =
-    (yy_state_type*)yy_flex_alloc(sizeof(yy_state_type) * (YY_BUF_SIZE+2));
 %endif
 }
 

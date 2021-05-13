@@ -3043,16 +3043,26 @@ void input_scan_construct(input_scan_lexer_t *yy_lexer)
 {
   yy_lexer->yy_client_data = NULL;
 
+  yy_lexer->yy_text = NULL;
+  yy_lexer->yy_leng = 0;
+
   yy_lexer->yy_input_stream = NULL;
   yy_lexer->yy_output_stream = NULL;
   yy_lexer->yy_current_buffer = NULL;
+
+  yy_lexer->yy_hold_char = 0;
+  yy_lexer->yy_n_chars = 0;
 
   yy_lexer->yy_c_buf_p = NULL;
   yy_lexer->yy_init = 1;
   yy_lexer->yy_start = 0;
   yy_lexer->yy_did_buffer_switch_on_eof = 0;
 
-  yy_lexer->yy_start_stack_ptr = yy_lexer->yy_start_stack_depth = 0;
+  yy_lexer->yy_last_accepting_state = 0; /* This can be a pointer. */
+  yy_lexer->yy_last_accepting_cpos = NULL;
+
+  yy_lexer->yy_start_stack_ptr = 0;
+  yy_lexer->yy_start_stack_depth = 0;
   yy_lexer->yy_start_stack = NULL;
 
 }
