@@ -1629,6 +1629,10 @@ static int eval_skel_identifier(void *extra_, char const *id, int len)
     else if (str_eq_substr(#flag, id, len)) { \
       return !!(flag);                        \
     }
+# define COND_INTVAR(var)                    \
+    else if (str_eq_substr(#var, id, len)) { \
+      return (var);                          \
+    }
 
   if (0) {}
 
@@ -1638,8 +1642,11 @@ static int eval_skel_identifier(void *extra_, char const *id, int len)
   COND_FLAG(interactive)
   COND_FLAG(jacobson)
   COND_FLAG(option_debug)
+  COND_FLAG(reject_used)
   COND_FLAG(use_read)
   COND_FLAG(yyclass)
+
+  COND_INTVAR(num_backing_up)
 
   else {
     fprintf(stderr, "%s:%d: smflex internal error: ",
@@ -1650,6 +1657,7 @@ static int eval_skel_identifier(void *extra_, char const *id, int len)
   }
 
 # undef COND_NAME
+# undef COND_INTVAR
 }
 
 

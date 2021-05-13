@@ -100,7 +100,7 @@ struct input_scan_lexer_state_struct {
   /* The following are not always needed, but may be depending
    * on use of certain smflex features (like REJECT or yymore()). */
 
-  /* TODO: Only needed when: num_backing_up > 0 && !reject_used */
+  /* These are related to backing up when REJECT is *not* used. */
   input_scan_state_type yy_last_accepting_state;
   char *yy_last_accepting_cpos;
 
