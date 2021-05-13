@@ -337,7 +337,7 @@ LEXOPT          [aceknopr]
         ^{NOT_WS}.*     {       /* non-indented code */
                           if (bracelevel <= 0) {   /* not in %{ ... %} */
                             yyless(0);             /* put it all back */
-                            yy_set_bol(yy_lexer, 1);
+                            input_scan_set_bol(yy_lexer, 1);
                             mark_prolog();
                             BEGIN(SECT2);
                           }

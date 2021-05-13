@@ -179,7 +179,7 @@ void input_scan_set_interactive(input_scan_lexer_t *yy_lexer, int is_interactive
 
 /* Set whether 'yy_lexer' will regard itself as being at the beginning
  * of a line (BOL), which is where "^" patterns can match. */
-void yy_set_bol(input_scan_lexer_t *yy_lexer, int at_bol);
+void input_scan_set_bol(input_scan_lexer_t *yy_lexer, int at_bol);
 
 /* The 'smflex' user must define this function.  It can return 0 after
  * calling 'input_scan_restart' to begin processing another file, or return 1 to

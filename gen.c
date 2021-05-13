@@ -1372,6 +1372,7 @@ static char const *lower_prefix_names[] = {
   "yy_scan_buffer",
   "yy_scan_bytes",
   "yy_scan_string",
+  "yy_set_bol",
   "yy_set_interactive",
   "yy_state_type",
   "yy_switch_to_buffer",

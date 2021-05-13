@@ -2387,6 +2387,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
         yy_restart
         yytext
         yy_read_character
+        yy_set_bol
         yy_wrap
         yy_unread_character
 </code></pre>
@@ -2397,6 +2398,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     <p>Within your scanner itself,
     you can still refer to the global variables and functions using either
     version of their name; but externally, they have the modified name.
+    (TODO: The use of yy_ names is broken right now.)
 
     <p>This option lets you link together multiple <code>smflex</code>
     scanners into the same executable.

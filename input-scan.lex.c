@@ -197,7 +197,7 @@ void input_scan_set_interactive(input_scan_lexer_t *yy_lexer, int is_interactive
 
 
 
-void yy_set_bol(input_scan_lexer_t *yy_lexer, int at_bol)
+void input_scan_set_bol(input_scan_lexer_t *yy_lexer, int at_bol)
 {
   yy_create_buffer_if_needed(yy_lexer);
   yy_lexer->yy_current_buffer->yy_at_bol = at_bol;
@@ -2081,7 +2081,7 @@ YY_RULE_SETUP
 {       /* non-indented code */
                           if (bracelevel <= 0) {   /* not in %{ ... %} */
                             yyless(0);             /* put it all back */
-                            yy_set_bol(yy_lexer, 1);
+                            input_scan_set_bol(yy_lexer, 1);
                             mark_prolog();
                             BEGIN(SECT2);
                           }

@@ -189,6 +189,8 @@ all-df: out/c-int-set-int-1.ok
 all-df: out/c-int-set-int-isatty.ok
 all-df: out/c-lexer1.ok
 all-df: out/c-lexer1-no-lines.ok
+all-df: out/c-prefix.ok
+all-df: out/c-prefix-validated.ok
 all-df: out/continued-action2.ok
 all-df: out/count-actions.ok
 all-df: out/cpp-int-batch.ok
@@ -261,6 +263,15 @@ endif
 username-yywrap.ok: username-yywrap.input2
 cppscan-yywrap.ok: cppscan-yywrap.input2
 input-buffers.ok: input-buffers.input2 input-buffers.input3 input-buffers.input4
+
+# For "c-prefix", check that it does not export any "yy_" symbols.
+out/c-prefix-validated.ok: out/c-prefix.ok
+	nm --extern-only --defined-only out/c-prefix.yy.o > out/c-prefix.yy.syms
+	if grep yy_ out/c-prefix.yy.syms; then \
+	  echo "There should not be any exported yy_ symbols!"; \
+	  exit 2; \
+	fi
+	touch $@
 
 # Unit test program.
 out/test-eval-skel-expr.exe: test-eval-skel-expr.c ../eval-skel-expr.h ../eval-skel-expr.c
