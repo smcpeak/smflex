@@ -74,12 +74,20 @@ extern int csize;
 extern int yymore_used, reject_used, real_reject, continued_action, in_rule;
 extern int yymore_really_used, reject_really_used;
 
-/* Initially false, set to true by "%option stack". */
+/* Initially false, set to true by "%option stack".  This controls
+ * whether we emit the functions for manipulating the state stack. */
 extern int option_stack;
 
 /* Initially false, even with "%option stack", this is set to true when
- * "%option yy_top_state" is used. */
+ * "%option yy_top_state" is used.  It controls the emission of
+ * 'yy_top_state'. */
 extern int option_yy_top_state;
+
+/* Initially false, each of these is set to true by their respective
+ * %options, and controls emission of the respective functions. */
+extern int option_yy_scan_string;
+extern int option_yy_scan_bytes;
+extern int option_yy_scan_buffer;
 
 
 /* Variables used in the smflex input routines:

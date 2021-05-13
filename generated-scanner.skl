@@ -1219,7 +1219,7 @@ void yyFlexLexer::yym_flush_buffer(YY_BUFFER_STATE b)
 %endif
 
 
-#ifndef YY_NO_SCAN_STRING /* Set by %option noyy_scan_string. */
+%if option_yy_scan_string
 YY_BUFFER_STATE yy_scan_string(yy_lexer_t *yy_lexer, const char *yy_str)
 {
   return yy_scan_bytes(yy_lexer, yy_str, strlen(yy_str));
@@ -1231,10 +1231,10 @@ YY_BUFFER_STATE yyFlexLexer::yym_scan_string(const char *yy_str)
   return yy_scan_string(&yym_lexer_state, yy_str);
 }
 %endif
-#endif
+%endif
 
 
-#ifndef YY_NO_SCAN_BYTES /* Set by %option noyy_scan_bytes. */
+%if option_yy_scan_bytes
 YY_BUFFER_STATE yy_scan_bytes(yy_lexer_t *yy_lexer,
                               const char *bytes, int len)
 {
@@ -1275,10 +1275,10 @@ YY_BUFFER_STATE yyFlexLexer::yym_scan_bytes(const char *bytes, int len)
   return yy_scan_bytes(&yym_lexer_state, bytes, len);
 }
 %endif
-#endif
+%endif
 
 
-#ifndef YY_NO_SCAN_BUFFER /* Set by %option noyy_scan_buffer. */
+%if option_yy_scan_buffer
 YY_BUFFER_STATE yy_scan_buffer(yy_lexer_t *yy_lexer,
                                char *base, size_t size)
 {
@@ -1318,7 +1318,7 @@ YY_BUFFER_STATE yyFlexLexer::yym_scan_buffer(char *base, size_t size)
   return yy_scan_buffer(&yym_lexer_state, base, size);
 }
 %endif
-#endif
+%endif
 
 
 %if option_stack

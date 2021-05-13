@@ -2,6 +2,9 @@
 /* Exercise 'yym_scan_string' and friends. */
 
 %option c++
+%option yy_scan_string
+%option yy_scan_bytes
+%option yy_scan_buffer
 
 %{
 #include <assert.h>          /* assert */

@@ -303,11 +303,11 @@ LEXOPT          [aceknopr]
         yymore          yymore_really_used = option_sense;
         yywrap          do_yywrap = option_sense;
 
-        yy_top_state    option_yy_top_state = option_sense;
+        yy_top_state    option_yy_top_state   = option_sense;
 
-        yy_scan_string  ACTION_IFDEF("YY_NO_SCAN_STRING", !option_sense);
-        yy_scan_bytes   ACTION_IFDEF("YY_NO_SCAN_BYTES", !option_sense);
-        yy_scan_buffer  ACTION_IFDEF("YY_NO_SCAN_BUFFER", !option_sense);
+        yy_scan_string  option_yy_scan_string = option_sense;
+        yy_scan_bytes   option_yy_scan_bytes  = option_sense;
+        yy_scan_buffer  option_yy_scan_buffer = option_sense;
 
         outfile         return OPT_OUTFILE;
         prefix          return OPT_PREFIX;

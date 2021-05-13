@@ -161,20 +161,6 @@ void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_ST
  * that source. */
 void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE b);
 
-/* Allocate a new buffer (which must be deallocated with
- * 'input_scan_delete_buffer') to scan the contents of NUL-terminated 'yy_str'.
- * Switch to that buffer. */
-INPUT_SCAN_BUFFER_STATE input_scan_scan_string(input_scan_lexer_t *yy_lexer, const char *yy_str);
-
-/* Like 'input_scan_scan_string', but without the presumption of NUL
- * termination. */
-INPUT_SCAN_BUFFER_STATE input_scan_scan_bytes(input_scan_lexer_t *yy_lexer, const char *bytes, int len);
-
-/* Whereas the preceding two functions make a copy of the source data,
- * this one scans it without making a copy.  The last two bytes *must*
- * be 0.  See the description in the manual. */
-INPUT_SCAN_BUFFER_STATE input_scan_scan_buffer(input_scan_lexer_t *yy_lexer, char *base, size_t size);
-
 /* Set the start state of 'yy_lexer' to 'state'.  This function must be
  * used instead of BEGIN when not within a rule action. */
 void input_scan_begin(input_scan_lexer_t *yy_lexer, int state);

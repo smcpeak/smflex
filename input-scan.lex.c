@@ -1966,26 +1966,26 @@ do_yywrap = option_sense;
 case 63:
 YY_RULE_SETUP
 #line 306 "input-scan.lex"
-option_yy_top_state = option_sense;
+option_yy_top_state   = option_sense;
 #line 1971 "input-scan.lex.c"
   YY_BREAK
 
 case 64:
 YY_RULE_SETUP
 #line 308 "input-scan.lex"
-ACTION_IFDEF("YY_NO_SCAN_STRING", !option_sense);
+option_yy_scan_string = option_sense;
 #line 1978 "input-scan.lex.c"
   YY_BREAK
 case 65:
 YY_RULE_SETUP
 #line 309 "input-scan.lex"
-ACTION_IFDEF("YY_NO_SCAN_BYTES", !option_sense);
+option_yy_scan_bytes  = option_sense;
 #line 1984 "input-scan.lex.c"
   YY_BREAK
 case 66:
 YY_RULE_SETUP
 #line 310 "input-scan.lex"
-ACTION_IFDEF("YY_NO_SCAN_BUFFER", !option_sense);
+option_yy_scan_buffer = option_sense;
 #line 1990 "input-scan.lex.c"
   YY_BREAK
 
@@ -3475,88 +3475,10 @@ void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STA
 
 
 
-#ifndef YY_NO_SCAN_STRING /* Set by %option noyy_scan_string. */
-INPUT_SCAN_BUFFER_STATE input_scan_scan_string(input_scan_lexer_t *yy_lexer, const char *yy_str)
-{
-  return input_scan_scan_bytes(yy_lexer, yy_str, strlen(yy_str));
-}
-
-#endif
 
 
-#ifndef YY_NO_SCAN_BYTES /* Set by %option noyy_scan_bytes. */
-INPUT_SCAN_BUFFER_STATE input_scan_scan_bytes(input_scan_lexer_t *yy_lexer,
-                              const char *bytes, int len)
-{
-  INPUT_SCAN_BUFFER_STATE b;
-  char *buf;
-  size_t n;
-  int i;
-
-  /* Get memory for full buffer, including space for trailing EOB's. */
-  n = len + 2;
-  buf = (char*)yy_flex_alloc(n);
-  if (!buf) {
-    YY_FATAL_ERROR("out of dynamic memory in input_scan_scan_bytes()");
-  }
-
-  for (i = 0; i < len; ++i) {
-    buf[i] = bytes[i];
-  }
-
-  buf[len] = buf[len + 1] = YY_END_OF_BUFFER_CHAR;
-
-  b = input_scan_scan_buffer(yy_lexer, buf, n);
-  if (!b) {
-    YY_FATAL_ERROR("bad buffer in input_scan_scan_bytes()");
-  }
-
-  /* It's okay to grow etc. this buffer, and we should throw it
-   * away when we're done.
-   */
-  b->yy_is_our_buffer = 1;
-
-  return b;
-}
-
-#endif
 
 
-#ifndef YY_NO_SCAN_BUFFER /* Set by %option noyy_scan_buffer. */
-INPUT_SCAN_BUFFER_STATE input_scan_scan_buffer(input_scan_lexer_t *yy_lexer,
-                               char *base, size_t size)
-{
-  INPUT_SCAN_BUFFER_STATE b;
-
-  if (size < 2 ||
-      base[size - 2] != YY_END_OF_BUFFER_CHAR ||
-      base[size - 1] != YY_END_OF_BUFFER_CHAR) {
-    /* They forgot to leave room for the EOB's. */
-    return 0;
-  }
-
-  b = (INPUT_SCAN_BUFFER_STATE)yy_flex_alloc(sizeof(input_scan_buffer_state));
-  if (!b) {
-    YY_FATAL_ERROR("out of dynamic memory in input_scan_scan_buffer()");
-  }
-
-  b->yy_buf_size = size - 2;    /* "- 2" to take care of EOB's */
-  b->yy_buf_pos = b->yy_ch_buf = base;
-  b->yy_is_our_buffer = 0;
-  b->yy_input_file = 0;
-  b->yy_n_chars = b->yy_buf_size;
-  YY_DEBUG_LOG_CALL("setting yy_is_interactive to 0 in input_scan_scan_buffer", 0);
-  b->yy_is_interactive = 0;
-  b->yy_at_bol = 1;
-  b->yy_fill_buffer = 0;
-  b->yy_buffer_status = YY_BUFFER_NEW;
-
-  input_scan_switch_to_buffer(yy_lexer, b);
-
-  return b;
-}
-
-#endif
 
 
 static void yy_push_state(input_scan_lexer_t *yy_lexer, int new_state)
