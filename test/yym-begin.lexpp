@@ -1,0 +1,35 @@
+/* yym-begin.lexpp */
+/* Illustrate calling yym_begin(). */
+
+%option c++
+
+                int enter_special;
+
+%x SPECIAL
+%%
+<SPECIAL>token  {
+                  std::cout << "saw 'token' in SPECIAL state\n";
+                  return 1;
+                }
+token           {
+                  std::cout << "saw 'token' in INITIAL state\n";
+                  return 2;
+                }
+<*>.|\n         /* discard */
+
+%%
+
+int main()
+{
+  yyFlexLexer lexer;
+
+  /* Repeatedly toggle 'enter_special' until EOF. */
+  enter_special = 0;
+  while (lexer.yym_lex()) {
+    enter_special = !enter_special;
+
+    lexer.yym_begin(enter_special? SPECIAL : INITIAL);
+  }
+
+  return 0;
+}

@@ -241,6 +241,7 @@ all-df: out/yy-input-redefined.ok
 all-df: out/yyinput-c-comments.ok
 all-d : out/yyless-foobar.ok
 all-d : out/yylineno.ok
+all-df: out/yym-begin.ok
 all-d : out/yymore-mega-kludge.ok
 all-df: out/zap-me.ok
 

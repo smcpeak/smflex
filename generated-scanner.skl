@@ -1422,6 +1422,20 @@ static void yy_flex_free(void *ptr)
   free(ptr);
 }
 
+
+void yy_begin(yy_lexer_t *yy_lexer, int state)
+{
+  BEGIN(state);
+}
+
+%if cpp_interface
+void yyFlexLexer::yym_begin(int state)
+{
+  yy_begin(&yym_lexer_state, state);
+}
+%endif
+
+
 #if YY_MAIN
 %if !cpp_interface
 int main()
@@ -1451,12 +1465,6 @@ int main()
 }
 %endif
 #endif
-
-
-void yy_begin(yy_lexer_t *yy_lexer, int state)
-{
-  BEGIN(state);
-}
 
 
 /* BEGIN cannot be used in section 3.  Instead, 'yy_begin' is used. */
