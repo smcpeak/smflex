@@ -3058,7 +3058,6 @@ void input_scan_construct(input_scan_lexer_t *yy_lexer)
 
   yy_lexer->yy_did_buffer_switch_on_eof = 0;
 
-  yy_lexer->yy_looking_for_trail_begin = 0;
   yy_lexer->yy_more_flag = 0;
   yy_lexer->yy_more_len = 0;
   yy_lexer->yy_more_offset = yy_lexer->yy_prev_more_offset = 0;
