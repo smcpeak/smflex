@@ -338,6 +338,7 @@ const char *header_skl_contents[] = {
   "  void yym_delete_buffer(YY_BUFFER_STATE b);",
   "  void yym_flush_buffer(yy_buffer_state *b);",
   "  void yym_begin(int state);",
+  "  void yym_set_interactive(int is_interactive);",
   "",
   "%if do_yywrap",
   "%if yyclass",

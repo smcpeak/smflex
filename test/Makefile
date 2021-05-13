@@ -193,6 +193,7 @@ all-df: out/continued-action2.ok
 all-df: out/count-actions.ok
 all-df: out/cpp-int-batch.ok
 all-df: out/cpp-int-default.ok
+all-df: out/cpp-int-set-int-1.ok
 all-d : out/cpp-int-interactive.ok
 all-df: out/cpp-manual-example.ok
 all-df: out/cpp-prefix-yywrap-yyclass.ok

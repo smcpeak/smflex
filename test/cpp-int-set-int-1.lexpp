@@ -1,0 +1,22 @@
+/* cpp-int-set-int-1.lexpp */
+/* C++-interface scanner that calls 'yym_set_interactive(1)'. */
+
+%option c++
+
+%%
+username           printf("USERNAME");
+
+%%
+
+int main()
+{
+  yyFlexLexer lexer(&std::cin);
+
+  lexer.yym_set_interactive(1);
+  while (lexer.yym_lex())
+    {}
+
+  return 0;
+}
+
+/* EOF */
