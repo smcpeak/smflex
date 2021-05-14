@@ -82,7 +82,7 @@ static char smflex_version[] = SMFLEX_VERSION;
 int printstats, syntaxerror, eofseen, option_debug, trace, nowarn, spprdflt;
 int interactive, caseins, do_yylineno, useecs, fulltbl, usemecs;
 int jacobson, gen_line_dirs, performance_report, backing_up_report;
-int cpp_interface, long_align, use_read, do_yywrap, csize;
+int cpp_interface, long_align, use_read, csize;
 int yymore_used, reject_used, real_reject, continued_action, in_rule;
 int yymore_really_used, reject_really_used;
 
@@ -499,9 +499,6 @@ void flexinit(int argc, char **argv)
   all_caps_prefix = "YY";
   yyclass = NULL;
   use_read = false;
-
-  /* smcpeak 2021-04-30: Changed the default value to false. */
-  do_yywrap = false;
 
   sawcmpflag = false;
 

@@ -1220,7 +1220,7 @@ condition remains unchanged; it does <em>not</em> revert to
 
 <p>If you instead want the scanner to continue scanning a new file, as
 if its contents came right after the previous one, then set
-<a href="#option-yywrap"><code>%option yywrap</code></a>.
+<a href="#yy-wrap-function"><code>yy_wrap_function</code></a>.
 
 <p>Three routines are available for scanning from in-memory buffers rather
 than files: <code>yy_scan_string()</code>, <code>yy_scan_bytes()</code>,
@@ -1253,11 +1253,6 @@ accessed.  The descriptions below apply only to the C API.
     will terminate.  It can instead return false (0) after setting up a
     new input source, meaning the scanner will continue scanning with
     that new input.
-
-    <p>This member exists even if <code>%option yywrap</code> is not
-    specified.  The effect of <code>%option yywrap</code> is to
-    initialize it to <code>&amp;yy_wrap</code> and obligate the user to
-    define <code>yy_wrap()</code>.
 
 </dl>
 
@@ -1661,7 +1656,7 @@ You select a particular buffer to be the active input source with:
 
 <p>This switches the scanner's input buffer so subsequent tokens will come
 from <code>new_buffer</code>.  <code>yy_switch_to_buffer()</code>
-may be used by <code>yy_wrap()</code> to set things up for continued scanning instead
+may be used by <code>yy_wrap_function()</code> to set things up for continued scanning instead
 of opening a new file and pointing <code>yyin</code> at it.  Calling
 this function does <em>not</em> change the start condition.
 
@@ -1805,7 +1800,7 @@ for an example demonstrating each of these functions.
 <h1 id="end-of-file-rules">END-OF-FILE RULES</h1>
 
 <p>The special rule "<code>&lt;&lt;EOF&gt;&gt;</code>" indicates actions which are to
-be taken when an end-of-file is encountered and <code>yy_wrap()</code> returns non-zero
+be taken when an end-of-file is encountered and <code>yy_wrap_function()</code> returns non-zero
 (i.e., indicates no further files to process). The action must finish
 by doing one of four things:
 
@@ -2520,7 +2515,7 @@ number are equivalent to <code>smflex</code> flags or their negation:
     In particular, it is not affected by
     <a href="#yy-restart"><code>yy_restart</code></a>,
     <a href="#yy-switch-to-buffer"><code>yy_switch_to_buffer</code></a>,
-    <a href="#option-yywrap"><code>yy_wrap</code></a> activity,
+    <a href="#yy-wrap-function"><code>yy_wrap_function</code></a> activity,
     etc.  If you want line numbers tracked across multiple input
     sources, you have to save and restore this value yourself at
     appropriate times.  The engine only knows to increment it when
@@ -2532,27 +2527,6 @@ number are equivalent to <code>smflex</code> flags or their negation:
     see any uses of it among the actions.  Conversely,
     <code>noyymore</code> disables <code>yymore()</code> even if it
     seems to be used.
-
-<dt id="option-yywrap"><code>yywrap</code>
-
-<dd><p>Make the scanner call <code>yy_wrap()</code> upon an end-of-file.
-    Otherwise, the scanner simply terminates.
-
-    <p>If set, you must provide a definition of the
-    <code>int yy_wrap(void)</code> function (either in your scanner
-    definition, or in another file that it links with).  In that case,
-    when the scanner reaches the end of one file, it calls
-    <code>yy_wrap()</code>.  If <code>yy_wrap()</code> returns false
-    (zero), then it is assumed that the function has set
-    <code>yyin</code> to point to another input file, and scanning
-    continues.  If it returns true (non-zero), then the scanner
-    terminates, returning 0 to its caller.
-
-    <p>When using <code>%option c++</code>, the name is
-    <code>yym_wrap()</code> (note the "m"), and it is
-    a method of either the <code>yyFlexLexer</code> class,
-    or of your derived class when using
-    <code>%option yyclass</code>.
 
 </dl>
 
@@ -3799,14 +3773,9 @@ scanner over input:
 <dd><p>This behaves like
     <a href="#yy-wrap-function"><code>yy_wrap_function</code></a>.
 
-    <p>
-    The effect of <a href="#option-yywrap"><code>%option yywrap</code></a>
-    is to obligate the user to define this method, either as a member
-    of <code>yyFlexLexer</code>, or of the derived class when using
-    <code>%option yyclass</code>.  Otherwise, a definition will be
-    provided in <code>yyFlexLexer</code> that returns 1, which you then
-    have the option to override in a derived class (whether or not you
-    are using <code>%option yyclass</code>).
+    <p>The default definition returns 1.  You have the option to
+    override it in a derived class (whether or not you are using
+    <code>%option yyclass</code>).
 
 <dt><code>yym_switch_to_buffer()</code>,
     <code>yym_create_buffer()</code>,
@@ -4183,16 +4152,41 @@ to be of continued value.
     <p>Replacement: Change <code>generated-scanner.skl</code> and
     recompile.
 
-<li><p>In <code>flex-2.5.4</code>, <code>%option main</code>
-    implied <code>%option noyywrap</code>.  (Furthermore,
-    <code>%option nomain</code> implied <code>%option yywrap</code>,
-    although that behavior was not documented.)  Now, these two
-    options are independent of each other.
+<li><p><code>flex-2.5.4</code> accepted <code>%option yywrap</code>
+    (with default value true),
+    meaning the user must define <code>yywrap()</code>, and
+    <code>%option noyywrap</code> to not require that definition.
+    These option
+    have been removed in favor of the <code>yy_wrap_function()</code>
+    function pointer member.
 
-    <p>Rationale: I do not see any reason for the original behavior.
-    The effect of the two options was and is orthogonal.
+    <p>Rationale: A function pointer is more flexible, as it can be set
+    at run time.  (And this function is called infrequently, so there is
+    no performance concern.)  This also lets me remove one
+    <code>smflex</code> option, simplifying the testing matrix.
 
-    <p>Replacement: Explicitly set the relevant options.
+    <p>Replacement for <code>%option noyywrap</code>: None needed;
+    just remove it.
+
+    <p>Replacement for <code>%option yywrap</code>:
+    Set <code>yy_wrap_function</code> like
+    <a href="test/username-yywrap.lex">this</a>:
+
+    <pre><!-- BEGIN example: "username-yywrap.lex" fragment=true indent=8 --><code>
+        int main()
+        {
+          yy_lexer_t lexer;
+          yy_construct(&amp;lexer);
+
+          /* This line is the replacement for the old "%option yywrap". */
+          lexer.yy_wrap_function = &amp;yywrap;
+
+          while (yy_lex(&amp;lexer))
+            {}
+          yy_destroy(&amp;lexer);
+          return 0;
+        }
+    </code><!-- END example --></pre>
 
 <li><p><code>flex-2.5.4</code> accepted
     <code>%option noyy_push_state</code> and
@@ -4342,21 +4336,9 @@ run-time support library.  That has been removed as detailed below.
     <p>Replacement: Remove <code>%option main</code> and provide an
     explicit definition: <code>int main() { yy_lex(); return 0; }</code>.
 
-<li><p>In <code>flex-2.5.4</code>, the default behavior was to
-    enable <code>yy_wrap()</code>.  Now it is disabled by default.
-
-    <p>Rationale: Most users do not want <code>yy_wrap()</code>.  Those
-    that do can easiily set the option asking for it.  By making it
-    default to off, I can eliminate <code>libfl.a</code> without
-    breaking scanners that previously implicitly relied on it.
-
-    <p>Replacement: Explicitly use <code>%option yywrap</code>.
-
 <li><p><code>flex-2.5.4</code> provided <code>libfl.a</code>, which
     contained definitions of <code>main()</code> (which called
-    <code>yy_lex()</code>, then called <code>yylex()</code>,
-    in a loop) and <code>yy_wrap()</code> (which
-    returned 1, then called <code>yywrap()</code>).
+    <code>yylex()</code> in a loop) and <code>yywrap()</code> (which returned 1).
     I have removed <code>libfl.a</code> entirely.
 
     <p>Rationale: The existence of a library compiled on the build
@@ -4368,9 +4350,9 @@ run-time support library.  That has been removed as detailed below.
 
     <p>Replacement: Set <code>%option main</code> to get an equivalent
     <code>main()</code> emitted into the generated scanner.
-    <code>%option noyywrap</code> is now the default, so there should
-    be no issue with trying to link with <code>yy_wrap()</code>.  (If
-    there is, just define it yourself: <code>int yy_wrap() { return 1; }</code>.)
+    <code>%option yywrap</code> has been removed in favor of
+    <a href="#yy-wrap-function"><code>yy_wrap_function</code></a>, so
+    there is no need for a definition of <code>yywrap()</code>.
 
 </ul>
 
@@ -4445,9 +4427,9 @@ run-time support library.  That has been removed as detailed below.
 
 <ul>
 
-<li><p>The <code>yyrestart</code>, <code>yywrap</code>, and
+<li><p>The <code>yyrestart</code> and
     <code>yylex</code> functions have been renamed to
-    <code>yy_restart</code>, <code>yy_wrap</code>, and
+    <code>yy_restart</code> and
     <code>yy_lex</code>, respectively.
 
     <p>Rationale: I want to encourage the use of <code>-P</code>
@@ -4508,10 +4490,6 @@ Renaming summary:
   <tr>
     <td><code>yylex</code>
     <td><code>yy_lex</code>
-    <td>Now requires a <code>yy_lexer_t*</code> parameter.
-  <tr>
-    <td><code>yywrap</code>
-    <td><code>yy_wrap</code>
     <td>Now requires a <code>yy_lexer_t*</code> parameter.
   <tr>
     <td><code>yyrestart</code>

@@ -298,7 +298,6 @@ LEXOPT          [aceknopr]
         warn            nowarn = ! option_sense;
         yylineno        do_yylineno = option_sense;
         yymore          yymore_really_used = option_sense;
-        yywrap          do_yywrap = option_sense;
 
         yy_read_character     option_yy_read_character   = option_sense;
         yy_scan_string        option_yy_scan_string      = option_sense;

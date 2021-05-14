@@ -1,10 +1,8 @@
 /* cpp-prefix-yywrap.lexpp */
-/* C++ scanner using %option prefix and %option yywrap. */
+/* C++ scanner using %option prefix and overriding yym_wrap(). */
 
 %option c++
-%option main
 %option prefix="MyLexer"
-%option yywrap
 
 %{
 #include <fstream>           // ifstream
@@ -20,10 +18,15 @@ username           cout << "USERNAME";
 
 %%
 
+class DerivedLexer : public MyLexerFlexLexer {
+public:
+  virtual int yym_wrap() /*override*/;
+};
+
 /* Non-NULL once we have read the second input. */
 static istream *secondFile = NULL;
 
-int MyLexerFlexLexer::yym_wrap()
+int DerivedLexer::yym_wrap()
 {
   if (!secondFile) {
     secondFile = new ifstream("cppscan-yywrap.input2");
@@ -46,5 +49,13 @@ int MyLexerFlexLexer::yym_wrap()
   }
 }
 
+
+int main()
+{
+  DerivedLexer lexer;
+  while (lexer.yym_lex())
+    {}
+  return 0;
+}
 
 /* EOF */

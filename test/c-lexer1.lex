@@ -79,8 +79,6 @@ static void collector_append(char const *text, int len);
 /* flex options */
 /****************/
 
-%option noyywrap
-
 
 /***************/
 /* sub-regexps */

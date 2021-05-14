@@ -266,6 +266,7 @@ endif
 
 # These tests read additional files.  (I do not think I have all of
 # these dependencies quite right.)
+out/cpp-prefix-yywrap.ok: cppscan-yywrap.input2
 out/cpp-prefix-yywrap2-yyclass.ok: cppscan-yywrap.input2
 out/cppscan-yywrap.ok: cppscan-yywrap.input2
 out/input-buffers.ok: input-buffers.input2 input-buffers.input3 input-buffers.input4

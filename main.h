@@ -49,8 +49,6 @@ void usage(void);
  * long_align - if true (-Ca flag), favor long-word alignment.
  * use_read - if true (-Cr) then use read() for scanner input;
  *   otherwise, use fread().
- * do_yywrap - do yy_wrap() processing on EOF.  If false, EOF treated as
- *   "no more files".
  * csize - size of character set for the scanner we're generating;
  *   128 for 7-bit chars and 256 for 8-bit
  * yymore_used - if true, yymore() is used in input rules
@@ -69,7 +67,7 @@ extern int printstats, syntaxerror, eofseen, option_debug, trace, nowarn, spprdf
 extern int interactive, caseins, do_yylineno;
 extern int useecs, fulltbl, usemecs, jacobson;
 extern int gen_line_dirs, performance_report, backing_up_report;
-extern int cpp_interface, long_align, use_read, do_yywrap;
+extern int cpp_interface, long_align, use_read;
 extern int csize;
 extern int yymore_used, reject_used, real_reject, continued_action, in_rule;
 extern int yymore_really_used, reject_really_used;

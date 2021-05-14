@@ -94,11 +94,10 @@ struct input_scan_lexer_state_struct {
    * true, meaning is no more input, and the scanner will terminate.  It
    * can instead return false (0) after setting up a new input source,
    * meaning the scanner will continue scanning with that new input.
+   * It is initially NULL.
    *
    * The type of the first parameter should be thought of as
-   * 'input_scan_lexer_t*'.
-   */
-  /* The initial value is NULL. */
+   * 'input_scan_lexer_t*'. */
   int (*yy_wrap_function)(struct input_scan_lexer_state_struct *yy_lexer);
 
   /* -------- Semi-public members -------- */

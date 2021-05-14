@@ -1,20 +1,10 @@
 /* username-yywrap.lex */
-/* Like username.lex, but use 'yy_wrap()'. */
+/* Like username.lex, but use 'yywrap()'. */
 
 %{
-
 #include <stdio.h>                     /* fopen */
 #include <stdlib.h>                    /* exit, perror */
-
 %}
-
-/* This test uses yy_wrap, and that feature now has to be explicitly
- * requested. */
-%option yywrap
-
-/* Also get a main() so I do not have to write my own. */
-%option main
-
 
 %%
 username           printf("USERNAME");
@@ -24,7 +14,7 @@ username           printf("USERNAME");
 /* True once we have read the second input. */
 static int readSecondFile = 0;
 
-int yy_wrap(yy_lexer_t *yy_lexer)
+int yywrap(yy_lexer_t *yy_lexer)
 {
   if (!readSecondFile) {
     readSecondFile = 1;
@@ -46,5 +36,21 @@ int yy_wrap(yy_lexer_t *yy_lexer)
   }
 }
 
+
+/* BEGIN: example fragment */
+int main()
+{
+  yy_lexer_t lexer;
+  yy_construct(&lexer);
+
+  /* This line is the replacement for the old "%option yywrap". */
+  lexer.yy_wrap_function = &yywrap;
+
+  while (yy_lex(&lexer))
+    {}
+  yy_destroy(&lexer);
+  return 0;
+}
+/* END: example fragment */
 
 /* EOF */
