@@ -108,7 +108,6 @@ extern int option_flex_compat;
  * prefix - the prefix used for externally visible names ("yy" by default)
  * all_caps_prefix - same as 'prefix' but in all caps
  * yyclass - if not NULL, yyFlexLexer subclass to use for 'lex' method
- * do_stdinit - whether to initialize yy_input_stream/yy_output_stream to stdin/stdout
  * program_name - name with which program was invoked
  *
  * action_array - array to hold the rule actions
@@ -129,7 +128,6 @@ extern int did_outfilename;
 extern char const *prefix;
 extern char const *all_caps_prefix;
 extern char *yyclass;
-extern int do_stdinit;
 extern char *program_name;
 extern char *action_array;
 extern int action_size;

@@ -78,7 +78,6 @@
 %}
 
 %option caseless nodefault outfile="input-scan.lex.c" stack
-%option nostdinit
 %option prefix="input_scan"
 %option yy_read_character
 %option yy_unread_character
@@ -295,7 +294,6 @@ LEXOPT          [aceknopr]
         read            use_read = option_sense;
         reject          reject_really_used = option_sense;
         stack           option_stack = option_sense;
-        stdinit         do_stdinit = option_sense;
         verbose         printstats = option_sense;
         warn            nowarn = ! option_sense;
         yylineno        do_yylineno = option_sense;

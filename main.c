@@ -106,7 +106,6 @@ int did_outfilename;
 char const *prefix;
 char const *all_caps_prefix;
 char *yyclass;
-int do_stdinit;
 
 /* Make sure program_name is initialized so we don't crash if writing
  * out an error message before getting the program name from argv[0].
@@ -487,7 +486,7 @@ void flexinit(int argc, char **argv)
   printstats = syntaxerror = trace = spprdflt = caseins = false;
   cpp_interface = backing_up_report = option_debug = fulltbl = false;
   jacobson = long_align = nowarn = yymore_used = continued_action = false;
-  do_yylineno = in_rule = reject_used = do_stdinit = false;
+  do_yylineno = in_rule = reject_used = false;
   yymore_really_used = reject_really_used = unspecified;
   option_stack = false;
   csize = unspecified;

@@ -2471,15 +2471,6 @@ number are equivalent to <code>smflex</code> flags or their negation:
 <dd><p>Enable the use of start condition stacks
     (see <a href="#start-conditions">Start Conditions</a>).
 
-<dt><code>stdinit</code>
-
-<dd><p>Initialize
-    <code>yyin</code> and <code>yyout</code> to <code>stdin</code> and
-    <code>stdout</code>, instead of the default of <code>nil</code>. Some existing
-    <code>lex</code> programs depend on this behavior, even though it is
-    not compliant with ANSI C, which does not require <code>stdin</code> and
-    <code>stdout</code> to be compile-time constant.
-
 <dt><code>yylineno</code>
 
 <dd><p>Generate a scanner that maintains
@@ -4254,6 +4245,19 @@ to be of continued value.
 
     <p>Replacement: Put the input into a named file, concatenating
     multiple files beforehand if necessary.
+
+<li><p><code>flex-2.5.4</code> accepts
+    <code>%option stdinit</code>, which means to statically initialize
+    <code>yyin</code> and <code>yyout</code> to <code>stdin</code>
+    and <code>stdout</code>.  <code>smflex</code> does not accept this
+    option.
+
+    <p>Rationale: <code>yyin</code> and <code>yyout</code> are no
+    longer global variables, so cannot be statically initialized.
+    (And, as noted in the option description, doing so was not
+    valid ANSI C anyway.)
+
+    <p>Replacement: None.
 
 </ul>
 
