@@ -115,12 +115,12 @@
 
 /* Return all but the first 'n' matched characters back to the input stream. */
 #define yyless(n) \
-  if (0) {} else { \
+  if (1) { \
     /* Undo effects of setting up yy_text. */ \
     *yy_cp = yy_lexer->yy_hold_char; \
     yy_lexer->yy_c_buf_p = yy_cp = yy_bp + n - YY_MORE_ADJ; \
     YY_DO_BEFORE_ACTION; /* set up yy_text again */ \
-  }
+  } else ((void)0)
 
 /* This structure contains the buffer state for a particular input
  * source.  By buffering, it allows efficient access to the bytes in
@@ -309,13 +309,13 @@ int yy_wrap(yy_lexer_t *yy_lexer)
 %else
 %if use_read
 #  define YY_INPUT(buf,result,max_size) \
-  if (0) {} else { \
+  if (1) { \
     result = read(fileno(yy_lexer->yy_input_stream), (char*)buf, max_size); \
     YY_DEBUG_LOG_CALL("read()", result); \
     if (result < 0) { \
       YY_FATAL_ERROR("input in smflex scanner failed"); \
     } \
-  }
+  } else ((void)0)
 %else
 #  define YY_INPUT(buf,result,max_size) \
   if (yy_lexer->yy_current_buffer->yy_is_interactive) { \
@@ -1486,14 +1486,14 @@ void yyFlexLexer::yym_LexerError(char const *msg)
  * a 'yy_lexer' in scope in section 3. */
 #undef yyless
 #define yyless(n) \
-  if (0) {} else { \
+  if (1) { \
     /* Undo effects of setting up yy_text. */ \
     yy_lexer->yy_text[yy_lexer->yy_leng] = yy_lexer->yy_hold_char; \
     yy_lexer->yy_c_buf_p = yy_lexer->yy_text + n; \
     yy_lexer->yy_hold_char = *(yy_lexer->yy_c_buf_p); \
     *(yy_lexer->yy_c_buf_p) = '\0'; \
     yy_lexer->yy_leng = n; \
-  }
+  } else ((void)0)
 
 
 /* Internal utility routines. */
