@@ -1180,21 +1180,6 @@ void make_tables()
   set_indent(2);
   gen_find_action();
 
-  skelout_upto("yy_lineno_update");
-  if (do_yylineno) {
-    indent_puts("if ( yy_act != YY_END_OF_BUFFER )");
-    indent_lbrace();
-    indent_puts("int yyl;");
-    indent_puts("for ( yyl = 0; yyl < yy_lexer->yy_leng; ++yyl )");
-    indent_up();
-    indent_puts("if ( yy_lexer->yy_text[yyl] == '\\n' )");
-    indent_up();
-    indent_puts("++(yy_lexer->yy_lineno);");
-    indent_down();
-    indent_down();
-    indent_rbrace();
-  }
-
   /* Copy actions to output file. */
   skelout_upto("user_actions");
   indent_up();
