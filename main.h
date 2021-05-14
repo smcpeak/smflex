@@ -30,7 +30,7 @@ void usage(void);
  * option_debug - if true (-d), make a "debug" scanner
  * trace - if true (-T), trace processing
  * nowarn - if true (-w), do not generate warnings
- * spprdflt - if true (-s), suppress the default rule
+ * option_suppress_default_rule - if true (-s), suppress the default rule
  * interactive - if true (-I), generate an interactive scanner
  * caseins - if true (-i), generate a case-insensitive scanner
  * do_yylineno - if true, generate code to maintain yylineno
@@ -63,7 +63,8 @@ void usage(void);
  * reject_really_used - same for REJECT
  */
 
-extern int printstats, syntaxerror, eofseen, option_debug, trace, nowarn, spprdflt;
+extern int printstats, syntaxerror, eofseen, option_debug, trace, nowarn;
+extern int option_suppress_default_rule;
 extern int interactive, caseins, do_yylineno;
 extern int useecs, fulltbl, usemecs, jacobson;
 extern int gen_line_dirs, performance_report, backing_up_report;

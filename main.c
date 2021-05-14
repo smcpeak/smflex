@@ -79,7 +79,8 @@ static char smflex_version[] = SMFLEX_VERSION;
 /* ----------- BEGIN: big block of globals ---------------- */
 /* These globals are all declared and documented in main.h. */
 
-int printstats, syntaxerror, eofseen, option_debug, trace, nowarn, spprdflt;
+int printstats, syntaxerror, eofseen, option_debug, trace, nowarn;
+int option_suppress_default_rule;
 int interactive, caseins, do_yylineno, useecs, fulltbl, usemecs;
 int jacobson, gen_line_dirs, performance_report, backing_up_report;
 int cpp_interface, long_align, use_read, csize;
@@ -193,7 +194,7 @@ int main(int argc, char **argv)
     if (!rule_useful[i] && i != default_rule)
       line_warning(_("rule cannot be matched"), rule_linenum[i]);
 
-  if (spprdflt && !reject_used && rule_useful[default_rule])
+  if (option_suppress_default_rule && !reject_used && rule_useful[default_rule])
     line_warning(_("-s option given but default rule can be matched"),
                  rule_linenum[default_rule]);
 
@@ -346,7 +347,7 @@ void flexend(int exit_status)
       putc('p', stderr);
     if (performance_report > 1)
       putc('p', stderr);
-    if (spprdflt)
+    if (option_suppress_default_rule)
       putc('s', stderr);
     if (printstats)
       putc('v', stderr);        /* always true! */
@@ -483,7 +484,9 @@ void flexinit(int argc, char **argv)
   int i, sawcmpflag;
   char *arg;
 
-  printstats = syntaxerror = trace = spprdflt = caseins = false;
+  printstats = syntaxerror = trace = false;
+  option_suppress_default_rule = false;
+  caseins = false;
   cpp_interface = backing_up_report = option_debug = fulltbl = false;
   jacobson = long_align = nowarn = yymore_used = continued_action = false;
   do_yylineno = in_rule = reject_used = false;
@@ -656,7 +659,7 @@ void flexinit(int argc, char **argv)
           break;
 
         case 's':
-          spprdflt = true;
+          option_suppress_default_rule = true;
           break;
 
         case 'T':

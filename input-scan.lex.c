@@ -1841,7 +1841,7 @@ option_debug = option_sense;
 case 43:
 YY_RULE_SETUP
 #line 278 "input-scan.lex"
-spprdflt = ! option_sense;
+option_suppress_default_rule = ! option_sense;
 #line 1846 "input-scan.lex.c"
   YY_BREAK
 case 44:

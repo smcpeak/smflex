@@ -275,7 +275,7 @@ LEXOPT          [aceknopr]
         caseful|case-sensitive          caseins = ! option_sense;
         caseless|case-insensitive       caseins = option_sense;
         debug           option_debug = option_sense;
-        default         spprdflt = ! option_sense;
+        default         option_suppress_default_rule = ! option_sense;
         ecs             useecs = option_sense;
         fast            synerr(_("\"fast\" has been renamed to \"jacobson\""));
         flex-compat     option_flex_compat = option_sense;

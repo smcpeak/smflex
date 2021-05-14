@@ -1387,7 +1387,7 @@ yyreduce:
                             scset[i] = mkbranch(scset[i], def_rule);
 
                           add_action(yy_output_file_line_directive);
-                          if (spprdflt)
+                          if (option_suppress_default_rule)
                             add_action("YY_FATAL_ERROR( \"smflex scanner jammed\" )");
                           else
                             add_action("ECHO");
