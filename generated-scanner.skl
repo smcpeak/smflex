@@ -304,8 +304,9 @@ int yy_wrap(yy_lexer_t *yy_lexer)
 #ifndef YY_INPUT
 %if cpp_interface
 #  define YY_INPUT(buf,result,max_size) \
-    if ( (result = yy_lexer->yy_wrapper_object->yym_LexerInput((char*)buf, max_size)) < 0 ) \
-      YY_FATAL_ERROR("input in smflex scanner failed");
+    if ( (result = yy_lexer->yy_wrapper_object->yym_LexerInput((char*)buf, max_size)) < 0 ) { \
+      YY_FATAL_ERROR("input in smflex scanner failed"); \
+    }
 %else
 %if use_read
 #  define YY_INPUT(buf,result,max_size) \
