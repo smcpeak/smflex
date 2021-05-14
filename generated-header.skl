@@ -71,7 +71,13 @@ typedef int yy_state_type_t;
 class yyFlexLexer;           /* Defined below. */
 %endif
 
-/* This struct encapsulates the scanner state. */
+/* This struct encapsulates the scanner state.
+ *
+ * Clients should, as much as possible, refrain from directly accessing
+ * the members of this structure.  Instead, use the API below.  These
+ * data members are subject to change between releases, while the API
+ * is intended to be stable.  Please report cases where the API is
+ * inadequate as bugs. */
 struct yy_lexer_state_struct {
 %if !cpp_interface
   /* Application-specific data.  The client of this interface is free
@@ -188,6 +194,7 @@ struct yy_lexer_state_struct {
 typedef struct yy_lexer_state_struct yy_lexer_t;
 
 
+/* -------- Essentials -------- */
 /* Initialize 'yy_lexer'.  This begins the lifecycle of a lexer
  * object. */
 void yy_construct(yy_lexer_t *yy_lexer);
@@ -212,22 +219,12 @@ void yy_destroy(yy_lexer_t *yy_lexer);
 int yy_lex(yy_lexer_t *yy_lexer);
 %endif
 
-%if option_yy_read_character
-/* Read a single character from the current input buffer of 'yy_lexer'.
- * Returns EOF (-1) on end of file. */
-int yy_read_character(yy_lexer_t *yy_lexer);
-
-%endif
-%if option_yy_unread_character
-/* Push a single character back into the input buffer of 'yy_lexer',
- * such that it will be the next one read. */
-void yy_unread_character(yy_lexer_t *yy_lexer, int c);
-
-%endif
 /* Abandon whatever input (if any) 'yy_lexer' was scanning, and start
- * scanning 'input_file'. */
+ * scanning 'input_file'.  This is how to choose what to scan;
+ * otherwise, the scanner reads standard input. */
 void yy_restart(yy_lexer_t *yy_lexer, YY_INPUT_STREAM_TYPE *input_file);
 
+/* -------- Scanning multiple sources (e.g., #includes) -------- */
 %if option_flex_compat
 /* Provided for flex compatibility. */
 typedef yy_buffer_state_t *YY_BUFFER_STATE;
@@ -250,6 +247,18 @@ void yy_delete_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *b);
  * that source. */
 void yy_flush_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *b);
 
+%if do_yywrap
+%if cpp_interface
+/* This just delegates to the C++ class 'yym_wrap' method. */
+%else
+/* The 'smflex' user must define this function.  It can return 0 after
+ * calling 'yy_restart' to begin processing another file, or return 1 to
+ * indicate there are no more files to process. */
+%endif
+int yy_wrap(yy_lexer_t *yy_lexer);
+%endif
+
+/* -------- Scanning in-memory data -------- */
 %if option_yy_scan_string
 /* Allocate a new buffer (which must be deallocated with
  * 'yy_delete_buffer') to scan the contents of NUL-terminated 'yy_str'.
@@ -276,10 +285,24 @@ yy_buffer_state_t *yy_scan_bytes(yy_lexer_t *yy_lexer, const char *bytes, int le
 yy_buffer_state_t *yy_scan_buffer(yy_lexer_t *yy_lexer, char *base, size_t size);
 
 %endif
+/* -------- Manipulating the start state -------- */
 /* Set the start state of 'yy_lexer' to 'state'.  This function must be
  * used instead of BEGIN when not within a rule action. */
 void yy_begin(yy_lexer_t *yy_lexer, int state);
 
+/* -------- Interacting with an input stream -------- */
+%if option_yy_read_character
+/* Read a single character from the current input buffer of 'yy_lexer'.
+ * Returns EOF (-1) on end of file. */
+int yy_read_character(yy_lexer_t *yy_lexer);
+
+%endif
+%if option_yy_unread_character
+/* Push a single character back into the input buffer of 'yy_lexer',
+ * such that it will be the next one read. */
+void yy_unread_character(yy_lexer_t *yy_lexer, int c);
+
+%endif
 /* Set the 'interactive' flag on the given 'yy_lexer'.  An interactive
  * yy_lexer reads its input one character at a time. */
 void yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive);
@@ -287,17 +310,6 @@ void yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive);
 /* Set whether 'yy_lexer' will regard itself as being at the beginning
  * of a line (BOL), which is where "^" patterns can match. */
 void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol);
-
-%if do_yywrap
-%if cpp_interface
-/* This just delegates to the C++ class 'yym_wrap' method. */
-%else
-/* The 'smflex' user must define this function.  It can return 0 after
- * calling 'yy_restart' to begin processing another file, or return 1 to
- * indicate there are no more files to process. */
-%endif
-int yy_wrap(yy_lexer_t *yy_lexer);
-%endif
 
 %if !cpp_interface
 #ifdef __cplusplus
@@ -307,7 +319,8 @@ int yy_wrap(yy_lexer_t *yy_lexer);
 
 
 %if cpp_interface
-/* Indicate that the C++ interface is in use. */
+/* ---------------------- C++ interface ----------------------- */
+/* Indicate that the C++ interface class is available. */
 #define yyFlexLexer_CLASS_DEFINED
 
 

@@ -44,7 +44,13 @@ typedef struct input_scan_buffer_state_struct input_scan_buffer_state_t;
 typedef int input_scan_state_type_t;
 
 
-/* This struct encapsulates the scanner state. */
+/* This struct encapsulates the scanner state.
+ *
+ * Clients should, as much as possible, refrain from directly accessing
+ * the members of this structure.  Instead, use the API below.  These
+ * data members are subject to change between releases, while the API
+ * is intended to be stable.  Please report cases where the API is
+ * inadequate as bugs. */
 struct input_scan_lexer_state_struct {
   /* Application-specific data.  The client of this interface is free
    * to use this value however they want.  'input_scan_construct' sets it to
@@ -115,6 +121,7 @@ struct input_scan_lexer_state_struct {
 typedef struct input_scan_lexer_state_struct input_scan_lexer_t;
 
 
+/* -------- Essentials -------- */
 /* Initialize 'yy_lexer'.  This begins the lifecycle of a lexer
  * object. */
 void input_scan_construct(input_scan_lexer_t *yy_lexer);
@@ -133,18 +140,12 @@ void input_scan_destroy(input_scan_lexer_t *yy_lexer);
  * was found (e.g., identifier, number, string, etc.). */
 int input_scan_lex(input_scan_lexer_t *yy_lexer);
 
-/* Read a single character from the current input buffer of 'yy_lexer'.
- * Returns EOF (-1) on end of file. */
-int input_scan_read_character(input_scan_lexer_t *yy_lexer);
-
-/* Push a single character back into the input buffer of 'yy_lexer',
- * such that it will be the next one read. */
-void input_scan_unread_character(input_scan_lexer_t *yy_lexer, int c);
-
 /* Abandon whatever input (if any) 'yy_lexer' was scanning, and start
- * scanning 'input_file'. */
+ * scanning 'input_file'.  This is how to choose what to scan;
+ * otherwise, the scanner reads standard input. */
 void input_scan_restart(input_scan_lexer_t *yy_lexer, FILE *input_file);
 
+/* -------- Scanning multiple sources (e.g., #includes) -------- */
 /* Create a new buffer for use with 'yy_lexer' that reads from 'file'.
  * The 'size' is the size of the read buffer; a size of 0 means to use
  * the default size smflex uses for its own buffers. */
@@ -162,9 +163,25 @@ void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_st
  * that source. */
 void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *b);
 
+/* The 'smflex' user must define this function.  It can return 0 after
+ * calling 'input_scan_restart' to begin processing another file, or return 1 to
+ * indicate there are no more files to process. */
+int input_scan_wrap(input_scan_lexer_t *yy_lexer);
+
+/* -------- Scanning in-memory data -------- */
+/* -------- Manipulating the start state -------- */
 /* Set the start state of 'yy_lexer' to 'state'.  This function must be
  * used instead of BEGIN when not within a rule action. */
 void input_scan_begin(input_scan_lexer_t *yy_lexer, int state);
+
+/* -------- Interacting with an input stream -------- */
+/* Read a single character from the current input buffer of 'yy_lexer'.
+ * Returns EOF (-1) on end of file. */
+int input_scan_read_character(input_scan_lexer_t *yy_lexer);
+
+/* Push a single character back into the input buffer of 'yy_lexer',
+ * such that it will be the next one read. */
+void input_scan_unread_character(input_scan_lexer_t *yy_lexer, int c);
 
 /* Set the 'interactive' flag on the given 'yy_lexer'.  An interactive
  * yy_lexer reads its input one character at a time. */
@@ -173,11 +190,6 @@ void input_scan_set_interactive(input_scan_lexer_t *yy_lexer, int is_interactive
 /* Set whether 'yy_lexer' will regard itself as being at the beginning
  * of a line (BOL), which is where "^" patterns can match. */
 void input_scan_set_bol(input_scan_lexer_t *yy_lexer, int at_bol);
-
-/* The 'smflex' user must define this function.  It can return 0 after
- * calling 'input_scan_restart' to begin processing another file, or return 1 to
- * indicate there are no more files to process. */
-int input_scan_wrap(input_scan_lexer_t *yy_lexer);
 
 #ifdef __cplusplus
 }
