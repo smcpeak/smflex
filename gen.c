@@ -1134,60 +1134,6 @@ void make_tables()
 
   line_directive_out(scanner_c_file, 0);
 
-  /* Copy everything up to and including the beginning of the
-   * definition of the YY_INPUT macro. */
-  skelout_upto("yy_input_defn");
-
-  if (!cpp_interface) {
-    /* Provide the body of YY_INPUT.
-     *
-     * TODO: It would be nice to put this into the skeleton since
-     * editing these strings here is a pain. */
-    if (use_read) {
-      outn("  if (0) {} else { \\");
-      outn("    result = read(fileno(yy_lexer->yy_input_stream), (char*)buf, max_size); \\");
-      outn("    YY_DEBUG_LOG_CALL(\"read()\", result); \\");
-      outn("    if (result < 0) { \\");
-      outn("      YY_FATAL_ERROR(\"input in smflex scanner failed\"); \\");
-      outn("    } \\");
-      outn("  }");
-    }
-
-    else {
-      outn("  if (yy_lexer->yy_current_buffer->yy_is_interactive) { \\");
-      outn("    int c = '*', n; \\");
-      outn("    for (n = 0; \\");
-      outn("         n < max_size && (c = getc(yy_lexer->yy_input_stream)) != EOF && c != '\\n'; \\");
-      outn("         ++n) { \\");
-      outn("      YY_DEBUG_LOG_CALL(\"getc()\", c); \\");
-      outn("      buf[n] = (char) c; \\");
-      outn("    } \\");
-      outn("    /* Either we hit 'size_max' or we read a special character. */ \\");
-      outn("    if (c == '\\n') { \\");
-      outn("      YY_DEBUG_LOG_CALL(\"getc()\", c); \\");
-      outn("      buf[n++] = (char) c; \\");
-      outn("    } \\");
-      outn("    if (c == EOF) { \\");
-      outn("      YY_DEBUG_LOG_CALL(\"getc()\", c); \\");
-      outn("      if (ferror(yy_lexer->yy_input_stream)) { \\");
-      outn("        YY_FATAL_ERROR(\"input in smflex scanner failed\"); \\");
-      outn("      } \\");
-      outn("    } \\");
-      outn("    result = n; \\");
-      outn("  } \\");
-      outn("  else { \\");
-      outn("    result = fread(buf, 1, max_size, yy_lexer->yy_input_stream); \\");
-      outn("    YY_DEBUG_LOG_CALL(\"fread()\", result); \\");
-      outn("    if (result == 0 && ferror(yy_lexer->yy_input_stream)) { \\");
-      outn("      YY_FATAL_ERROR(\"input in smflex scanner failed\"); \\");
-      outn("    } \\");
-      outn("  }");
-    }
-  }
-  else {
-    /* For the C++ interface, the skeleton defines YY_INPUT. */
-  }
-
   skelout_upto("YY_RULE_SETUP");
 
   indent_puts("#define YY_RULE_SETUP \\");
