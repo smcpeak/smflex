@@ -234,6 +234,7 @@ all-d : out/reject-frob.ok
 all-df: out/toy-pascal.ok
 all-df: out/scan-string-etc.ok
 all-df: out/set-bol.ok
+all-df: out/stack-api.ok
 all-d : out/trailing-context.ok
 all-df: out/unput-parenthesized.ok
 all-d : out/username-full.ok
