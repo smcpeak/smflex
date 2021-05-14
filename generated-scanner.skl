@@ -200,7 +200,7 @@ static void *yy_flex_realloc(void *, size_t);
 static void yy_flex_free(void *);
 
 static void yy_load_buffer_state(yy_lexer_t *yy_lexer);
-static void yy_init_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE b,
+static void yy_init_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *b,
                            YY_INPUT_STREAM_TYPE *file);
 
 /* If 'yy_lexer' does not have a current buffer, create one. */
@@ -847,7 +847,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
         ("input buffer overflow, can't enlarge buffer because scanner uses REJECT");
 %else
       /* just a shorter name for the current buffer */
-      YY_BUFFER_STATE b = yy_lexer->yy_current_buffer;
+      yy_buffer_state_t *b = yy_lexer->yy_current_buffer;
 
       int yy_c_buf_p_offset = (int) (yy_lexer->yy_c_buf_p - b->yy_ch_buf);
 
@@ -1088,7 +1088,7 @@ void yyFlexLexer::yym_restart(YY_INPUT_STREAM_TYPE *input_file)
 %endif
 
 
-void yy_switch_to_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE new_buffer)
+void yy_switch_to_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *new_buffer)
 {
   if (yy_lexer->yy_current_buffer == new_buffer) {
     return;
@@ -1113,7 +1113,7 @@ void yy_switch_to_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE new_buffer)
 }
 
 %if cpp_interface
-void yyFlexLexer::yym_switch_to_buffer(YY_BUFFER_STATE new_buffer)
+void yyFlexLexer::yym_switch_to_buffer(yy_buffer_state_t *new_buffer)
 {
   yy_switch_to_buffer(&yym_lexer_state, new_buffer);
 }
@@ -1129,12 +1129,12 @@ static void yy_load_buffer_state(yy_lexer_t *yy_lexer)
 }
 
 
-YY_BUFFER_STATE yy_create_buffer(yy_lexer_t *yy_lexer,
-                                 YY_INPUT_STREAM_TYPE *file, int size)
+yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer,
+                                    YY_INPUT_STREAM_TYPE *file, int size)
 {
-  YY_BUFFER_STATE b;
+  yy_buffer_state_t *b;
 
-  b = (YY_BUFFER_STATE)yy_flex_alloc(sizeof(yy_buffer_state_t));
+  b = (yy_buffer_state_t*)yy_flex_alloc(sizeof(yy_buffer_state_t));
   if (!b) {
     YY_FATAL_ERROR("out of dynamic memory in yy_create_buffer()");
   }
@@ -1157,15 +1157,15 @@ YY_BUFFER_STATE yy_create_buffer(yy_lexer_t *yy_lexer,
 }
 
 %if cpp_interface
-YY_BUFFER_STATE yyFlexLexer::yym_create_buffer(YY_INPUT_STREAM_TYPE *file,
-                                               int size)
+yy_buffer_state_t *yyFlexLexer::yym_create_buffer(YY_INPUT_STREAM_TYPE *file,
+                                                  int size)
 {
   return yy_create_buffer(&yym_lexer_state, file, size);
 }
 %endif
 
 
-void yy_delete_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE b)
+void yy_delete_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *b)
 {
   if (!b) {
     return;
@@ -1184,7 +1184,7 @@ void yy_delete_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE b)
 }
 
 %if cpp_interface
-void yyFlexLexer::yym_delete_buffer(YY_BUFFER_STATE b)
+void yyFlexLexer::yym_delete_buffer(yy_buffer_state_t *b)
 {
   yy_delete_buffer(&yym_lexer_state, b);
 }
@@ -1192,7 +1192,7 @@ void yyFlexLexer::yym_delete_buffer(YY_BUFFER_STATE b)
 
 
 static void yy_init_buffer(yy_lexer_t *yy_lexer,
-                           YY_BUFFER_STATE b, YY_INPUT_STREAM_TYPE *file)
+                           yy_buffer_state_t *b, YY_INPUT_STREAM_TYPE *file)
 {
   yy_flush_buffer(yy_lexer, b);
 
@@ -1209,7 +1209,7 @@ static void yy_init_buffer(yy_lexer_t *yy_lexer,
 }
 
 
-void yy_flush_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE b)
+void yy_flush_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *b)
 {
   if (!b) {
     return;
@@ -1235,7 +1235,7 @@ void yy_flush_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE b)
 }
 
 %if cpp_interface
-void yyFlexLexer::yym_flush_buffer(YY_BUFFER_STATE b)
+void yyFlexLexer::yym_flush_buffer(yy_buffer_state_t *b)
 {
   yy_flush_buffer(&yym_lexer_state, b);
 }
@@ -1243,13 +1243,13 @@ void yyFlexLexer::yym_flush_buffer(YY_BUFFER_STATE b)
 
 
 %if option_yy_scan_string
-YY_BUFFER_STATE yy_scan_string(yy_lexer_t *yy_lexer, const char *yy_str)
+yy_buffer_state_t *yy_scan_string(yy_lexer_t *yy_lexer, const char *yy_str)
 {
   return yy_scan_bytes(yy_lexer, yy_str, strlen(yy_str));
 }
 
 %if cpp_interface
-YY_BUFFER_STATE yyFlexLexer::yym_scan_string(const char *yy_str)
+yy_buffer_state_t *yyFlexLexer::yym_scan_string(const char *yy_str)
 {
   return yy_scan_string(&yym_lexer_state, yy_str);
 }
@@ -1258,10 +1258,10 @@ YY_BUFFER_STATE yyFlexLexer::yym_scan_string(const char *yy_str)
 
 
 %if option_yy_scan_bytes
-YY_BUFFER_STATE yy_scan_bytes(yy_lexer_t *yy_lexer,
-                              const char *bytes, int len)
+yy_buffer_state_t *yy_scan_bytes(yy_lexer_t *yy_lexer,
+                                 const char *bytes, int len)
 {
-  YY_BUFFER_STATE b;
+  yy_buffer_state_t *b;
   char *buf;
   size_t n;
   int i;
@@ -1293,7 +1293,7 @@ YY_BUFFER_STATE yy_scan_bytes(yy_lexer_t *yy_lexer,
 }
 
 %if cpp_interface
-YY_BUFFER_STATE yyFlexLexer::yym_scan_bytes(const char *bytes, int len)
+yy_buffer_state_t *yyFlexLexer::yym_scan_bytes(const char *bytes, int len)
 {
   return yy_scan_bytes(&yym_lexer_state, bytes, len);
 }
@@ -1302,10 +1302,10 @@ YY_BUFFER_STATE yyFlexLexer::yym_scan_bytes(const char *bytes, int len)
 
 
 %if option_yy_scan_buffer
-YY_BUFFER_STATE yy_scan_buffer(yy_lexer_t *yy_lexer,
-                               char *base, size_t size)
+yy_buffer_state_t *yy_scan_buffer(yy_lexer_t *yy_lexer,
+                                  char *base, size_t size)
 {
-  YY_BUFFER_STATE b;
+  yy_buffer_state_t *b;
 
   if (size < 2 ||
       base[size - 2] != YY_END_OF_BUFFER_CHAR ||
@@ -1314,7 +1314,7 @@ YY_BUFFER_STATE yy_scan_buffer(yy_lexer_t *yy_lexer,
     return 0;
   }
 
-  b = (YY_BUFFER_STATE)yy_flex_alloc(sizeof(yy_buffer_state_t));
+  b = (yy_buffer_state_t*)yy_flex_alloc(sizeof(yy_buffer_state_t));
   if (!b) {
     YY_FATAL_ERROR("out of dynamic memory in yy_scan_buffer()");
   }
@@ -1336,7 +1336,7 @@ YY_BUFFER_STATE yy_scan_buffer(yy_lexer_t *yy_lexer,
 }
 
 %if cpp_interface
-YY_BUFFER_STATE yyFlexLexer::yym_scan_buffer(char *base, size_t size)
+yy_buffer_state_t *yyFlexLexer::yym_scan_buffer(char *base, size_t size)
 {
   return yy_scan_buffer(&yym_lexer_state, base, size);
 }

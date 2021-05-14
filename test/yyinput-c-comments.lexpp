@@ -40,3 +40,14 @@ static void error(char const *msg)
               }
             }
           }
+
+%%
+
+void dummy(yyFlexLexer &lexer)
+{
+  /* Simply test that 'YY_BUFFER_STATE' is exported when
+   * %option flex-compat is specified. */
+  YY_BUFFER_STATE b;
+  b = lexer.yym_create_buffer(&std::cin, YY_BUF_SIZE);
+  lexer.yym_switch_to_buffer(b);
+}

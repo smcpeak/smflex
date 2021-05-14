@@ -145,29 +145,24 @@ void input_scan_unread_character(input_scan_lexer_t *yy_lexer, int c);
  * scanning 'input_file'. */
 void input_scan_restart(input_scan_lexer_t *yy_lexer, FILE *input_file);
 
-/* Pointer to an opaque type that represents an input source along
- * with a read buffer for that source.  See the manual section
- * "Multiple Input Buffers" for more details. */
-typedef input_scan_buffer_state_t *INPUT_SCAN_BUFFER_STATE;
-
 /* Create a new buffer for use with 'yy_lexer' that reads from 'file'.
  * The 'size' is the size of the read buffer; 8192 is a reasonable
  * value to use. */
 /* TODO: The manual advises using YY_BUF_SIZE, but that value is not
  * currently exported. */
-INPUT_SCAN_BUFFER_STATE input_scan_create_buffer(input_scan_lexer_t *yy_lexer, FILE *file,
-                                 int size);
+input_scan_buffer_state_t *input_scan_create_buffer(input_scan_lexer_t *yy_lexer, FILE *file,
+                                    int size);
 
 /* Make 'new_buffer' the active input source for 'yy_lexer'. */
-void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE new_buffer);
+void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *new_buffer);
 
 /* Deallocate 'b' and release any resources associated with it. */
-void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE b);
+void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *b);
 
 /* Discard any already-read data from the input source associated with
  * 'b'.  Future attempts to read will start by reading new data from
  * that source. */
-void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE b);
+void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *b);
 
 /* Set the start state of 'yy_lexer' to 'state'.  This function must be
  * used instead of BEGIN when not within a rule action. */

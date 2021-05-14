@@ -176,7 +176,7 @@ static void *yy_flex_realloc(void *, size_t);
 static void yy_flex_free(void *);
 
 static void input_scan_load_buffer_state(input_scan_lexer_t *yy_lexer);
-static void input_scan_init_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE b,
+static void input_scan_init_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *b,
                            FILE *file);
 
 /* If 'yy_lexer' does not have a current buffer, create one. */
@@ -3117,7 +3117,7 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
 
     while (num_to_read <= 0) {  /* Not enough room in the buffer - grow it. */
       /* just a shorter name for the current buffer */
-      INPUT_SCAN_BUFFER_STATE b = yy_lexer->yy_current_buffer;
+      input_scan_buffer_state_t *b = yy_lexer->yy_current_buffer;
 
       int yy_c_buf_p_offset = (int) (yy_lexer->yy_c_buf_p - b->yy_ch_buf);
 
@@ -3363,7 +3363,7 @@ void input_scan_restart(input_scan_lexer_t *yy_lexer, FILE *input_file)
 
 
 
-void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE new_buffer)
+void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *new_buffer)
 {
   if (yy_lexer->yy_current_buffer == new_buffer) {
     return;
@@ -3398,12 +3398,12 @@ static void input_scan_load_buffer_state(input_scan_lexer_t *yy_lexer)
 }
 
 
-INPUT_SCAN_BUFFER_STATE input_scan_create_buffer(input_scan_lexer_t *yy_lexer,
-                                 FILE *file, int size)
+input_scan_buffer_state_t *input_scan_create_buffer(input_scan_lexer_t *yy_lexer,
+                                    FILE *file, int size)
 {
-  INPUT_SCAN_BUFFER_STATE b;
+  input_scan_buffer_state_t *b;
 
-  b = (INPUT_SCAN_BUFFER_STATE)yy_flex_alloc(sizeof(input_scan_buffer_state_t));
+  b = (input_scan_buffer_state_t*)yy_flex_alloc(sizeof(input_scan_buffer_state_t));
   if (!b) {
     YY_FATAL_ERROR("out of dynamic memory in input_scan_create_buffer()");
   }
@@ -3427,7 +3427,7 @@ INPUT_SCAN_BUFFER_STATE input_scan_create_buffer(input_scan_lexer_t *yy_lexer,
 
 
 
-void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE b)
+void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *b)
 {
   if (!b) {
     return;
@@ -3448,7 +3448,7 @@ void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_ST
 
 
 static void input_scan_init_buffer(input_scan_lexer_t *yy_lexer,
-                           INPUT_SCAN_BUFFER_STATE b, FILE *file)
+                           input_scan_buffer_state_t *b, FILE *file)
 {
   input_scan_flush_buffer(yy_lexer, b);
 
@@ -3460,7 +3460,7 @@ static void input_scan_init_buffer(input_scan_lexer_t *yy_lexer,
 }
 
 
-void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, INPUT_SCAN_BUFFER_STATE b)
+void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *b)
 {
   if (!b) {
     return;

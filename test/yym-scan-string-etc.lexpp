@@ -29,7 +29,7 @@ int main()
   data[size+1] = 0;
 
   printf("Scanning with 'yym_scan_string'...\n");
-  YY_BUFFER_STATE buf = lexer.yym_scan_string(data);
+  yy_buffer_state_t *buf = lexer.yym_scan_string(data);
   while (lexer.yym_lex())
     {}
   lexer.yym_delete_buffer(buf);

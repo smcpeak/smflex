@@ -30,7 +30,7 @@ int main()
   yy_construct(&lexer);
 
   printf("Scanning with 'yy_scan_string'...\n");
-  YY_BUFFER_STATE buf = yy_scan_string(&lexer, data);
+  yy_buffer_state_t *buf = yy_scan_string(&lexer, data);
   while (yy_lex(&lexer))
     {}
   yy_delete_buffer(&lexer, buf);

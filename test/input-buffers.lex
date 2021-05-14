@@ -15,7 +15,7 @@
 
 %{
 #define MAX_INCLUDE_DEPTH 10
-YY_BUFFER_STATE include_stack[MAX_INCLUDE_DEPTH];
+yy_buffer_state_t *include_stack[MAX_INCLUDE_DEPTH];
 int include_stack_len = 0;
 %}
 
@@ -38,7 +38,7 @@ include[ ]+         BEGIN(incl);
           }
           include_stack[include_stack_len++] = YY_CURRENT_BUFFER;
 
-          YY_BUFFER_STATE newbuf = yy_create_buffer(yy_lexer, fp, YY_BUF_SIZE);
+          yy_buffer_state_t *newbuf = yy_create_buffer(yy_lexer, fp, YY_BUF_SIZE);
           yy_switch_to_buffer(yy_lexer, newbuf);
 
           /* Start condition for processing the new file. */

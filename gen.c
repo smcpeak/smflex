@@ -1349,6 +1349,12 @@ static char lookup_result[MAX_PREFIX_LEN + 100];
  * including the generated header or by linking with the generated
  * scanner. */
 static char const *all_caps_prefix_names[] = {
+  /* This is the only capitalized name that is part of the public API,
+   * and even then, only with "%option flex-compat".  Going forward, my
+   * plan is to that things in the public API have lowercase names,
+   * while things only usable from within the scanner definition use
+   * uppercase names.  Therefore, this should be the only entry in this
+   * table. */
   "YY_BUFFER_STATE",
 };
 

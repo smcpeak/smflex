@@ -1600,19 +1600,14 @@ mechanism for creating and switching between multiple input buffers. An
 input buffer is created by using:
 
 <pre><code>
-    YY_BUFFER_STATE yy_create_buffer(yy_lexer_t *yy_lexer, FILE *file, int size)
+    yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer, FILE *file, int size)
 </code></pre>
 
 <p>which takes a <code>FILE</code> pointer and a size and creates a buffer
 associated with the given file and large enough to hold <code>size</code>
 characters (when in doubt, use <code>YY_BUF_SIZE</code> for the size). It
-returns a <code>YY_BUFFER_STATE</code> handle, which may then be
-passed to other routines (see below). The <code>YY_BUFFER_STATE</code>
-type is a pointer to an opaque <code>struct yy_buffer_state_struct</code>
-structure, so you may safely initialize <code>YY_BUFFER_STATE</code> variables to
-<code>((YY_BUFFER_STATE) 0)</code> if you wish, and also refer to the
-opaque structure in order to correctly declare input buffers in source
-files other than that of your scanner.
+returns a <code>yy_buffer_state_t*</code>, pointer which may then be
+passed to other routines (see below).
 
 <p>The <code>FILE</code>
 pointer in the call to <code>yy_create_buffer</code> is used to set
@@ -1629,7 +1624,7 @@ below) to close the file.
 You select a particular buffer to be the active input source with:
 
 <pre><code>
-    void yy_switch_to_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE new_buffer)
+    void yy_switch_to_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *new_buffer)
 </code></pre>
 
 <p>This switches the scanner's input buffer so subsequent tokens will come
@@ -1641,7 +1636,7 @@ this function does <em>not</em> change the start condition.
 <p>When finished scanning from a buffer, call:
 
 <pre><code>
-    void yy_delete_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE buffer)
+    void yy_delete_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *buffer)
 </code></pre>
 
 <p>to reclaim the storage associated with it.  If <code>buffer</code> is
@@ -1651,7 +1646,7 @@ this function does <em>not</em> change the start condition.
 particular source, call:
 
 <pre><code>
-    void yy_flush_buffer(yy_lexer_t *yy_lexer, YY_BUFFER_STATE buffer)
+    void yy_flush_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *buffer)
 </code></pre>
 
 <p>After calling this function, the next time the
@@ -1659,7 +1654,7 @@ scanner attempts to read data from the buffer, it will first fill
 the buffer anew using <code>YY_INPUT</code>.
 
 <p>Finally, the <code>YY_CURRENT_BUFFER</code> macro returns a
-<code>YY_BUFFER_STATE</code> handle to the current buffer.
+<code>yy_buffer_state_t*</code> pointer to the current buffer.
 
 <p>Here is an <a href="test/input-buffers.lex">example</a>
 of using these features for writing a scanner which
@@ -1672,7 +1667,7 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
 
     %{
     #define MAX_INCLUDE_DEPTH 10
-    YY_BUFFER_STATE include_stack[MAX_INCLUDE_DEPTH];
+    yy_buffer_state_t *include_stack[MAX_INCLUDE_DEPTH];
     int include_stack_len = 0;
     %}
 
@@ -1695,7 +1690,7 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
               }
               include_stack[include_stack_len++] = YY_CURRENT_BUFFER;
 
-              YY_BUFFER_STATE newbuf = yy_create_buffer(yy_lexer, fp, YY_BUF_SIZE);
+              yy_buffer_state_t *newbuf = yy_create_buffer(yy_lexer, fp, YY_BUF_SIZE);
               yy_switch_to_buffer(yy_lexer, newbuf);
 
               /* Start condition for processing the new file. */
@@ -1724,7 +1719,7 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
 <p>Three routines are available for setting up input buffers for
 scanning in-memory strings instead of files. All of them create a
 new input buffer for scanning the string, and return a corresponding
-<code>YY_BUFFER_STATE</code> handle (which you should delete with
+<code>yy_buffer_state_t*</code> pointer (which you should delete with
 <code>yy_delete_buffer()</code> when done with it). They also switch
 to the new buffer using <code>yy_switch_to_buffer()</code>, so the next
 call to <code>yy_lex()</code> will start scanning the string.
@@ -1964,7 +1959,7 @@ the rule actions.
     reassigned by the user.
 
 <li><p><code>YY_CURRENT_BUFFER</code>
-    returns a <code>YY_BUFFER_STATE</code> handle to the current
+    returns a <code>yy_buffer_state_t*</code> pointer to the current
     buffer.
 
 <li><p><code>YY_START</code>
@@ -2056,6 +2051,13 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
         <td><code>unput</code>
         <td><code>YY_UNREAD_CHARACTER</code>
     </table>
+
+    <p>Additionally, this adds to to the generated header file the
+    following typedef:
+
+    <pre><code>
+        typedef yy_buffer_state_t *YY_BUFFER_STATE;
+    </code></pre>
 
     <p>The intent of this option is to make it a bit easier to test
     with <code>smflex</code> during a transition period, rather than
@@ -4330,12 +4332,27 @@ run-time support library.  That has been removed as detailed below.
 
     <p>Replacement: Use <code>YY_START</code>.
 
+<li><p><code>struct yy_buffer_state</code>: The <code>flex-2.5.4</code>
+    manual advertised that if you want to declare a pointer to a buffer
+    from some external file, you should declare it as a pointer to
+    <code>struct yy_buffer_state</code>.  This type has been removed.
+    (Really it has been renamed, but it is no longer part of the public
+    API.)
+
+    <p>Rationale: Conjuring type declarations for foreign APIs out of
+    thin air is fragile.
+
+    <p>Replacement: Include the generated header file.  It declares all
+    of the types needed to use the API, as well as the API functions
+    themselves (which also would have needed to have been conjured when
+    using <code>flex-2.5.4</code>).
+
 </ul>
 
 
-<h2 id="renamed-functions-and-macros">Renamed Functions and Macros</h2>
+<h2 id="renamed-entities">Renamed Entities</h2>
 
-<p>Several functions and macros have been renamed:
+<p>Several entities have been renamed:
 
 <ul>
 
@@ -4377,6 +4394,18 @@ run-time support library.  That has been removed as detailed below.
     <p>With <code>%option flex-compat</code>, <code>unput()</code> is
     available as an alias for <code>YY_UNREAD_CHARACTER()</code>.
 
+<li><p>The <code>YY_BUFFER_STATE</code> type (implicitly a pointer) has
+    been renamed to <code>yy_buffer_state_t*</code> (explicitly a
+    pointer).
+
+    <p>Rationale: Making the pointerness implicit offers no additional
+    flexibility, while slightly increasing the potential for confusion.
+    More importantly, I am trying to organize the names so that
+    lowercase names are consistently exported as part of the external
+    API, while uppercase names are those only usable from within the
+    scanner definition file.  This type is meant for external use, so
+    that means it should be lowercase.
+
 </ul>
 
 <p>
@@ -4410,6 +4439,10 @@ Renaming summary:
   <tr>
     <td><code>unput</code>
     <td><code>YY_UNREAD_CHARACTER</code>
+    <td>Old name available with <code>%option flex-compat</code>.
+  <tr>
+    <td><code>YY_BUFFER_STATE</code>
+    <td><code>yy_buffer_state_t*</code>
     <td>Old name available with <code>%option flex-compat</code>.
 </table>
 
