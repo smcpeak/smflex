@@ -3030,9 +3030,9 @@ void input_scan_construct(input_scan_lexer_t *yy_lexer)
   yy_lexer->yy_last_accepting_state = 0; /* This can be a pointer. */
   yy_lexer->yy_last_accepting_cpos = NULL;
 
-  yy_lexer->yy_start_stack_ptr = 0;
-  yy_lexer->yy_start_stack_depth = 0;
-  yy_lexer->yy_start_stack = NULL;
+  yy_lexer->yy_start_stack_cur_size = 0;
+  yy_lexer->yy_start_stack_alloc_size = 0;
+  yy_lexer->yy_start_stack_array = NULL;
 
 }
 
@@ -3484,26 +3484,26 @@ void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_sta
 
 void yy_push_state(input_scan_lexer_t *yy_lexer, int new_state)
 {
-  if (yy_lexer->yy_start_stack_ptr >= yy_lexer->yy_start_stack_depth) {
+  if (yy_lexer->yy_start_stack_cur_size >= yy_lexer->yy_start_stack_alloc_size) {
     size_t new_size;
 
-    yy_lexer->yy_start_stack_depth += YY_START_STACK_INCR;
-    new_size = yy_lexer->yy_start_stack_depth * sizeof(int);
+    yy_lexer->yy_start_stack_alloc_size += YY_START_STACK_INCR;
+    new_size = yy_lexer->yy_start_stack_alloc_size * sizeof(int);
 
-    if (!yy_lexer->yy_start_stack) {
-      yy_lexer->yy_start_stack = (int*)yy_flex_alloc(new_size);
+    if (!yy_lexer->yy_start_stack_array) {
+      yy_lexer->yy_start_stack_array = (int*)yy_flex_alloc(new_size);
     }
     else {
-      yy_lexer->yy_start_stack =
-        (int*)yy_flex_realloc((void*)yy_lexer->yy_start_stack, new_size);
+      yy_lexer->yy_start_stack_array =
+        (int*)yy_flex_realloc((void*)yy_lexer->yy_start_stack_array, new_size);
     }
 
-    if (!yy_lexer->yy_start_stack) {
+    if (!yy_lexer->yy_start_stack_array) {
       YY_FATAL_ERROR("out of memory expanding start-condition stack");
     }
   }
 
-  yy_lexer->yy_start_stack[yy_lexer->yy_start_stack_ptr++] = YY_START;
+  yy_lexer->yy_start_stack_array[yy_lexer->yy_start_stack_cur_size++] = YY_START;
 
   BEGIN(new_state);
 }
@@ -3512,11 +3512,11 @@ void yy_push_state(input_scan_lexer_t *yy_lexer, int new_state)
 
 void yy_pop_state(input_scan_lexer_t *yy_lexer)
 {
-  if (--(yy_lexer->yy_start_stack_ptr) < 0) {
+  if (--(yy_lexer->yy_start_stack_cur_size) < 0) {
     YY_FATAL_ERROR("yy_pop_state: start-condition stack underflow");
   }
 
-  BEGIN(yy_lexer->yy_start_stack[yy_lexer->yy_start_stack_ptr]);
+  BEGIN(yy_lexer->yy_start_stack_array[yy_lexer->yy_start_stack_cur_size]);
 }
 
 

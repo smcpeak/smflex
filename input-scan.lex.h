@@ -137,9 +137,9 @@ struct input_scan_lexer_state_struct {
   char *yy_last_accepting_cpos;
 
   /* These variables are used to implement "%option stack". */
-  int yy_start_stack_ptr;
-  int yy_start_stack_depth;
-  int *yy_start_stack;
+  int yy_start_stack_cur_size;         /* Number of elements in stack. */
+  int yy_start_stack_alloc_size;       /* Allocated size of stack. */
+  int *yy_start_stack_array;           /* The stack.  [0] is bottom. */
 };
 
 typedef struct input_scan_lexer_state_struct input_scan_lexer_t;

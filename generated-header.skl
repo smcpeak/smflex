@@ -209,9 +209,9 @@ struct yy_lexer_state_struct {
 %endif
 %if option_stack
   /* These variables are used to implement "%option stack". */
-  int yy_start_stack_ptr;
-  int yy_start_stack_depth;
-  int *yy_start_stack;
+  int yy_start_stack_cur_size;         /* Number of elements in stack. */
+  int yy_start_stack_alloc_size;       /* Allocated size of stack. */
+  int *yy_start_stack_array;           /* The stack.  [0] is bottom. */
 %endif
 };
 
