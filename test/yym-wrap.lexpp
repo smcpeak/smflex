@@ -1,0 +1,62 @@
+/* yym-wrap.lexpp */
+/* Demonstrate overriding 'yym_wrap()'. */
+
+%{
+#include <fstream>                     /* std::ifstream */
+#include <stdio.h>                     /* perror */
+#include <stdlib.h>                    /* exit */
+%}
+
+%option c++
+
+%%
+username           printf("USERNAME");
+
+%%
+
+/* True once we have read the second input. */
+static int readSecondFile = 0;
+
+
+/* Define a derived class without having said "%option yyclass". */
+class MyLexer : public yyFlexLexer {
+public:
+  virtual int yym_wrap() /*override*/;
+};
+
+
+int MyLexer::yym_wrap()
+{
+  using std::ifstream;
+
+  if (!readSecondFile) {
+    readSecondFile = 1;
+
+    ifstream *in = new ifstream("username-yywrap.input2");
+    if (!*in) {
+      perror("open(username-yywrap.input2)");
+      exit(2);
+    }
+
+    yym_switch_streams(in);
+
+    /* Not done, keep going. */
+    return 0;
+  }
+  else {
+    delete yym_input_stream();
+
+    /* All done. */
+    return 1;
+  }
+}
+
+int main()
+{
+  MyLexer lexer;
+  while (lexer.yym_lex())
+    {}
+  return 0;
+}
+
+/* EOF */

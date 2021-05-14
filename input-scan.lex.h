@@ -56,6 +56,10 @@ typedef int input_scan_state_type_t;
  *
  * In addition to the allowed forms of member access, the API functions,
  * below, can be used to manipulate this structure.
+ *
+ * However, when the C++ interface is in use, it is considered to be the
+ * exclusive client of the C interface, and therefore the the client of
+ * the C++ interface should not access any members directly.
  */
 struct input_scan_lexer_state_struct {
   /* -------- Public members -------- */
@@ -84,6 +88,18 @@ struct input_scan_lexer_state_struct {
 
   /* Output sink for default ECHO. */
   FILE *yy_output_stream;
+
+  /* When the end of the current input is read, if it is not NULL, the
+   * scanner calls this to determine what to do next.  It can return
+   * true, meaning is no more input, and the scanner will terminate.  It
+   * can instead return false (0) after setting up a new input source,
+   * meaning the scanner will continue scanning with that new input.
+   *
+   * The type of the first parameter should be thought of as
+   * 'input_scan_lexer_t*'.
+   */
+  /* The initial value is NULL. */
+  int (*yy_wrap_function)(struct input_scan_lexer_state_struct *yy_lexer);
 
   /* -------- Semi-public members -------- */
   /* The input source we are currently reading from, and a buffer
@@ -172,8 +188,6 @@ void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_st
  * that source. */
 void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *b);
 
-
-/* -------- Scanning in-memory data -------- */
 /* -------- Manipulating the start state -------- */
 /* Set the start state of 'yy_lexer' to 'state'.  This function must be
  * used instead of BEGIN when not within a rule action. */

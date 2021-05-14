@@ -1143,6 +1143,8 @@ parameter.
 <!-- ======================================================= -->
 <h1 id="the-generated-scanner">THE GENERATED SCANNER</h1>
 
+<p>TODO: Rename this section to "The C API".
+
 <p>The output of <code>smflex</code> is the file <code>lex.yy.c</code>,
 which contains the scanning routine <code>yy_lex()</code>, a number of
 tables used by it for matching tokens, and a number of auxiliary routines
@@ -1228,6 +1230,36 @@ the section <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
 <p>The scanner writes its <code>ECHO</code> output to the
 <code>yyout</code> global (default, stdout), which may be redefined by
 the user simply by assigning it to some other <code>FILE</code> pointer.
+
+
+<h2 id="yy_lexer_t">The yy_lexer_t structure</h2>
+
+<p>TODO: Fill this out.
+
+<p>When using the C++ API, this structure should not be directly
+accessed.  The descriptions below apply only to the C API.
+
+<p><code>yy_lexer_t</code> contains the following public and
+   semi-public members:
+
+<dl>
+
+<dt id="yy-wrap-function"><code>int (*yy_wrap_function)(yy_state_t *yy_lexer)</code>
+
+    <dd><p>
+    When the end of the current input is read, if this is not
+    <code>NULL</code>, the scanner calls this to determine what to do
+    next.  It can return true, meaning is no more input, and the scanner
+    will terminate.  It can instead return false (0) after setting up a
+    new input source, meaning the scanner will continue scanning with
+    that new input.
+
+    <p>This member exists even if <code>%option yywrap</code> is not
+    specified.  The effect of <code>%option yywrap</code> is to
+    initialize it to <code>&amp;yy_wrap</code> and obligate the user to
+    define <code>yy_wrap()</code>.
+
+</dl>
 
 
 <!-- ======================================================= -->
@@ -2518,7 +2550,9 @@ number are equivalent to <code>smflex</code> flags or their negation:
 
     <p>When using <code>%option c++</code>, the name is
     <code>yym_wrap()</code> (note the "m"), and it is
-    a method of the <code>yyFlexLexer</code> class.
+    a method of either the <code>yyFlexLexer</code> class,
+    or of your derived class when using
+    <code>%option yyclass</code>.
 
 </dl>
 
@@ -3762,12 +3796,17 @@ scanner over input:
 
 <dt><code>virtual int yym_wrap()</code>
 
-<dd><p>If <a href="#option-yywrap"><code>%option yywrap</code></a>
-    is specified, then this will be invoked before <code>yym_lex()</code>
-    returns EOF.  If not using <code>%option yyclass</code>, then
-    define this as a method of <code>yyFlexLexer</code>, using the
-    existing declaration in the generated header file.  Otherwise,
-    declare and define it as a method of your derived class.
+<dd><p>This behaves like
+    <a href="#yy-wrap-function"><code>yy_wrap_function</code></a>.
+
+    <p>
+    The effect of <a href="#option-yywrap"><code>%option yywrap</code></a>
+    is to obligate the user to define this method, either as a member
+    of <code>yyFlexLexer</code>, or of the derived class when using
+    <code>%option yyclass</code>.  Otherwise, a definition will be
+    provided in <code>yyFlexLexer</code> that returns 1, which you then
+    have the option to override in a derived class (whether or not you
+    are using <code>%option yyclass</code>).
 
 <dt><code>yym_switch_to_buffer()</code>,
     <code>yym_create_buffer()</code>,

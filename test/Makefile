@@ -199,6 +199,7 @@ all-df: out/cpp-int-set-int-1.ok
 all-d : out/cpp-int-interactive.ok
 all-df: out/cpp-manual-example.ok
 all-df: out/cpp-prefix-yywrap-yyclass.ok
+all-df: out/cpp-prefix-yywrap2-yyclass.ok
 all-df: out/cpp-prefix-yywrap.ok
 all-df: out/cpp-prefix.ok
 all-df: out/cppscan-full.ok
@@ -245,6 +246,7 @@ all-df: out/username-yywrap.ok
 all-df: out/username.ok
 all-df: out/vert-bar-action.ok
 all-df: out/yy-input-redefined.ok
+all-df: out/yy-wrap-function.ok
 all-df: out/yyinput-c-comments.ok
 all-d : out/yyless-foobar.ok
 all-d : out/yylineno.ok
@@ -252,6 +254,7 @@ all-df: out/yym-begin.ok
 all-df: out/yym-read-character.ok
 all-df: out/yym-scan-string-etc.ok
 all-df: out/yym-set-bol.ok
+all-df: out/yym-wrap.ok
 all-d : out/yymore-mega-kludge.ok
 all-df: out/zap-me.ok
 
@@ -261,10 +264,14 @@ ifeq ($(TEST_CONFIG),default)
   all: all-d
 endif
 
-# These tests read additional files.
-username-yywrap.ok: username-yywrap.input2
-cppscan-yywrap.ok: cppscan-yywrap.input2
-input-buffers.ok: input-buffers.input2 input-buffers.input3 input-buffers.input4
+# These tests read additional files.  (I do not think I have all of
+# these dependencies quite right.)
+out/cpp-prefix-yywrap2-yyclass.ok: cppscan-yywrap.input2
+out/cppscan-yywrap.ok: cppscan-yywrap.input2
+out/input-buffers.ok: input-buffers.input2 input-buffers.input3 input-buffers.input4
+out/username-yywrap.ok: username-yywrap.input2
+out/yy-wrap-function.ok: yy-wrap-function.input2
+out/yym-wrap.ok: username-yywrap.input2
 
 # For "c-prefix", check that it does not export any "yy_" symbols.
 out/c-prefix-validated.ok: out/c-prefix.ok
