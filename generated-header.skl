@@ -394,6 +394,13 @@ public:      /* methods */
   yy_buffer_state_t *yym_scan_buffer(char *base, size_t size);
 %endif
   void yym_begin(int state);
+%if option_stack
+  void yym_push_state(int new_state);
+  void yym_pop_state();
+%if option_yy_top_state
+  int yym_top_state();
+%endif
+%endif
 %if option_yy_read_character
   int yym_read_character();
 %endif
@@ -452,11 +459,6 @@ public:      /* methods */
 
   /* This can be overridden to customize how errors are handled. */
   virtual void yym_LexerError(const char *msg);
-
-protected:   /* methods */
-  void yym_push_state(int new_state);
-  void yym_pop_state();
-  int yym_top_state();
 
 protected:   /* data */
   /* Underlying lexer state, around which this class is a wrapper. */
