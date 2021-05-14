@@ -3,7 +3,12 @@
 
 %option c++
 
-                int enter_special;
+%{
+#include <assert.h>                    /* assert */
+
+int enter_special;
+%}
+
 
 %x SPECIAL
 %%
@@ -26,6 +31,11 @@ int main()
   /* Repeatedly toggle 'enter_special' until EOF. */
   enter_special = 0;
   while (lexer.yym_lex()) {
+    /* We should have gotten into the state indicated by
+     * 'enter_special'. */
+    assert(lexer.yym_get_start_state() ==
+           (enter_special? SPECIAL : INITIAL));
+
     enter_special = !enter_special;
 
     lexer.yym_set_start_state(enter_special? SPECIAL : INITIAL);

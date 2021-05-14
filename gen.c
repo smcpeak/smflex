@@ -1300,6 +1300,7 @@ static char const *lower_prefix_names[] = {
   "yy_delete_buffer",
   "yy_destroy",
   "yy_flush_buffer",
+  "yy_get_start_state",
   "yy_init_buffer",
   "yy_load_buffer_state",
   "yy_scan_buffer",

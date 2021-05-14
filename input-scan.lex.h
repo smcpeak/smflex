@@ -196,6 +196,9 @@ void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_sta
  * used instead of BEGIN when not within a rule action. */
 void input_scan_set_start_state(input_scan_lexer_t *yy_lexer, int state);
 
+/* Get the current start state. */
+int input_scan_get_start_state(input_scan_lexer_t *yy_lexer);
+
 /* Set the start state to 'new_state', pushing the current start state
  * onto the state stack. */
 void yy_push_state(input_scan_lexer_t *yy_lexer, int new_state);

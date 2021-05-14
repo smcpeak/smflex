@@ -53,9 +53,7 @@
 #define BEGIN yy_lexer->yy_start_state = 1 + 2 *
 
 /* Translate the current start state into a value that can be later handed
- * to BEGIN to return to the state.  The YYSTATE alias is for lex
- * compatibility.
- */
+ * to BEGIN to return to the state. */
 #define YY_START ((yy_lexer->yy_start_state - 1) / 2)
 
 /* Action number for EOF rule of a given start state. */
@@ -1546,6 +1544,19 @@ void yy_set_start_state(yy_lexer_t *yy_lexer, int state)
 void yyFlexLexer::yym_set_start_state(int state)
 {
   yy_set_start_state(&yym_lexer_state, state);
+}
+%endif
+
+
+int yy_get_start_state(yy_lexer_t *yy_lexer)
+{
+  return YY_START;
+}
+
+%if cpp_interface
+int yyFlexLexer::yym_get_start_state()
+{
+  return yy_get_start_state(&yym_lexer_state);
 }
 %endif
 
