@@ -4796,6 +4796,13 @@ I have also found and fixed a few pre-existing bugs:
     one-line fix is in commit <code>d7106b2da2</code>, although that
     commit has many other changes too.
 
+<li><p>
+    In <code>flex-2.5.4</code>, creating a very deep stack of start
+    states with <code>yy_push_state</code> caused quadratic run time
+    due to inefficient allocation size growth.  The fix is to allocate
+    using exponentially growing sizes.  Commit <code>0b2a7c04a6</code>
+    contains the fix.
+
 </ul>
 
 
