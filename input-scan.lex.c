@@ -3281,6 +3281,7 @@ void input_scan_unread_character(input_scan_lexer_t *yy_lexer, int c)
 }
 
 
+
 /* Read one character from the current input source of 'yy_lexer'. */
 int input_scan_read_character(input_scan_lexer_t *yy_lexer)
 {
@@ -3345,6 +3346,7 @@ int input_scan_read_character(input_scan_lexer_t *yy_lexer)
 
   return c;
 }
+
 
 
 void input_scan_restart(input_scan_lexer_t *yy_lexer, FILE *input_file)

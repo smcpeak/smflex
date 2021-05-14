@@ -3771,6 +3771,11 @@ scanner over input:
     data sources and sinks are <code>i/ostream</code> pointers rather
     than <code>FILE*</code>.
 
+<dt><code>yym_read_character()</code> and
+    <code>yym_unread_character()</code>
+
+<dd><p>These also work like their C-interface counterparts.
+
 </dl>
 
 <p>When <code>yym_lex()</code> returns a non-zero value, these methods
@@ -4618,10 +4623,10 @@ members:
     <td><code>yym_LexerError</code>
   <tr>
     <td><code>yyunput</code>
-    <td>(removed)
+    <td><code>yym_unread_character</code>
   <tr>
     <td><code>yyinput</code>
-    <td>(removed)
+    <td><code>yym_read_character</code>
   <tr>
     <td><code>yy_load_buffer_state</code>
     <td>(removed)

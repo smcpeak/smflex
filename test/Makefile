@@ -248,6 +248,7 @@ all-df: out/yyinput-c-comments.ok
 all-d : out/yyless-foobar.ok
 all-d : out/yylineno.ok
 all-df: out/yym-begin.ok
+all-df: out/yym-read-character.ok
 all-df: out/yym-scan-string-etc.ok
 all-df: out/yym-set-bol.ok
 all-d : out/yymore-mega-kludge.ok
