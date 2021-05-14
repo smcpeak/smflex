@@ -44,13 +44,18 @@ typedef struct input_scan_buffer_state_struct input_scan_buffer_state_t;
 typedef int input_scan_state_type_t;
 
 
-/* This struct encapsulates the scanner state.
+/* This structure encapsulates the scanner state.
  *
- * The first section contains "public" members in the sense that they
- * can be directly accessed, and behave as documented in the manual.
+ * There are three kinds of members:
  *
- * The second section contains "private" members that clients should not
- * directly access.  Instead, use the API below.
+ * - Public members can be directly read and written.
+ *
+ * - Semi-public members can be directly read, but not written.
+ *
+ * - Private members cannot be directly accessed.
+ *
+ * In addition to the allowed forms of member access, the API functions,
+ * below, can be used to manipulate this structure.
  */
 struct input_scan_lexer_state_struct {
   /* -------- Public members -------- */
@@ -80,11 +85,12 @@ struct input_scan_lexer_state_struct {
   /* Output sink for default ECHO. */
   FILE *yy_output_stream;
 
-  /* -------- Private members -------- */
+  /* -------- Semi-public members -------- */
   /* The input source we are currently reading from, and a buffer
    * in front of it. */
   input_scan_buffer_state_t *yy_current_buffer;
 
+  /* -------- Private members -------- */
   /* Holds the character overwritten by a NUL when 'yy_text' is formed. */
   char yy_hold_char;
 

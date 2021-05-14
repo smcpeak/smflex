@@ -71,13 +71,18 @@ typedef int yy_state_type_t;
 class yyFlexLexer;           /* Defined below. */
 %endif
 
-/* This struct encapsulates the scanner state.
+/* This structure encapsulates the scanner state.
  *
- * The first section contains "public" members in the sense that they
- * can be directly accessed, and behave as documented in the manual.
+ * There are three kinds of members:
  *
- * The second section contains "private" members that clients should not
- * directly access.  Instead, use the API below.
+ * - Public members can be directly read and written.
+ *
+ * - Semi-public members can be directly read, but not written.
+ *
+ * - Private members cannot be directly accessed.
+ *
+ * In addition to the allowed forms of member access, the API functions,
+ * below, can be used to manipulate this structure.
  */
 struct yy_lexer_state_struct {
   /* -------- Public members -------- */
@@ -127,11 +132,12 @@ struct yy_lexer_state_struct {
   int yy_flex_debug;
 
 %endif
-  /* -------- Private members -------- */
+  /* -------- Semi-public members -------- */
   /* The input source we are currently reading from, and a buffer
    * in front of it. */
   yy_buffer_state_t *yy_current_buffer;
 
+  /* -------- Private members -------- */
   /* Holds the character overwritten by a NUL when 'yy_text' is formed. */
   char yy_hold_char;
 
