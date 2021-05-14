@@ -726,7 +726,7 @@ int input_scan_wrap(input_scan_lexer_t *lexer)
 /* set_input_file - open the given file (if NULL, stdin) for scanning */
 void set_input_file(char *file)
 {
-  if (file && strcmp(file, "-")) {
+  if (file && !str_eq(file, "-")) {
     infilename = copy_string(file);
     input_lexer.yy_input_stream = fopen(infilename, "r");
 

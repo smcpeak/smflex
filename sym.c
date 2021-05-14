@@ -34,8 +34,6 @@
 #include "misc.h"                      /* flexfatal, action_define */
 #include "nfa.h"                       /* mkstate */
 
-#include <string.h>                    /* strcmp */
-
 
 struct hash_entry *ndtbl[NAME_TABLE_HASH_SIZE];
 struct hash_entry *sctbl[START_COND_HASH_SIZE];
@@ -55,7 +53,7 @@ int addsym(char sym[], char *str_def, int int_def,
   struct hash_entry *successor;
 
   while (sym_entry) {
-    if (!strcmp(sym, sym_entry->name)) {        /* entry already exists */
+    if (str_eq(sym, sym_entry->name)) {        /* entry already exists */
       return -1;
     }
 
@@ -120,7 +118,7 @@ struct hash_entry *findsym(char sym[], hash_table table, int table_size)
   struct hash_entry *sym_entry = table[hashfunct(sym, table_size)];
 
   while (sym_entry) {
-    if (!strcmp(sym, sym_entry->name))
+    if (str_eq(sym, sym_entry->name))
       return sym_entry;
     sym_entry = sym_entry->next;
   }
