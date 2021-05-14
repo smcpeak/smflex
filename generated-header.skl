@@ -116,8 +116,8 @@ struct yy_lexer_state_struct {
   YY_OUTPUT_STREAM_TYPE *yy_output_stream;
 
 %if do_yylineno
-  /* Line number within the currently scanned file.  TODO: Does this
-   * work after 'yy_restart', etc.? */
+  /* Current line number in the input being scanned.  See the
+   * description in the manual for additional details. */
   int yy_lineno;
 
 %endif

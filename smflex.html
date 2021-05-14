@@ -1033,7 +1033,7 @@ an action:
     <p><code>yyless</code> is a macro; it can only be used in the
     <code>smflex</code> input file, not from other source files.
 
-<li><p><code>YY_UNREAD_CHARACTER(c)</code>
+<li><p id="yy-unread-character"><code>YY_UNREAD_CHARACTER(c)</code>
     puts the character <code>c</code> back onto the input stream. It
     will be the next character scanned. The
     <a href="test/unread-character-parenthesized.lex">following action</a> will take
@@ -1076,7 +1076,7 @@ an action:
     macro is not available.  Instead, you can call the
     <code>void yy_unread_character(yy_lexer_t *lexer, int c)</code> function.
 
-<li><p><code>YY_READ_CHARACTER()</code>
+<li><p id="yy-read-character"><code>YY_READ_CHARACTER()</code>
     reads the next character from the input.  Once a character is read in
     this way, it is considered "consumed", and will not be subsequently
     matched by scanner rules.  For example, the
@@ -1620,7 +1620,7 @@ However, you may want to use
 <code>yyin</code> yourself, for example (as shown in the example
 below) to close the file.
 
-<p>
+<p id="yy-switch-to-buffer">
 You select a particular buffer to be the active input source with:
 
 <pre><code>
@@ -1947,7 +1947,7 @@ the rule actions.
     assign <code>yyin</code> at the new input file and then call the
     scanner again to continue scanning.
 
-<li><p><code>void yy_restart(FILE *new_file)</code>
+<li><p id="yy-restart"><code>void yy_restart(FILE *new_file)</code>
     may be called to point <code>yyin</code> at the new input file. The
     switch-over to the new file is immediate (any previously buffered-up
     input is lost). Note that calling <code>yy_restart()</code> with
@@ -2474,8 +2474,25 @@ number are equivalent to <code>smflex</code> flags or their negation:
 <dt><code>yylineno</code>
 
 <dd><p>Generate a scanner that maintains
-    the number of the current line read from its input in the global
-    variable <code>yylineno</code>.
+    the number of the current line read from its input in the
+    <code>yy_lineno</code> field.
+
+    <p>Initially 1, <code>yy_lineno</code> is incremented once for
+    every newline in every matched token, and every newline seen by
+    <a href="#yy-read-character"><code>yy_read_character</code></a>.
+    It is decremented once per newline
+    seen by <a href="#yy-unread-character"><code>yy_unread_character</code></a>
+    (because that will presumably then be undone).
+
+    <p>This value is not otherwise manipulated by the scanning engine.
+    In particular, it is not affected by
+    <a href="#yy-restart"><code>yy_restart</code></a>,
+    <a href="#yy-switch-to-buffer"><code>yy_switch_to_buffer</code></a>,
+    <a href="#option-yywrap"><code>yy_wrap</code></a> activity,
+    etc.  If you want line numbers tracked across multiple input
+    sources, you have to save and restore this value yourself at
+    appropriate times.  The engine only knows to increment it when
+    newline characters go by.
 
 <dt><code>yymore</code>
 
