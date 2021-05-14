@@ -124,8 +124,12 @@ struct input_scan_lexer_state_struct {
    * remove that feature or this field, so for now they stay. */
   int yy_init;
 
-  /* Current start state number. */
-  int yy_start;
+  /* Current start state number.  This is a "start" state in the sense
+   * that it indicates the state in which the recognizer begins when
+   * 'input_scan_lex()' is called; the recognizer then transitions from there
+   * depending on what characters are seen.  Beware that the value of
+   * this field is different from what BEGIN and YY_START use.*/
+  int yy_start_state;
 
   /* Flag which is used to allow input_scan_wrap()'s to do buffer switches
    * instead of setting up a fresh 'yy_input_stream'.

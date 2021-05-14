@@ -714,14 +714,14 @@ void gen_start_state()
   if (jacobson) {
     if (bol_needed) {
       indent_puts
-        ("yy_current_state = yy_start_state_list[yy_lexer->yy_start + YY_AT_BOL()];");
+        ("yy_current_state = yy_start_state_list[yy_lexer->yy_start_state + YY_AT_BOL()];");
     }
     else
-      indent_puts("yy_current_state = yy_start_state_list[yy_lexer->yy_start];");
+      indent_puts("yy_current_state = yy_start_state_list[yy_lexer->yy_start_state];");
   }
 
   else {
-    indent_puts("yy_current_state = yy_lexer->yy_start;");
+    indent_puts("yy_current_state = yy_lexer->yy_start_state;");
 
     if (bol_needed)
       indent_puts("yy_current_state += YY_AT_BOL();");

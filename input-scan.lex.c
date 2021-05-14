@@ -31,13 +31,13 @@
  * but we do it the disgusting crufty way forced on us by the ()-less
  * definition of BEGIN.
  */
-#define BEGIN yy_lexer->yy_start = 1 + 2 *
+#define BEGIN yy_lexer->yy_start_state = 1 + 2 *
 
 /* Translate the current start state into a value that can be later handed
  * to BEGIN to return to the state.  The YYSTATE alias is for lex
  * compatibility.
  */
-#define YY_START ((yy_lexer->yy_start - 1) / 2)
+#define YY_START ((yy_lexer->yy_start_state - 1) / 2)
 
 /* Action number for EOF rule of a given start state. */
 #define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
@@ -1389,8 +1389,8 @@ int input_scan_lex(input_scan_lexer_t * const yy_lexer)
     YY_USER_INIT;
 #endif
 
-    if (!yy_lexer->yy_start)
-      yy_lexer->yy_start = 1;   /* first start state */
+    if (!yy_lexer->yy_start_state)
+      yy_lexer->yy_start_state = 1;   /* first start state */
 
     if (!yy_lexer->yy_input_stream)
       yy_lexer->yy_input_stream = stdin;
@@ -1416,7 +1416,7 @@ int input_scan_lex(input_scan_lexer_t * const yy_lexer)
      */
     yy_bp = yy_cp;
 
-    yy_current_state = yy_lexer->yy_start;
+    yy_current_state = yy_lexer->yy_start_state;
     yy_current_state += YY_AT_BOL();
 yy_match:
     do
@@ -3022,7 +3022,7 @@ void input_scan_construct(input_scan_lexer_t *yy_lexer)
 
   yy_lexer->yy_c_buf_p = NULL;
   yy_lexer->yy_init = 1;
-  yy_lexer->yy_start = 0;
+  yy_lexer->yy_start_state = 0;
   yy_lexer->yy_did_buffer_switch_on_eof = 0;
 
   yy_lexer->yy_wrap_function = NULL;
@@ -3171,7 +3171,7 @@ static input_scan_state_type_t yy_get_previous_state(input_scan_lexer_t *yy_lexe
   input_scan_state_type_t yy_current_state;
   char *yy_cp;
 
-  yy_current_state = yy_lexer->yy_start;
+  yy_current_state = yy_lexer->yy_start_state;
   yy_current_state += YY_AT_BOL();
 
   for (yy_cp = yy_lexer->yy_text + YY_MORE_ADJ;
