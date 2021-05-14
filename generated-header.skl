@@ -234,10 +234,8 @@ typedef yy_buffer_state_t *YY_BUFFER_STATE;
 
 %endif
 /* Create a new buffer for use with 'yy_lexer' that reads from 'file'.
- * The 'size' is the size of the read buffer; 8192 is a reasonable
- * value to use. */
-/* TODO: The manual advises using YY_BUF_SIZE, but that value is not
- * currently exported. */
+ * The 'size' is the size of the read buffer; a size of 0 means to use
+ * the default size smflex uses for its own buffers. */
 yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer, YY_INPUT_STREAM_TYPE *file,
                                     int size);
 
@@ -352,7 +350,7 @@ public:      /* methods */
    * here is that the 'yy_lexer_t*' parameter is omitted, as it is
    * implicitly carried by the object the method is invoked upon. */
   void yym_restart(YY_INPUT_STREAM_TYPE *s);
-  yy_buffer_state_t *yym_create_buffer(YY_INPUT_STREAM_TYPE *file, int size);
+  yy_buffer_state_t *yym_create_buffer(YY_INPUT_STREAM_TYPE *file, int size=0);
   void yym_switch_to_buffer(yy_buffer_state_t *new_buffer);
   void yym_delete_buffer(yy_buffer_state_t *b);
   void yym_flush_buffer(yy_buffer_state_t *b);

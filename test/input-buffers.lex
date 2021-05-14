@@ -38,7 +38,7 @@ include[ ]+         BEGIN(incl);
           }
           include_stack[include_stack_len++] = YY_CURRENT_BUFFER;
 
-          yy_buffer_state_t *newbuf = yy_create_buffer(yy_lexer, fp, YY_BUF_SIZE);
+          yy_buffer_state_t *newbuf = yy_create_buffer(yy_lexer, fp, 0 /*size*/);
           yy_switch_to_buffer(yy_lexer, newbuf);
 
           /* Start condition for processing the new file. */

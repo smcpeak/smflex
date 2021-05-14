@@ -146,10 +146,8 @@ void input_scan_unread_character(input_scan_lexer_t *yy_lexer, int c);
 void input_scan_restart(input_scan_lexer_t *yy_lexer, FILE *input_file);
 
 /* Create a new buffer for use with 'yy_lexer' that reads from 'file'.
- * The 'size' is the size of the read buffer; 8192 is a reasonable
- * value to use. */
-/* TODO: The manual advises using YY_BUF_SIZE, but that value is not
- * currently exported. */
+ * The 'size' is the size of the read buffer; a size of 0 means to use
+ * the default size smflex uses for its own buffers. */
 input_scan_buffer_state_t *input_scan_create_buffer(input_scan_lexer_t *yy_lexer, FILE *file,
                                     int size);
 

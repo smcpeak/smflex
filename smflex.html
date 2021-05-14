@@ -1605,7 +1605,7 @@ input buffer is created by using:
 
 <p>which takes a <code>FILE</code> pointer and a size and creates a buffer
 associated with the given file and large enough to hold <code>size</code>
-characters (when in doubt, use <code>YY_BUF_SIZE</code> for the size). It
+characters; a <code>size</code> of 0 means to use a reasonable default size. It
 returns a <code>yy_buffer_state_t*</code>, pointer which may then be
 passed to other routines (see below).
 
@@ -1690,7 +1690,7 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
               }
               include_stack[include_stack_len++] = YY_CURRENT_BUFFER;
 
-              yy_buffer_state_t *newbuf = yy_create_buffer(yy_lexer, fp, YY_BUF_SIZE);
+              yy_buffer_state_t *newbuf = yy_create_buffer(yy_lexer, fp, 0 /*size*/);
               yy_switch_to_buffer(yy_lexer, newbuf);
 
               /* Start condition for processing the new file. */

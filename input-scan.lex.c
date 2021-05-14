@@ -3408,6 +3408,9 @@ input_scan_buffer_state_t *input_scan_create_buffer(input_scan_lexer_t *yy_lexer
     YY_FATAL_ERROR("out of dynamic memory in input_scan_create_buffer()");
   }
 
+  if (size == 0) {
+    size = YY_BUF_SIZE;
+  }
   b->yy_buf_size = size;
 
   /* yy_ch_buf has to be 2 characters longer than the size given because

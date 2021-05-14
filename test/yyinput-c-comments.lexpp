@@ -50,4 +50,9 @@ void dummy(yyFlexLexer &lexer)
   YY_BUFFER_STATE b;
   b = lexer.yym_create_buffer(&std::cin, YY_BUF_SIZE);
   lexer.yym_switch_to_buffer(b);
+  lexer.yym_delete_buffer(b);
+
+  /* Exercise not passing a size. */
+  b = lexer.yym_create_buffer(&std::cin);
+  lexer.yym_switch_to_buffer(b);
 }
