@@ -6,3 +6,4 @@
 [state 2] endfoo
 [state 0] comment with  lots of stars
 [state 0] comment with paren  in it
+(yy_top_[state 0]) here should be ignored

@@ -3523,7 +3523,7 @@ void yy_push_state(input_scan_lexer_t *yy_lexer, int new_state)
 void yy_pop_state(input_scan_lexer_t *yy_lexer)
 {
   if (--(yy_lexer->yy_start_stack_ptr) < 0) {
-    YY_FATAL_ERROR("start-condition stack underflow");
+    YY_FATAL_ERROR("yy_pop_state: start-condition stack underflow");
   }
 
   BEGIN(yy_lexer->yy_start_stack[yy_lexer->yy_start_stack_ptr]);

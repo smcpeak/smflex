@@ -6,3 +6,4 @@ state quick open (**) and close
 state endfoo
 state comment with (**********) lots of stars
 state comment with paren (* ) *) in it
+(yy_top_state) here should be ignored
