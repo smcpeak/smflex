@@ -107,8 +107,6 @@ char const *prefix;
 char const *all_caps_prefix;
 char *yyclass;
 int do_stdinit;
-char **input_files;
-int num_input_files;
 
 /* Make sure program_name is initialized so we don't crash if writing
  * out an error message before getting the program name from argv[0].
@@ -702,13 +700,13 @@ void flexinit(int argc, char **argv)
   get_next_arg:;
   }
 
-  num_input_files = argc;
-  input_files = argv;
-
   /* Do this before setting the input file.  We never destroy this. */
   input_scan_construct(&input_lexer);
 
-  set_input_file(num_input_files > 0 ? input_files[0] : NULL);
+  if (argc != 1) {
+    flexerror(_("smflex requires exactly one input file"));
+  }
+  set_input_file(argv[0]);
 
   lastccl = lastsc = lastdfa = lastnfa = 0;
   num_rules = num_eof_rules = default_rule = 0;
@@ -948,7 +946,7 @@ void set_up_initial_allocations()
 
 /* Text to print in response to --help. */
 static const char *usage_text[] = {
-  "Usage: smflex [options] [input.lex [...]]",
+  "Usage: smflex [options] input.lex [...]",
   "",
   "Options that affect what input smflex accepts:",
   "",

@@ -204,7 +204,7 @@
 <h1 id="synopsis">SYNOPSIS</h1>
 
 <pre><code>
-  smflex [options] [input.lex [...]]
+  smflex [options] input.lex [...]
 </code></pre>
 
 <p>Briefly, the options are as follows
@@ -4238,6 +4238,22 @@ to be of continued value.
     from the start (and may mandate that, or perhaps merely provide a
     warning).  If that is done, then there is little need for the
     aliases.
+
+<li><p><code>flex-2.5.4</code> is willing to read its input from
+    standard input if no input files are specified, and from multiple
+    input files (effectively concatenating them) if multiple are
+    specified.  <code>smflex</code> insists there be exactly one
+    input file.
+
+    <p>Rationale: I want to derive the default output file and
+    prefix name from the input file, in part to ensure people use
+    prefix names from the start, but that requires there be at
+    least one file.  Multiple input files are weird, and also cause
+    a problem for naming because the first input file might not have
+    a distinguishing name (e.g., if it is boilerplate).
+
+    <p>Replacement: Put the input into a named file, concatenating
+    multiple files beforehand if necessary.
 
 </ul>
 

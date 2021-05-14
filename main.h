@@ -109,8 +109,6 @@ extern int option_flex_compat;
  * all_caps_prefix - same as 'prefix' but in all caps
  * yyclass - if not NULL, yyFlexLexer subclass to use for 'lex' method
  * do_stdinit - whether to initialize yy_input_stream/yy_output_stream to stdin/stdout
- * input_files - array holding names of input files
- * num_input_files - size of input_files array
  * program_name - name with which program was invoked
  *
  * action_array - array to hold the rule actions
@@ -132,8 +130,6 @@ extern char const *prefix;
 extern char const *all_caps_prefix;
 extern char *yyclass;
 extern int do_stdinit;
-extern char **input_files;
-extern int num_input_files;
 extern char *program_name;
 extern char *action_array;
 extern int action_size;

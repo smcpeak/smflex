@@ -78,7 +78,7 @@
 %}
 
 %option caseless nodefault outfile="input-scan.lex.c" stack
-%option nostdinit yywrap
+%option nostdinit
 %option prefix="input_scan"
 %option yy_read_character
 %option yy_unread_character
@@ -709,34 +709,14 @@ LEXOPT          [aceknopr]
 input_scan_lexer_t input_lexer;
 
 
-/* Wrapup a file in the lexical analyzer and possibly move on to
- * the next file. */
-int input_scan_wrap(input_scan_lexer_t *lexer)
-{
-  if (--num_input_files > 0) {
-    set_input_file(*++input_files);
-    return 0;
-  }
-
-  else
-    return 1;
-}
-
-
 /* set_input_file - open the given file (if NULL, stdin) for scanning */
 void set_input_file(char *file)
 {
-  if (file && !str_eq(file, "-")) {
-    infilename = copy_string(file);
-    input_lexer.yy_input_stream = fopen(infilename, "r");
+  infilename = copy_string(file);
+  input_lexer.yy_input_stream = fopen(infilename, "r");
 
-    if (input_lexer.yy_input_stream == NULL)
-      lerrsf(_("can't open %s"), file);
-  }
-
-  else {
-    input_lexer.yy_input_stream = stdin;
-    infilename = copy_string("<stdin>");
+  if (input_lexer.yy_input_stream == NULL) {
+    lerrsf(_("can't open %s"), file);
   }
 
   linenum = 1;

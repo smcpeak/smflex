@@ -163,10 +163,6 @@ void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_st
  * that source. */
 void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *b);
 
-/* The 'smflex' user must define this function.  It can return 0 after
- * calling 'input_scan_restart' to begin processing another file, or return 1 to
- * indicate there are no more files to process. */
-int input_scan_wrap(input_scan_lexer_t *yy_lexer);
 
 /* -------- Scanning in-memory data -------- */
 /* -------- Manipulating the start state -------- */
