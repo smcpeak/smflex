@@ -3575,7 +3575,7 @@ static void yy_flex_free(void *ptr)
 }
 
 
-void input_scan_begin(input_scan_lexer_t *yy_lexer, int state)
+void input_scan_set_start_state(input_scan_lexer_t *yy_lexer, int state)
 {
   BEGIN(state);
 }
@@ -3584,7 +3584,8 @@ void input_scan_begin(input_scan_lexer_t *yy_lexer, int state)
 
 
 
-/* BEGIN cannot be used in section 3.  Instead, 'input_scan_begin' is used. */
+/* BEGIN cannot be used in section 3.  Instead, 'input_scan_set_start_state' is
+ * used. */
 #undef BEGIN
 
 /* After this point, the user's section 3 code appears. */

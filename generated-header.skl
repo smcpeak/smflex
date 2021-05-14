@@ -307,7 +307,7 @@ yy_buffer_state_t *yy_scan_buffer(yy_lexer_t *yy_lexer, char *base, size_t size)
 /* -------- Manipulating the start state -------- */
 /* Set the start state of 'yy_lexer' to 'state'.  This function must be
  * used instead of BEGIN when not within a rule action. */
-void yy_begin(yy_lexer_t *yy_lexer, int state);
+void yy_set_start_state(yy_lexer_t *yy_lexer, int state);
 
 %if option_stack
 /* Set the start state to 'new_state', pushing the current start state
@@ -417,7 +417,7 @@ public:      /* methods */
 %if option_yy_scan_buffer
   yy_buffer_state_t *yym_scan_buffer(char *base, size_t size);
 %endif
-  void yym_begin(int state);
+  void yym_set_start_state(int state);
 %if option_stack
   void yym_push_state(int new_state);
   void yym_pop_state();

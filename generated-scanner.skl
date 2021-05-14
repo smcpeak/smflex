@@ -1537,15 +1537,15 @@ static void yy_flex_free(void *ptr)
 }
 
 
-void yy_begin(yy_lexer_t *yy_lexer, int state)
+void yy_set_start_state(yy_lexer_t *yy_lexer, int state)
 {
   BEGIN(state);
 }
 
 %if cpp_interface
-void yyFlexLexer::yym_begin(int state)
+void yyFlexLexer::yym_set_start_state(int state)
 {
-  yy_begin(&yym_lexer_state, state);
+  yy_set_start_state(&yym_lexer_state, state);
 }
 %endif
 
@@ -1581,7 +1581,8 @@ int main()
 %endif
 
 
-/* BEGIN cannot be used in section 3.  Instead, 'yy_begin' is used. */
+/* BEGIN cannot be used in section 3.  Instead, 'yy_set_start_state' is
+ * used. */
 #undef BEGIN
 
 /* After this point, the user's section 3 code appears. */

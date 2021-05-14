@@ -1,5 +1,5 @@
-/* yym-begin.lexpp */
-/* Illustrate calling yym_begin(). */
+/* yym-set-start-state.lexpp */
+/* Illustrate calling yym_set_start_state(). */
 
 %option c++
 
@@ -28,7 +28,7 @@ int main()
   while (lexer.yym_lex()) {
     enter_special = !enter_special;
 
-    lexer.yym_begin(enter_special? SPECIAL : INITIAL);
+    lexer.yym_set_start_state(enter_special? SPECIAL : INITIAL);
   }
 
   return 0;
