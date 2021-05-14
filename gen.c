@@ -1123,13 +1123,11 @@ void make_tables()
   if (yymore_used) {
     indent_puts("#define yymore() (yy_lexer->yy_more_flag = 1)");
     indent_puts("#define YY_MORE_ADJ yy_lexer->yy_more_len");
-    indent_puts("#define YY_RESTORE_YY_MORE_OFFSET");
   }
 
   else {
     indent_puts("#define yymore() yymore_used_but_not_detected");
     indent_puts("#define YY_MORE_ADJ 0");
-    indent_puts("#define YY_RESTORE_YY_MORE_OFFSET");
   }
 
   out_with_line_directive_substitution(&action_array[defs1_offset]);

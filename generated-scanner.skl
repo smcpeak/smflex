@@ -118,7 +118,6 @@
   if (0) {} else { \
     /* Undo effects of setting up yy_text. */ \
     *yy_cp = yy_lexer->yy_hold_char; \
-    YY_RESTORE_YY_MORE_OFFSET \
     yy_lexer->yy_c_buf_p = yy_cp = yy_bp + n - YY_MORE_ADJ; \
     YY_DO_BEFORE_ACTION; /* set up yy_text again */ \
   }
@@ -519,7 +518,6 @@ do_action:      /* This label is used only to access EOF actions. */
 
         /* Undo the effects of YY_DO_BEFORE_ACTION. */
         *yy_cp = yy_lexer->yy_hold_char;
-        YY_RESTORE_YY_MORE_OFFSET
 
         if (yy_lexer->yy_current_buffer->yy_buffer_status == YY_BUFFER_NEW) {
           /* We're scanning a new file or input source.  It's
