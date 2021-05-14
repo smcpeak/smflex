@@ -46,12 +46,14 @@ typedef int input_scan_state_type_t;
 
 /* This struct encapsulates the scanner state.
  *
- * Clients should, as much as possible, refrain from directly accessing
- * the members of this structure.  Instead, use the API below.  These
- * data members are subject to change between releases, while the API
- * is intended to be stable.  Please report cases where the API is
- * inadequate as bugs. */
+ * The first section contains "public" members in the sense that they
+ * can be directly accessed, and behave as documented in the manual.
+ *
+ * The second section contains "private" members that clients should not
+ * directly access.  Instead, use the API below.
+ */
 struct input_scan_lexer_state_struct {
+  /* -------- Public members -------- */
   /* Application-specific data.  The client of this interface is free
    * to use this value however they want.  'input_scan_construct' sets it to
    * NULL. */
@@ -59,7 +61,7 @@ struct input_scan_lexer_state_struct {
 
   /* After a rule pattern has been matched, this is set to point at the
    * matched text within 'yy_current_buffer', temporarily
-   * NUL-terminated.
+   * NUL-terminated.  It is only valid while an action is executing.
    *
    * NOTE: Within section 2 actions, there is also a 'yytext' (without
    * an underscore) macro that expands to 'yy_lexer->yy_text'. */
@@ -78,6 +80,7 @@ struct input_scan_lexer_state_struct {
   /* Output sink for default ECHO. */
   FILE *yy_output_stream;
 
+  /* -------- Private members -------- */
   /* The input source we are currently reading from, and a buffer
    * in front of it. */
   input_scan_buffer_state_t *yy_current_buffer;
