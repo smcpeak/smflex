@@ -174,6 +174,14 @@ int input_scan_wrap(input_scan_lexer_t *yy_lexer);
  * used instead of BEGIN when not within a rule action. */
 void input_scan_begin(input_scan_lexer_t *yy_lexer, int state);
 
+/* Set the start state to 'new_state', pushing the current start state
+ * onto the state stack. */
+void yy_push_state(input_scan_lexer_t *yy_lexer, int new_state);
+
+/* Set the start state to the element at the top of the stack and
+ * remove that element.  The stack must not be empty. */
+void yy_pop_state(input_scan_lexer_t *yy_lexer);
+
 /* -------- Interacting with an input stream -------- */
 /* Read a single character from the current input buffer of 'yy_lexer'.
  * Returns EOF (-1) on end of file. */

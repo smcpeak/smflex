@@ -280,14 +280,6 @@ int yy_wrap(yy_lexer_t *yy_lexer)
 #define yy_wrap(yy_lexer) 1
 %endif
 
-%if option_stack
-static void yy_push_state(yy_lexer_t *yy_lexer, int new_state);
-static void yy_pop_state(yy_lexer_t *yy_lexer);
-%if option_yy_top_state
-static int yy_top_state(yy_lexer_t *yy_lexer);
-%endif
-%endif
-
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
 #  define YY_READ_BUF_SIZE 8192
@@ -1360,7 +1352,7 @@ yy_buffer_state_t *yyFlexLexer::yym_scan_buffer(char *base, size_t size)
 
 
 %if option_stack
-static void yy_push_state(yy_lexer_t *yy_lexer, int new_state)
+void yy_push_state(yy_lexer_t *yy_lexer, int new_state)
 {
   if (yy_lexer->yy_start_stack_ptr >= yy_lexer->yy_start_stack_depth) {
     size_t new_size;
@@ -1394,7 +1386,7 @@ void yyFlexLexer::yym_push_state(int new_state)
 %endif
 
 
-static void yy_pop_state(yy_lexer_t *yy_lexer)
+void yy_pop_state(yy_lexer_t *yy_lexer)
 {
   if (--(yy_lexer->yy_start_stack_ptr) < 0) {
     YY_FATAL_ERROR("start-condition stack underflow");
@@ -1412,7 +1404,7 @@ void yyFlexLexer::yym_pop_state()
 
 
 %if option_yy_top_state
-static int yy_top_state(yy_lexer_t *yy_lexer)
+int yy_top_state(yy_lexer_t *yy_lexer)
 {
   return yy_lexer->yy_start_stack[yy_lexer->yy_start_stack_ptr - 1];
 }
