@@ -209,8 +209,8 @@ void input_scan_set_bol(input_scan_lexer_t *yy_lexer, int at_bol)
 
 typedef unsigned char YY_CHAR;
 
-static input_scan_state_type yy_get_previous_state(input_scan_lexer_t *yy_lexer);
-static input_scan_state_type yy_try_NUL_trans(input_scan_lexer_t *yy_lexer, input_scan_state_type current_state);
+static input_scan_state_type_t yy_get_previous_state(input_scan_lexer_t *yy_lexer);
+static input_scan_state_type_t yy_try_NUL_trans(input_scan_lexer_t *yy_lexer, input_scan_state_type_t current_state);
 static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer);
 static void yy_fatal_error(input_scan_lexer_t *yy_lexer, char const *msg);
 
@@ -1373,7 +1373,7 @@ static void yy_pop_state(input_scan_lexer_t *yy_lexer);
 int input_scan_lex(input_scan_lexer_t * const yy_lexer)
 {
 
-  input_scan_state_type yy_current_state;
+  input_scan_state_type_t yy_current_state;
   char *yy_cp, *yy_bp;
   int yy_act;
 
@@ -2933,7 +2933,7 @@ case YY_STATE_EOF(LINEDIR):
         if (yy_lexer->yy_c_buf_p <=
               &yy_lexer->yy_current_buffer->yy_ch_buf[yy_lexer->yy_n_chars]) {
           /* This was really a NUL. */
-          input_scan_state_type yy_next_state;
+          input_scan_state_type_t yy_next_state;
 
           yy_lexer->yy_c_buf_p = yy_lexer->yy_text + yy_amount_of_matched_text;
 
@@ -3185,9 +3185,9 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
 
 
 /* yy_get_previous_state - get the state just before the EOB char was reached */
-static input_scan_state_type yy_get_previous_state(input_scan_lexer_t *yy_lexer)
+static input_scan_state_type_t yy_get_previous_state(input_scan_lexer_t *yy_lexer)
 {
-  input_scan_state_type yy_current_state;
+  input_scan_state_type_t yy_current_state;
   char *yy_cp;
 
   yy_current_state = yy_lexer->yy_start;
@@ -3220,7 +3220,7 @@ static input_scan_state_type yy_get_previous_state(input_scan_lexer_t *yy_lexer)
  * synopsis
  *      next_state = yy_try_NUL_trans(yy_lexer, current_state);
  */
-static input_scan_state_type yy_try_NUL_trans(input_scan_lexer_t *yy_lexer, input_scan_state_type yy_current_state)
+static input_scan_state_type_t yy_try_NUL_trans(input_scan_lexer_t *yy_lexer, input_scan_state_type_t yy_current_state)
 {
   int yy_is_jam;
   char *yy_cp = yy_lexer->yy_c_buf_p;

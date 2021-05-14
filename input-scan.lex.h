@@ -41,7 +41,7 @@ typedef struct input_scan_buffer_state_struct input_scan_buffer_state_t;
 /* This is the type of 'yy_current_state' (among other things), which
  * is the current state within the finite state automaton that is
  * responsible for recognizing tokens. */
-typedef int input_scan_state_type;
+typedef int input_scan_state_type_t;
 
 
 /* This struct encapsulates the scanner state. */
@@ -103,7 +103,7 @@ struct input_scan_lexer_state_struct {
   int yy_did_buffer_switch_on_eof;
 
   /* These are related to backing up when REJECT is *not* used. */
-  input_scan_state_type yy_last_accepting_state;
+  input_scan_state_type_t yy_last_accepting_state;
   char *yy_last_accepting_cpos;
 
   /* These variables are used to implement "%option stack". */

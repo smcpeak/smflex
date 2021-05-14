@@ -68,7 +68,7 @@ static int indent_level = 0;    /* each level is 8 spaces */
 static char C_int_decl[] =   "static const int %s[%d] =\n    {   0,\n";
 static char C_short_decl[] = "static const short int %s[%d] =\n    {   0,\n";
 static char C_long_decl[] =  "static const long int %s[%d] =\n    {   0,\n";
-static char C_state_decl[] = "static const %s_state_type %s[%d] =\n    {   0,\n";
+static char C_state_decl[] = "static const %s_state_type_t %s[%d] =\n    {   0,\n";
 
 
 /* Indent to the current level. */
@@ -1374,7 +1374,7 @@ static char const *lower_prefix_names[] = {
   "yy_scan_string",
   "yy_set_bol",
   "yy_set_interactive",
-  "yy_state_type",
+  "yy_state_type_t",
   "yy_switch_to_buffer",
   "yy_trans_info_t",
   "yy_trans_info_struct",
