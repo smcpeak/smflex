@@ -154,7 +154,7 @@ void genctbl()
   int end_of_buffer_action = num_rules + 1;
 
   /* Table of verify for transition and offset to next state. */
-  out_dec("static const yy_trans_info yy_transition[%d] =\n",
+  out_dec("static const yy_trans_info_t yy_transition[%d] =\n",
           tblend + numecs + 1);
   outn("    {");
 
@@ -224,7 +224,7 @@ void genctbl()
   outn("    };\n");
 
   /* Table of pointers to start states. */
-  out_dec("static const yy_trans_info *yy_start_state_list[%d] =\n",
+  out_dec("static const yy_trans_info_t *yy_start_state_list[%d] =\n",
           lastsc * 2 + 1);
   outn("    {");                /* } so vi doesn't get confused */
 
@@ -505,7 +505,7 @@ void gen_next_match()
 
   else if (jacobson) {
     /* In this version of the inner loop, 'yy_current_state' is a
-     * pointer to an array of 'yy_trans_info', and that array is
+     * pointer to an array of 'yy_trans_info_t', and that array is
      * indexed into using the current character (or character class).
      * If the 'yy_verify' of the indicated entry equals the current
      * character, then we enter the loop body to update
@@ -528,7 +528,7 @@ void gen_next_match()
      */
 
     indent_lbrace();
-    indent_puts ("const yy_trans_info *yy_trans_info_ptr;\n");
+    indent_puts ("const yy_trans_info_t *yy_trans_info_ptr;\n");
     indent_puts ("YY_CHAR yy_c;\n");
     indent_put2s("for (yy_c = %s;", char_map);
     indent_puts ("     (yy_trans_info_ptr = &yy_current_state[(unsigned)yy_c])");
@@ -666,7 +666,7 @@ void gen_NUL_trans()
     do_indent();
     out_dec("int yy_c = %d;\n", NUL_ec);
 
-    indent_puts("const yy_trans_info *yy_trans_info_ptr;\n");
+    indent_puts("const yy_trans_info_t *yy_trans_info_ptr;\n");
     indent_puts("yy_trans_info_ptr = &yy_current_state[(unsigned int) yy_c];");
     indent_puts("yy_current_state += yy_trans_info_ptr->yy_nxt;");
 
@@ -1057,7 +1057,7 @@ void make_tables()
 
     indent_put2s("%s yy_nxt;", trans_offset_type);
     indent_down();
-    indent_puts("} yy_trans_info;");
+    indent_puts("} yy_trans_info_t;");
   }
 
   if (jacobson)
@@ -1376,7 +1376,7 @@ static char const *lower_prefix_names[] = {
   "yy_set_interactive",
   "yy_state_type",
   "yy_switch_to_buffer",
-  "yy_trans_info",
+  "yy_trans_info_t",
   "yy_trans_info_struct",
   "yy_lex",
   "yy_read_character",

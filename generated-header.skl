@@ -55,14 +55,14 @@ extern "C" {
 /* Opaque types defined in the generated scanner code. */
 typedef struct yy_buffer_state_struct yy_buffer_state_t;
 %if jacobson
-typedef struct yy_trans_info_struct yy_trans_info;
+typedef struct yy_trans_info_struct yy_trans_info_t;
 %endif
 
 /* This is the type of 'yy_current_state' (among other things), which
  * is the current state within the finite state automaton that is
  * responsible for recognizing tokens. */
 %if jacobson
-typedef yy_trans_info const *yy_state_type;
+typedef yy_trans_info_t const *yy_state_type;
 %else
 typedef int yy_state_type;
 %endif

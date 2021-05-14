@@ -852,9 +852,9 @@ int str_eq(char const *s1, char const *s2)
 }
 
 
-/* transition_struct_out - output a yy_trans_info structure
+/* transition_struct_out - output a yy_trans_info_t structure
  *
- * outputs the yy_trans_info structure with the two elements, element_v and
+ * outputs the yy_trans_info_t structure with the two elements, element_v and
  * element_n.  Formats the output with spaces and carriage returns.
  */
 void transition_struct_out(int element_v, int element_n)
