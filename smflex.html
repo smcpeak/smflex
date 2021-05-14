@@ -4655,7 +4655,7 @@ members:
 <h2 id="new-features">New Features</h2>
 
 <p>
-There is one new feature:
+There is are a few new features:
 
 <ul>
 
@@ -4667,6 +4667,14 @@ There is one new feature:
     the C interface.  The key change making that possible is the
     change to emit a per-scanner header file rather than forcing all
     scanners to share the same one.
+
+<li><p>
+    <code>flex-2.5.4</code> did not allow <code>%option c++</code> to be
+    used with <code>yy_scan_string</code>, <code>yy_scan_bytes</code>,
+    or <code>yy_scan_byffer</code>.  Arguably this was not a major
+    limitation because the C++ scanner reads from <code>istream</code>,
+    which can read from memory, but it was a needless discrepancy.
+    These are now all compatible.
 
 </ul>
 
