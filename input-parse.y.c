@@ -1390,7 +1390,7 @@ yyreduce:
                           if (option_suppress_default_rule)
                             add_action("YY_FATAL_ERROR( \"smflex scanner jammed\" )");
                           else
-                            add_action("ECHO");
+                            add_action("YY_ECHO");
 
                           add_action(";\n  YY_BREAK\n");
                         }

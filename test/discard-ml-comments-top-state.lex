@@ -17,8 +17,8 @@
 }
 
   /* A way to get into and out of 'foo'. */
-beginfoo                BEGIN(foo); ECHO;
-<foo>endfoo             BEGIN(INITIAL); ECHO;
+beginfoo                BEGIN(foo); YY_ECHO;
+<foo>endfoo             BEGIN(INITIAL); YY_ECHO;
 
   /* This rule lets me query current start state. */
 <INITIAL,foo>state      {

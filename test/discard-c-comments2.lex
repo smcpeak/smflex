@@ -25,11 +25,11 @@
   /* END: example fragment */
 
   /* A way to get into and out of 'foo'. */
-beginfoo                BEGIN(foo); ECHO;
-<foo>endfoo             BEGIN(INITIAL); ECHO;
+beginfoo                BEGIN(foo); YY_ECHO;
+<foo>endfoo             BEGIN(INITIAL); YY_ECHO;
 
   /* Need to maintain 'line_num' outside comments too. */
-<INITIAL,foo>\n         ++line_num; ECHO;
+<INITIAL,foo>\n         ++line_num; YY_ECHO;
 
   /* This rule lets me confirm that 'line_num' is being maintained.
    * and also check the current start state. */

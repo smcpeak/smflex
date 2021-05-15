@@ -931,7 +931,7 @@ an action:
 
 <ul>
 
-<li><p><code>ECHO</code> copies yytext to the scanner's output.
+<li><p><code>YY_ECHO</code> copies yytext to the scanner's output.
 
 <li><p><code>BEGIN</code> followed by the name of a
     <a href="#start-conditions">start condition</a>
@@ -970,7 +970,7 @@ an action:
         a        |
         ab       |
         abc      |
-        abcd     ECHO; REJECT;
+        abcd     YY_ECHO; REJECT;
         .|\n     /* eat up any unmatched character */
     </code><!-- END example --></pre>
 
@@ -993,13 +993,13 @@ an action:
 
     <pre><!-- BEGIN example: "yymore-mega-kludge.lex" fragment=true indent=8 --><code>
         %%
-        mega-    ECHO; yymore();
-        kludge   ECHO;
+        mega-    YY_ECHO; yymore();
+        kludge   YY_ECHO;
     </code><!-- END example --></pre>
 
     <p>First "mega-" is matched and echoed to the output. Then "kludge"
     is matched, but the previous "mega-" is still hanging around at the
-    beginning of <code>yytext</code> so the <code>ECHO</code> for the "kludge"
+    beginning of <code>yytext</code> so the <code>YY_ECHO</code> for the "kludge"
     rule will actually write "mega-kludge".
 
     <p>Two notes regarding use of <code>yymore()</code>. First,
@@ -1021,8 +1021,8 @@ an action:
 
     <pre><!-- BEGIN example: "yyless-foobar.lex" fragment=true indent=8 --><code>
         %%
-        foobar    ECHO; yyless(3);
-        [a-z]+    ECHO;
+        foobar    YY_ECHO; yyless(3);
+        [a-z]+    YY_ECHO;
     </code><!-- END example --></pre>
 
     <p>An argument of 0 to <code>yyless</code> will cause the entire current
@@ -1207,7 +1207,7 @@ than files: <code>yy_scan_string()</code>, <code>yy_scan_bytes()</code>,
 and <code>yy_scan_buffer()</code>. See the discussion of them in
 the section <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
 
-<p>The scanner writes its <code>ECHO</code> output to the
+<p>The scanner writes its <code>YY_ECHO</code> output to the
 <code>yyout</code> global (default, stdout), which may be redefined by
 the user simply by assigning it to some other <code>FILE</code> pointer.
 
@@ -1399,11 +1399,11 @@ example could also have been written;
     &lt;*&gt;bar    something_else();
 </code></pre>
 
-<p>The default rule (to <code>ECHO</code> any unmatched character)
+<p>The default rule (to <code>YY_ECHO</code> any unmatched character)
 remains active in start conditions. It is equivalent to:
 
 <pre><code>
-    &lt;*&gt;.|\n     ECHO;
+    &lt;*&gt;.|\n     YY_ECHO;
 </code></pre>
 
 <p><code>BEGIN(0)</code> returns to the original state where only the
@@ -1759,8 +1759,8 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
     %%
     include[ ]+         BEGIN(incl);
 
-    [a-z]+              ECHO;
-    [^a-z\n]*\n?        ECHO;
+    [a-z]+              YY_ECHO;
+    [^a-z\n]*\n?        YY_ECHO;
 
     &lt;incl&gt;[^\n]+      { /* got the include file name */
               FILE *fp = fopen(yytext, "r");
@@ -2040,7 +2040,7 @@ the rule actions.
     buffer and continues scanning the same input file.
 
 <li><p><code>FILE *yyout</code>
-    is the file to which <code>ECHO</code> actions are done. It can be
+    is the file to which <code>YY_ECHO</code> actions are done. It can be
     reassigned by the user.
 
 <li><p><code>YY_CURRENT_BUFFER</code>
@@ -4528,6 +4528,15 @@ run-time support library.  That has been removed as detailed below.
     <p>With <code>%option flex-compat</code>, <code>unput()</code> is
     available as an alias for <code>YY_UNREAD_CHARACTER()</code>.
 
+<li><p>The <code>ECHO</code> macro has been renamed to
+    <code>YY_ECHO</code>.
+
+    <p>Rationale: This is a continuation of the theme of adding "YY_"
+    to all names.
+
+    <p>With <code>%option flex-compat</code>, <code>ECHO</code> is
+    available as an alias for <code>YY_ECHO</code>.
+
 <li><p>The <code>YY_INPUT</code> macro has been replaced by
     <a href="#yy-read-input-function"><code>yy_read_input_function</code></a>.
 
@@ -4577,6 +4586,10 @@ Renaming summary:
   <tr>
     <td><code>unput</code>
     <td><code>YY_UNREAD_CHARACTER</code>
+    <td>Old name available with <code>%option flex-compat</code>.
+  <tr>
+    <td><code>ECHO</code>
+    <td><code>YY_ECHO</code>
     <td>Old name available with <code>%option flex-compat</code>.
   <tr>
     <td><code>YY_BUFFER_STATE</code>

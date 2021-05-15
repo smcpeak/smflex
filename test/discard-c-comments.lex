@@ -15,7 +15,7 @@
   /* END: example fragment */
 
   /* Need to maintain 'line_num' outside comments too. */
-\n                      ++line_num; ECHO;
+\n                      ++line_num; YY_ECHO;
 
   /* This rule lets me confirm that 'line_num' is being maintained. */
 line_num                printf("[line_num: %d]", line_num);

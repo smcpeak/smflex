@@ -13,9 +13,9 @@ int ctr[YY_NUM_RULES+1];     /* Entry 0 not used here. */
 %}
 
 %%
-foo        ECHO;             /* rule 1 */
-bar        ECHO;             /* rule 2 */
-[ ]+       ECHO;             /* rule 3 */
+foo        YY_ECHO;             /* rule 1 */
+bar        YY_ECHO;             /* rule 2 */
+[ ]+       YY_ECHO;             /* rule 3 */
                              /* rule 4: implicit default */
 %%
 

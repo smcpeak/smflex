@@ -5,5 +5,5 @@
 
 /* BEGIN: example fragment */
 %%
-mega-    ECHO; yymore();
-kludge   ECHO;
+mega-    YY_ECHO; yymore();
+kludge   YY_ECHO;

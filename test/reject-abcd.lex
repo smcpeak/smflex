@@ -8,5 +8,5 @@
 a        |
 ab       |
 abc      |
-abcd     ECHO; REJECT;
+abcd     YY_ECHO; REJECT;
 .|\n     /* eat up any unmatched character */

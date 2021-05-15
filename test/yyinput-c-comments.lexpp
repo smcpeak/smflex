@@ -41,6 +41,9 @@ static void error(char const *msg)
             }
           }
 
+          /* Exercise 'ECHO' with flex-compat. */
+more      std::cout << "MORE"; ECHO;
+
 %%
 
 void dummy(yyFlexLexer &lexer)

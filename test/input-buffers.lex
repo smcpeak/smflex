@@ -22,8 +22,8 @@ int include_stack_len = 0;
 %%
 include[ ]+         BEGIN(incl);
 
-[a-z]+              ECHO;
-[^a-z\n]*\n?        ECHO;
+[a-z]+              YY_ECHO;
+[^a-z\n]*\n?        YY_ECHO;
 
 <incl>[^\n]+      { /* got the include file name */
           FILE *fp = fopen(yytext, "r");
