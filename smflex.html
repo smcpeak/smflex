@@ -858,7 +858,7 @@ pointer <code>yytext</code>, and its length in the global integer
 pattern is then executed (a more detailed description of <a href="#actions">actions</a> follows),
 and then the remaining input is scanned for another match.
 
-<p>If no match is found, then the <em>default rule</em> is executed:
+<p id="default-rule">If no match is found, then the <em>default rule</em> is executed:
 the next character in the input is considered matched and copied to the
 standard output. Thus, the simplest legal <code>smflex</code> input is:
 
@@ -931,7 +931,7 @@ an action:
 
 <ul>
 
-<li><p><code>YY_ECHO</code> copies yytext to the scanner's output.
+<li id="yy-echo"><p><code>YY_ECHO</code> copies yytext to the scanner's output.
 
 <li><p><code>BEGIN</code> followed by the name of a
     <a href="#start-conditions">start condition</a>
@@ -1214,14 +1214,65 @@ the user simply by assigning it to some other <code>FILE</code> pointer.
 
 <h2 id="yy_lexer_t">The yy_lexer_t structure</h2>
 
-<p>TODO: Fill this out.
+<p>The <code>yy_lexer_t</code> structure contains all of the scanner
+state except for local variables inside the <code>yy_lex()</code>
+function.  All scanner operations require a <code>yy_lexer_t</code>;
+it is the central structure of the C API.
 
-<p>When using the C++ API, this structure should not be directly
-accessed.  The descriptions below apply only to the C API.
+<p>However, when using the <code>yyFlexLexer</code> C++ wrapper class,
+this structure should not be directly accessed.  The descriptions below
+apply only to direct use of the C API.
 
-<p><code>yy_lexer_t</code> contains the following public members:
+<p>Within this document, a "public" member is one that the client is
+allowed to both read and write.  <code>yy_lexer_t</code> contains the
+following public members:
 
 <dl>
+
+<dt id="yy-client-data"><code>void *yy_client_data;</code>
+
+    <dd><p>
+    This pointer is available for use by the client of the API to
+    associate any additional data with the <code>yy_lexer_t</code>
+    object.  It is initially <code>NULL</code>.
+
+<dt id="yy-text"><code>char *yy_text;</code>
+
+    <dd><p>
+    After a rule pattern has been matched, this points at the matched
+    text within the scanning buffer.  It is NUL-terminated.  It is only
+    valid while an action is executing; you must make a copy of the
+    data to use it for longer than that.
+
+<dt id="yy-leng"><code>int yy_leng;</code>
+
+    <dd><p>
+    When <code>yy_text</code> is valid, <code>yy_leng</code> gives the
+    length of the matched text, in bytes.
+
+<dt id="yy-input-stream"><code>yy_input_stream_t *yy_input_stream;</code>
+
+    <dd><p>
+    Usually, this is a pointer to some object that acts as an input
+    source for the scanner.  However, exactly what it is, and whether it
+    is even used, are determined by <code>yy_read_input_function</code>,
+    and hence ultimately up to the client.  Consequently, the type
+    <code>yy_input_stream_t</code> is more of a default or a suggestion
+    than a requirement.
+
+    <p>When using the C API, this is initialized to <code>stdin</code>,
+    which has type <code>FILE*</code>.
+
+    <p>TODO: What exactly are the rules for changing this value?
+
+<dt id="yy-output-stream"><code>yy_output_stream_t *yy_output_stream;</code>
+
+    <dd><p>
+    Similar to the preceding, this is normally an object capable of
+    receiving output, but precisely what it is is determined by the
+    <code>yy_write_output_function</code>.
+
+    <p>When using the C API, this is initialized to <code>stdout</code>.
 
 <dt id="yy-read-input-function">
     <code>int (*yy_read_input_function)(yy_lexer_t *yy_lexer, void *dest, int size);</code>
@@ -1285,17 +1336,75 @@ accessed.  The descriptions below apply only to the C API.
     destination is <code>yy_output_stream</code>.  Return
     <code>size</code> for success or -1 for error.
 
+    <p>With default settings, the initial value is a function that
+    writes to <code>yy_output_stream</code> using <code>fwrite</code>.
+
+    <p>The <a href="#yy-echo"><code>YY_ECHO</code></a> macro, which is
+    implicitly used by the <a href="#default-rule">default rule</a>,
+    calls this function.
+
 <dt id="yy-wrap-function"><code>int (*yy_wrap_function)(yy_lexer_t *yy_lexer);</code>
 
     <dd><p>
-    When the end of the current input is read, if this is not
-    <code>NULL</code>, the scanner calls this to determine what to do
+    When the end of the current input is encountered, if this is not
+    <code>NULL</code> (which is its initial value), the scanner calls this to determine what to do
     next.  It can return true, meaning is no more input, and the scanner
     will terminate.  It can instead return false (0) after setting up a
     new input source, meaning the scanner will continue scanning with
     that new input.
 
+<dt id="yy-lineno"><code>int yy_lineno;</code>
+
+    <dd><p>
+    When <code>%option yylineno</code> is set, this field exists, has
+    initial value 1, and is incremented once for every newline character
+    in <code>yy_text</code> when a token is matched.  It is also
+    incremented for every newline seen by <a
+    href="#yy-read-character"><code>yy_read_character</code></a>, and
+    decremented once for every newline seen by <a
+    href="#yy-unread-character"><code>yy_unread_character</code></a>.
+
+    <p>This value is not otherwise manipulated by the scanning engine.
+    In particular, it is not affected by
+    <a href="#yy-restart"><code>yy_restart</code></a>,
+    <a href="#yy-switch-to-buffer"><code>yy_switch_to_buffer</code></a>,
+    <a href="#yy-wrap-function"><code>yy_wrap_function</code></a> activity,
+    etc.  If you want line numbers tracked across multiple input
+    sources, you have to save and restore this value yourself at
+    appropriate times.  The engine only knows to increment it when
+    newline characters are matched.
+
+<dt id="yy-flex-debug"><code>int yy_flex_debug;</code>
+
+    <dd><p>
+    When <code>%option debug</code> is set, this field exists with
+    initial falue true.  The client may change it at any time; the
+    scanner does not.
+
+    <p>
+    When this field is true, and a rule is matched, the scanner will
+    write to <code>stderr</code> a line of the form:
+
+    <pre><code>
+        --accepting rule at line 53 ("the matched text")
+    </code></pre>
+
+    <p>The line number refers to the location of the rule in the file
+    defining the scanner (i.e., the file that was fed to <code>smflex</code>). Messages
+    are also generated when the scanner backs up, accepts the default rule,
+    reaches the end of its input buffer (or encounters a NUL; at this point,
+    the two look the same as far as the scanner is concerned), or reaches
+    an end-of-file.
+
 </dl>
+
+<p>Within section 2 actions, several convenience macros provide access
+to associated fields with the need for an explicit object:
+
+<pre><code>
+    #define yytext (yy_lexer-&gt;yy_text)
+    #define yyleng (yy_lexer-&gt;yy_leng)
+</code></pre>
 
 <p>The C API contains the following functions:
 
@@ -2101,21 +2210,8 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dt><code>-d</code>
 
-<dd><p>Make the generated scanner run in <em>debug</em> mode. Whenever
-    a pattern is recognized and the global <code>yy_flex_debug</code> is
-    non-zero (which is the default), the scanner will write to <code>stderr</code>
-    a line of the form:
-
-    <pre><code>
-        --accepting rule at line 53 ("the matched text")
-</code></pre>
-
-    <p>The line number refers to the location of the rule in the file
-    defining the scanner (i.e., the file that was fed to <code>smflex</code>). Messages
-    are also generated when the scanner backs up, accepts the default rule,
-    reaches the end of its input buffer (or encounters a NUL; at this point,
-    the two look the same as far as the scanner is concerned), or reaches
-    an end-of-file.
+<dd><p>Generate a scanner with the
+    <a href="#yy-flex-debug"><code>yy_flex_debug</code></a> field.
 
 <dt><code>--flex-compat</code>
 
@@ -2558,26 +2654,8 @@ number are equivalent to <code>smflex</code> flags or their negation:
 
 <dt><code>yylineno</code>
 
-<dd><p>Generate a scanner that maintains
-    the number of the current line read from its input in the
-    <code>yy_lineno</code> field.
-
-    <p>Initially 1, <code>yy_lineno</code> is incremented once for
-    every newline in every matched token, and every newline seen by
-    <a href="#yy-read-character"><code>yy_read_character</code></a>.
-    It is decremented once per newline
-    seen by <a href="#yy-unread-character"><code>yy_unread_character</code></a>
-    (because that will presumably then be undone).
-
-    <p>This value is not otherwise manipulated by the scanning engine.
-    In particular, it is not affected by
-    <a href="#yy-restart"><code>yy_restart</code></a>,
-    <a href="#yy-switch-to-buffer"><code>yy_switch_to_buffer</code></a>,
-    <a href="#yy-wrap-function"><code>yy_wrap_function</code></a> activity,
-    etc.  If you want line numbers tracked across multiple input
-    sources, you have to save and restore this value yourself at
-    appropriate times.  The engine only knows to increment it when
-    newline characters go by.
+<dd><p>Generate a scanner that has
+    <a href="#yy-lineno"><code>yy_lineno</code></a>.
 
 <dt><code>yymore</code>
 
