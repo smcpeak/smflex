@@ -46,6 +46,11 @@ int main()
 
   assert(yy_get_start_state(&lexer) == 0);
 
+  if (getenv("UNDERFLOW")) {
+    /* Cause an error. */
+    yy_pop_state(&lexer);
+  }
+
   yy_destroy(&lexer);
   yy_check_for_memory_leaks();
   return 0;
