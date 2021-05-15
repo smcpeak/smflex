@@ -768,6 +768,9 @@ void yy_destroy(yy_lexer_t *yy_lexer)
 %if reject_used
   free(yy_lexer->yy_state_buf);
 %endif
+%if option_stack
+  yy_flex_free(yy_lexer->yy_start_stack_array);
+%endif
   yy_delete_buffer(yy_lexer, yy_lexer->yy_current_buffer);
 }
 
