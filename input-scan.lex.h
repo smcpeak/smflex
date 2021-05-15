@@ -49,6 +49,51 @@ typedef FILE input_scan_input_stream_t;
 typedef FILE input_scan_output_stream_t;
 
 
+/* Error codes that can be reported to 'yy_error_function'. */
+typedef enum input_scan_error_code_enum {
+  /* No error has occurred.  This will not be reported as an error code,
+   * rather it is used simply to indicate the absence of an error. */
+  input_scan_err_no_error = 0,
+
+  /* Something went wrong with the scanner internal logic.  Either there
+   * is a bug in smflex or the API was misused (but that was not
+   * detected directly). */
+  input_scan_err_internal_error,
+
+  /* The API was misused by passing data that violates its constraints
+   * or invoking functions in an invalid sequence. */
+  input_scan_err_api_misuse,
+
+  /* An attempt to read from the input source failed. */
+  input_scan_err_input_error,
+
+  /* A single token was larger than the size of the input buffer, and
+   * the buffer cannot be expanded due to how the scanner was
+   * configured. */
+  input_scan_err_input_buffer_overflow,
+
+  /* The default rule has been suppressed, and none of the
+   * user-specified rules matches the scanned input.  'flex' refers to
+   * this condition as "scanner jammed". */
+  yy_err_no_rule_matches,
+
+  /* The scanner failed to allocate more memory when needed. */
+  input_scan_err_out_of_memory,
+
+  /* The 'input_scan_unread_character' function tried to add a character, but
+   * the buffer is not large enough to hold it and the current token. */
+  input_scan_err_unread_overflow,
+
+  /* The start-state stack has hit its maximum size.  The exact size
+   * depends on configuration parameters, but is usually at least one
+   * billion (INT_MAX/2). */
+  input_scan_err_state_stack_overflow,
+
+  /* The number of error codes, starting with 0. */
+  input_scan_err_num_error_codes
+} input_scan_error_code_t;
+
+
 /* This is the type of 'yy_current_state' (among other things), which
  * is the current state within the finite state automaton that is
  * responsible for recognizing tokens. */
@@ -127,12 +172,30 @@ struct input_scan_lexer_struct {
    * 'input_scan_lexer_t*'. */
   int (*yy_wrap_function)(struct input_scan_lexer_struct *yy_lexer);
 
+  /* Invoked when an error occurs during scanning.  The function may
+   * return, in which case the scanner will try to recover by returning
+   * control to the client (typically by pretending it hit the end of
+   * the input), but the scanner object should be regarded as broken
+   * after that point, and hence the client should stop trying to scan
+   * and call 'input_scan_destroy' to clean up instead.
+   *
+   * If not NULL, 'detail' is some additional bit of detail that may be
+   * of use to a human, but is not useful for error recovery.
+   *
+   * The initial value is '&input_scan_error_print_and_exit'. */
+  void (*yy_error_function)(struct input_scan_lexer_struct *yy_lexer,
+    input_scan_error_code_t code, char const *detail);
+
   /* -------- Semi-public members -------- */
   /* The input source we are currently reading from, and a buffer
    * in front of it. */
   input_scan_buffer_state_t *yy_current_buffer;
 
   /* -------- Private members -------- */
+  /* The error code of the last error reported, or
+   * 'input_scan_err_no_error' if none has. */
+  input_scan_error_code_t yy_error_code;
+
   /* Holds the character overwritten by a NUL when 'yy_text' is formed. */
   char yy_hold_char;
 
@@ -203,7 +266,9 @@ void input_scan_restart(input_scan_lexer_t *yy_lexer, input_scan_input_stream_t 
 /* -------- Scanning multiple sources (e.g., #includes) -------- */
 /* Create a new buffer for use with 'yy_lexer' that reads from 'file'.
  * The 'size' is the size of the read buffer; a size of 0 means to use
- * the default size smflex uses for its own buffers. */
+ * the default size smflex uses for its own buffers.
+ *
+ * If out of memory, returns NULL after calling 'yy_error_function'. */
 input_scan_buffer_state_t *input_scan_create_buffer(input_scan_lexer_t *yy_lexer, input_scan_input_stream_t *file,
                                     int size);
 
@@ -251,19 +316,32 @@ void input_scan_set_interactive(input_scan_lexer_t *yy_lexer, int is_interactive
  * of a line (BOL), which is where "^" patterns can match. */
 void input_scan_set_bol(input_scan_lexer_t *yy_lexer, int at_bol);
 
-/* -------- Available methods for 'yy_read_input' -------- */
+/* -------- Available methods for function pointers -------- */
 /* Use Standard C 'fread()'.  This assumes that 'yy_input_stream'
  * is a 'FILE*'. */
 int input_scan_read_input_with_fread(input_scan_lexer_t *yy_lexer,
   void *dest, int size);
 
-/* -------- Available methods for 'yy_write_output' -------- */
 /* Use Standard C 'fwrite()'.  This assumes that 'yy_output_stream'
  * is a 'FILE*'.*/
 int input_scan_write_output_with_fwrite(input_scan_lexer_t *yy_lexer,
   void const *dest, int size);
 
+/* Print an error message to stderr and exit. */
+void input_scan_error_print_and_exit(input_scan_lexer_t *yy_lexer,
+  input_scan_error_code_t code, char const *detail);
+
 /* -------- Diagnostics -------- */
+/* Return the code of the error the scanner encountered, or
+ * 'input_scan_err_no_error' if none has been.  This can be used in situations
+ * where 'yy_error_function' returns in order to signal to the client
+ * code that it must stop calling scanner functions. */
+input_scan_error_code_t input_scan_get_error(input_scan_lexer_t *yy_lexer);
+
+/* Return an English string describing the given error 'code' as a
+ * pointer to statically-allocated memory. */
+char const *input_scan_error_string(input_scan_error_code_t code);
+
 /* Fail an assertion if there are any objects allocated, across all
  * scanner instances, that have not been freed.  This can be called
  * after destroying all instances to check for memory leaks. */

@@ -1117,7 +1117,7 @@ an action:
     flushes the scanner's internal buffer so that the next time the
     scanner attempts to match a token, it will first refill the buffer
     using
-    <a href="#yy-read-input-function"><code>yy_read_input_function</code></a>
+    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>
     This action is a special case of the more general
     <code>yy_flush_buffer()</code> function, described in
     <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
@@ -1168,7 +1168,7 @@ unless either <code>yyin</code> is pointed at a new input file (in which
 case scanning continues from that file), or <code>yy_restart()</code>
 is called. <code>yy_restart()</code> takes one argument, a <code>FILE *</code>
 pointer (which can be nil, if you've set up
-<a href="#yy-read-input-function"><code>yy_read_input_function</code></a>
+<a href="#yy_read_input_function"><code>yy_read_input_function</code></a>
 to scan from a source other than <code>yyin</code>), and initializes
 <code>yyin</code> for scanning from that file. Essentially there is no
 difference between just assigning <code>yyin</code> to a new input file
@@ -1190,7 +1190,7 @@ option, the scanner uses
 block reads rather than simple <code>getc()</code> calls to read
 characters from <code>yyin</code>. The nature of how it gets its input
 can be controlled by setting
-<a href="#yy-read-input-function"><code>yy_read_input_function</code></a>.
+<a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
 
 <p>When the scanner receives an end-of-file indication from
 <code>yy_read_input_function</code>,
@@ -1200,7 +1200,7 @@ condition remains unchanged; it does <em>not</em> revert to
 
 <p>If you instead want the scanner to continue scanning a new file, as
 if its contents came right after the previous one, then set
-<a href="#yy-wrap-function"><code>yy_wrap_function</code></a>.
+<a href="#yy_wrap_function"><code>yy_wrap_function</code></a>.
 
 <p>Three routines are available for scanning from in-memory buffers rather
 than files: <code>yy_scan_string()</code>, <code>yy_scan_bytes()</code>,
@@ -1274,7 +1274,7 @@ following public members:
 
     <p>When using the C API, this is initialized to <code>stdout</code>.
 
-<dt id="yy-read-input-function">
+<dt id="yy_read_input_function">
     <code>int (*yy_read_input_function)(yy_lexer_t *yy_lexer, void *dest, int size);</code>
 
     <dd><p>
@@ -1343,7 +1343,7 @@ following public members:
     implicitly used by the <a href="#default-rule">default rule</a>,
     calls this function.
 
-<dt id="yy-wrap-function"><code>int (*yy_wrap_function)(yy_lexer_t *yy_lexer);</code>
+<dt id="yy_wrap_function"><code>int (*yy_wrap_function)(yy_lexer_t *yy_lexer);</code>
 
     <dd><p>
     When the end of the current input is encountered, if this is not
@@ -1352,6 +1352,30 @@ following public members:
     will terminate.  It can instead return false (0) after setting up a
     new input source, meaning the scanner will continue scanning with
     that new input.
+
+<dt id="yy_error_function">
+    <code>void (*yy_error_function)(yy_lexer_t *yy_lexer, yy_error_code_t code, char const *detail);</code>
+
+    <dd><p>
+    When an error occurs during scanning, such as running out of memory
+    or the input source reports a read error, this function is called.
+    If the function returns, the scanner tries to recover by returning
+    control to the client, for example by pretending the end of the input
+    was reached.  The client should cease scanning activities and use
+    <code>yy_destroy</code> to release resources.
+
+    <p>
+    <code>code</code> describes the error with sufficient precision to
+    allow automatic recovery by the client.
+    See <a href="#diagnostics">Diagnostics</a> for a list
+    of error codes and their descriptions.  <code>detail</code> is
+    optional (possibly <code>NULL</code>) additional information that
+    may be of interest to a human but should not be mechanically
+    inspected.
+
+    <p>
+    The initial value is
+    <a href="#yy_error_print_and_exit"><code>yy_error_print_and_exit</code></a>.
 
 <dt id="yy-lineno"><code>int yy_lineno;</code>
 
@@ -1368,7 +1392,7 @@ following public members:
     In particular, it is not affected by
     <a href="#yy-restart"><code>yy_restart</code></a>,
     <a href="#yy-switch-to-buffer"><code>yy_switch_to_buffer</code></a>,
-    <a href="#yy-wrap-function"><code>yy_wrap_function</code></a> activity,
+    <a href="#yy_wrap_function"><code>yy_wrap_function</code></a> activity,
     etc.  If you want line numbers tracked across multiple input
     sources, you have to save and restore this value yourself at
     appropriate times.  The engine only knows to increment it when
@@ -1406,9 +1430,40 @@ to associated fields with the need for an explicit object:
     #define yyleng (yy_lexer-&gt;yy_leng)
 </code></pre>
 
-<p>The C API contains the following functions:
+<p>These functions are the pre-defined handlers for the function
+pointers in <code>yy_lexer_t</code>:
 
 <dl>
+
+<dt id="yy_error_print_and_exit">
+    <code>void yy_error_print_and_exit(yy_lexer_t *yy_lexer, yy_error_code_t code, char const *detail);</code>
+
+    <dd><p>
+    Prints a message to standard error and exits with a non-zero exit code.
+
+</dl>
+
+<p>These functions relate to error handling and diagnostics:
+
+<dl>
+
+<dt id="yy_get_error">
+    <code>yy_error_code_t yy_get_error(yy_lexer_t *yy_lexer);</code>
+
+    <dd><p>
+    Return the code of the error the scanner encountered, or
+    <code>yy_err_no_error</code> if none has
+    been.  This can be used in situations where <a
+    href="#yy_error_function"><code>yy_error_function</code></a> returns
+    in order to signal to the client code that it must stop calling
+    scanner functions.
+
+<dt id="yy_error_string">
+    <code>char const *yy_error_string(yy_error_code_t code);</code>
+
+    <dd><p>
+    Return an English string describing the given error
+    <code>code</code> as a pointer to statically-allocated memory.
 
 <dt id="yy-check-for-memory-leaks"><code>void yy_check_for_memory_leaks(void);</code>
 
@@ -1729,20 +1784,20 @@ conditions:
 
 <dl>
 
-<dt><code>void yy_push_state(yy_lexer_t *yy_lexer, int new_state)</code>
+<dt id="yy_push_state"><code>void yy_push_state(yy_lexer_t *yy_lexer, int new_state)</code>
 
-<dd><p>pushes the current start condition onto the top of the start
+    <dd><p>pushes the current start condition onto the top of the start
     condition stack and switches to <code>new_state</code> as though you had
     used <code>BEGIN new_state</code> (recall that start condition names
     are also integers).
 
 <dt><code>void yy_pop_state(yy_lexer_t *yy_lexer)</code>
 
-<dd><p>pops the top of the stack and switches to it via <code>BEGIN</code>.
+    <dd><p>pops the top of the stack and switches to it via <code>BEGIN</code>.
 
 <dt><code>int yy_top_state(yy_lexer_t *yy_lexer)</code>
 
-<dd><p>returns the top of the stack without altering the stack's contents.
+    <dd><p>returns the top of the stack without altering the stack's contents.
 
     <p>Use of this function requires <code>%option yy_top_state</code>.
 
@@ -1780,7 +1835,7 @@ scopes, by using them to keep track of nested comments in ML:
 reading from several input streams. As <code>smflex</code> scanners do a
 large amount of buffering, one cannot control where the next input will
 be read from by simply writing a
-<a href="#yy-read-input-function"><code>yy_read_input_function</code></a>
+<a href="#yy_read_input_function"><code>yy_read_input_function</code></a>
 which is sensitive
 to the scanning context. <code>yy_read_input_function</code> is only called when the
 scanner reaches the end of its buffer, which may be a long time after
@@ -2490,7 +2545,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     input buffer).
 
     <code>-Cr</code> has no effect if you change
-    <a href="#yy-read-input-function"><code>yy_read_input_function</code></a>.
+    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
 
     Using <code>-Cr</code> introduces a compile-time dependency on
     <code>unistd.h</code> and a link-time dependency on <code>read</code>.
@@ -3907,7 +3962,7 @@ scanner over input:
 <dt><code>virtual int yym_wrap()</code>
 
 <dd><p>This behaves like
-    <a href="#yy-wrap-function"><code>yy_wrap_function</code></a>.
+    <a href="#yy_wrap_function"><code>yy_wrap_function</code></a>.
 
     <p>The default definition returns 1.  You have the option to
     override it in a derived class (whether or not you are using
@@ -4309,8 +4364,8 @@ to be of continued value.
     <p>Replacement: Change <code>generated-scanner.skl</code> and
     recompile.
 
-<li><p><code>flex-2.5.4</code> accepted <code>%option yywrap</code>
-    (with default value true),
+<li id="option-yywrap-removed"><p><code>flex-2.5.4</code> accepted
+    <code>%option yywrap</code> (with default value true),
     meaning the user must define <code>yywrap()</code>, and
     <code>%option noyywrap</code> to not require that definition.
     These option
@@ -4492,7 +4547,7 @@ run-time support library.  That has been removed as detailed below.
     <p>Replacement: Set <code>%option main</code> to get an equivalent
     <code>main()</code> emitted into the generated scanner.
     <code>%option yywrap</code> has been removed in favor of
-    <a href="#yy-wrap-function"><code>yy_wrap_function</code></a>, so
+    <a href="#yy_wrap_function"><code>yy_wrap_function</code></a>, so
     there is no need for a definition of <code>yywrap()</code>.
 
 </ul>
@@ -4596,6 +4651,12 @@ run-time support library.  That has been removed as detailed below.
     <code>input</code> and <code>yyinput</code> as aliases for
     <code>YY_READ_CHARACTER</code>.
 
+<li><p>The <code>yywrap</code> function has been replaced by
+    <a href="#yy_wrap_function"><code>yy_wrap_function</code></a>.
+
+    <p>See the discussion of the removal of
+    <a href="#option-yywrap-removed"><code>%option yywrap</code></a>.
+
 <li><p>The <code>unput()</code> macro has
     been renamed to <code>YY_UNREAD_CHARACTER()</code>.
 
@@ -4616,12 +4677,17 @@ run-time support library.  That has been removed as detailed below.
     available as an alias for <code>YY_ECHO</code>.
 
 <li><p>The <code>YY_INPUT</code> macro has been replaced by
-    <a href="#yy-read-input-function"><code>yy_read_input_function</code></a>.
+    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
 
     <p>Rationale: Using macros to configure the scanner is somewhat
     fragile (due to C syntax quirks) and limited (it can only access
     what is in scope where it is used), and it requires modifying the
     scanner and recompiling.  A function pointer is much more flexible.
+
+<li><p>The <code>YY_FATAL_ERROR</code> macro has been replaced by
+    <a href="#yy_error_function"><code>yy_error_function</code></a>.
+
+    <p>Rationale: Function pointers are more flexible than macros.
 
 <li><p>The <code>YY_BUFFER_STATE</code> type (implicitly a pointer) has
     been renamed to <code>yy_buffer_state_t*</code> (explicitly a
@@ -4654,6 +4720,10 @@ Renaming summary:
     <td><code>yy_restart</code>
     <td>Now requires a <code>yy_lexer_t*</code> parameter.
   <tr>
+    <td><code>yywrap</code>
+    <td><a href="#yy_wrap_function"><code>yy_wrap_function</code></a>
+    <td>Replacement rather than rename.
+  <tr>
     <td><code>input</code>
     <td><code>YY_READ_CHARACTER</code>
     <td>Old name available with <code>%option flex-compat</code>.
@@ -4675,8 +4745,12 @@ Renaming summary:
     <td>Old name available with <code>%option flex-compat</code>.
   <tr>
     <td><code>YY_INPUT</code>
-    <td><a href="#yy-read-input-function"><code>yy_read_input_function</code></a>
-    <td>More than a renaming, it is a replacement.
+    <td><a href="#yy_read_input_function"><code>yy_read_input_function</code></a>
+    <td>Replacement rather than rename.
+  <tr>
+    <td><code>YY_FATAL_ERROR</code>
+    <td><a href="#yy_error_function"><code>yy_error_function</code></a>
+    <td>Replacement rather than rename.
 </table>
 
 
@@ -4788,9 +4862,11 @@ compared to <code>flex-2.5.4</code>:
     <code>yym_lex()</code>, which is precisely what the old method
     did.
 
-<li><p>The methods <code>LexerInput</code> and <code>LexerOutput</code>
-    have been renamed to <code>yym_read_input</code> and
-    <code>yym_write_output</code>.
+<li><p>The methods <code>LexerInput</code>, <code>LexerOutput</code>,
+    and <code>LexerError</code>
+    have been renamed to <code>yym_read_input</code>,
+    <code>yym_write_output</code>, and
+    <code>yym_error</code>.
 
     <p>Rationale: The new names follow the method naming convention I
     have established generally, match the corresponding names from the
@@ -4857,7 +4933,7 @@ members:
     <td><code>yym_write_output</code>
   <tr>
     <td><code>LexerError</code>
-    <td><code>yym_LexerError</code>
+    <td><code>yym_error</code>
   <tr>
     <td><code>yyunput</code>
     <td><code>yym_unread_character</code>
@@ -5010,6 +5086,10 @@ revision history before 2021-04-30.
 <!-- ======================================================= -->
 <h1 id="diagnostics">DIAGNOSTICS</h1>
 
+
+<p>The following messages might be printed while <code>smflex</code>
+runs:
+
 <dl>
 
 <dt><p><code>warning, rule cannot be matched</code>
@@ -5033,24 +5113,6 @@ start condition) that the default rule (match any single character) is
 the only one that will match a particular input. Since <code>-s</code>
 was given, presumably this is not intended.
 
-<dt><p><code>reject_used_but_not_detected undefined</code> or
-    <code>yymore_used_but_not_detected undefined</code>
-
-<dd>These errors can occur
-at compile time. They indicate that the scanner uses <code>REJECT</code>
-or <code>yymore()</code> but that <code>smflex</code> failed to notice the
-fact, meaning that <code>smflex</code> scanned the first two sections
-looking for occurrences of these actions and failed to find any,
-but somehow you snuck some in (via a #include file, for example). Use
-<code>%option reject</code> or <code>%option yymore</code> to indicate
-to <code>smflex</code> that you really do use these features.
-
-<dt><p><code>smflex scanner jammed</code>
-
-<dd>a scanner compiled with <code>-s</code>
-has encountered an input string which wasn't matched by any of its
-rules. This error can also occur due to internal problems.
-
 <dt><p><code>scanner requires -8 flag to use the character 'x'</code>
 
 <dd>Your scanner specification includes recognizing the 8-bit
@@ -5059,37 +5121,97 @@ scanner defaulted to 7-bit because you used the <code>-Cf</code> or
 <code>-CJ</code> table compression options. See the discussion of the
 <code>-7</code> flag for details.
 
-<dt><p><code>smflex scanner push-back overflow</code>
-
-<dd>you used
-<code>YY_UNREAD_CHARACTER()</code> to push back so much text that the scanner's
-buffer could not hold both the pushed-back text and the current token
-in <code>yytext</code>. Ideally the scanner should dynamically resize
-the buffer in this case, but at present it does not.
-
-<dt><p><code>input buffer overflow, can't enlarge buffer because scanner uses REJECT</code>
-
-<dd>the scanner was working on matching an extremely large
-token and needed to expand the input buffer. This doesn't work with
-scanners that use <code>REJECT</code>.
-
-<dt><p><code>fatal smflex scanner internal error--end of buffer missed</code>
-
-<dd>This can occur in an scanner which is reentered after a long-jump has
-jumped out (or over) the scanner's activation frame. Before reentering
-the scanner, use:
-
-<pre><code>
-    yy_restart( yyin );
-</code></pre>
-
-or, as noted above, switch to using the C++ scanner class.
-
 <dt><p><code>too many start conditions in &lt;&gt; construct!</code>
 
 <dd>you listed
 more start conditions in a &lt;&gt; construct than exist (so you must
 have listed at least one of them twice).
+
+</dl>
+
+
+<p>These messages might be printed by the compiler while compiling the
+generated scanner:
+
+<dl>
+
+<dt><p><code>reject_used_but_not_detected undefined</code> or
+    <code>yymore_used_but_not_detected undefined</code>
+
+<dd>These indicate that the scanner uses <code>REJECT</code>
+or <code>yymore()</code> but that <code>smflex</code> failed to notice the
+fact, meaning that <code>smflex</code> scanned the first two sections
+looking for occurrences of these actions and failed to find any,
+but somehow you snuck some in (via a #include file, for example). Use
+<code>%option reject</code> or <code>%option yymore</code> to indicate
+to <code>smflex</code> that you really do use these features.
+
+</dl>
+
+
+<p>These are the error codes that can be reported to
+<a href="#yy_error_function"><code>yy_error_function</code></a>
+while the generated scanner is running:
+
+<dl>
+
+<dt id="yy_err_internal_error"><code>yy_err_internal_error</code>:
+
+    <dd><p>
+    Something went wrong with the scanner internal logic.  Either there
+    is a bug in <code>smflex</code> or the API was misused (but that was
+    not detected directly).
+
+<dt id="yy_err_api_misuse"><code>yy_err_api_misuse</code>:
+
+    <dd><p>
+    The API was misused by passing data that violates its constraints or
+    invoking functions in an invalid sequence.
+
+<dt id="yy_err_input_error"><code>yy_err_input_error</code>:
+
+    <dd><p>
+    An attempt to read from the input source failed; that is,
+    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>
+    returned -1.
+
+<dt id="yy_err_input_buffer_overflow"><code>yy_err_input_buffer_overflow</code>:
+
+    <dd><p>
+    The scanner was working on matching an extremely large token and
+    needed to expand the input buffer. This doesn't work with scanners
+    that use <code>REJECT</code>.
+
+<dt id="yy_err_no_rule_matches"><code>yy_err_no_rule_matches</code>:
+
+    <dd><p>
+    The scanner was compiled with <code>-s</code> and has encountered an
+    input string which wasn't matched by any of its rules.
+
+    <p>Older <code>flex</code> reports this condition as
+    "scanner jammed".
+
+<dt id="yy_err_out_of_memory"><code>yy_err_out_of_memory</code>:
+
+    <dd><p>
+    The scanner failed to allocate more memory when needed.
+
+<dt id="yy_err_unread_overflow"><code>yy_err_unread_overflow</code>:
+
+    <dd><p>
+    You used <code>YY_UNREAD_CHARACTER()</code> to push back so much
+    text that the scanner's buffer could not hold both the pushed-back
+    text and the current token in <code>yytext</code>. Ideally the
+    scanner should dynamically resize the buffer in this case, but at
+    present it does not.
+
+<dt id="yy_err_state_stack_overflow"><code>yy_err_state_stack_overflow</code>:
+
+    <dd><p>
+    When using <a href="#yy_push_state"><code>yy_push_state</code></a>,
+    the start-state stack has hit its maximum size.  The exact size
+    depends on configuration parameters, but is usually at least one
+    billion <code>(INT_MAX/2)</code>.
 
 </dl>
 

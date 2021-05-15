@@ -100,12 +100,14 @@ goal            :  sect1 sect1end sect2 initforrule
                             scset[i] = mkbranch(scset[i], def_rule);
 
                           add_action(yy_output_file_line_directive);
-                          if (option_suppress_default_rule)
-                            add_action("YY_FATAL_ERROR( \"smflex scanner jammed\" )");
-                          else
-                            add_action("YY_ECHO");
-
-                          add_action(";\n  YY_BREAK\n");
+                          if (option_suppress_default_rule) {
+                            add_action("  YY_ERROR(yy_err_no_rule_matches, NULL /*detail*/);\n"
+                                       "  return 0;\n");
+                          }
+                          else {
+                            add_action("  YY_ECHO;\n"
+                                       "  YY_BREAK\n");
+                          }
                         }
                 ;
 

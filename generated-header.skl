@@ -75,6 +75,55 @@ typedef std::ostream yy_output_stream_t;
 %endif
 
 
+/* Error codes that can be reported to 'yy_error_function'. */
+typedef enum yy_error_code_enum {
+  /* No error has occurred.  This will not be reported as an error code,
+   * rather it is used simply to indicate the absence of an error. */
+  yy_err_no_error = 0,
+
+  /* Something went wrong with the scanner internal logic.  Either there
+   * is a bug in smflex or the API was misused (but that was not
+   * detected directly). */
+  yy_err_internal_error,
+
+  /* The API was misused by passing data that violates its constraints
+   * or invoking functions in an invalid sequence. */
+  yy_err_api_misuse,
+
+  /* An attempt to read from the input source failed. */
+  yy_err_input_error,
+
+  /* A single token was larger than the size of the input buffer, and
+   * the buffer cannot be expanded due to how the scanner was
+   * configured. */
+  yy_err_input_buffer_overflow,
+
+  /* The default rule has been suppressed, and none of the
+   * user-specified rules matches the scanned input.  'flex' refers to
+   * this condition as "scanner jammed". */
+  yy_err_no_rule_matches,
+
+  /* The scanner failed to allocate more memory when needed. */
+  yy_err_out_of_memory,
+
+%if option_yy_unread_character
+  /* The 'yy_unread_character' function tried to add a character, but
+   * the buffer is not large enough to hold it and the current token. */
+  yy_err_unread_overflow,
+
+%endif
+%if option_stack
+  /* The start-state stack has hit its maximum size.  The exact size
+   * depends on configuration parameters, but is usually at least one
+   * billion (INT_MAX/2). */
+  yy_err_state_stack_overflow,
+
+%endif
+  /* The number of error codes, starting with 0. */
+  yy_err_num_error_codes
+} yy_error_code_t;
+
+
 /* This is the type of 'yy_current_state' (among other things), which
  * is the current state within the finite state automaton that is
  * responsible for recognizing tokens. */
@@ -164,6 +213,20 @@ struct yy_lexer_struct {
    * 'yy_lexer_t*'. */
   int (*yy_wrap_function)(struct yy_lexer_struct *yy_lexer);
 
+  /* Invoked when an error occurs during scanning.  The function may
+   * return, in which case the scanner will try to recover by returning
+   * control to the client (typically by pretending it hit the end of
+   * the input), but the scanner object should be regarded as broken
+   * after that point, and hence the client should stop trying to scan
+   * and call 'yy_destroy' to clean up instead.
+   *
+   * If not NULL, 'detail' is some additional bit of detail that may be
+   * of use to a human, but is not useful for error recovery.
+   *
+   * The initial value is '&yy_error_print_and_exit'. */
+  void (*yy_error_function)(struct yy_lexer_struct *yy_lexer,
+    yy_error_code_t code, char const *detail);
+
 %if do_yylineno
   /* Current line number in the input being scanned.  See the
    * description in the manual for additional details. */
@@ -182,6 +245,10 @@ struct yy_lexer_struct {
   yy_buffer_state_t *yy_current_buffer;
 
   /* -------- Private members -------- */
+  /* The error code of the last error reported, or
+   * 'yy_err_no_error' if none has. */
+  yy_error_code_t yy_error_code;
+
   /* Holds the character overwritten by a NUL when 'yy_text' is formed. */
   char yy_hold_char;
 
@@ -292,7 +359,9 @@ typedef yy_buffer_state_t *YY_BUFFER_STATE;
 %endif
 /* Create a new buffer for use with 'yy_lexer' that reads from 'file'.
  * The 'size' is the size of the read buffer; a size of 0 means to use
- * the default size smflex uses for its own buffers. */
+ * the default size smflex uses for its own buffers.
+ *
+ * If out of memory, returns NULL after calling 'yy_error_function'. */
 yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer, yy_input_stream_t *file,
                                     int size);
 
@@ -313,14 +382,18 @@ void yy_flush_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *b);
 %if option_yy_scan_string
 /* Allocate a new buffer (which must be deallocated with
  * 'yy_delete_buffer') to scan the contents of NUL-terminated 'yy_str'.
- * Switch to that buffer. */
+ * Switch to that buffer.
+ *
+ * If out of memory, returns NULL after calling 'yy_error_function'. */
 yy_buffer_state_t *yy_scan_string(yy_lexer_t *yy_lexer, const char *yy_str);
 
 %endif
 %if option_yy_scan_bytes
 /* Allocate a new buffer (which must be deallocated with
  * 'yy_delete_buffer') to scan 'len' bytes at 'bytes'.
- * Switch to that buffer. */
+ * Switch to that buffer.
+ *
+ * If out of memory, returns NULL after calling 'yy_error_function'. */
 yy_buffer_state_t *yy_scan_bytes(yy_lexer_t *yy_lexer, const char *bytes, int len);
 
 %endif
@@ -332,7 +405,9 @@ yy_buffer_state_t *yy_scan_bytes(yy_lexer_t *yy_lexer, const char *bytes, int le
  * The new buffer does not make a copy of 'base'; instead it uses it
  * in-place and destructively modifies it.  The last two bytes (at
  * [size-2] and [size-1]) *must* be 0, but are not treated as part of
- * the input to scan.  See the description in the manual. */
+ * the input to scan.  See the description in the manual.
+ *
+ * If out of memory, returns NULL after calling 'yy_error_function'. */
 yy_buffer_state_t *yy_scan_buffer(yy_lexer_t *yy_lexer, char *base, size_t size);
 
 %endif
@@ -382,7 +457,7 @@ void yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive);
  * of a line (BOL), which is where "^" patterns can match. */
 void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol);
 
-/* -------- Available methods for 'yy_read_input' -------- */
+/* -------- Available methods for function pointers -------- */
 /* Use Standard C 'fread()'.  This assumes that 'yy_input_stream'
  * is a 'FILE*'. */
 int yy_read_input_with_fread(yy_lexer_t *yy_lexer,
@@ -395,13 +470,26 @@ int yy_read_input_with_read(yy_lexer_t *yy_lexer,
   void *dest, int size);
 
 %endif
-/* -------- Available methods for 'yy_write_output' -------- */
 /* Use Standard C 'fwrite()'.  This assumes that 'yy_output_stream'
  * is a 'FILE*'.*/
 int yy_write_output_with_fwrite(yy_lexer_t *yy_lexer,
   void const *dest, int size);
 
+/* Print an error message to stderr and exit. */
+void yy_error_print_and_exit(yy_lexer_t *yy_lexer,
+  yy_error_code_t code, char const *detail);
+
 /* -------- Diagnostics -------- */
+/* Return the code of the error the scanner encountered, or
+ * 'yy_err_no_error' if none has been.  This can be used in situations
+ * where 'yy_error_function' returns in order to signal to the client
+ * code that it must stop calling scanner functions. */
+yy_error_code_t yy_get_error(yy_lexer_t *yy_lexer);
+
+/* Return an English string describing the given error 'code' as a
+ * pointer to statically-allocated memory. */
+char const *yy_error_string(yy_error_code_t code);
+
 /* Fail an assertion if there are any objects allocated, across all
  * scanner instances, that have not been freed.  This can be called
  * after destroying all instances to check for memory leaks. */
@@ -514,6 +602,10 @@ public:      /* methods */
    * implementation returns 1. */
   virtual int yym_wrap();
 
+  /* Called when an error occurs.  The default behavior is to print a
+   * message to stderr and exit. */
+  virtual void yym_error(yy_error_code_t code, char const *detail);
+
 
   /* ---------------------------------------------------------- */
   /* The class interface below this point is still in a somewhat
@@ -542,9 +634,6 @@ public:      /* methods */
   void yym_set_debug(int flag)    { yym_lexer_state.yy_flex_debug = flag; }
 
 %endif
-  /* This can be overridden to customize how errors are handled. */
-  virtual void yym_LexerError(const char *msg);
-
 protected:   /* data */
   /* Underlying lexer state, around which this class is a wrapper.
    * According to the principles of this API, this member should be
