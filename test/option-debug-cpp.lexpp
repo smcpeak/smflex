@@ -6,6 +6,9 @@
 %option c++
 %%
 
-one      printf("ONE");
-two      printf("TWO");
-three    printf("THREE");
+one              printf("ONE");
+two              printf("TWO");
+three            printf("THREE");
+get_debug        printf("[debug is %d]", yym_get_debug());
+"set_debug(0)"   yym_set_debug(0);
+"set_debug(1)"   yym_set_debug(1);

@@ -548,7 +548,7 @@ const char *header_skl_contents[] = {
   "",
   "%endif",
   "%if option_debug",
-  "  int yym_debug() const           { return yym_lexer_state.yy_flex_debug; }",
+  "  int yym_get_debug() const       { return yym_lexer_state.yy_flex_debug; }",
   "  void yym_set_debug(int flag)    { yym_lexer_state.yy_flex_debug = flag; }",
   "",
   "%endif",

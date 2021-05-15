@@ -1,3 +1,4 @@
 hi one there
-blah two
-username three four!
+blah two get_debug
+username three set_debug(0) four! get_debug
+debug off now set_debug(1) now it is on get_debug

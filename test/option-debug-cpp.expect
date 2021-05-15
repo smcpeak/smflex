@@ -1,6 +1,7 @@
 hi ONE there
-blah TWO
-username THREE four!
+blah TWO [debug is 1]
+username THREE  four! [debug is 0]
+debug off now  now it is on [debug is 1]
 --(end of buffer or a NUL)
 --accepting default rule ("h")
 --accepting default rule ("i")
@@ -20,6 +21,8 @@ username THREE four!
 --accepting default rule ("h")
 --accepting default rule (" ")
 --accepting rule at line 10 ("two")
+--accepting default rule (" ")
+--accepting rule at line 12 ("get_debug")
 --accepting default rule ("
 ")
 --accepting default rule ("u")
@@ -33,11 +36,22 @@ username THREE four!
 --accepting default rule (" ")
 --accepting rule at line 11 ("three")
 --accepting default rule (" ")
---accepting default rule ("f")
+--accepting rule at line 13 ("set_debug(0)")
+--accepting default rule (" ")
+--accepting default rule ("n")
 --accepting default rule ("o")
---accepting default rule ("u")
---accepting default rule ("r")
---accepting default rule ("!")
+--accepting default rule ("w")
+--accepting default rule (" ")
+--accepting default rule ("i")
+--accepting default rule ("t")
+--accepting default rule (" ")
+--accepting default rule ("i")
+--accepting default rule ("s")
+--accepting default rule (" ")
+--accepting default rule ("o")
+--accepting default rule ("n")
+--accepting default rule (" ")
+--accepting rule at line 12 ("get_debug")
 --(end of buffer or a NUL)
 --accepting default rule ("
 ")
