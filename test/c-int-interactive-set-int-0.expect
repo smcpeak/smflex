@@ -1,8 +1,8 @@
 [due to option interactive, yy_is_interactive is: 1]
 [setting yy_is_interactive due to yy_set_interactive: 0]
-[fread(): 33]
+[n=33 c=104]
 hi USERNAME there
 blah
 USERNAME!
-[fread(): 0]
+[n=0 c=0]
 [due to option interactive, yy_is_interactive is: 1]

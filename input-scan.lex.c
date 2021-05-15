@@ -3018,6 +3018,36 @@ void input_scan_destroy(input_scan_lexer_t *yy_lexer)
 
 
 
+/* Get more data by calling 'yy_read_input_function'. */
+static int yy_call_read_input(input_scan_lexer_t *yy_lexer, void *dest, int size)
+{
+  int n;
+
+  YY_ASSERT(size >= 1);
+  if (yy_lexer->yy_current_buffer->yy_is_interactive) {
+    /* Read one character at a time. */
+    size = 1;
+  }
+
+  n = yy_lexer->yy_read_input_function(yy_lexer, dest, size);
+  if (n < 0) {
+    YY_FATAL_ERROR("reading input in smflex scanner failed");
+
+    /* Recover by pretending we saw EOF. */
+    n = 0;
+  }
+
+#ifdef YY_ENABLE_DEBUG_LOG_CALL
+  {
+    int c = n==0? 0 : ((char*)dest)[0];
+    printf("[n=%d c=%d]\n", n, c);
+  }
+#endif
+
+  return n;
+}
+
+
 /* yy_get_next_buffer - try to read in a new buffer
  *
  * Returns a code representing an action:
@@ -3108,19 +3138,10 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
     }
 
     /* Read in more data. */
-    {
-      int n = yy_lexer->yy_read_input_function(yy_lexer,
+    yy_lexer->yy_n_chars =
+      yy_call_read_input(yy_lexer,
         &yy_lexer->yy_current_buffer->yy_ch_buf[number_to_move],
         num_to_read);
-      if (n < 0) {
-        YY_FATAL_ERROR("reading input in smflex scanner failed");
-
-        /* Recover by pretending we saw EOF. */
-        n = 0;
-      }
-
-      yy_lexer->yy_n_chars = n;
-    }
 
     yy_lexer->yy_current_buffer->yy_n_chars = yy_lexer->yy_n_chars;
   }
@@ -3613,37 +3634,11 @@ int input_scan_read_input_with_fread(input_scan_lexer_t *yy_lexer,
 {
   FILE *input_file = (FILE*)(yy_lexer->yy_input_stream);
 
-  /* TODO: This is not the right place to implement interactive reads. */
-  if (yy_lexer->yy_current_buffer->yy_is_interactive) {
-    char *buf = (char*)dest;
-    int c = '*', n;
-    for (n = 0;
-         n < size && (c = getc(input_file)) != EOF && c != '\n';
-         ++n) {
-      YY_DEBUG_LOG_CALL("getc()", c);
-      buf[n] = (char) c;
-    }
-    /* Either we hit 'size_max' or we read a special character. */
-    if (c == '\n') {
-      YY_DEBUG_LOG_CALL("getc()", c);
-      buf[n++] = (char) c;
-    }
-    if (c == EOF) {
-      YY_DEBUG_LOG_CALL("getc()", c);
-      if (ferror(input_file)) {
-        return -1;
-      }
-    }
-    return n;
+  int n = fread(dest, 1, size, input_file);
+  if (n == 0 && ferror(input_file)) {
+    return -1;
   }
-  else {
-    int n = fread(dest, 1, size, input_file);
-    YY_DEBUG_LOG_CALL("fread()", n);
-    if (n == 0 && ferror(input_file)) {
-      return -1;
-    }
-    return n;
-  }
+  return n;
 }
 
 
