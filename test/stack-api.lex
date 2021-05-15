@@ -47,6 +47,7 @@ int main()
   assert(yy_get_start_state(&lexer) == 0);
 
   yy_destroy(&lexer);
+  yy_check_for_memory_leaks();
   return 0;
 }
 

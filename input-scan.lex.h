@@ -224,6 +224,12 @@ void input_scan_set_interactive(input_scan_lexer_t *yy_lexer, int is_interactive
  * of a line (BOL), which is where "^" patterns can match. */
 void input_scan_set_bol(input_scan_lexer_t *yy_lexer, int at_bol);
 
+/* -------- Diagnostics -------- */
+/* Fail an assertion if there are any objects allocated, across all
+ * scanner instances, that have not been freed.  This can be called
+ * after destroying all instances to check for memory leaks. */
+void input_scan_check_for_memory_leaks(void);
+
 #ifdef __cplusplus
 }
 #endif

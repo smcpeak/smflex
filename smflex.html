@@ -1244,7 +1244,7 @@ accessed.  The descriptions below apply only to the C API.
 
 <dl>
 
-<dt id="yy-wrap-function"><code>int (*yy_wrap_function)(yy_state_t *yy_lexer)</code>
+<dt id="yy-wrap-function"><code>int (*yy_wrap_function)(yy_state_t *yy_lexer);</code>
 
     <dd><p>
     When the end of the current input is read, if this is not
@@ -1253,6 +1253,19 @@ accessed.  The descriptions below apply only to the C API.
     will terminate.  It can instead return false (0) after setting up a
     new input source, meaning the scanner will continue scanning with
     that new input.
+
+</dl>
+
+<p>The C API contains the following functions:
+
+<dl>
+
+<dt id="yy-check-for-memory-leaks"><code>void yy_check_for_memory_leaks(void);</code>
+
+    <dd><p>
+    Fail an assertion if there are any objects allocated, across all
+    scanner instances, that have not been freed.  This can be called
+    after destroying all instances to check for memory leaks.
 
 </dl>
 
@@ -3799,6 +3812,11 @@ scanner over input:
 
 <dd><p>Same as the C interface.
     (<a href="test/discard-ml-comments-cpp.lexpp">Example.</a>)
+
+<dt><code>static void yym_check_for_memory_leaks()</code>
+
+    <dd><p>Same as
+    <a href="#yy-check-for-memory-leaks"><code>yy_check_for_memory_leaks</code></a>.
 
 </dl>
 

@@ -3047,6 +3047,7 @@ void input_scan_construct(input_scan_lexer_t *yy_lexer)
 
 void input_scan_destroy(input_scan_lexer_t *yy_lexer)
 {
+  yy_flex_free(yy_lexer->yy_start_stack_array);
   input_scan_delete_buffer(yy_lexer, yy_lexer->yy_current_buffer);
 }
 
@@ -3576,29 +3577,44 @@ static void yy_fatal_error(input_scan_lexer_t *yy_lexer, char const *msg)
   } else ((void)0)
 
 
-/* Internal utility routines. */
+
+static long yy_num_allocated_objects = 0;
 
 static void *yy_flex_alloc(size_t size)
 {
-  return (void*)malloc(size);
+  void *ret = malloc(size);
+  if (ret) {
+    yy_num_allocated_objects++;
+  }
+  return ret;
 }
 
 static void *yy_flex_realloc(void *ptr, size_t size)
 {
-  /* The cast to (char *) in the following accommodates both
-   * implementations that use char* generic pointers, and those
-   * that use void* generic pointers.  It works with the latter
-   * because both ANSI C and C++ allow castless assignment from
-   * any pointer type to void*, and deal with argument conversions
-   * as though doing an assignment.
-   */
-  return (void *) realloc((char *) ptr, size);
+  /* 'realloc' has implementation-defined behavior when 'size==0'. */
+  YY_ASSERT(size != 0);
+
+  void *ret = realloc(ptr, size);
+  if (ret && !ptr) {
+    yy_num_allocated_objects++;
+  }
+  return ret;
 }
 
 static void yy_flex_free(void *ptr)
 {
+  if (ptr) {
+    yy_num_allocated_objects--;
+  }
   free(ptr);
 }
+
+
+void input_scan_check_for_memory_leaks()
+{
+  YY_ASSERT(yy_num_allocated_objects == 0);
+}
+
 
 
 void input_scan_set_start_state(input_scan_lexer_t *yy_lexer, int state)
