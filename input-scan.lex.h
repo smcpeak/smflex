@@ -61,7 +61,7 @@ typedef int input_scan_state_type_t;
  * exclusive client of the C interface, and therefore the the client of
  * the C++ interface should not access any members directly.
  */
-struct input_scan_lexer_state_struct {
+struct input_scan_lexer_struct {
   /* -------- Public members -------- */
   /* Application-specific data.  The client of this interface is free
    * to use this value however they want.  'input_scan_construct' sets it to
@@ -98,7 +98,7 @@ struct input_scan_lexer_state_struct {
    *
    * The type of the first parameter should be thought of as
    * 'input_scan_lexer_t*'. */
-  int (*yy_wrap_function)(struct input_scan_lexer_state_struct *yy_lexer);
+  int (*yy_wrap_function)(struct input_scan_lexer_struct *yy_lexer);
 
   /* -------- Semi-public members -------- */
   /* The input source we are currently reading from, and a buffer
@@ -146,7 +146,7 @@ struct input_scan_lexer_state_struct {
   int *yy_start_stack_array;           /* The stack.  [0] is bottom. */
 };
 
-typedef struct input_scan_lexer_state_struct input_scan_lexer_t;
+typedef struct input_scan_lexer_struct input_scan_lexer_t;
 
 
 /* -------- Essentials -------- */
