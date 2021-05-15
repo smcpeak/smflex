@@ -1345,8 +1345,8 @@ static char const *look_up_skel_identifier(char const *id, int len)
     }
   }
 
-  if (str_eq_substr("yyclass_name", id, len) && yyclass!=NULL) {
-    return yyclass;
+  if (str_eq_substr("option_yyclass_name", id, len) && option_yyclass!=NULL) {
+    return option_yyclass;
   }
 
   if (str_eq_substr("YY_INPUT_STREAM_TYPE", id, len)) {
@@ -1541,10 +1541,10 @@ static int eval_skel_identifier(void *extra_, char const *id, int len)
   COND_FLAG(option_yy_scan_buffer)
   COND_FLAG(option_yy_top_state)
   COND_FLAG(option_yy_unread_character)
+  COND_FLAG(option_yyclass)
   COND_FLAG(reject_used)
   COND_FLAG(use_read)
   COND_FLAG(variable_trailing_context_rules)
-  COND_FLAG(yyclass)
   COND_FLAG(yymore_used)
 
   COND_INTVAR(num_backing_up)

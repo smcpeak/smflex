@@ -163,7 +163,7 @@ option          :  OPT_OUTFILE '=' NAME
                 |  OPT_PREFIX '=' NAME
                         { set_prefix(copy_string(nmstr)); }
                 |  OPT_YYCLASS '=' NAME
-                        { yyclass = copy_string(nmstr); }
+                        { option_yyclass = copy_string(nmstr); }
                 ;
 
 sect2           :  sect2 scon initforrule flexrule '\n'

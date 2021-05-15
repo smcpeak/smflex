@@ -1465,7 +1465,7 @@ yyreduce:
 
   case 18:
 #line 166 "input-parse.y" /* yacc.c:1646  */
-    { yyclass = copy_string(nmstr); }
+    { option_yyclass = copy_string(nmstr); }
 #line 1470 "input-parse.y.c" /* yacc.c:1646  */
     break;
 

@@ -106,7 +106,7 @@ char *infilename = NULL, *outfilename = NULL;
 int did_outfilename;
 char const *prefix;
 char const *all_caps_prefix;
-char *yyclass;
+char *option_yyclass;
 
 /* Make sure program_name is initialized so we don't crash if writing
  * out an error message before getting the program name from argv[0].
@@ -500,7 +500,7 @@ void flexinit(int argc, char **argv)
   write_native_line_endings = 0;
   prefix = "yy";
   all_caps_prefix = "YY";
-  yyclass = NULL;
+  option_yyclass = NULL;
   use_read = false;
 
   sawcmpflag = false;
@@ -844,7 +844,7 @@ void readin()
   else
     outn("typedef char YY_CHAR;");
 
-  if (yyclass && !cpp_interface) {
+  if (option_yyclass && !cpp_interface) {
     flexerror(_("%option yyclass only meaningful for C++-interface scanners"));
   }
 

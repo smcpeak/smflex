@@ -393,8 +393,8 @@ static void yy_fatal_error(yy_lexer_t *yy_lexer, char const *msg);
 %if !cpp_interface
 int yy_lex(yy_lexer_t * const yy_lexer)
 %else
-%if yyclass
-int yyclass_name::yym_lex()
+%if option_yyclass
+int option_yyclass_name::yym_lex()
 %else
 int yyFlexLexer::yym_lex()
 %endif
@@ -1630,8 +1630,8 @@ int main()
 int main()
 {
   /* Keep retrieving tokens and discarding them until EOF. */
-%if yyclass
-  yyclass_name lexer;
+%if option_yyclass
+  option_yyclass_name lexer;
 %else
   yyFlexLexer lexer;
 %endif
