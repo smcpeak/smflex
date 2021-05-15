@@ -36,9 +36,6 @@
 %else
 #include <stdio.h>                     /* FILE */
 %endif
-%# In the skeleton file, we use YY_INPUT_STREAM_TYPE and
-%# YY_OUTPUT_STREAM_TYPE.  These are substituted for std::istream,
-%# std::ostream, or FILE, as appropriate, during generation.
 
 %# If we are not generating the C++ interface, but using a C++ compiler,
 %# make sure all of the functions have C linkage so they can be used
@@ -57,6 +54,26 @@ typedef struct yy_buffer_state_struct yy_buffer_state_t;
 %if jacobson
 typedef struct yy_trans_info_struct yy_trans_info_t;
 %endif
+
+%# TODO: Arrange to use these definitions depending on options.
+%# typedef struct yy_input_stream_generic  yy_input_stream_t;
+%# typedef struct yy_output_stream_generic yy_output_stream_t;
+%#
+/* Types of input and output streams.  The scanner core treats these
+ * as opaque; only 'yy_read_input_function' and
+ * 'yy_write_output_function' use them in a non-opaque way, and those
+ * can be replaced by the client.
+ *
+ * Thus, the actual types used here are effectively default
+ * suggestions, not requirements. */
+%if !cpp_interface
+typedef FILE yy_input_stream_t;
+typedef FILE yy_output_stream_t;
+%else
+typedef std::istream yy_input_stream_t;
+typedef std::ostream yy_output_stream_t;
+%endif
+
 
 /* This is the type of 'yy_current_state' (among other things), which
  * is the current state within the finite state automaton that is
@@ -115,11 +132,31 @@ struct yy_lexer_struct {
    * macro active in section 2 actions. */
   int yy_leng;
 
-  /* Input source for default YY_INPUT. */
-  YY_INPUT_STREAM_TYPE *yy_input_stream;
+  /* Input source.  This is initially a FILE*, namely 'stdin'. */
+  yy_input_stream_t *yy_input_stream;
 
-  /* Output sink for default ECHO. */
-  YY_OUTPUT_STREAM_TYPE *yy_output_stream;
+  /* Output sink.  This is initially a FILE*, namely 'stdout'. */
+  yy_output_stream_t *yy_output_stream;
+
+  /* Read up to 'size' bytes into 'dest'.  The presumed source of the
+   * data is 'yy_input_stream', but that is up to the client.  Return
+   * the number of bytes read, or 0 for end of file, or -1 for a read
+   * error.
+   */
+%if use_read
+  /* The initial value is '&yy_read_input_with_read'. */
+%else
+  /* The initial value is '&yy_read_input_with_fread'. */
+%endif
+  int (*yy_read_input_function)(struct yy_lexer_struct *yy_lexer,
+    void *dest, int size);
+
+  /* Write 'size' bytes from 'src'.  The presumed destination is
+   * 'yy_output_stream'.  Return 'size' for success or -1 for error.
+   *
+   * The initial value is '&yy_write_output_with_fwrite'. */
+  int (*yy_write_output_function)(struct yy_lexer_struct *yy_lexer,
+    void const *src, int size);
 
   /* When the end of the current input is read, if it is not NULL, the
    * scanner calls this to determine what to do next.  It can return
@@ -250,7 +287,7 @@ int yy_lex(yy_lexer_t *yy_lexer);
 /* Abandon whatever input (if any) 'yy_lexer' was scanning, and start
  * scanning 'input_file'.  This is how to choose what to scan;
  * otherwise, the scanner reads standard input. */
-void yy_restart(yy_lexer_t *yy_lexer, YY_INPUT_STREAM_TYPE *input_file);
+void yy_restart(yy_lexer_t *yy_lexer, yy_input_stream_t *input_file);
 
 /* -------- Scanning multiple sources (e.g., #includes) -------- */
 %if option_flex_compat
@@ -261,7 +298,7 @@ typedef yy_buffer_state_t *YY_BUFFER_STATE;
 /* Create a new buffer for use with 'yy_lexer' that reads from 'file'.
  * The 'size' is the size of the read buffer; a size of 0 means to use
  * the default size smflex uses for its own buffers. */
-yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer, YY_INPUT_STREAM_TYPE *file,
+yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer, yy_input_stream_t *file,
                                     int size);
 
 /* Make 'new_buffer' the active input source for 'yy_lexer'. */
@@ -350,6 +387,25 @@ void yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive);
  * of a line (BOL), which is where "^" patterns can match. */
 void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol);
 
+/* -------- Available methods for 'yy_read_input' -------- */
+/* Use Standard C 'fread()'.  This assumes that 'yy_input_stream'
+ * is a 'FILE*'. */
+int yy_read_input_with_fread(yy_lexer_t *yy_lexer,
+  void *dest, int size);
+
+%if use_read
+/* Use POSIX 'read()'.  This assumes that 'yy_input_stream' is a
+ * 'FILE*'.  It uses 'fileno' to get the file descriptor. */
+int yy_read_input_with_read(yy_lexer_t *yy_lexer,
+  void *dest, int size);
+
+%endif
+/* -------- Available methods for 'yy_write_output' -------- */
+/* Use Standard C 'fwrite()'.  This assumes that 'yy_output_stream'
+ * is a 'FILE*'.*/
+int yy_write_output_with_fwrite(yy_lexer_t *yy_lexer,
+  void const *dest, int size);
+
 /* -------- Diagnostics -------- */
 /* Fail an assertion if there are any objects allocated, across all
  * scanner instances, that have not been freed.  This can be called
@@ -371,9 +427,6 @@ void yy_check_for_memory_leaks(void);
 
 /* Wrapper class that provides a more convenient interface for C++.
  *
- * Clients can retrieve one token at a time using 'yym_lex()' and
- * inspect the text of each token using 'yym_text()' and 'yym_leng()'.
- *
  * If "%option yyclass" is used, then this is a base class for a derived
  * class defined by the user.  The derived class can have additional
  * data members that the scanner actions can use, and only it (not the
@@ -388,8 +441,8 @@ public:      /* methods */
    * otherwise 'cin' (standard input) is used.  Similarly, if
    * 'arg_yyout' is specified, it becomes the output stream; otherwise
    * 'cout' is used. */
-  yyFlexLexer(YY_INPUT_STREAM_TYPE *arg_yyin = NULL,
-              YY_OUTPUT_STREAM_TYPE *arg_yyout = NULL);
+  yyFlexLexer(yy_input_stream_t *arg_yyin = NULL,
+              yy_output_stream_t *arg_yyout = NULL);
 
   virtual ~yyFlexLexer();
 
@@ -403,8 +456,10 @@ public:      /* methods */
 
   /* The following methods provide read-only access to the corresponding
    * members of 'yy_lexer_t'. */
-  YY_INPUT_STREAM_TYPE *yym_input_stream() const
+  yy_input_stream_t *yym_input_stream() const
     { return yym_lexer_state.yy_input_stream; }
+  yy_output_stream_t *yym_output_stream() const
+    { return yym_lexer_state.yy_output_stream; }
 
   /* The following "yym_" methods are all counterparts for the
    * corresponding "yy_" global functions that comprise the C interface.
@@ -412,8 +467,8 @@ public:      /* methods */
    * do (and also the descriptions in the manual).  The only difference
    * here is that the 'yy_lexer_t*' parameter is omitted, as it is
    * implicitly carried by the object the method is invoked upon. */
-  void yym_restart(YY_INPUT_STREAM_TYPE *s);
-  yy_buffer_state_t *yym_create_buffer(YY_INPUT_STREAM_TYPE *file, int size=0);
+  void yym_restart(yy_input_stream_t *s);
+  yy_buffer_state_t *yym_create_buffer(yy_input_stream_t *file, int size=0);
   void yym_switch_to_buffer(yy_buffer_state_t *new_buffer);
   void yym_delete_buffer(yy_buffer_state_t *b);
   void yym_flush_buffer(yy_buffer_state_t *b);
@@ -445,6 +500,19 @@ public:      /* methods */
   void yym_set_bol(int at_bol);
   static void yym_check_for_memory_leaks();
 
+  /* Read up to 'size' bytes into 'dest', returning the number of bytes
+   * read, 0 for EOF, and -1 for error.
+   *
+   * The default implementation reads from 'yym_input_stream()',
+   * treating it as 'std::istream*'. */
+  virtual int yym_read_input(void *dest, int size);
+
+  /* Write 'size' bytes from 'dest' to the output stream.
+   *
+   * The default implementation writes to 'yym_output_stream()',
+   * treating it as 'std::ostream*'. */
+  virtual int yym_write_output(void const *dest, int size);
+
   /* This is called by 'yym_lex()' on EOF to possibly supply new input.
    * It must either set up a new input source and return 0, or else
    * return 1, the latter meaning there is no more input.  The default
@@ -463,8 +531,8 @@ public:      /* methods */
    * The scanner core does *not* delete these objects; the client is
    * responsible for deallocation if needed. */
   /* TODO: I don't think this is a good interface. */
-  void yym_switch_streams(YY_INPUT_STREAM_TYPE *new_in = NULL,
-                          YY_OUTPUT_STREAM_TYPE *new_out = NULL);
+  void yym_switch_streams(yy_input_stream_t *new_in = NULL,
+                          yy_output_stream_t *new_out = NULL);
 
   /* Last-matched token text (NUL-terminated) and its length. */
   const char* yym_text()          { return yym_lexer_state.yy_text; }
@@ -479,12 +547,6 @@ public:      /* methods */
   void yym_set_debug(int flag)    { yym_lexer_state.yy_flex_debug = flag; }
 
 %endif
-  /* These methods may be overridden to provide an alternate source and
-   * sink.  The default implementations read and write
-   * 'yy_input_stream' and 'yy_output_stream' in 'yym_lexer_state'. */
-  virtual int yym_LexerInput(char *buf, int max_size);
-  virtual void yym_LexerOutput(const char *buf, int size);
-
   /* This can be overridden to customize how errors are handled. */
   virtual void yym_LexerError(const char *msg);
 

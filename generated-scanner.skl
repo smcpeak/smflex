@@ -135,7 +135,7 @@
  * that source one at a time; its principal operations are to get the
  * next character and to put a character back. */
 struct yy_buffer_state_struct {
-  YY_INPUT_STREAM_TYPE *yy_input_file;
+  yy_input_stream_t *yy_input_file;
 
   char *yy_ch_buf;                /* input buffer */
   char *yy_buf_pos;               /* current position in input buffer */
@@ -208,7 +208,7 @@ static void yy_flex_free(void *);
 
 static void yy_load_buffer_state(yy_lexer_t *yy_lexer);
 static void yy_init_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *b,
-                           YY_INPUT_STREAM_TYPE *file);
+                           yy_input_stream_t *file);
 
 /* If 'yy_lexer' does not have a current buffer, create one. */
 static void yy_create_buffer_if_needed(yy_lexer_t *yy_lexer)
@@ -258,6 +258,18 @@ int yyFlexLexer::yym_wrap()
 {
   return 1;    /* No more input. */
 }
+
+
+static int yy_read_input_delegate(yy_lexer_t *yy_lexer, void *dest, int size)
+{
+  return yy_lexer->yy_wrapper_object->yym_read_input(dest, size);
+}
+
+static int yy_write_output_delegate(yy_lexer_t *yy_lexer,
+                                    void const *dest, int size)
+{
+  return yy_lexer->yy_wrapper_object->yym_write_output(dest, size);
+}
 %endif # cpp_interface
 
 
@@ -292,71 +304,12 @@ static void yy_fatal_error(yy_lexer_t *yy_lexer, char const *msg);
 #  define YY_READ_BUF_SIZE 8192
 #endif
 
-/* Copy whatever the last rule matched to the standard output. */
-
+/* Copy whatever the last rule matched to the output stream. */
+/* TODO: Rename to YY_ECHO. */
 #ifndef ECHO
-%if !cpp_interface
-/* This used to be an fputs(), but since the string might contain NUL's,
- * we now use fwrite().
- */
-#  define ECHO (void) fwrite(yy_lexer->yy_text, yy_lexer->yy_leng, 1, yy_lexer->yy_output_stream)
-%else C++ definition
-#  define ECHO yym_LexerOutput(yy_lexer->yy_text, yy_lexer->yy_leng)
-%endif
+#  define ECHO ((void)yy_lexer->yy_write_output_function(yy_lexer, \
+                        yy_lexer->yy_text, yy_lexer->yy_leng))
 #endif
-
-/* Gets input and stuffs it into "buf".  number of characters read, or YY_NULL,
- * is returned in "result".
- */
-#ifndef YY_INPUT
-%if cpp_interface
-#  define YY_INPUT(buf,result,max_size) \
-    if ( (result = yy_lexer->yy_wrapper_object->yym_LexerInput((char*)buf, max_size)) < 0 ) { \
-      YY_FATAL_ERROR("input in smflex scanner failed"); \
-    }
-%else
-%if use_read
-#  define YY_INPUT(buf,result,max_size) \
-  if (1) { \
-    result = read(fileno(yy_lexer->yy_input_stream), (char*)buf, max_size); \
-    YY_DEBUG_LOG_CALL("read()", result); \
-    if (result < 0) { \
-      YY_FATAL_ERROR("input in smflex scanner failed"); \
-    } \
-  } else ((void)0)
-%else
-#  define YY_INPUT(buf,result,max_size) \
-  if (yy_lexer->yy_current_buffer->yy_is_interactive) { \
-    int c = '*', n; \
-    for (n = 0; \
-         n < max_size && (c = getc(yy_lexer->yy_input_stream)) != EOF && c != '\n'; \
-         ++n) { \
-      YY_DEBUG_LOG_CALL("getc()", c); \
-      buf[n] = (char) c; \
-    } \
-    /* Either we hit 'size_max' or we read a special character. */ \
-    if (c == '\n') { \
-      YY_DEBUG_LOG_CALL("getc()", c); \
-      buf[n++] = (char) c; \
-    } \
-    if (c == EOF) { \
-      YY_DEBUG_LOG_CALL("getc()", c); \
-      if (ferror(yy_lexer->yy_input_stream)) { \
-        YY_FATAL_ERROR("input in smflex scanner failed"); \
-      } \
-    } \
-    result = n; \
-  } \
-  else { \
-    result = fread(buf, 1, max_size, yy_lexer->yy_input_stream); \
-    YY_DEBUG_LOG_CALL("fread()", result); \
-    if (result == 0 && ferror(yy_lexer->yy_input_stream)) { \
-      YY_FATAL_ERROR("input in smflex scanner failed"); \
-    } \
-  }
-%endif # use_read
-%endif # cpp_interface
-#endif /* YY_INPUT */
 
 /* No semi-colon after return; correct usage is to write "yyterminate();" -
  * we don't want an extra ';' after the "return" because that will cause
@@ -371,7 +324,12 @@ static void yy_fatal_error(yy_lexer_t *yy_lexer, char const *msg);
 #  define YY_START_STACK_INCR 25
 #endif
 
-/* Report a fatal error. */
+/* Report a fatal error.
+ *
+ * Currently, most of this file assumes that YY_FATAL_ERROR does not
+ * return, but I am in the process of trying to allow the scanner to
+ * recover from errors, in which case this function will be allowed to
+ * return. */
 #ifndef YY_FATAL_ERROR
 #  define YY_FATAL_ERROR(msg) yy_fatal_error(yy_lexer, msg)
 #endif
@@ -422,20 +380,6 @@ int yyFlexLexer::yym_lex()
 
     if (!yy_lexer->yy_start_state)
       yy_lexer->yy_start_state = 1;   /* first start state */
-
-    if (!yy_lexer->yy_input_stream)
-%if !cpp_interface
-      yy_lexer->yy_input_stream = stdin;
-%else
-      yy_lexer->yy_input_stream = &std::cin;
-%endif
-
-    if (!yy_lexer->yy_output_stream)
-%if !cpp_interface
-      yy_lexer->yy_output_stream = stdout;
-%else
-      yy_lexer->yy_output_stream = &std::cout;
-%endif
 
     if (!yy_lexer->yy_current_buffer)
       yy_lexer->yy_current_buffer =
@@ -698,17 +642,15 @@ void yy_construct(yy_lexer_t *yy_lexer)
   yy_lexer->yy_text = NULL;
   yy_lexer->yy_leng = 0;
 
-  yy_lexer->yy_input_stream = NULL;
-  yy_lexer->yy_output_stream = NULL;
-  yy_lexer->yy_current_buffer = NULL;
+  yy_lexer->yy_input_stream = (yy_input_stream_t*)stdin;
+  yy_lexer->yy_output_stream = (yy_output_stream_t*)stdout;
 
-  yy_lexer->yy_hold_char = 0;
-  yy_lexer->yy_n_chars = 0;
-
-  yy_lexer->yy_c_buf_p = NULL;
-  yy_lexer->yy_init = 1;
-  yy_lexer->yy_start_state = 0;
-  yy_lexer->yy_did_buffer_switch_on_eof = 0;
+%if use_read
+  yy_lexer->yy_read_input_function   = &yy_read_input_with_read;
+%else
+  yy_lexer->yy_read_input_function   = &yy_read_input_with_fread;
+%endif
+  yy_lexer->yy_write_output_function = &yy_write_output_with_fwrite;
 
   yy_lexer->yy_wrap_function = NULL;
 
@@ -720,6 +662,16 @@ void yy_construct(yy_lexer_t *yy_lexer)
   yy_lexer->yy_flex_debug = 1;
 
 %endif
+  yy_lexer->yy_current_buffer = NULL;
+
+  yy_lexer->yy_hold_char = 0;
+  yy_lexer->yy_n_chars = 0;
+
+  yy_lexer->yy_c_buf_p = NULL;
+  yy_lexer->yy_init = 1;
+  yy_lexer->yy_start_state = 0;
+  yy_lexer->yy_did_buffer_switch_on_eof = 0;
+
 %if num_backing_up > 0 && !reject_used
   yy_lexer->yy_last_accepting_state = 0; /* This can be a pointer. */
   yy_lexer->yy_last_accepting_cpos = NULL;
@@ -753,13 +705,19 @@ void yy_construct(yy_lexer_t *yy_lexer)
 }
 
 %if cpp_interface
-yyFlexLexer::yyFlexLexer(YY_INPUT_STREAM_TYPE *arg_yyin, YY_OUTPUT_STREAM_TYPE *arg_yyout)
+yyFlexLexer::yyFlexLexer(yy_input_stream_t *arg_yyin, yy_output_stream_t *arg_yyout)
 {
   yy_construct(&yym_lexer_state);
-  yym_lexer_state.yy_input_stream = arg_yyin;
-  yym_lexer_state.yy_output_stream = arg_yyout;
   yym_lexer_state.yy_wrapper_object = this;
-  yym_lexer_state.yy_wrap_function = &yy_wrap_delegate;
+
+  yym_lexer_state.yy_input_stream =
+    arg_yyin  ? arg_yyin  : (yy_input_stream_t*)&std::cin;
+  yym_lexer_state.yy_output_stream =
+    arg_yyout ? arg_yyout : (yy_output_stream_t*)&std::cout;
+
+  yym_lexer_state.yy_read_input_function   = &yy_read_input_delegate;
+  yym_lexer_state.yy_write_output_function = &yy_write_output_delegate;
+  yym_lexer_state.yy_wrap_function         = &yy_wrap_delegate;
 }
 %endif
 
@@ -780,7 +738,7 @@ yyFlexLexer::~yyFlexLexer()
   yy_destroy(&yym_lexer_state);
 }
 
-void yyFlexLexer::yym_switch_streams(YY_INPUT_STREAM_TYPE *new_in, YY_OUTPUT_STREAM_TYPE *new_out)
+void yyFlexLexer::yym_switch_streams(yy_input_stream_t *new_in, yy_output_stream_t *new_out)
 {
   if (new_in) {
     yym_delete_buffer(yym_lexer_state.yy_current_buffer);
@@ -792,27 +750,31 @@ void yyFlexLexer::yym_switch_streams(YY_INPUT_STREAM_TYPE *new_in, YY_OUTPUT_STR
   }
 }
 
-int yyFlexLexer::yym_LexerInput(char* buf, int max_size)
+
+int yyFlexLexer::yym_read_input(void *dest, int size)
 {
-  if (yym_lexer_state.yy_input_stream->eof()) {
+  std::istream *input_istream = (std::istream*)yym_input_stream();
+
+  if (input_istream->eof()) {
     YY_DEBUG_LOG_CALL("first istream::eof()", 1);
     return 0;
   }
 
-  if (yym_lexer_state.yy_input_stream->fail()) {
+  if (input_istream->fail()) {
     YY_DEBUG_LOG_CALL("istream::fail()", 1);
     return -1;
   }
 
   if (yym_lexer_state.yy_current_buffer->yy_is_interactive) {
-    yym_lexer_state.yy_input_stream->get(buf[0]);
+    char *buf = (char*)dest;
+    input_istream->get(buf[0]);
 
-    if (yym_lexer_state.yy_input_stream->eof()) {
+    if (input_istream->eof()) {
       YY_DEBUG_LOG_CALL("second istream::eof()", 1);
       return 0;
     }
 
-    if (yym_lexer_state.yy_input_stream->bad()) {
+    if (input_istream->bad()) {
       YY_DEBUG_LOG_CALL("istream::bad()", 1);
       return -1;
     }
@@ -822,25 +784,34 @@ int yyFlexLexer::yym_LexerInput(char* buf, int max_size)
   }
 
   else {
-    (void) yym_lexer_state.yy_input_stream->read(buf, max_size);
+    input_istream->read((char*)dest, size);
 
-    if (yym_lexer_state.yy_input_stream->bad()) {
+    if (input_istream->bad()) {
       YY_DEBUG_LOG_CALL("istream::bad()", 1);
       return -1;
     }
     else {
-      std::streamsize ret = yym_lexer_state.yy_input_stream->gcount();
+      std::streamsize ret = input_istream->gcount();
       YY_DEBUG_LOG_CALL("istream::gcount()", ret);
       return ret;
     }
   }
 }
 
-void yyFlexLexer::yym_LexerOutput(const char *buf, int size)
+
+int yyFlexLexer::yym_write_output(void const *dest, int size)
 {
-  (void) yym_lexer_state.yy_output_stream->write(buf, size);
+  std::ostream *output_ostream = (std::ostream*)yym_output_stream();
+  output_ostream->write((char const *)dest, size);
+  if (output_ostream->bad()) {
+    return -1;
+  }
+  else {
+    return size;
+  }
 }
 %endif
+
 
 /* yy_get_next_buffer - try to read in a new buffer
  *
@@ -937,8 +908,19 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
     }
 
     /* Read in more data. */
-    YY_INPUT((&yy_lexer->yy_current_buffer->yy_ch_buf[number_to_move]),
-             yy_lexer->yy_n_chars, num_to_read);
+    {
+      int n = yy_lexer->yy_read_input_function(yy_lexer,
+        &yy_lexer->yy_current_buffer->yy_ch_buf[number_to_move],
+        num_to_read);
+      if (n < 0) {
+        YY_FATAL_ERROR("reading input in smflex scanner failed");
+
+        /* Recover by pretending we saw EOF. */
+        n = 0;
+      }
+
+      yy_lexer->yy_n_chars = n;
+    }
 
     yy_lexer->yy_current_buffer->yy_n_chars = yy_lexer->yy_n_chars;
   }
@@ -1140,7 +1122,7 @@ int yyFlexLexer::yym_read_character()
 %endif # option_yy_read_character
 
 
-void yy_restart(yy_lexer_t *yy_lexer, YY_INPUT_STREAM_TYPE *input_file)
+void yy_restart(yy_lexer_t *yy_lexer, yy_input_stream_t *input_file)
 {
   if (!yy_lexer->yy_current_buffer) {
     yy_lexer->yy_current_buffer =
@@ -1152,7 +1134,7 @@ void yy_restart(yy_lexer_t *yy_lexer, YY_INPUT_STREAM_TYPE *input_file)
 }
 
 %if cpp_interface
-void yyFlexLexer::yym_restart(YY_INPUT_STREAM_TYPE *input_file)
+void yyFlexLexer::yym_restart(yy_input_stream_t *input_file)
 {
   yy_restart(&yym_lexer_state, input_file);
 }
@@ -1201,7 +1183,7 @@ static void yy_load_buffer_state(yy_lexer_t *yy_lexer)
 
 
 yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer,
-                                    YY_INPUT_STREAM_TYPE *file, int size)
+                                    yy_input_stream_t *file, int size)
 {
   yy_buffer_state_t *b;
 
@@ -1231,7 +1213,7 @@ yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer,
 }
 
 %if cpp_interface
-yy_buffer_state_t *yyFlexLexer::yym_create_buffer(YY_INPUT_STREAM_TYPE *file,
+yy_buffer_state_t *yyFlexLexer::yym_create_buffer(yy_input_stream_t *file,
                                                   int size)
 {
   return yy_create_buffer(&yym_lexer_state, file, size);
@@ -1266,7 +1248,7 @@ void yyFlexLexer::yym_delete_buffer(yy_buffer_state_t *b)
 
 
 static void yy_init_buffer(yy_lexer_t *yy_lexer,
-                           yy_buffer_state_t *b, YY_INPUT_STREAM_TYPE *file)
+                           yy_buffer_state_t *b, yy_input_stream_t *file)
 {
   yy_flush_buffer(yy_lexer, b);
 
@@ -1611,6 +1593,76 @@ int yyFlexLexer::yym_get_start_state()
   return yy_get_start_state(&yym_lexer_state);
 }
 %endif
+
+
+int yy_read_input_with_fread(yy_lexer_t *yy_lexer,
+  void *dest, int size)
+{
+  FILE *input_file = (FILE*)(yy_lexer->yy_input_stream);
+
+  /* TODO: This is not the right place to implement interactive reads. */
+  if (yy_lexer->yy_current_buffer->yy_is_interactive) {
+    char *buf = (char*)dest;
+    int c = '*', n;
+    for (n = 0;
+         n < size && (c = getc(input_file)) != EOF && c != '\n';
+         ++n) {
+      YY_DEBUG_LOG_CALL("getc()", c);
+      buf[n] = (char) c;
+    }
+    /* Either we hit 'size_max' or we read a special character. */
+    if (c == '\n') {
+      YY_DEBUG_LOG_CALL("getc()", c);
+      buf[n++] = (char) c;
+    }
+    if (c == EOF) {
+      YY_DEBUG_LOG_CALL("getc()", c);
+      if (ferror(input_file)) {
+        return -1;
+      }
+    }
+    return n;
+  }
+  else {
+    int n = fread(dest, 1, size, input_file);
+    YY_DEBUG_LOG_CALL("fread()", n);
+    if (n == 0 && ferror(input_file)) {
+      return -1;
+    }
+    return n;
+  }
+}
+
+
+%if use_read
+int yy_read_input_with_read(yy_lexer_t *yy_lexer,
+  void *dest, int size)
+{
+  FILE *input_file = (FILE*)(yy_lexer->yy_input_stream);
+
+  int n = read(fileno(input_file), dest, size);
+  YY_DEBUG_LOG_CALL("read()", result);
+  if (n < 0) {
+    return -1;
+  }
+  return n;
+}
+%endif
+
+
+int yy_write_output_with_fwrite(yy_lexer_t *yy_lexer,
+  void const *dest, int size)
+{
+  FILE *output_file = (FILE*)(yy_lexer->yy_output_stream);
+
+  size_t n = fwrite(dest, 1, size, output_file);
+  if (n == (size_t)size) {
+    return size;
+  }
+  else {
+    return -1;
+  }
+}
 
 
 %if option_main

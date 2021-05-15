@@ -1301,11 +1301,14 @@ static char const *lower_prefix_names[] = {
   "yy_flush_buffer",
   "yy_get_start_state",
   "yy_init_buffer",
+  "yy_input_stream_t",
   "yy_lex",
   "yy_lexer_struct",
   "yy_lexer_t",
   "yy_load_buffer_state",
+  "yy_output_stream_t",
   "yy_read_character",
+  "yy_read_input_with_fread",
   "yy_restart",
   "yy_scan_buffer",
   "yy_scan_bytes",
@@ -1319,6 +1322,7 @@ static char const *lower_prefix_names[] = {
   "yy_trans_info_t",
   "yy_unread_character",
   "yy_wrap",
+  "yy_write_output_with_fwrite",
 };
 
 

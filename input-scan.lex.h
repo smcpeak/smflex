@@ -38,6 +38,17 @@ extern "C" {
 /* Opaque types defined in the generated scanner code. */
 typedef struct input_scan_buffer_state_struct input_scan_buffer_state_t;
 
+/* Types of input and output streams.  The scanner core treats these
+ * as opaque; only 'yy_read_input_function' and
+ * 'yy_write_output_function' use them in a non-opaque way, and those
+ * can be replaced by the client.
+ *
+ * Thus, the actual types used here are effectively default
+ * suggestions, not requirements. */
+typedef FILE input_scan_input_stream_t;
+typedef FILE input_scan_output_stream_t;
+
+
 /* This is the type of 'yy_current_state' (among other things), which
  * is the current state within the finite state automaton that is
  * responsible for recognizing tokens. */
@@ -83,11 +94,27 @@ struct input_scan_lexer_struct {
    * macro active in section 2 actions. */
   int yy_leng;
 
-  /* Input source for default YY_INPUT. */
-  FILE *yy_input_stream;
+  /* Input source.  This is initially a FILE*, namely 'stdin'. */
+  input_scan_input_stream_t *yy_input_stream;
 
-  /* Output sink for default ECHO. */
-  FILE *yy_output_stream;
+  /* Output sink.  This is initially a FILE*, namely 'stdout'. */
+  input_scan_output_stream_t *yy_output_stream;
+
+  /* Read up to 'size' bytes into 'dest'.  The presumed source of the
+   * data is 'yy_input_stream', but that is up to the client.  Return
+   * the number of bytes read, or 0 for end of file, or -1 for a read
+   * error.
+   */
+  /* The initial value is '&input_scan_read_input_with_fread'. */
+  int (*yy_read_input_function)(struct input_scan_lexer_struct *yy_lexer,
+    void *dest, int size);
+
+  /* Write 'size' bytes from 'src'.  The presumed destination is
+   * 'yy_output_stream'.  Return 'size' for success or -1 for error.
+   *
+   * The initial value is '&input_scan_write_output_with_fwrite'. */
+  int (*yy_write_output_function)(struct input_scan_lexer_struct *yy_lexer,
+    void const *src, int size);
 
   /* When the end of the current input is read, if it is not NULL, the
    * scanner calls this to determine what to do next.  It can return
@@ -171,13 +198,13 @@ int input_scan_lex(input_scan_lexer_t *yy_lexer);
 /* Abandon whatever input (if any) 'yy_lexer' was scanning, and start
  * scanning 'input_file'.  This is how to choose what to scan;
  * otherwise, the scanner reads standard input. */
-void input_scan_restart(input_scan_lexer_t *yy_lexer, FILE *input_file);
+void input_scan_restart(input_scan_lexer_t *yy_lexer, input_scan_input_stream_t *input_file);
 
 /* -------- Scanning multiple sources (e.g., #includes) -------- */
 /* Create a new buffer for use with 'yy_lexer' that reads from 'file'.
  * The 'size' is the size of the read buffer; a size of 0 means to use
  * the default size smflex uses for its own buffers. */
-input_scan_buffer_state_t *input_scan_create_buffer(input_scan_lexer_t *yy_lexer, FILE *file,
+input_scan_buffer_state_t *input_scan_create_buffer(input_scan_lexer_t *yy_lexer, input_scan_input_stream_t *file,
                                     int size);
 
 /* Make 'new_buffer' the active input source for 'yy_lexer'. */
@@ -223,6 +250,18 @@ void input_scan_set_interactive(input_scan_lexer_t *yy_lexer, int is_interactive
 /* Set whether 'yy_lexer' will regard itself as being at the beginning
  * of a line (BOL), which is where "^" patterns can match. */
 void input_scan_set_bol(input_scan_lexer_t *yy_lexer, int at_bol);
+
+/* -------- Available methods for 'yy_read_input' -------- */
+/* Use Standard C 'fread()'.  This assumes that 'yy_input_stream'
+ * is a 'FILE*'. */
+int input_scan_read_input_with_fread(input_scan_lexer_t *yy_lexer,
+  void *dest, int size);
+
+/* -------- Available methods for 'yy_write_output' -------- */
+/* Use Standard C 'fwrite()'.  This assumes that 'yy_output_stream'
+ * is a 'FILE*'.*/
+int input_scan_write_output_with_fwrite(input_scan_lexer_t *yy_lexer,
+  void const *dest, int size);
 
 /* -------- Diagnostics -------- */
 /* Fail an assertion if there are any objects allocated, across all

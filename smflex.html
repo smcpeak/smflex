@@ -1116,9 +1116,9 @@ an action:
 <li><p><code>YY_FLUSH_BUFFER</code>
     flushes the scanner's internal buffer so that the next time the
     scanner attempts to match a token, it will first refill the buffer
-    using <code>YY_INPUT</code> (see
-    <a href="#the-generated-scanner">The Generated Scanner</a>). This
-    action is a special case of the more general
+    using
+    <a href="#yy-read-input-function"><code>yy_read_input_function</code></a>
+    This action is a special case of the more general
     <code>yy_flush_buffer()</code> function, described in
     <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
 
@@ -1167,7 +1167,8 @@ statement.
 unless either <code>yyin</code> is pointed at a new input file (in which
 case scanning continues from that file), or <code>yy_restart()</code>
 is called. <code>yy_restart()</code> takes one argument, a <code>FILE *</code>
-pointer (which can be nil, if you've set up <code>YY_INPUT</code>
+pointer (which can be nil, if you've set up
+<a href="#yy-read-input-function"><code>yy_read_input_function</code></a>
 to scan from a source other than <code>yyin</code>), and initializes
 <code>yyin</code> for scanning from that file. Essentially there is no
 difference between just assigning <code>yyin</code> to a new input file
@@ -1188,32 +1189,11 @@ then be called again and it will resume scanning where it left off.
 option, the scanner uses
 block reads rather than simple <code>getc()</code> calls to read
 characters from <code>yyin</code>. The nature of how it gets its input
-can be controlled by defining the <code>YY_INPUT</code> macro. <code>YY_INPUT</code>'s
-calling sequence is <code>YY_INPUT(buf, result, max_size)</code>. Its action is to
-place up to <code>max_size</code> characters in the character array
-<code>buf</code> and return in the integer variable <code>result</code>
-either the number of characters read or the constant <code>YY_NULL</code> (0 on Unix
-systems) to indicate EOF. The default <code>YY_INPUT</code> reads from the global
-pointer <code>yyin</code>.
+can be controlled by setting
+<a href="#yy-read-input-function"><code>yy_read_input_function</code></a>.
 
-<p>A <a href="test/yy-input-redefined.lex">sample</a>
-definition of <code>YY_INPUT</code> (in the definitions section of the
-input file) is:
-
-<pre><!-- BEGIN example: "yy-input-redefined.lex" fragment=true indent=4 --><code>
-    %{
-    #define YY_INPUT(buf, result, max_size) {          \
-      int c = getchar();                               \
-      result = (c == EOF) ? YY_NULL : (buf[0] = c, 1); \
-    }
-    %}
-</code><!-- END example --></pre>
-
-<p>This definition will change the input processing to occur one character
-at a time.  (The <code>-I</code> / <code>%option interactive</code>
-option also has that effect.)
-
-<p>When the scanner receives an end-of-file indication from <code>YY_INPUT</code>,
+<p>When the scanner receives an end-of-file indication from
+<code>yy_read_input_function</code>,
 the scanner terminates, returning 0 to its caller.  The start
 condition remains unchanged; it does <em>not</em> revert to
 <code>INITIAL</code>.
@@ -1239,12 +1219,73 @@ the user simply by assigning it to some other <code>FILE</code> pointer.
 <p>When using the C++ API, this structure should not be directly
 accessed.  The descriptions below apply only to the C API.
 
-<p><code>yy_lexer_t</code> contains the following public and
-   semi-public members:
+<p><code>yy_lexer_t</code> contains the following public members:
 
 <dl>
 
-<dt id="yy-wrap-function"><code>int (*yy_wrap_function)(yy_state_t *yy_lexer);</code>
+<dt id="yy-read-input-function">
+    <code>int (*yy_read_input_function)(yy_lexer_t *yy_lexer, void *dest, int size);</code>
+
+    <dd><p>
+    Read up to <code>size</code> bytes into <code>dest</code>.  The
+    presumed source of the data is <code>yy_input_stream</code>, but
+    that is up to the client.  Return the number of bytes read, or 0 for
+    end of file, or -1 for a read error.
+
+    <p>
+    The initial value depends on the <code>smflex</code> options, but by
+    default, it uses <code>fread</code> to read from
+    <code>yy_input_stream</code>.  The user of the API can customize how
+    input is read by changing this function pointer.
+
+    <p>
+    An <a href="test/yy-input-redefined.lex">example</a> showing a
+    definition of <code>yy_read_input_function</code> and how to
+    activate it for scanning is:
+
+    <pre><!-- BEGIN example: "yy-input-redefined.lex" fragment=true indent=8 --><code>
+        int my_read_input(yy_lexer_t *yy_lexer, void *dest, int size)
+        {
+          int c = getchar();
+          c = tolower(c);    /* Just for demonstration purposes. */
+          if (c == EOF) {
+            return 0;
+          }
+          else {
+            ((char*)dest)[0] = c;
+            return 1;
+          }
+        }
+
+        int main()
+        {
+          yy_lexer_t lexer;
+          yy_construct(&amp;lexer);
+
+          /* Alter how the scanner gets its input. */
+          lexer.yy_read_input_function = &amp;my_read_input;
+
+          while (yy_lex(&amp;lexer))
+            {}
+          yy_destroy(&amp;lexer);
+          return 0;
+        }
+    </code><!-- END example --></pre>
+
+    <p>This definition will change the input processing to occur one character
+    at a time.  (The <code>-I</code> / <code>%option interactive</code>
+    option also has that effect.)  For demonstration purposes, it also
+    lowercases all input as it is read.
+
+<dt id="yy-write-output-function">
+    <code>int (*yy_write_output_function)(struct yy_lexer_struct *yy_lexer, void const *src, int size);</code>
+
+    <dd><p>
+    Write <code>size</code> bytes from <code>src</code>.  The presumed
+    destination is <code>yy_output_stream</code>.  Return
+    <code>size</code> for success or -1 for error.
+
+<dt id="yy-wrap-function"><code>int (*yy_wrap_function)(yy_lexer_t *yy_lexer);</code>
 
     <dd><p>
     When the end of the current input is read, if this is not
@@ -1629,8 +1670,10 @@ scopes, by using them to keep track of nested comments in ML:
 <p>Some scanners (such as those which support "include" files) require
 reading from several input streams. As <code>smflex</code> scanners do a
 large amount of buffering, one cannot control where the next input will
-be read from by simply writing a <code>YY_INPUT</code> which is sensitive
-to the scanning context. <code>YY_INPUT</code> is only called when the
+be read from by simply writing a
+<a href="#yy-read-input-function"><code>yy_read_input_function</code></a>
+which is sensitive
+to the scanning context. <code>yy_read_input_function</code> is only called when the
 scanner reaches the end of its buffer, which may be a long time after
 scanning a statement such as an "include" which requires switching the
 input source.
@@ -1643,7 +1686,9 @@ input buffer is created by using:
     yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer, FILE *file, int size)
 </code></pre>
 
-<p>which takes a <code>FILE</code> pointer and a size and creates a buffer
+<p>which takes a <code>FILE</code> pointer
+(TODO: It really accepts <code>yy_input_stream_t *</code>)
+and a size and creates a buffer
 associated with the given file and large enough to hold <code>size</code>
 characters; a <code>size</code> of 0 means to use a reasonable default size. It
 returns a <code>yy_buffer_state_t*</code>, pointer which may then be
@@ -1653,8 +1698,8 @@ passed to other routines (see below).
 pointer in the call to <code>yy_create_buffer</code> is used to set
 the value of <code>yyin</code> while that buffer is the active
 input source.  Within the generated code,
-<code>yyin</code> is only used by <code>YY_INPUT</code>; if you
-redefine <code>YY_INPUT</code> so it no longer uses <code>yyin</code>,
+<code>yyin</code> is only used by <code>yy_read_input_function</code>; if you
+redefine <code>yy_read_input_function</code> so it no longer uses <code>yyin</code>,
 then you can safely pass <code>NULL</code> as the <code>FILE</code> pointer.
 However, you may want to use
 <code>yyin</code> yourself, for example (as shown in the example
@@ -1691,7 +1736,7 @@ particular source, call:
 
 <p>After calling this function, the next time the
 scanner attempts to read data from the buffer, it will first fill
-the buffer anew using <code>YY_INPUT</code>.
+the buffer anew using <code>yy_read_input_function</code>.
 
 <p>Finally, the <code>YY_CURRENT_BUFFER</code> macro returns a
 <code>yy_buffer_state_t*</code> pointer to the current buffer.
@@ -2348,8 +2393,8 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     scanner will miss whatever text your previous reads left in the stdio
     input buffer).
 
-    <code>-Cr</code> has no effect if you define <code>YY_INPUT</code>
-    (see The Generated Scanner above).
+    <code>-Cr</code> has no effect if you change
+    <a href="#yy-read-input-function"><code>yy_read_input_function</code></a>.
 
     Using <code>-Cr</code> introduces a compile-time dependency on
     <code>unistd.h</code> and a link-time dependency on <code>read</code>.
@@ -4465,8 +4510,8 @@ run-time support library.  That has been removed as detailed below.
     "yy" prefix.  It was also strange because it would be called
     <code>yyinput()</code> when generating a C++ interface, causing a
     needless difference between the two.  The latter was then easily
-    confused with <code>YY_INPUT</code>, a completely different macro the user could
-    redefine to read blocks of data.  The new name uses the "YY_"
+    confused with <code>YY_INPUT</code>, a completely different macro.
+    The new name uses the "YY_"
     prefix for forward compatibility and has a clearer, more unique name.
 
     <p>However, <code>%option flex-compat</code> will introduce both
@@ -4482,6 +4527,14 @@ run-time support library.  That has been removed as detailed below.
 
     <p>With <code>%option flex-compat</code>, <code>unput()</code> is
     available as an alias for <code>YY_UNREAD_CHARACTER()</code>.
+
+<li><p>The <code>YY_INPUT</code> macro has been replaced by
+    <a href="#yy-read-input-function"><code>yy_read_input_function</code></a>.
+
+    <p>Rationale: Using macros to configure the scanner is somewhat
+    fragile (due to C syntax quirks) and limited (it can only access
+    what is in scope where it is used), and it requires modifying the
+    scanner and recompiling.  A function pointer is much more flexible.
 
 <li><p>The <code>YY_BUFFER_STATE</code> type (implicitly a pointer) has
     been renamed to <code>yy_buffer_state_t*</code> (explicitly a
@@ -4529,6 +4582,10 @@ Renaming summary:
     <td><code>YY_BUFFER_STATE</code>
     <td><code>yy_buffer_state_t*</code>
     <td>Old name available with <code>%option flex-compat</code>.
+  <tr>
+    <td><code>YY_INPUT</code>
+    <td><a href="#yy-read-input-function"><code>yy_read_input_function</code></a>
+    <td>More than a renaming, it is a replacement.
 </table>
 
 
@@ -4640,6 +4697,15 @@ compared to <code>flex-2.5.4</code>:
     <code>yym_lex()</code>, which is precisely what the old method
     did.
 
+<li><p>The methods <code>LexerInput</code> and <code>LexerOutput</code>
+    have been renamed to <code>yym_read_input</code> and
+    <code>yym_write_output</code>.
+
+    <p>Rationale: The new names follow the method naming convention I
+    have established generally, match the corresponding names from the
+    C API (which did not exist when the old names were created), and
+    are (a little) more descriptive.
+
 <li><p>Several protected members that were not part of the documented
     API have been removed.  For example,
     <code>yy_load_buffer_state</code> was present as a protected member
@@ -4694,10 +4760,10 @@ members:
     <td><code>yym_set_debug</code>
   <tr>
     <td><code>LexerInput</code>
-    <td><code>yym_LexerInput</code>
+    <td><code>yym_read_input</code>
   <tr>
     <td><code>LexerOutput</code>
-    <td><code>yym_LexerOutput</code>
+    <td><code>yym_write_output</code>
   <tr>
     <td><code>LexerError</code>
     <td><code>yym_LexerError</code>
