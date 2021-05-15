@@ -107,15 +107,10 @@ class yyFlexLexer;           /* Defined below. */
  */
 struct yy_lexer_struct {
   /* -------- Public members -------- */
-%if !cpp_interface
   /* Application-specific data.  The client of this interface is free
    * to use this value however they want.  'yy_construct' sets it to
    * NULL. */
   void *yy_client_data;
-%else
-  /* Pointer to the C++ wrapper object. */
-  yyFlexLexer *yy_wrapper_object;
-%endif
 
   /* After a rule pattern has been matched, this is set to point at the
    * matched text within 'yy_current_buffer', temporarily

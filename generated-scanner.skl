@@ -249,9 +249,12 @@ void yyFlexLexer::yym_set_bol(int at_bol)
 
 
 %if cpp_interface
+/* Pointer to the C++ wrapper object. */
+#define YY_WRAPPER_OBJECT ((yyFlexLexer*)(yy_lexer->yy_client_data))
+
 static int yy_wrap_delegate(yy_lexer_t *yy_lexer)
 {
-  return yy_lexer->yy_wrapper_object->yym_wrap();
+  return YY_WRAPPER_OBJECT->yym_wrap();
 }
 
 int yyFlexLexer::yym_wrap()
@@ -262,13 +265,13 @@ int yyFlexLexer::yym_wrap()
 
 static int yy_read_input_delegate(yy_lexer_t *yy_lexer, void *dest, int size)
 {
-  return yy_lexer->yy_wrapper_object->yym_read_input(dest, size);
+  return YY_WRAPPER_OBJECT->yym_read_input(dest, size);
 }
 
 static int yy_write_output_delegate(yy_lexer_t *yy_lexer,
                                     void const *dest, int size)
 {
-  return yy_lexer->yy_wrapper_object->yym_write_output(dest, size);
+  return YY_WRAPPER_OBJECT->yym_write_output(dest, size);
 }
 %endif # cpp_interface
 
@@ -633,11 +636,7 @@ do_action:      /* This label is used only to access EOF actions. */
 
 void yy_construct(yy_lexer_t *yy_lexer)
 {
-%if !cpp_interface
   yy_lexer->yy_client_data = NULL;
-%else
-  yy_lexer->yy_wrapper_object = NULL;
-%endif
 
   yy_lexer->yy_text = NULL;
   yy_lexer->yy_leng = 0;
@@ -708,7 +707,7 @@ void yy_construct(yy_lexer_t *yy_lexer)
 yyFlexLexer::yyFlexLexer(yy_input_stream_t *arg_yyin, yy_output_stream_t *arg_yyout)
 {
   yy_construct(&yym_lexer_state);
-  yym_lexer_state.yy_wrapper_object = this;
+  yym_lexer_state.yy_client_data = this;
 
   yym_lexer_state.yy_input_stream =
     arg_yyin  ? arg_yyin  : (yy_input_stream_t*)&std::cin;
