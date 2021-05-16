@@ -81,14 +81,18 @@ void scan_length(int len)
 int main()
 {
   scan_length(100);
+
+  yy_alloc_failure_countdown = 1;
+  scan_length(100);
+
+  yy_alloc_failure_countdown = 2;
+  scan_length(100);
+
   scan_length(1000);
   scan_length(10000);
   scan_length(100000);
 
   if (1) {
-    /* Failure count 2 is a different recovery issue. */
-    /* And a leak that I need to come back to. */
-    /*yy_alloc_failure_countdown = 2;*/
     yy_alloc_failure_countdown = 4;
     scan_length(100000);
   }

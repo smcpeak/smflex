@@ -3460,8 +3460,8 @@ input_scan_buffer_state_t *input_scan_create_buffer(input_scan_lexer_t *yy_lexer
    */
   b->yy_ch_buf = (char*)yy_flex_alloc(b->yy_buf_size + 2);
   if (!b->yy_ch_buf) {
-    /* TODO: This leaks 'b'. */
     YY_ERROR(input_scan_err_out_of_memory, "input_scan_create_buffer: input buffer");
+    yy_flex_free(b);
     return NULL;
   }
 
