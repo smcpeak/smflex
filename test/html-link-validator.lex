@@ -123,6 +123,16 @@ int main(int argc, char **argv)
     }
   }
 
+  /* Check for duplicate anchors, again inefficiently. */
+  for (i=0; i < numAnchors; i++) {
+    for (j = i+1; j < numAnchors; j++) {
+      if (0==strcmp(anchors[i], anchors[j])) {
+        printf("Duplicate anchor: \"%s\".\n", anchors[i]);
+        numErrors++;
+      }
+    }
+  }
+
   if (numErrors > 0) {
     printf("Errors: %d\n", numErrors);
 
