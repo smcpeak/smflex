@@ -10,7 +10,7 @@ username      printf("USERNAME");
 
 %%
 
-static int my_read_input(yy_lexer_t *yy_lexer,
+static int read_input_fail(yy_lexer_t *yy_lexer,
   void *dest, int size)
 {
   return -1;
@@ -26,56 +26,50 @@ static void record_error(yy_lexer_t *yy_lexer,
   edetail = detail;
 }
 
-static void input_error()
+
+static void provoke_error(yy_error_code_t expect_code)
 {
   int t;
-
   yy_lexer_t lexer;
+
   yy_construct(&lexer);
   lexer.yy_error_function = &record_error;
-  lexer.yy_read_input_function = &my_read_input;
-
   assert(yy_get_error(&lexer) == yy_err_no_error);
 
-  /* Will hit an immediate input error. */
-  t = yy_lex(&lexer);
-  assert(t == 0);
+  switch (expect_code) {
+    case yy_err_input_error: {
+      lexer.yy_read_input_function = &read_input_fail;
+
+      /* Will hit an immediate input error. */
+      t = yy_lex(&lexer);
+      assert(t == 0);
+
+      assert(0==strcmp(yy_error_string(ecode), "error reading input source"));
+      assert(edetail == NULL);
+      break;
+    }
+
+    case yy_err_no_rule_matches: {
+      yy_buffer_state_t *buf = yy_scan_string(&lexer, "something");
+      assert(buf);
+
+      /* Will hit "no rule matches". */
+      t = yy_lex(&lexer);
+      assert(t == 0);
+
+      assert(0==strcmp(yy_error_string(ecode), "no rule matches the input text"));
+      assert(edetail == NULL);
+      break;
+    }
+
+    default:
+      assert(!"unhandled code");
+  }
 
   /* Validate the error reporting. */
-  assert(ecode == yy_err_input_error);
-  assert(0==strcmp(yy_error_string(ecode), "error reading input source"));
-  assert(edetail == NULL);
-  assert(yy_get_error(&lexer) == ecode);
+  assert(ecode == expect_code);
+  assert(yy_get_error(&lexer) == expect_code);
 
-  yy_destroy(&lexer);
-  yy_check_for_memory_leaks();
-}
-
-static void no_rule_matches()
-{
-  int t;
-  yy_buffer_state_t *buf;
-
-  yy_lexer_t lexer;
-  yy_construct(&lexer);
-  lexer.yy_error_function = &record_error;
-
-  buf = yy_scan_string(&lexer, "something");
-  assert(buf);
-
-  assert(yy_get_error(&lexer) == yy_err_no_error);
-
-  /* Will hit "no rule matches". */
-  t = yy_lex(&lexer);
-  assert(t == 0);
-
-  /* Validate the error reporting. */
-  assert(ecode == yy_err_no_rule_matches);
-  assert(0==strcmp(yy_error_string(ecode), "no rule matches the input text"));
-  assert(edetail == NULL);
-  assert(yy_get_error(&lexer) == ecode);
-
-  yy_delete_buffer(&lexer, buf);
   yy_destroy(&lexer);
   yy_check_for_memory_leaks();
 }
@@ -83,7 +77,7 @@ static void no_rule_matches()
 
 int main()
 {
-  input_error();
-  no_rule_matches();
+  provoke_error(yy_err_input_error);
+  provoke_error(yy_err_no_rule_matches);
   return 0;
 }
