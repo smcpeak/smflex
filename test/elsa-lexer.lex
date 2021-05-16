@@ -504,7 +504,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
 
   /* string literal missing final quote */
 "L"?{QUOTE}({STRCHAR}|{ESCAPE})*{EOL}   {
-  BEGIN(BUGGY_STRING_LIT);
+  YY_SET_START_STATE(BUGGY_STRING_LIT);
   return svalTok(TOK_STRING_LITERAL);
 }
 
@@ -527,7 +527,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
 <BUGGY_STRING_LIT>{
   ({STRCHAR}|{ESCAPE})*{QUOTE} {
     /* found the end */
-    BEGIN(INITIAL);
+    YY_SET_START_STATE(INITIAL);
     return svalTok(TOK_STRING_LITERAL);
   }
   ({STRCHAR}|{ESCAPE})*{EOL} {

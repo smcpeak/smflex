@@ -117,7 +117,7 @@ LEXOPT          [aceknopr]
 
 
 <INITIAL>{
-        ^{WS}           indented_code = true; BEGIN(CODEBLOCK);
+        ^{WS}           indented_code = true; YY_SET_START_STATE(CODEBLOCK);
         ^"/*"           ACTION_ECHO; yy_push_state(yy_lexer, COMMENT);
         ^#{OPTWS}line{WS}       yy_push_state(yy_lexer, LINEDIR);
         ^"%s"{NAME}?    {
@@ -136,7 +136,7 @@ LEXOPT          [aceknopr]
                           ++ linenum;
                           line_directive_out_src();
                           indented_code = false;
-                          BEGIN(CODEBLOCK);
+                          YY_SET_START_STATE(CODEBLOCK);
                         }
 
         {WS}            /* discard */
@@ -146,7 +146,7 @@ LEXOPT          [aceknopr]
                           bracelevel = 0;
                           mark_defs1();
                           line_directive_out_src();
-                          BEGIN(SECT2PROLOG);
+                          YY_SET_START_STATE(SECT2PROLOG);
                           return SECTEND;
                         }
 
@@ -155,7 +155,7 @@ LEXOPT          [aceknopr]
                            * processing options.  It has to be treated
                            * as non-source. */
                           add_action(yy_output_file_line_directive);
-                          BEGIN(OPTION);
+                          YY_SET_START_STATE(OPTION);
                           return OPTION_OP;
                         }
 
@@ -167,7 +167,7 @@ LEXOPT          [aceknopr]
         ^{NAME}         {
                           strcpy(nmstr, yytext);
                           didadef = false;
-                          BEGIN(PICKUPDEF);
+                          YY_SET_START_STATE(PICKUPDEF);
                         }
 
         {SCNAME}        RETURNNAME;
@@ -210,7 +210,7 @@ LEXOPT          [aceknopr]
         ^"%}".*{NL}     {
                           ++linenum;
                           ADD_ACTION_NL();
-                          BEGIN(INITIAL);
+                          YY_SET_START_STATE(INITIAL);
                         }
 
         {NAME}|{NOT_NAME}|.     ACTION_ECHO;
@@ -219,7 +219,7 @@ LEXOPT          [aceknopr]
                           ++linenum;
                           ACTION_ECHO;
                           if (indented_code)
-                            BEGIN(INITIAL);
+                            YY_SET_START_STATE(INITIAL);
                         }
 }
 
@@ -243,7 +243,7 @@ LEXOPT          [aceknopr]
         {NL}            {
                           if (!didadef)
                             synerr(_("incomplete name definition"));
-                          BEGIN(INITIAL);
+                          YY_SET_START_STATE(INITIAL);
                           ++linenum;
                           ADD_ACTION_NL();
                         }
@@ -257,7 +257,7 @@ LEXOPT          [aceknopr]
                           /* Return to source context after processing
                            * a line of options. */
                           line_directive_out_src();
-                          BEGIN(INITIAL);
+                          YY_SET_START_STATE(INITIAL);
                         }
         {WS}            option_sense = true;
 
@@ -318,11 +318,11 @@ LEXOPT          [aceknopr]
 
         (([a-mo-z]|n[a-np-z])[[:alpha:]\-+]*)|. {
                           format_synerr(_("unrecognized %%option: %s"), yytext);
-                          BEGIN(RECOVER);
+                          YY_SET_START_STATE(RECOVER);
                         }
 }
 
-<RECOVER>.*{NL}         ++linenum; ADD_ACTION_NL(); BEGIN(INITIAL);
+<RECOVER>.*{NL}         ++linenum; ADD_ACTION_NL(); YY_SET_START_STATE(INITIAL);
 
 
 <SECT2PROLOG>{
@@ -336,7 +336,7 @@ LEXOPT          [aceknopr]
                             YY_LESS_TEXT(0);       /* put it all back */
                             input_scan_set_bol(yy_lexer, 1);
                             mark_prolog();
-                            BEGIN(SECT2);
+                            YY_SET_START_STATE(SECT2);
                           }
                           else
                             ACTION_ECHO;
@@ -362,18 +362,18 @@ LEXOPT          [aceknopr]
                           indented_code = false;
                           doing_codeblock = true;
                           bracelevel = 1;
-                          BEGIN(PERCENT_BRACE_ACTION);
+                          YY_SET_START_STATE(PERCENT_BRACE_ACTION);
                         }
 
-        ^{OPTWS}"<"     BEGIN(SC); return '<';
+        ^{OPTWS}"<"     YY_SET_START_STATE(SC); return '<';
         ^{OPTWS}"^"     return '^';
-        \"              BEGIN(QUOTE); return '"';
-        "{"/[[:digit:]] BEGIN(NUM); return '{';
+        \"              YY_SET_START_STATE(QUOTE); return '"';
+        "{"/[[:digit:]] YY_SET_START_STATE(NUM); return '{';
         "$"/([[:blank:]]|{NL})  return '$';
 
         {WS}"%{"        {
                           bracelevel = 1;
-                          BEGIN(PERCENT_BRACE_ACTION);
+                          YY_SET_START_STATE(PERCENT_BRACE_ACTION);
 
                           if (in_rule) {
                             doing_rule_action = true;
@@ -404,7 +404,7 @@ LEXOPT          [aceknopr]
                           YY_LESS_TEXT(yyleng - 2); /* put back '/', '*' */
                           bracelevel = 0;
                           continued_action = false;
-                          BEGIN(ACTION);
+                          YY_SET_START_STATE(ACTION);
                         }
 
         ^{WS}           /* allow indented rules */
@@ -416,7 +416,7 @@ LEXOPT          [aceknopr]
                            */
                           bracelevel = 0;
                           continued_action = false;
-                          BEGIN(ACTION);
+                          YY_SET_START_STATE(ACTION);
 
                           if (in_rule) {
                             doing_rule_action = true;
@@ -428,7 +428,7 @@ LEXOPT          [aceknopr]
         {OPTWS}{NL}     {
                           bracelevel = 0;
                           continued_action = false;
-                          BEGIN(ACTION);
+                          YY_SET_START_STATE(ACTION);
                           YY_UNREAD_CHARACTER('\n');      /* so <ACTION> sees it */
 
                           if (in_rule) {
@@ -443,7 +443,7 @@ LEXOPT          [aceknopr]
 
         ^"%%".*         {
                           sectnum = 3;
-                          BEGIN(SECT3);
+                          YY_SET_START_STATE(SECT3);
                           yyterminate(); /* to stop the parser */
                         }
 
@@ -474,7 +474,7 @@ LEXOPT          [aceknopr]
                              */
                             YY_LESS_TEXT(1);
 
-                            BEGIN(FIRSTCCL);
+                            YY_SET_START_STATE(FIRSTCCL);
                             return '[';
                           }
                         }
@@ -499,7 +499,7 @@ LEXOPT          [aceknopr]
                               PUT_BACK_STRING((char *) nmdefptr, 0);
 
                               if (nmdefptr[0] == '^')
-                                BEGIN(CARETISBOL);
+                                YY_SET_START_STATE(CARETISBOL);
                             }
 
                             else {
@@ -517,24 +517,24 @@ LEXOPT          [aceknopr]
 
 <SC>{
         [,*]            return (unsigned char) yytext[0];
-        ">"             BEGIN(SECT2); return '>';
-        ">"/^           BEGIN(CARETISBOL); return '>';
+        ">"             YY_SET_START_STATE(SECT2); return '>';
+        ">"/^           YY_SET_START_STATE(CARETISBOL); return '>';
         {SCNAME}        RETURNNAME;
         .               {
                           format_synerr(_("bad <start condition>: %s"), yytext);
                         }
 }
 
-<CARETISBOL>"^"         BEGIN(SECT2); return '^';
+<CARETISBOL>"^"         YY_SET_START_STATE(SECT2); return '^';
 
 
 <QUOTE>{
         [^"\n]          RETURNCHAR;
-        \"              BEGIN(SECT2); return '"';
+        \"              YY_SET_START_STATE(SECT2); return '"';
 
         {NL}            {
                           synerr(_("missing quote"));
-                          BEGIN(SECT2);
+                          YY_SET_START_STATE(SECT2);
                           ++linenum;
                           ADD_ACTION_NL();
                           return '"';
@@ -543,39 +543,39 @@ LEXOPT          [aceknopr]
 
 
 <FIRSTCCL>{
-        "^"/[^-\]\n]    BEGIN(CCL); return '^';
+        "^"/[^-\]\n]    YY_SET_START_STATE(CCL); return '^';
         "^"/("-"|"]")   return '^';
-        .               BEGIN(CCL); RETURNCHAR;
+        .               YY_SET_START_STATE(CCL); RETURNCHAR;
 }
 
 <CCL>{
         -/[^\]\n]       return '-';
         [^\]\n]         RETURNCHAR;
-        "]"             BEGIN(SECT2); return ']';
+        "]"             YY_SET_START_STATE(SECT2); return ']';
         .|{NL}          {
                           synerr(_("bad character class"));
-                          BEGIN(SECT2);
+                          YY_SET_START_STATE(SECT2);
                           return ']';
                         }
 }
 
 <FIRSTCCL,CCL>{
-        "[:alnum:]"     BEGIN(CCL); return CCE_ALNUM;
-        "[:alpha:]"     BEGIN(CCL); return CCE_ALPHA;
-        "[:blank:]"     BEGIN(CCL); return CCE_BLANK;
-        "[:cntrl:]"     BEGIN(CCL); return CCE_CNTRL;
-        "[:digit:]"     BEGIN(CCL); return CCE_DIGIT;
-        "[:graph:]"     BEGIN(CCL); return CCE_GRAPH;
-        "[:lower:]"     BEGIN(CCL); return CCE_LOWER;
-        "[:print:]"     BEGIN(CCL); return CCE_PRINT;
-        "[:punct:]"     BEGIN(CCL); return CCE_PUNCT;
-        "[:space:]"     BEGIN(CCL); return CCE_SPACE;
-        "[:upper:]"     BEGIN(CCL); return CCE_UPPER;
-        "[:xdigit:]"    BEGIN(CCL); return CCE_XDIGIT;
+        "[:alnum:]"     YY_SET_START_STATE(CCL); return CCE_ALNUM;
+        "[:alpha:]"     YY_SET_START_STATE(CCL); return CCE_ALPHA;
+        "[:blank:]"     YY_SET_START_STATE(CCL); return CCE_BLANK;
+        "[:cntrl:]"     YY_SET_START_STATE(CCL); return CCE_CNTRL;
+        "[:digit:]"     YY_SET_START_STATE(CCL); return CCE_DIGIT;
+        "[:graph:]"     YY_SET_START_STATE(CCL); return CCE_GRAPH;
+        "[:lower:]"     YY_SET_START_STATE(CCL); return CCE_LOWER;
+        "[:print:]"     YY_SET_START_STATE(CCL); return CCE_PRINT;
+        "[:punct:]"     YY_SET_START_STATE(CCL); return CCE_PUNCT;
+        "[:space:]"     YY_SET_START_STATE(CCL); return CCE_SPACE;
+        "[:upper:]"     YY_SET_START_STATE(CCL); return CCE_UPPER;
+        "[:xdigit:]"    YY_SET_START_STATE(CCL); return CCE_XDIGIT;
         {CCL_EXPR}      {
                           format_synerr(_("bad character class expression: %s"),
                                         yytext);
-                          BEGIN(CCL);
+                          YY_SET_START_STATE(CCL);
                           return CCE_ALNUM;
                         }
 }
@@ -587,17 +587,17 @@ LEXOPT          [aceknopr]
                         }
 
         ","             return ',';
-        "}"             BEGIN(SECT2); return '}';
+        "}"             YY_SET_START_STATE(SECT2); return '}';
 
         .               {
                           synerr(_("bad character inside {}'s"));
-                          BEGIN(SECT2);
+                          YY_SET_START_STATE(SECT2);
                           return '}';
                         }
 
         {NL}            {
                           synerr(_("missing }"));
-                          BEGIN(SECT2);
+                          YY_SET_START_STATE(SECT2);
                           ++linenum;
                           ADD_ACTION_NL();
                           return '}';
@@ -633,7 +633,7 @@ LEXOPT          [aceknopr]
                             }
 
                             doing_rule_action = doing_codeblock = false;
-                            BEGIN(SECT2);
+                            YY_SET_START_STATE(SECT2);
                           }
                         }
 }
@@ -652,7 +652,7 @@ LEXOPT          [aceknopr]
         [^[:alpha:]_{}"'/\n]+   ACTION_ECHO;
         {NAME}          ACTION_ECHO;
         "'"([^'\\\n]|\\.)*"'"   ACTION_ECHO; /* character constant */
-        \"              ACTION_ECHO; BEGIN(ACTION_STRING);
+        \"              ACTION_ECHO; YY_SET_START_STATE(ACTION_STRING);
         {NL}            {
                           ++ linenum;
                           ACTION_ECHO;
@@ -663,7 +663,7 @@ LEXOPT          [aceknopr]
                             }
 
                             doing_rule_action = false;
-                            BEGIN(SECT2);
+                            YY_SET_START_STATE(SECT2);
                           }
                         }
         .               ACTION_ECHO;
@@ -673,7 +673,7 @@ LEXOPT          [aceknopr]
         [^"\\\n]+       ACTION_ECHO;
         \\.             ACTION_ECHO;
         {NL}            ++linenum; ACTION_ECHO;
-        \"              ACTION_ECHO; BEGIN(ACTION);
+        \"              ACTION_ECHO; YY_SET_START_STATE(ACTION);
         .               ACTION_ECHO;
 }
 
@@ -687,7 +687,7 @@ LEXOPT          [aceknopr]
                           yylval = myesc((Char *) yytext);
 
                           if (YY_START == FIRSTCCL)
-                            BEGIN(CCL);
+                            YY_SET_START_STATE(CCL);
 
                           return CHAR;
                         }

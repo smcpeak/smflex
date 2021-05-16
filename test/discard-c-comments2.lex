@@ -10,23 +10,23 @@
 %%
 "/*"                    {
                           comment_caller = INITIAL;
-                          BEGIN(comment);
+                          YY_SET_START_STATE(comment);
                         }
 
 <foo>"/*"               {
                           comment_caller = foo;
-                          BEGIN(comment);
+                          YY_SET_START_STATE(comment);
                         }
 
 <comment>[^*\n]*        /* eat anything that's not a '*' */
 <comment>"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
 <comment>\n             ++line_num;
-<comment>"*"+"/"        BEGIN(comment_caller);
+<comment>"*"+"/"        YY_SET_START_STATE(comment_caller);
   /* END: example fragment */
 
   /* A way to get into and out of 'foo'. */
-beginfoo                BEGIN(foo); YY_ECHO;
-<foo>endfoo             BEGIN(INITIAL); YY_ECHO;
+beginfoo                YY_SET_START_STATE(foo); YY_ECHO;
+<foo>endfoo             YY_SET_START_STATE(INITIAL); YY_ECHO;
 
   /* Need to maintain 'line_num' outside comments too. */
 <INITIAL,foo>\n         ++line_num; YY_ECHO;

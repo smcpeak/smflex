@@ -15,10 +15,10 @@
         char string_buf[MAX_STR_LITERAL_LEN];
         char *string_buf_ptr;
 %%
-\"      string_buf_ptr = string_buf; BEGIN(str);
+\"      string_buf_ptr = string_buf; YY_SET_START_STATE(str);
 
 <str>\"        { /* saw closing quote - all done */
-          BEGIN(INITIAL);
+          YY_SET_START_STATE(INITIAL);
           *string_buf_ptr = '\0';
 
           /* Inform caller that we saw and interpreted a string literal.
@@ -28,7 +28,7 @@
 
 <str>\n        {
           printf("unterminated string literal\n");
-          BEGIN(INITIAL);     /* Recover from the error. */
+          YY_SET_START_STATE(INITIAL);     /* Recover from the error. */
         }
 
 <str>\\[0-7]{1,3} {

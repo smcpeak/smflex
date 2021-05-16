@@ -1,14 +1,13 @@
-/* begin-special.lex */
-/* Illustrate calling BEGIN on entry to yy_lex(). */
+/* yy-set-start-state-special.lex */
+/* Illustrate calling YY_SET_START_STATE on entry to yy_lex(). */
 
-%option flex-compat
-
+                /* BEGIN: example fragment */
                 int enter_special;
 
 %x SPECIAL
 %%
                 if (enter_special) {
-                  BEGIN(SPECIAL);
+                  YY_SET_START_STATE(SPECIAL);
                 }
 
 <SPECIAL>token  {      /* ... etc. ... */

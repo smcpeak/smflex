@@ -209,7 +209,8 @@ struct input_scan_lexer_struct {
    * that it indicates the state in which the recognizer begins when
    * 'input_scan_lex()' is called; the recognizer then transitions from there
    * depending on what characters are seen.  Beware that the value of
-   * this field is different from what BEGIN and YY_START use.*/
+   * this field is different from what 'input_scan_set_start_state' and
+   * 'input_scan_get_start_state' use (they differ by some arithmetic).*/
   int yy_start_state;
 
   /* Flag which is used to allow yy_wrap()'s to do buffer switches
@@ -284,8 +285,7 @@ void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_st
 void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *b);
 
 /* -------- Manipulating the start state -------- */
-/* Set the start state of 'yy_lexer' to 'state'.  This function must be
- * used instead of BEGIN when not within a rule action. */
+/* Set the start state of 'yy_lexer' to 'state'. */
 void input_scan_set_start_state(input_scan_lexer_t *yy_lexer, int state);
 
 /* Get the current start state. */

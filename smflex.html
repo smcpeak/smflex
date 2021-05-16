@@ -933,9 +933,10 @@ an action:
 
 <li id="yy_echo"><p><code>YY_ECHO</code> copies yytext to the scanner's output.
 
-<li><p><code>BEGIN</code> followed by the name of a
+<li id="YY_SET_START_STATE-macro"><p><code>YY_SET_START_STATE(s)</code>
+    places the scanner in
     <a href="#start-conditions">start condition</a>
-    places the scanner in the corresponding start condition.
+    <code>s</code>.
 
 <li><p><code>REJECT</code>
     directs the scanner to proceed on to the "second best" rule which
@@ -1029,7 +1030,7 @@ an action:
 
     <p>An argument of 0 to <code>YY_LESS_TEXT</code> will cause the entire current
     input string to be scanned again. Unless you've changed how the scanner
-    will subsequently process its input (using <code>BEGIN</code>, for
+    will subsequently process its input (using <code>YY_SET_START_STATE</code>, for
     example), this will result in an endless loop.
 
     <p>Outside of rule actions, the <code>YY_LESS_TEXT</code>
@@ -1455,6 +1456,30 @@ text matched by a rule:
 
 </dl>
 
+<p id="start-state-functions">These functions are available for manipulating the current
+<a href="#start-conditions">start state</a>:
+
+<dl>
+
+<dt id="yy_set_start_state"><code>void yy_set_start_state(yy_lexer_t *yy_lexer, int state);</code>
+
+    <dd><p>
+    Set the start state of <code>yy_lexer</code> to <code>state</code>.
+
+<dt id="yy_get_start_state"><code>int yy_get_start_state(yy_lexer_t *yy_lexer);</code>
+
+    <dd><p>
+    Get the current start state.
+
+</dl>
+
+<p>Additionally, the functions
+<a href="#yy_push_state"><code>yy_push_state</code></a>,
+<a href="#yy_pop_state"><code>yy_pop_state</code></a>, and
+<a href="#yy_top_state"><code>yy_top_state</code></a> are
+available to manipulate the stack of start states, as  documented under
+<a href="#start-conditions">Start Conditions</a>.
+
 <p>These functions are the pre-defined handlers for the function
 pointers in <code>yy_lexer_t</code>:
 
@@ -1508,6 +1533,9 @@ pointers in <code>yy_lexer_t</code>:
 <!-- ======================================================= -->
 <h1 id="start-conditions">START CONDITIONS</h1>
 
+<p>TODO: This section should be called "Start States", not "conditions".
+There is nothing conditional about them.
+
 <p><code>smflex</code> provides a mechanism for conditionally activating
 rules. Any rule whose pattern is prefixed with "&lt;sc&gt;" will only be
 active when the scanner is in the start condition named "sc". For example,
@@ -1534,8 +1562,9 @@ condition, and
 the input using unindented lines beginning with either <code>%s</code>
 or <code>%x</code> followed by a list of names. The former declares
 <em>inclusive</em> start conditions, the latter <em>exclusive</em> start
-conditions. A start condition is activated using the <code>BEGIN</code>
-action. Until the next <code>BEGIN</code> action is executed, rules
+conditions. A start condition is activated using the
+<a href="#YY_SET_START_STATE-macro"><code>YY_SET_START_STATE</code></a>
+action. Until the next <code>YY_SET_START_STATE</code> action is executed, rules
 with the given start condition will be active and rules with other start
 conditions will be inactive. If the start condition is <em>inclusive</em>,
 then rules with no start conditions at all will also be active. If
@@ -1600,26 +1629,25 @@ remains active in start conditions. It is equivalent to:
     &lt;*&gt;.|\n     YY_ECHO;
 </code></pre>
 
-<p><code>BEGIN(0)</code> returns to the original state where only the
+<p><code>YY_SET_START_STATE(0)</code> returns to the original state where only the
 rules with no start conditions are active. This state can also be referred
-to as the start-condition "INITIAL", so <code>BEGIN(INITIAL)</code> is
-equivalent to <code>BEGIN(0)</code>. (The parentheses around the start
-condition name are not required but are considered good style.)
+to as the start-condition "INITIAL", so <code>YY_SET_START_STATE(INITIAL)</code> is
+equivalent to <code>YY_SET_START_STATE(0)</code>.
 
-<p><code>BEGIN</code> actions can also be given as indented code
+<p><code>YY_SET_START_STATE</code> actions can also be given as indented code
 at the beginning of the rules section. For example, the
 <a href="test/begin-special.lex">following</a>
 will cause the scanner to enter the "SPECIAL" start condition
 whenever <code>yy_lex()</code> is called and the global variable
 <code>enter_special</code> is true:
 
-<pre><!-- BEGIN example: "begin-special.lex" fragment=true indent=4 --><code>
+<pre><!-- BEGIN example: "yy-set-start-state-special.lex" fragment=true indent=4 --><code>
                     int enter_special;
 
     %x SPECIAL
     %%
                     if (enter_special) {
-                      BEGIN(SPECIAL);
+                      YY_SET_START_STATE(SPECIAL);
                     }
 
     &lt;SPECIAL&gt;token  {      /* ... etc. ... */
@@ -1641,7 +1669,7 @@ the floating-point number 123.456:
     %s expect
 
     %%
-    expect-floats       BEGIN(expect);
+    expect-floats       YY_SET_START_STATE(expect);
 
     &lt;expect&gt;[0-9]+"."[0-9]+  {
                           printf("found a float: %f\n", atof(yytext));
@@ -1650,7 +1678,7 @@ the floating-point number 123.456:
                           /* That's the end of the line, so we need another
                            * "expect-floats" before we'll recognize any more
                            * floats. */
-                          BEGIN(INITIAL);
+                          YY_SET_START_STATE(INITIAL);
                         }
 
     [0-9]+              {
@@ -1668,11 +1696,11 @@ maintaining a count of the current input line.
     %x comment
                             int line_num = 1;
     %%
-    "/*"                    BEGIN(comment);
+    "/*"                    YY_SET_START_STATE(comment);
     &lt;comment&gt;[^*\n]*        /* eat anything that's not a '*' */
     &lt;comment&gt;"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
     &lt;comment&gt;\n             ++line_num;
-    &lt;comment&gt;"*"+"/"        BEGIN(INITIAL);
+    &lt;comment&gt;"*"+"/"        YY_SET_START_STATE(INITIAL);
 </code><!-- END example --></pre>
 
 <p>This scanner goes to a bit of trouble to match as much text as possible
@@ -1691,18 +1719,18 @@ fashion:
     %%
     "/*"                    {
                               comment_caller = INITIAL;
-                              BEGIN(comment);
+                              YY_SET_START_STATE(comment);
                             }
 
     &lt;foo&gt;"/*"               {
                               comment_caller = foo;
-                              BEGIN(comment);
+                              YY_SET_START_STATE(comment);
                             }
 
     &lt;comment&gt;[^*\n]*        /* eat anything that's not a '*' */
     &lt;comment&gt;"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
     &lt;comment&gt;\n             ++line_num;
-    &lt;comment&gt;"*"+"/"        BEGIN(comment_caller);
+    &lt;comment&gt;"*"+"/"        YY_SET_START_STATE(comment_caller);
 </code><!-- END example --></pre>
 
 <p>Furthermore, you can access the current start condition using the
@@ -1727,10 +1755,10 @@ using exclusive start conditions, including expanded escape sequences
             char string_buf[MAX_STR_LITERAL_LEN];
             char *string_buf_ptr;
     %%
-    \"      string_buf_ptr = string_buf; BEGIN(str);
+    \"      string_buf_ptr = string_buf; YY_SET_START_STATE(str);
 
     &lt;str&gt;\"        { /* saw closing quote - all done */
-              BEGIN(INITIAL);
+              YY_SET_START_STATE(INITIAL);
               *string_buf_ptr = '\0';
 
               /* Inform caller that we saw and interpreted a string literal.
@@ -1740,7 +1768,7 @@ using exclusive start conditions, including expanded escape sequences
 
     &lt;str&gt;\n        {
               printf("unterminated string literal\n");
-              BEGIN(INITIAL);     /* Recover from the error. */
+              YY_SET_START_STATE(INITIAL);     /* Recover from the error. */
             }
 
     &lt;str&gt;\\[0-7]{1,3} {
@@ -1809,36 +1837,41 @@ is a complete example demonstrating start condition scopes.
 
 <p>Start condition scopes may be nested.
 
-<p>Three routines are available for manipulating stacks of start
-conditions:
+
+<h2 id="start-state-stack">Start State Stack</h2>
+
+<p>If <a href="#option-stack"><code>%option stack</code></a> is set,
+there is a stack of start
+states that allows the scanner to enter a new state while remembering
+where it came from.  This is useful when there is one language embedded
+inside another and they require different lexing rules.  Three routines
+are available for manipulating the stack of start conditions:
 
 <dl>
 
-<dt id="yy_push_state"><code>void yy_push_state(yy_lexer_t *yy_lexer, int new_state)</code>
+<dt id="yy_push_state"><code>void yy_push_state(yy_lexer_t *yy_lexer, int new_state);</code>
 
-    <dd><p>pushes the current start condition onto the top of the start
-    condition stack and switches to <code>new_state</code> as though you had
-    used <code>BEGIN new_state</code> (recall that start condition names
-    are also integers).
+    <dd><p>Push the current start condition onto the top of the start
+    condition stack and switch to <code>new_state</code> as though you had
+    used
+    <a href="#yy_set_start_state"><code>yy_set_start_state(yy_lexer, new_state)</code></a>.
 
-<dt><code>void yy_pop_state(yy_lexer_t *yy_lexer)</code>
+<dt id="yy_pop_state"><code>void yy_pop_state(yy_lexer_t *yy_lexer);</code>
 
-    <dd><p>pops the top of the stack and switches to it via <code>BEGIN</code>.
+    <dd><p>Pop the top of the stack and switch to it via
+    <code>yy_set_start_state</code>.
 
-<dt><code>int yy_top_state(yy_lexer_t *yy_lexer)</code>
+<dt id="yy_top_state"><code>int yy_top_state(yy_lexer_t *yy_lexer);</code>
 
-    <dd><p>returns the top of the stack without altering the stack's contents.
+    <dd><p>Return the top of the stack without altering the stack's contents.
 
     <p>Use of this function requires <code>%option yy_top_state</code>.
 
 </dl>
 
 <p>The start condition stack grows dynamically and so has no built-in
-size limitation. If memory is exhausted, program execution aborts.
-
-<p>To use start condition stacks, your scanner must include a
-<code>%option stack</code> directive (see
-<a href="#options">Options</a>).
+size limitation. If memory is exhausted,
+<a href="#yy_error_function"><code>yy_error_function</code></a> is called.
 
 <p><a href="test/discard-ml-comments.lex">Here</a> is an example that
 demonstrates the start condition stack, as well as start condition
@@ -1951,7 +1984,7 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
     %}
 
     %%
-    include[ ]+         BEGIN(incl);
+    include[ ]+         YY_SET_START_STATE(incl);
 
     [a-z]+              YY_ECHO;
     [^a-z\n]*\n?        YY_ECHO;
@@ -1975,7 +2008,7 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
               yy_switch_to_buffer(yy_lexer, newbuf);
 
               /* Start condition for processing the new file. */
-              BEGIN(INITIAL);
+              YY_SET_START_STATE(INITIAL);
             }
 
     &lt;&lt;EOF&gt;&gt; {
@@ -2246,7 +2279,7 @@ the rule actions.
 <li><p><code>YY_START</code>
     returns an integer value corresponding to the current start
     condition. You can subsequently use this value with
-    <code>BEGIN</code> to return to that start condition.
+    <code>YY_SET_START_STATE</code> to return to that start condition.
 
 </ul>
 
@@ -2740,7 +2773,7 @@ number are equivalent to <code>smflex</code> flags or their negation:
     <code>noreject</code> disables <code>REJECT</code> even when it
     seems to be used.
 
-<dt><code>stack</code>
+<dt id="option-stack"><code>stack</code>
 
 <dd><p>Enable the use of start condition stacks
     (see <a href="#start-conditions">Start Conditions</a>).
@@ -2794,7 +2827,7 @@ corresponding option is set.  These are:
     yy_scan_string
     yy_scan_bytes
     yy_scan_buffer
-    yy_top_state           # Only has effect with %option stack.
+    <span id="option-yy_top_state">yy_top_state           # Only has effect with %option stack.</span>
     yy_unread_character
 </code></pre>
 
@@ -3804,12 +3837,12 @@ for the action. Recall the scanner for C comments:
     %%
             int line_num = 1;
 
-    "/*"         BEGIN(comment);
+    "/*"         YY_SET_START_STATE(comment);
 
     &lt;comment&gt;[^*\n]*
     &lt;comment&gt;"*"+[^*/\n]*
     &lt;comment&gt;\n             ++line_num;
-    &lt;comment&gt;"*"+"/"        BEGIN(INITIAL);
+    &lt;comment&gt;"*"+"/"        YY_SET_START_STATE(INITIAL);
 </code></pre>
 
 <p>This could be sped up by writing it as:
@@ -3819,13 +3852,13 @@ for the action. Recall the scanner for C comments:
     %%
             int line_num = 1;
 
-    "/*"         BEGIN(comment);
+    "/*"         YY_SET_START_STATE(comment);
 
     &lt;comment&gt;[^*\n]*
     &lt;comment&gt;[^*\n]*\n      ++line_num;
     &lt;comment&gt;"*"+[^*/\n]*
     &lt;comment&gt;"*"+[^*/\n]*\n ++line_num;
-    &lt;comment&gt;"*"+"/"        BEGIN(INITIAL);
+    &lt;comment&gt;"*"+"/"        YY_SET_START_STATE(INITIAL);
 </code></pre>
 
 <p>Now instead of each newline requiring the processing of another action,
@@ -4022,7 +4055,9 @@ scanner over input:
 <dd><p>These also work like their C-interface counterparts.
     (<a href="test/yym-read-character.lexpp">Example.</a>)
 
-<dt><code>yym_push_state()</code>,
+<dt><code>yym_set_start_state()</code>,
+    <code>yym_get_start_state()</code>,
+    <code>yym_push_state()</code>,
     <code>yym_pop_state()</code>, and
     <code>yym_top_state()</code>
 
@@ -4723,6 +4758,21 @@ run-time support library.  That has been removed as detailed below.
     <p>With <code>%option flex-compat</code>, <code>yyless</code> is
     available as an alias for <code>YY_LESS_TEXT</code>.
 
+<li><p>The <code>BEGIN</code> macro has been renamed to
+    <a href="#YY_SET_START_STATE-macro"><code>YY_SET_START_STATE</code></a>.
+    Additionally, it now requires a parenthesized argument, whereas in
+    <code>flex</code> it is legal to write "<code>BEGIN s;</code>" to
+    change to start condition <code>s</code>
+
+    <p>Rationale: The new name adheres to my naming convention and
+    has a clearer purpose.  In particular, it is weird how the old
+    name uses "BEGIN" for both the act of entering and leaving a
+    special parsing mode.  The new name does not imply there is a
+    "leave" counterpart.
+
+    <p>The old name is available with
+    <code>%option flex-compat</code>.
+
 <li><p>The <code>YY_INPUT</code> macro has been replaced by
     <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
 
@@ -4789,6 +4839,10 @@ Renaming summary:
   <tr>
     <td><code>yyless</code>
     <td><a href="#YY_LESS_TEXT-macro"><code>YY_LESS_TEXT</code></a>
+    <td>Old name available with <code>%option flex-compat</code>.
+  <tr>
+    <td><code>BEGIN</code>
+    <td><a href="#YY_SET_START_STATE-macro"><code>YY_SET_START_STATE</code></a>
     <td>Old name available with <code>%option flex-compat</code>.
   <tr>
     <td><code>YY_BUFFER_STATE</code>

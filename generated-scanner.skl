@@ -52,14 +52,11 @@
  * C89 as my lowest common denomnator. */
 #define YY_SIZE_T_MAX ((size_t)(-1))
 
-/* Enter a start condition.  This macro really ought to take a parameter,
- * but we do it the disgusting crufty way forced on us by the ()-less
- * definition of BEGIN.
- */
-#define BEGIN yy_lexer->yy_start_state = 1 + 2 *
+/* Enter a start condition. */
+#define YY_SET_START_STATE(s) (yy_lexer->yy_start_state = 1 + 2 * (s))
 
 /* Translate the current start state into a value that can be later handed
- * to BEGIN to return to the state. */
+ * to YY_SET_START_STATE to return to the state. */
 #define YY_START ((yy_lexer->yy_start_state - 1) / 2)
 
 /* Action number for EOF rule of a given start state. */
@@ -413,6 +410,11 @@ int yyFlexLexer::yym_lex()
   char *yy_cp, *yy_bp;
   int yy_act;
 
+%# TODO: All of the aliases should be defined here.
+%if option_flex_compat
+#     define BEGIN(s) YY_SET_START_STATE(s)
+%endif
+
 %% user_local_decl: user's declarations go here
 
   if (yy_lexer->yy_init) {
@@ -556,6 +558,7 @@ do_action:      /* This label is used only to access EOF actions. */
       /* Remove flex aliases too. */
 #     undef ECHO
 #     undef yyless
+#     undef BEGIN
 %if option_yy_read_character
 #     undef input
 #     undef yyinput
@@ -1525,7 +1528,7 @@ void yy_push_state(yy_lexer_t *yy_lexer, int new_state)
 
   yy_lexer->yy_start_stack_array[yy_lexer->yy_start_stack_cur_size++] = YY_START;
 
-  BEGIN(new_state);
+  YY_SET_START_STATE(new_state);
 }
 
 %if cpp_interface
@@ -1544,7 +1547,7 @@ void yy_pop_state(yy_lexer_t *yy_lexer)
   }
 
   --(yy_lexer->yy_start_stack_cur_size);
-  BEGIN(yy_lexer->yy_start_stack_array[yy_lexer->yy_start_stack_cur_size]);
+  YY_SET_START_STATE(yy_lexer->yy_start_stack_array[yy_lexer->yy_start_stack_cur_size]);
 }
 
 %if cpp_interface
@@ -1755,7 +1758,7 @@ void yy_check_for_memory_leaks()
 
 void yy_set_start_state(yy_lexer_t *yy_lexer, int state)
 {
-  BEGIN(state);
+  YY_SET_START_STATE(state);
 }
 
 %if cpp_interface
@@ -1867,7 +1870,7 @@ int main()
 
 /* Remove documented YY_XXX macros, as they cannot be used in section 3.
  * Most of them have yy_XXX alternatives that accept 'yy_lexer_t*'. */
-#undef BEGIN                /* TODO: Rename to 'YY_SET_START_STATE'. */
+#undef YY_SET_START_STATE
 #undef YY_START             /* TODO: Rename to 'YY_GET_START_STATE'. */
 #undef YY_LESS_TEXT
 #undef YY_CURRENT_BUFFER    /* TODO: Document as alias of the field. */
