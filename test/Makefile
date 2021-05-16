@@ -277,6 +277,7 @@ all-df: out/yy-input-redefined.ok
 all-df: out/yy-wrap-function.ok
 all-df: out/yyinput-c-comments.ok
 all-d : out/yyless-foobar.ok
+all-d : out/yyless-foobar-s3.ok
 all-d : out/yylineno.ok
 all-df: out/yym-read-character.ok
 all-df: out/yym-scan-string-etc.ok

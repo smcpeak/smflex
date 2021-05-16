@@ -326,14 +326,14 @@ LEXOPT          [aceknopr]
 
 
 <SECT2PROLOG>{
-        ^"%{".* ++bracelevel; yyless( 2 );      /* eat only %{ */
-        ^"%}".* --bracelevel; yyless( 2 );      /* eat only %} */
+        ^"%{".* ++bracelevel; YY_LESS_TEXT( 2 );      /* eat only %{ */
+        ^"%}".* --bracelevel; YY_LESS_TEXT( 2 );      /* eat only %} */
 
         ^{WS}.* ACTION_ECHO;    /* indented code in prolog */
 
         ^{NOT_WS}.*     {       /* non-indented code */
                           if (bracelevel <= 0) {   /* not in %{ ... %} */
-                            yyless(0);             /* put it all back */
+                            YY_LESS_TEXT(0);       /* put it all back */
                             input_scan_set_bol(yy_lexer, 1);
                             mark_prolog();
                             BEGIN(SECT2);
@@ -401,7 +401,7 @@ LEXOPT          [aceknopr]
                         }
 
         ^{WS}"/*"       {
-                          yyless(yyleng - 2); /* put back '/', '*' */
+                          YY_LESS_TEXT(yyleng - 2); /* put back '/', '*' */
                           bracelevel = 0;
                           continued_action = false;
                           BEGIN(ACTION);
@@ -472,7 +472,7 @@ LEXOPT          [aceknopr]
                             /* Push back everything but the leading bracket
                              * so the ccl can be rescanned.
                              */
-                            yyless(1);
+                            YY_LESS_TEXT(1);
 
                             BEGIN(FIRSTCCL);
                             return '[';

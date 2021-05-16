@@ -1327,6 +1327,7 @@ static char const *lower_prefix_names[] = {
   "yy_get_start_state",
   "yy_init_buffer",
   "yy_input_stream_t",
+  "yy_less_text",
   "yy_lex",
   "yy_lexer_struct",
   "yy_lexer_t",

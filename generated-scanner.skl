@@ -139,16 +139,25 @@
 #  define YY_STATIC_ASSERT(cond) ((void)(int (*)[((cond)? +1 : -1)])0)
 #endif
 
+/* Check an API precondition.  If it fails, call YY_ERROR.  If that
+ * returns, the form evaluates to 0; otherwise it evaluates to 1. */
+#ifndef YY_API_PRECONDITION
+#  define YY_API_PRECONDITION(cond) \
+     ((cond)? 1 : (YY_ERROR(yy_err_api_misuse, #cond), 0))
+#endif
+
 #define EOB_ACT_CONTINUE_SCAN 0
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
 
-/* Return all but the first 'n' matched characters back to the input stream. */
-#define yyless(n) \
+/* Return all but the first 'n' matched characters back to the input
+ * stream.  This definition only works in section 3 where the local
+ * variables 'yy_cp' and 'yy_bp' are present. */
+#define YY_LESS_TEXT(new_yy_leng) \
   if (1) { \
     /* Undo effects of setting up yy_text. */ \
     *yy_cp = yy_lexer->yy_hold_char; \
-    yy_lexer->yy_c_buf_p = yy_cp = yy_bp + n - YY_MORE_ADJ; \
+    yy_lexer->yy_c_buf_p = yy_cp = yy_bp + new_yy_leng - YY_MORE_ADJ; \
     YY_DO_BEFORE_ACTION; /* set up yy_text again */ \
   } else ((void)0)
 
@@ -428,7 +437,8 @@ int yyFlexLexer::yym_lex()
     yy_load_buffer_state(yy_lexer);
   }
 
-  while (1) {            /* loops until end-of-file is reached */
+  /* Loop over all tokens in the input until end-of-file. */
+  while (1) {
 %% yymore_loop_top: yymore()-related code goes here
     yy_cp = yy_lexer->yy_c_buf_p;
 
@@ -513,6 +523,7 @@ do_action:      /* This label is used only to access EOF actions. */
 %if option_flex_compat
       /* flex compatibility aliases. */
 #     define ECHO YY_ECHO
+#     define yyless(n) YY_LESS_TEXT(n)
 %if option_yy_read_character
 #     define input() YY_READ_CHARACTER()
 #     define yyinput() YY_READ_CHARACTER()
@@ -539,11 +550,20 @@ do_action:      /* This label is used only to access EOF actions. */
 %if do_yylineno
 #     undef yylineno
 %endif
+%# TODO: Remove things like YY_ECHO.
+
 %if option_flex_compat
+      /* Remove flex aliases too. */
+#     undef ECHO
+#     undef yyless
+%if option_yy_read_character
 #     undef input
 #     undef yyinput
+%endif
+%if option_yy_unread_character
 #     undef unput
 %endif
+%endif # option_flex_compat
 
 
       case YY_END_OF_BUFFER: {
@@ -1658,20 +1678,24 @@ void yyFlexLexer::yym_error(yy_error_code_t code, char const *detail)
 %endif
 
 
-/* Redefine yyless() so it works in section 3 code. */
-/* TODO: This is broken right now unless the user arranges to have
- * a 'yy_lexer' in scope in section 3. */
-#undef yyless
-#define yyless(n) \
-  if (1) { \
-    /* Undo effects of setting up yy_text. */ \
-    yy_lexer->yy_text[yy_lexer->yy_leng] = yy_lexer->yy_hold_char; \
-    yy_lexer->yy_c_buf_p = yy_lexer->yy_text + n; \
-    yy_lexer->yy_hold_char = *(yy_lexer->yy_c_buf_p); \
-    *(yy_lexer->yy_c_buf_p) = '\0'; \
-    yy_lexer->yy_leng = n; \
-  } else ((void)0)
+void yy_less_text(yy_lexer_t *yy_lexer, int new_yy_leng)
+{
+  if (!YY_API_PRECONDITION(0 <= new_yy_leng &&
+                                new_yy_leng <= yy_lexer->yy_leng)) {
+    return;
+  }
 
+  /* Undo effects of setting up yy_text. */
+  yy_lexer->yy_text[yy_lexer->yy_leng] = yy_lexer->yy_hold_char;
+
+  /* Move the end-of-token pointer to the specified location. */
+  yy_lexer->yy_c_buf_p = yy_lexer->yy_text + new_yy_leng;
+  yy_lexer->yy_leng = new_yy_leng;
+
+  /* Re-insert the temporary NUL terminator. */
+  yy_lexer->yy_hold_char = *(yy_lexer->yy_c_buf_p);
+  *(yy_lexer->yy_c_buf_p) = '\0';
+}
 
 
 /* When this symbol is defined, enable mechanisms to inject failures

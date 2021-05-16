@@ -5,5 +5,5 @@
 
 /* BEGIN: example fragment */
 %%
-foobar    YY_ECHO; yyless(3);
+foobar    YY_ECHO; YY_LESS_TEXT(3);
 [a-z]+    YY_ECHO;

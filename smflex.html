@@ -1009,29 +1009,32 @@ an action:
     the presence of <code>yymore()</code> in the scanner's action entails
     a minor performance penalty in the scanner's matching speed.
 
-<li><p><code>yyless(n)</code>
+<li id="YY_LESS_TEXT-macro"><p><code>YY_LESS_TEXT(n)</code>
     returns all but the first <code>n</code> characters of the current
     token back to the input stream, where they will be rescanned when
-    the scanner looks for the next match. <code>yytext</code> and
-    <code>yyleng</code> are adjusted appropriately (e.g.,
-    <code>yyleng</code> will now be equal to <code>n</code>). For
+    the scanner looks for the next match.
+    <a href="#yy_text"><code>yy_text</code></a> and
+    <a href="#yy_leng"><code>yy_leng</code></a>
+    are adjusted appropriately (e.g.,
+    <code>yy_leng</code> will now be equal to <code>n</code>). For
     example, on the input "foobar" the
     <a href="test/yyless-foobar.lex">following</a> will write out
     "foobarbar":
 
     <pre><!-- BEGIN example: "yyless-foobar.lex" fragment=true indent=8 --><code>
         %%
-        foobar    YY_ECHO; yyless(3);
+        foobar    YY_ECHO; YY_LESS_TEXT(3);
         [a-z]+    YY_ECHO;
     </code><!-- END example --></pre>
 
-    <p>An argument of 0 to <code>yyless</code> will cause the entire current
+    <p>An argument of 0 to <code>YY_LESS_TEXT</code> will cause the entire current
     input string to be scanned again. Unless you've changed how the scanner
     will subsequently process its input (using <code>BEGIN</code>, for
     example), this will result in an endless loop.
 
-    <p><code>yyless</code> is a macro; it can only be used in the
-    <code>smflex</code> input file, not from other source files.
+    <p>Outside of rule actions, the <code>YY_LESS_TEXT</code>
+    macro is not available.  Instead, you can call the
+    <a href="#yy_less_text"><code>yy_less_text</code></a> function.
 
 <li><p id="yy_unread_character"><code>YY_UNREAD_CHARACTER(c)</code>
     puts the character <code>c</code> back onto the input stream. It
@@ -1427,12 +1430,30 @@ following public members:
 </dl>
 
 <p>Within section 2 actions, several convenience macros provide access
-to associated fields with the need for an explicit object:
+to associated fields without the need for an explicit object:
 
 <pre><code>
-    #define yytext (yy_lexer-&gt;yy_text)
-    #define yyleng (yy_lexer-&gt;yy_leng)
+    #define YY_TEXT (yy_lexer-&gt;yy_text)
+    #define YY_LENG (yy_lexer-&gt;yy_leng)
 </code></pre>
+
+<p>These functions are available for inspecting and manipulating the
+text matched by a rule:
+
+<dl>
+
+<dt id="yy_less_text"><code>void yy_less_text(yy_lexer_t *yy_lexer, int new_yy_leng);</code>
+
+    <dd><p>
+    Put a suffix of the matched text back into the read buffer so it
+    will be scanned next.  This function can only be called when <a
+    href="#yy_text"><code>yy_text</code></a> could be accessed.
+    <code>new_yy_leng</code> must be in <code>[0,yy_leng]</code>, and it
+    determines the new value of <a
+    href="#yy_leng"><code>yy_leng</code></a>. The amount of text put
+    back is the difference between the old and new lengths.
+
+</dl>
 
 <p>These functions are the pre-defined handlers for the function
 pointers in <code>yy_lexer_t</code>:
@@ -2289,6 +2310,12 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
         <th>Compatibility alias
         <th>New name
       <tr>
+        <td><code>ECHO</code>
+        <td><code>YY_ECHO</code>
+      <tr>
+        <td><code>yyless</code>
+        <td><code>YY_LESS_TEXT</code>
+      <tr>
         <td><code>input</code>
         <td><code>YY_READ_CHARACTER</code>
       <tr>
@@ -2299,18 +2326,18 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
         <td><code>YY_UNREAD_CHARACTER</code>
     </table>
 
-    <p>Additionally, this adds to to the generated header file the
-    following typedef:
+    <p>Additionally, this option adds to to the generated header file the
+    following typedef, which is used in <code>flex</code> to access the
+    <a href="#multiple-input-buffers">Multiple Input Buffers</a>
+    functions:
 
     <pre><code>
         typedef yy_buffer_state_t *YY_BUFFER_STATE;
     </code></pre>
 
-    <p>The intent of this option is to make it a bit easier to test
+    <p>The intent of this option is to make it a bit easier to experiment
     with <code>smflex</code> during a transition period, rather than
-    to use it indefinitely.  The aliases it provides can reduce the
-    amount of rule action code that has to change, but changes to
-    options are still typically required.
+    to use it indefinitely.
 
 <dt><code>-h</code>
 
@@ -4687,6 +4714,15 @@ run-time support library.  That has been removed as detailed below.
     <p>With <code>%option flex-compat</code>, <code>ECHO</code> is
     available as an alias for <code>YY_ECHO</code>.
 
+<li><p>The <code>yyless</code> macro has been renamed to
+    <code>YY_LESS_TEXT</code>.
+
+    <p>Rationale: In addition to adding "YY_" to and capitalizing all
+    macro names, I added "_TEXT" to clarify what we are getting less of.
+
+    <p>With <code>%option flex-compat</code>, <code>yyless</code> is
+    available as an alias for <code>YY_LESS_TEXT</code>.
+
 <li><p>The <code>YY_INPUT</code> macro has been replaced by
     <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
 
@@ -4749,6 +4785,10 @@ Renaming summary:
   <tr>
     <td><code>ECHO</code>
     <td><code>YY_ECHO</code>
+    <td>Old name available with <code>%option flex-compat</code>.
+  <tr>
+    <td><code>yyless</code>
+    <td><a href="#YY_LESS_TEXT-macro"><code>YY_LESS_TEXT</code></a>
     <td>Old name available with <code>%option flex-compat</code>.
   <tr>
     <td><code>YY_BUFFER_STATE</code>

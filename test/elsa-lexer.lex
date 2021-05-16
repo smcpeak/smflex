@@ -454,7 +454,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
   /* this rule is to avoid backing up in the lexer
    * when there are two dots but not three */
 ".." {
-  yyless(1);     /* put back all but 1; this is inexpensive */
+  YY_LESS_TEXT(1);     /* put back all but 1; this is inexpensive */
   return tok(TOK_DOT);
 }
 

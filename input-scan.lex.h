@@ -111,16 +111,21 @@ struct input_scan_lexer_struct {
 
   /* After a rule pattern has been matched, this is set to point at the
    * matched text within 'yy_current_buffer', temporarily
-   * NUL-terminated.  It is only valid while an action is executing.
+   * NUL-terminated.
    *
-   * NOTE: Within section 2 actions, there is also a 'yytext' (without
-   * an underscore) macro that expands to 'yy_lexer->yy_text'. */
+   * This pointer is only valid while an action is executing, or between
+   * when input_scan_lex() returns a non-zero value and the next invocation of a
+   * input_scan_lex(), or any function that modifies the read buffer except for
+   * input_scan_less_text().
+   *
+   * NOTE: Within section 2 actions, there is also a 'YY_TEXT' macro
+   * that expands to 'yy_lexer->yy_text'. */
   char *yy_text;
 
   /* After a rule pattern has been matched, this is set to the length
    * of the matched text, in bytes.
    *
-   * NOTE: As with 'yy_text', this field has an associated 'yyleng'
+   * NOTE: As with 'yy_text', this field has an associated 'YY_LENG'
    * macro active in section 2 actions. */
   int yy_leng;
 
@@ -248,6 +253,15 @@ int input_scan_lex(input_scan_lexer_t *yy_lexer);
  * scanning 'input_file'.  This is how to choose what to scan;
  * otherwise, the scanner reads standard input. */
 void input_scan_restart(input_scan_lexer_t *yy_lexer, input_scan_input_stream_t *input_file);
+
+/* -------- Manipulating matched text -------- */
+/* Put a suffix of the matched text back into the read buffer so it will
+ * be scanned next.  This function can only be called when
+ * 'yy_lexer->yy_text' could be accessed.  'new_yy_leng' must be in
+ * [0,yy_leng], and it determines the new value of 'yy_lexer->yy_leng'.
+ * The amount of text put back is the difference between the old and
+ * new lengths. */
+void input_scan_less_text(input_scan_lexer_t *yy_lexer, int new_yy_leng);
 
 /* -------- Scanning multiple sources (e.g., #includes) -------- */
 /* Create a new buffer for use with 'yy_lexer' that reads from 'file'.
