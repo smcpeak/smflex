@@ -69,6 +69,10 @@ out/outfile-specified.yy.c: outfile.lex $(SMFLEX)
 	@mkdir -p out
 	$(SMFLEX) $(SMFLEX_OPTS) $<
 
+
+# Compilation flags to add for memory tests.
+MEM_TEST_FLAGS := -DYY_ENABLE_DEBUG_LOG_CALL -DYY_ENABLE_DEBUG_LOG_MEM -DYY_ALLOCATOR_FAILURE_INJECTION
+
 # Extra compilation flags to add for certain tests.
 CFLAGS_FOR_c_int_batch                      := -DYY_ENABLE_DEBUG_LOG_CALL
 CFLAGS_FOR_c_int_default                    := -DYY_ENABLE_DEBUG_LOG_CALL
@@ -78,7 +82,8 @@ CFLAGS_FOR_c_int_interactive_set_int_isatty := -DYY_ENABLE_DEBUG_LOG_CALL
 CFLAGS_FOR_c_int_set_int_0                  := -DYY_ENABLE_DEBUG_LOG_CALL
 CFLAGS_FOR_c_int_set_int_1                  := -DYY_ENABLE_DEBUG_LOG_CALL
 CFLAGS_FOR_c_int_set_int_isatty             := -DYY_ENABLE_DEBUG_LOG_CALL
-CFLAGS_FOR_large_token := -DYY_ENABLE_DEBUG_LOG_CALL -DYY_ENABLE_DEBUG_LOG_MEM -DYY_ALLOCATOR_FAILURE_INJECTION
+CFLAGS_FOR_large_token      := $(MEM_TEST_FLAGS)
+CFLAGS_FOR_scan_string_only := $(MEM_TEST_FLAGS)
 
 CXXFLAGS_FOR_cpp_int_batch       := -DYY_ENABLE_DEBUG_LOG_CALL
 CXXFLAGS_FOR_cpp_int_default     := -DYY_ENABLE_DEBUG_LOG_CALL

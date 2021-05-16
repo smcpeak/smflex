@@ -1423,7 +1423,7 @@ const char *scanner_skl_contents[] = {
   "  b = yy_scan_buffer(yy_lexer, buf, n);",
   "  if (!b) {",
   "    /* The error has already been reported. */",
-  "    /* TODO: This leaks 'buf'. */",
+  "    yy_flex_free(buf);",
   "    return NULL;",
   "  }",
   "",

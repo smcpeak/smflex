@@ -1418,7 +1418,7 @@ yy_buffer_state_t *yy_scan_bytes(yy_lexer_t *yy_lexer,
   b = yy_scan_buffer(yy_lexer, buf, n);
   if (!b) {
     /* The error has already been reported. */
-    /* TODO: This leaks 'buf'. */
+    yy_flex_free(buf);
     return NULL;
   }
 
