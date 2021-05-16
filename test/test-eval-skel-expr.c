@@ -66,9 +66,11 @@ static int eval_test_expr(char const *expr)
 
 static void test_expr(char const *expr, int expect)
 {
+  int actual;
+
   print_errors = 1;
 
-  int actual = eval_test_expr(expr);
+  actual = eval_test_expr(expr);
   if (actual != expect) {
     fprintf(stderr,
       "test_expr failed:\n"

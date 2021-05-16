@@ -19,6 +19,7 @@ int main()
 {
   char data[4096];
   yy_lexer_t lexer;
+  yy_buffer_state_t *buf;
 
   /* Read stdin into memory. */
   size_t size = fread(data, 1, sizeof(data)-2, stdin);
@@ -30,7 +31,7 @@ int main()
   yy_construct(&lexer);
 
   printf("Scanning with 'yy_scan_string'...\n");
-  yy_buffer_state_t *buf = yy_scan_string(&lexer, data);
+  buf = yy_scan_string(&lexer, data);
   while (yy_lex(&lexer))
     {}
   yy_delete_buffer(&lexer, buf);

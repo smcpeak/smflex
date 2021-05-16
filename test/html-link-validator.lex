@@ -16,7 +16,7 @@ enum {
   MAX_ANCHORS = 1000,
 
   /* Maximum number of intra-document links. */
-  MAX_LINKS = 1000,
+  MAX_LINKS = 1000
 };
 
 /* Number of anchors found.*/

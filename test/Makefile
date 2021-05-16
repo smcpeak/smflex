@@ -21,11 +21,17 @@ CXX := g++
 
 # C compilation options for correctness test executables.
 #
-# WERROR is something that can be set to -Werror in personal.mk.
-CFLAGS := -g -Wall -I. -std=c89 $(WERROR)
+# This refers to several variables that can be set in personal.mk:
+#
+#   CSTD      -std=c89
+#   CXXSTD    -std=c++98
+#   PEDANTIC  -pedantic
+#   WERROR    -Werror
+#
+CFLAGS := -g -Wall -I. $(CSTD) $(PEDANTIC) $(WERROR)
 
 # C++ compilation options.
-CXXFLAGS := -g -Wall -I. -std=c++98 $(WERROR)
+CXXFLAGS := -g -Wall -I. $(CXXSTD) $(PEDANTIC) $(WERROR)
 
 # smflex executable.
 SMFLEX := ../smflex

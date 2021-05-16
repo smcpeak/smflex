@@ -43,11 +43,13 @@ static void scanFile(char const *fname)
 
 #else
   yy_lexer_t lexer;
+  FILE *fp;
+
   yy_construct(&lexer);
 
   /* Open a named file, which is how I expect a real scanner would
    * usually operate. */
-  FILE *fp = fopen(fname, "rb");
+  fp = fopen(fname, "rb");
   if (!fp) {
     printf("failed to open file \"%s\"\n", fname);
     exit(2);

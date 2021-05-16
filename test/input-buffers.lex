@@ -26,6 +26,8 @@ include[ ]+         BEGIN(incl);
 [^a-z\n]*\n?        YY_ECHO;
 
 <incl>[^\n]+      { /* got the include file name */
+          yy_buffer_state_t *newbuf;
+
           FILE *fp = fopen(yytext, "r");
           if (!fp) {
             fprintf(stderr, "Cannot open include file: \"%s\".\n", yytext);
@@ -38,7 +40,7 @@ include[ ]+         BEGIN(incl);
           }
           include_stack[include_stack_len++] = YY_CURRENT_BUFFER;
 
-          yy_buffer_state_t *newbuf = yy_create_buffer(yy_lexer, fp, 0 /*size*/);
+          newbuf = yy_create_buffer(yy_lexer, fp, 0 /*size*/);
           yy_switch_to_buffer(yy_lexer, newbuf);
 
           /* Start condition for processing the new file. */
