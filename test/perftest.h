@@ -71,6 +71,7 @@ static int runPerftest(int argc, char **argv)
   if (argc >= 2) {
     /* Read a named file. */
     char const *inputFname = argv[1];
+    int i;
 
     if (argc >= 3) {
       /* Specify number of iterations. */
@@ -78,7 +79,7 @@ static int runPerftest(int argc, char **argv)
       printf("iters: %d\n", iters);
     }
 
-    for (int i=0; i < iters; i++) {
+    for (i=0; i < iters; i++) {
       scanFile(inputFname);
     }
   }

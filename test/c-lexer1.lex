@@ -215,7 +215,6 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
      * get an extra NUL in the collected token, which I don't want */
   }
 
-  //lexer.error("unterminated string literal");
   lexer_emit(L1_STRING_LITERAL, COLLECTOR);
   BEGIN(INITIAL);
 
@@ -282,7 +281,6 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
 
   /* final, error */
 <ST_C_COMMENT><<EOF>>     {
-  //lexer.error("unterminated /**/ comment");
   lexer_emit(L1_COMMENT, COLLECTOR);
   BEGIN(INITIAL);
 }
@@ -335,13 +333,15 @@ int main(int argc, char **argv)
     printf("identifiers: %d\n", tokenCount[L1_IDENTIFIER]);
   }
   else {
+    int i;
+
     /* Print these globals, again to prevent them from being optimized
      * away. */
     printf("last token text: \"%.*s\"\n", lastTokenLen, lastTokenText);
     printf("last collected text: \"%.*s\"\n", lastCollectedLen, lastCollectedText);
 
     /* Print token count stats. */
-    for (int i=0; i < NUM_L1_TOKENS; i++) {
+    for (i=0; i < NUM_L1_TOKENS; i++) {
       printf("type=%d count=%d\n", i, tokenCount[i]);
     }
   }

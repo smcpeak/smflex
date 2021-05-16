@@ -22,10 +22,10 @@ CXX := g++
 # C compilation options for correctness test executables.
 #
 # WERROR is something that can be set to -Werror in personal.mk.
-CFLAGS := -g -Wall -I. $(WERROR)
+CFLAGS := -g -Wall -I. -std=c89 $(WERROR)
 
 # C++ compilation options.
-CXXFLAGS := $(CFLAGS)
+CXXFLAGS := -g -Wall -I. -std=c++98 $(WERROR)
 
 # smflex executable.
 SMFLEX := ../smflex
@@ -362,7 +362,8 @@ FLEX254 := ../../flex-2.5.4/flex
 FLEX264 := /usr/bin/flex
 
 # Compilation flags for use when making performance test programs.
-PERF_CFLAGS := -O2 -Wall -Werror -Wno-unused-function -DHAS_POSIX
+PERF_CFLAGS := -O2 -Wall -Werror -Wno-unused-function -DHAS_POSIX -std=c89
+PERF_CXXFLAGS := -O2 -Wall -Werror -Wno-unused-function -DHAS_POSIX -std=c++98
 
 
 # 'readfile' program for baseline.
@@ -374,7 +375,7 @@ $(OPERF)/readfile-c.exe: readfile.c
 all: $(OPERF)/readfile-cpp.exe
 $(OPERF)/readfile-cpp.exe: readfile.c
 	@mkdir -p $(OPERF)
-	$(CXX) -o$@ -xc++ -std=c++98 $(PERF_CFLAGS) $<
+	$(CXX) -o$@ -xc++ -std=c++98 $(PERF_CXXFLAGS) $<
 
 # This collects together the measurements supporting the main
 # conclusions from the readfile experiment:
@@ -518,7 +519,7 @@ ifeq ($(INTERFACE),c)
 	$(CC) $(PERF_CFLAGS) $($(VARIANT)_CFLAGS) -o$@ $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.c
 else
 	$($(VARIANT)_EXEC) -+ -o$(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc $($*_OPS) $<
-	$(CXX) $(PERF_CFLAGS) $($(VARIANT)_CFLAGS) -o$@ $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc
+	$(CXX) $(PERF_CXXFLAGS) $($(VARIANT)_CFLAGS) -o$@ $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-$*.yy.cc
 endif
 
 

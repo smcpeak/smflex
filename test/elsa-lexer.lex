@@ -681,12 +681,14 @@ int main(int argc, char **argv)
     printf("identifiers: %d\n", tokenCount[TOK_NAME]);
   }
   else {
+    int i;
+
     /* Print these globals, again to prevent them from being optimized
      * away. */
     printf("last token text: \"%.*s\"\n", lastTokenLen, lastTokenText);
 
     /* Print token count stats. */
-    for (int i=0; i < NUM_TOKEN_TYPES; i++) {
+    for (i=0; i < NUM_TOKEN_TYPES; i++) {
       int count = tokenCount[i];
       if (count > 0) {
         printf("type=%d count=%d\n", i, count);
