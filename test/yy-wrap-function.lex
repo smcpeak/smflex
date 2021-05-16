@@ -46,6 +46,7 @@ int main()
   while (yy_lex(&lexer))
     {}
   yy_destroy(&lexer);
+  yy_check_for_memory_leaks();
   return 0;
 }
 

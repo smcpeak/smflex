@@ -107,6 +107,7 @@ int main(int argc, char **argv)
   yy_construct(&lexer);
   yy_lex(&lexer);
   yy_destroy(&lexer);
+  yy_check_for_memory_leaks();
 
   for (i=0; i < numLinks; i++) {
     /* Inefficient linear search. */

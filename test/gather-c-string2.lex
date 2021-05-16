@@ -71,5 +71,6 @@ int main()
     printf("string literal: %s\n", string_buf);
   }
   yy_destroy(&lexer);
+  yy_check_for_memory_leaks();
   return 0;
 }
