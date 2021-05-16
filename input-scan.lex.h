@@ -70,7 +70,12 @@ typedef enum input_scan_error_code_enum {
   /* A single token was larger than the size of the input buffer, and
    * the buffer cannot be expanded due to how the scanner was
    * configured. */
-  input_scan_err_input_buffer_overflow,
+  yy_err_input_buffer_cannot_expand,
+
+  /* A single token was larger than the size of the input buffer, and
+   * it cannot be expanded because the new size would not be
+   * representable with 'size_t'. */
+  yy_err_input_buffer_at_max_size,
 
   /* The default rule has been suppressed, and none of the
    * user-specified rules matches the scanned input.  'flex' refers to

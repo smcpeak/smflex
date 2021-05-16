@@ -5158,7 +5158,8 @@ to <code>smflex</code> that you really do use these features.
 </dl>
 
 
-<p>These are the error codes that can be reported to
+<p id="yy_error_code_t">These are the error code enumerators of type
+<code>yy_error_code_t</code> that can be reported to
 <a href="#yy_error_function"><code>yy_error_function</code></a>
 while the generated scanner is running:
 
@@ -5184,12 +5185,19 @@ while the generated scanner is running:
     <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>
     returned -1.
 
-<dt id="yy_err_input_buffer_overflow"><code>yy_err_input_buffer_overflow</code>:
+<dt id="yy_err_input_buffer_cannot_expand"><code>yy_err_input_buffer_cannot_expand</code>:
 
     <dd><p>
     The scanner was working on matching an extremely large token and
     needed to expand the input buffer. This doesn't work with scanners
     that use <code>REJECT</code>.
+
+<dt id="yy_err_input_buffer_at_max_size"><code>yy_err_input_buffer_at_max_size</code>:
+
+    <dd><p>
+    A single token was larger than the size of the input buffer, and it
+    cannot be expanded because the new size would not be representable
+    with <code>size_t</code>.
 
 <dt id="yy_err_no_rule_matches"><code>yy_err_no_rule_matches</code>:
 

@@ -63,10 +63,21 @@ out/outfile-specified.yy.c: outfile.lex $(SMFLEX)
 	@mkdir -p out
 	$(SMFLEX) $(SMFLEX_OPTS) $<
 
+# Extra compilation flags to add for certain tests.
+CFLAGS_FOR_large_token_yy := -DYY_ENABLE_DEBUG_LOG_CALL -DYY_ENABLE_DEBUG_LOG_MEM -DYY_ALLOCATOR_FAILURE_INJECTION
+
+# Given the name of a C source file without its extension, get the
+# CFLAGS to use when compiling that file.  This first maps hyphens and
+# dots to underscores, then looks for a 'CFLAGS_FOR_XXX' that matches,
+# yielding the empty string if there is none.
+GET_CFLAGS = $(CFLAGS_FOR_$(subst -,_,$(subst .,_,$(1))))
+
 # Compile a C file in out/.
 #
 # If the file name contains "c-int-", then add -DYY_ENABLE_DEBUG_LOG_CALL
 # to the compilation line to enable relevant diagnostic prinouts.
+#
+# TODO: Change the 'grep' to use GET_CFLAGS instead.
 #
 .PRECIOUS: out/%.o
 out/%.o: out/%.c
@@ -74,8 +85,8 @@ out/%.o: out/%.c
 	  echo $(CC) -o$@ -c $(CFLAGS) -DYY_ENABLE_DEBUG_LOG_CALL $<; \
 	  $(CC) -o$@ -c $(CFLAGS) -DYY_ENABLE_DEBUG_LOG_CALL $<; \
 	else \
-	  echo $(CC) -o$@ -c $(CFLAGS) $<; \
-	  $(CC) -o$@ -c $(CFLAGS) $<; \
+	  echo $(CC) -o$@ -c $(CFLAGS) $(call GET_CFLAGS,$*) $<; \
+	  $(CC) -o$@ -c $(CFLAGS) $(call GET_CFLAGS,$*) $<; \
 	fi
 
 # Compile a C file in out/ as if it were C++.
@@ -221,6 +232,7 @@ all-df: out/gather-c-string2.ok
 all-df: out/html-link-validator.ok
 all-df: out/input-buffers.ok
 all-df: out/input-c-comments.ok
+all-df: out/large-token.ok
 all-df: out/noreject-frob.ok
 all-df: out/normalize-whitespace.ok
 all-df: out/notrailing-context.ok

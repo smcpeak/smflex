@@ -48,6 +48,10 @@
  */
 #define YY_SC_TO_UI(c) ((unsigned int) (unsigned char) c)
 
+/* Maximum value of 'size_t'.  C99 has SIZE_MAX but I am targeting
+ * C89 as my lowest common denomnator. */
+#define YY_SIZE_T_MAX ((size_t)(-1))
+
 /* Enter a start condition.  This macro really ought to take a parameter,
  * but we do it the disgusting crufty way forced on us by the ()-less
  * definition of BEGIN.
@@ -78,13 +82,26 @@
 #ifdef YY_ENABLE_DEBUG_LOG_CALL
 %if !cpp_interface
 #  define YY_DEBUG_LOG_CALL(call, val) \
-     printf("[%s: %d]\n", call, val)
+     printf("[%s: %d]\n", call, (int)(val))
 %else
 #  define YY_DEBUG_LOG_CALL(call, val) \
      (std::cout << '[' << (call) << ": " << (int)(val) << "]\n")
 %endif
 #else
 #  define YY_DEBUG_LOG_CALL(str, val) ((void)0)
+#endif
+
+/* A switch to control memory-related debug logs. */
+#ifdef YY_ENABLE_DEBUG_LOG_MEM
+%if !cpp_interface
+#  define YY_DEBUG_LOG_MEM(str, val) \
+     printf("[%s: %d]\n", str, (int)(val))
+%else
+#  define YY_DEBUG_LOG_MEM(str, val) \
+     (std::cout << '[' << (str) << ": " << (int)(val) << "]\n")
+%endif
+#else
+#  define YY_DEBUG_LOG_MEM(str, val) ((void)0)
 #endif
 
 /* This macro is meant to be used for a label that the code generator
@@ -142,7 +159,11 @@
 struct yy_buffer_state_struct {
   yy_input_stream_t *yy_input_file;
 
-  char *yy_ch_buf;                /* input buffer */
+  /* Pointer to the beginning of the input buffer.  The allocated
+   * space in the buffer is 'yy_buf_size+2'.  The buffer is owned
+   * by this structure if 'yy_is_our_buffer'. */
+  char *yy_ch_buf;
+
   char *yy_buf_pos;               /* current position in input buffer */
 
   /* Size of input buffer in bytes, not including room for EOB
@@ -215,18 +236,26 @@ static void yy_load_buffer_state(yy_lexer_t *yy_lexer);
 static void yy_init_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *b,
                            yy_input_stream_t *file);
 
-/* If 'yy_lexer' does not have a current buffer, create one. */
-static void yy_create_buffer_if_needed(yy_lexer_t *yy_lexer)
+/* If 'yy_lexer' does not have a current buffer, create one.
+ * Return false if allocation failed.*/
+static int yy_create_buffer_if_needed(yy_lexer_t *yy_lexer)
 {
   if (!yy_lexer->yy_current_buffer) {
-    yy_lexer->yy_current_buffer = yy_create_buffer(yy_lexer, yy_lexer->yy_input_stream, YY_BUF_SIZE);
+    yy_lexer->yy_current_buffer =
+      yy_create_buffer(yy_lexer, yy_lexer->yy_input_stream, YY_BUF_SIZE);
+    if (!yy_lexer->yy_current_buffer) {
+      return 0;
+    }
   }
+  return 1;
 }
 
 
 void yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive)
 {
-  yy_create_buffer_if_needed(yy_lexer);
+  if (!yy_create_buffer_if_needed(yy_lexer)) {
+    return;
+  }
   YY_DEBUG_LOG_CALL("setting yy_is_interactive due to yy_set_interactive", is_interactive);
   yy_lexer->yy_current_buffer->yy_is_interactive = is_interactive;
 }
@@ -241,7 +270,9 @@ void yyFlexLexer::yym_set_interactive(int is_interactive)
 
 void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol)
 {
-  yy_create_buffer_if_needed(yy_lexer);
+  if (!yy_create_buffer_if_needed(yy_lexer)) {
+    return;
+  }
   yy_lexer->yy_current_buffer->yy_at_bol = at_bol;
 }
 
@@ -385,12 +416,18 @@ int yyFlexLexer::yym_lex()
     YY_USER_INIT;
 #endif
 
-    if (!yy_lexer->yy_start_state)
+    if (!yy_lexer->yy_start_state) {
       yy_lexer->yy_start_state = 1;   /* first start state */
+    }
 
-    if (!yy_lexer->yy_current_buffer)
+    if (!yy_lexer->yy_current_buffer) {
       yy_lexer->yy_current_buffer =
         yy_create_buffer(yy_lexer, yy_lexer->yy_input_stream, YY_BUF_SIZE);
+      if (!yy_lexer->yy_current_buffer) {
+        /* Error already reported, just try to get out. */
+        return 0;
+      }
+    }
 
     yy_load_buffer_state(yy_lexer);
   }
@@ -876,7 +913,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
     while (num_to_read <= 0) {  /* Not enough room in the buffer - grow it. */
 %if reject_used
       /* Cannot enlarge because of REJECT. */
-      YY_ERROR(yy_err_input_buffer_overflow,
+      YY_ERROR(yy_err_input_buffer_cannot_expand,
         "can't enlarge buffer because scanner uses REJECT");
       return EOB_ACT_END_OF_FILE;
 %else
@@ -886,28 +923,37 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
       int yy_c_buf_p_offset = (int) (yy_lexer->yy_c_buf_p - b->yy_ch_buf);
 
       if (b->yy_is_our_buffer) {
-        int new_size = b->yy_buf_size * 2;
+        size_t new_size;
+        char *new_buffer;
 
-        if (new_size <= 0)
-          b->yy_buf_size += b->yy_buf_size / 8;
-        else
-          b->yy_buf_size *= 2;
+        /* Check for arithemtic overflow calculating new size. */
+        if (b->yy_buf_size > (YY_SIZE_T_MAX-2) / 2) {
+          YY_ERROR(yy_err_input_buffer_at_max_size, NULL /*detail*/);
+          return EOB_ACT_END_OF_FILE;
+        }
+        new_size = b->yy_buf_size * 2;
 
-        b->yy_ch_buf = (char *)
-          /* Include room in for 2 EOB chars. */
-          yy_flex_realloc((void *) b->yy_ch_buf, b->yy_buf_size + 2);
-
-        if (!b->yy_ch_buf) {
-          /* TODO: The original buffer leaks in this case. */
+        /* Allocate a new buffer. */
+        YY_DEBUG_LOG_MEM("allocate new buffer", new_size + 2);
+        new_buffer = (char*)yy_flex_alloc(new_size + 2);
+        if (!new_buffer) {
           YY_ERROR(yy_err_out_of_memory, "while expanding input buffer");
           return EOB_ACT_END_OF_FILE;
         }
+
+        /* Copy the old data, including the EOB characters. */
+        memcpy(new_buffer, b->yy_ch_buf, b->yy_buf_size + 2);
+
+        /* Release the old buffer and update the fields. */
+        yy_flex_free(b->yy_ch_buf);
+        b->yy_ch_buf = new_buffer;
+        b->yy_buf_size = new_size;
       }
       else {
         /* This happens if we think we need more input to get a match,
          * but we are using 'yy_scan_buffer' and there is no more data.
-         * But in that case, why did we not already see the end of the
-         * input marker? */
+         * But in that case, why did we not already see the end of
+         * buffer markers? */
         YY_ERROR(yy_err_internal_error, "expanding un-owned input buffer");
         return EOB_ACT_END_OF_FILE;
       }
@@ -1133,6 +1179,9 @@ void yy_restart(yy_lexer_t *yy_lexer, yy_input_stream_t *input_file)
   if (!yy_lexer->yy_current_buffer) {
     yy_lexer->yy_current_buffer =
       yy_create_buffer(yy_lexer, yy_lexer->yy_input_stream, YY_BUF_SIZE);
+    if (!yy_lexer->yy_current_buffer) {
+      return;     /* Error already reported, try to recover. */
+    }
   }
 
   yy_init_buffer(yy_lexer, yy_lexer->yy_current_buffer, input_file);
@@ -1524,6 +1573,7 @@ static char const * const yy_error_string_table[] = {
   "API misused",
   "error reading input source",
   "token is too large and input buffer cannot be expanded",
+  "token is too large and input buffer is already at maximum size",
   "no rule matches the input text",
   "out of memory",
 %if option_yy_unread_character
@@ -1628,11 +1678,28 @@ void yyFlexLexer::yym_error(yy_error_code_t code, char const *detail)
 
 
 
+/* When this symbol is defined, enable mechanisms to inject failures
+ * into the allocator routines. */
+#ifdef YY_ALLOCATOR_FAILURE_INJECTION
+/* Number of 'alloc' calls before we inject a failure. */
+unsigned yy_alloc_failure_countdown = 0;
+#endif
+
 static long yy_num_allocated_objects = 0;
 
 static void *yy_flex_alloc(size_t size)
 {
-  void *ret = malloc(size);
+  void *ret;
+
+  YY_DEBUG_LOG_MEM("yy_flex_alloc", size);
+#ifdef YY_ALLOCATOR_FAILURE_INJECTION
+  if (--yy_alloc_failure_countdown == 0) {
+    YY_DEBUG_LOG_MEM("alloc_fail", size);
+    return NULL;
+  }
+#endif
+
+  ret = malloc(size);
   if (ret) {
     yy_num_allocated_objects++;
   }
@@ -1641,10 +1708,19 @@ static void *yy_flex_alloc(size_t size)
 
 static void *yy_flex_realloc(void *ptr, size_t size)
 {
+  void *ret;
+
   /* 'realloc' has implementation-defined behavior when 'size==0'. */
   YY_ASSERT(size != 0);
 
-  void *ret = realloc(ptr, size);
+#ifdef YY_ALLOCATOR_FAILURE_INJECTION
+  if (--yy_alloc_failure_countdown == 0) {
+    YY_DEBUG_LOG_MEM("realloc_fail", size);
+    return NULL;
+  }
+#endif
+
+  ret = realloc(ptr, size);
   if (ret && !ptr) {
     yy_num_allocated_objects++;
   }
@@ -1662,7 +1738,11 @@ static void yy_flex_free(void *ptr)
 
 void yy_check_for_memory_leaks()
 {
-  YY_ASSERT(yy_num_allocated_objects == 0);
+  if (yy_num_allocated_objects != 0) {
+    fprintf(stderr, "yy_check_for_memory_leaks: leaked %ld objects\n",
+            yy_num_allocated_objects);
+    exit(4);
+  }
 }
 
 %if cpp_interface
