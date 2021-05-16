@@ -1936,6 +1936,8 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
     [^a-z\n]*\n?        YY_ECHO;
 
     &lt;incl&gt;[^\n]+      { /* got the include file name */
+              yy_buffer_state_t *newbuf;
+
               FILE *fp = fopen(yytext, "r");
               if (!fp) {
                 fprintf(stderr, "Cannot open include file: \"%s\".\n", yytext);
@@ -1948,7 +1950,7 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
               }
               include_stack[include_stack_len++] = YY_CURRENT_BUFFER;
 
-              yy_buffer_state_t *newbuf = yy_create_buffer(yy_lexer, fp, 0 /*size*/);
+              newbuf = yy_create_buffer(yy_lexer, fp, 0 /*size*/);
               yy_switch_to_buffer(yy_lexer, newbuf);
 
               /* Start condition for processing the new file. */
@@ -5075,7 +5077,8 @@ I have also found and fixed a few pre-existing bugs:
     <code>flex-2.5.4</code> has some memory leaks in error cases.
     It also has a wrong arithmetic overflow check that has undefined
     behavior.
-    Commits with fixes: <code>d8038d0185</code>.
+    Commits with fixes: <code>d8038d0185</code>,
+    <code>4cc7be815f</code>.
 
 </ul>
 
