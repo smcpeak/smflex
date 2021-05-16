@@ -226,10 +226,6 @@ struct yy_buffer_state_struct {
 #define YY_FLUSH_BUFFER yy_flush_buffer(yy_lexer, yy_lexer->yy_current_buffer)
 
 static void *yy_flex_alloc(size_t);
-
-YY_POSSIBLY_UNUSED_FUNCTION
-static void *yy_flex_realloc(void *, size_t);
-
 static void yy_flex_free(void *);
 
 static void yy_load_buffer_state(yy_lexer_t *yy_lexer);
@@ -1701,27 +1697,6 @@ static void *yy_flex_alloc(size_t size)
 
   ret = malloc(size);
   if (ret) {
-    yy_num_allocated_objects++;
-  }
-  return ret;
-}
-
-static void *yy_flex_realloc(void *ptr, size_t size)
-{
-  void *ret;
-
-  /* 'realloc' has implementation-defined behavior when 'size==0'. */
-  YY_ASSERT(size != 0);
-
-#ifdef YY_ALLOCATOR_FAILURE_INJECTION
-  if (--yy_alloc_failure_countdown == 0) {
-    YY_DEBUG_LOG_MEM("realloc_fail", size);
-    return NULL;
-  }
-#endif
-
-  ret = realloc(ptr, size);
-  if (ret && !ptr) {
     yy_num_allocated_objects++;
   }
   return ret;
