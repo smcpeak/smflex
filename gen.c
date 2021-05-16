@@ -1039,7 +1039,7 @@ void make_tables()
       (total_table_size >= MAX_SHORT || long_align) ? "long" : "short";
 
     set_indent(0);
-    indent_put2s("typedef struct %s_trans_info_struct", prefix);
+    indent_put2s("struct %s_trans_info_struct", prefix);
     indent_lbrace();
 
     if (long_align)
@@ -1057,7 +1057,18 @@ void make_tables()
 
     indent_put2s("%s yy_nxt;", trans_offset_type);
     indent_down();
-    indent_puts("} yy_trans_info_t;");
+    indent_puts("};");
+
+    if (!str_eq(prefix, "yy")) {
+      /* Sort of ugly: we emit a few more references to
+       * 'yy_trans_info_t', but that is not what the type is called
+       * in the header file.  So emit a #define.
+       *
+       * Ideally all of the emitted references would come from the
+       * skeleton file, or at least go through the more general name
+       * substitution system, eliminating the need for this. */
+      indent_put2s("#define yy_trans_info_t %s_trans_info_t", prefix);
+    }
   }
 
   if (jacobson)
