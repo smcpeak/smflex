@@ -36,3 +36,9 @@ authors') name".
 Note that the "flex.skl" scanner skeleton carries no copyright notice.
 You are free to do whatever you please with scanners generated using flex;
 for them, you are not even bound by the above copyright.
+
+Addendum by Scott McPeak: I have renamed "flex.skl" to
+"generated-scanner.skl".  The latter continues to be unencumbered by
+copyright claims.  Furthermore, the file "generated-header.skl" is also
+free of copyight claims.  Consequently, you are free to do whatever you
+please with scanners generated using smflex.
