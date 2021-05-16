@@ -8,12 +8,24 @@
 
 %option nodefault
 %option yy_scan_string
+%option yy_unread_character
 
 %%
 
 username      printf("USERNAME");
 reject        REJECT;  /* Use REJECT to make buffer unexpandable. */
 x+            printf("saw %d xs\n", yyleng);
+
+unread        {
+                /* Unread a lot of characters so we hit the limit. */
+                int i;
+                printf("saw 'unread'\n");
+                for (i=0; i<17000; i++) {
+                  /* Once we hit the limit, this will keep trying and
+                   * failing to unread.  Should be fine. */
+                  YY_UNREAD_CHARACTER('x');
+                }
+              }
 
 %%
 
@@ -55,6 +67,30 @@ static int read_input_xs(yy_lexer_t *yy_lexer,
 }
 
 
+static char const *fixed_string;
+static int fixed_string_index;
+
+/* Generate 'fixed_string'. */
+static int read_input_fixed_string(yy_lexer_t *yy_lexer,
+  void *dest, int size)
+{
+  int len = strlen(fixed_string);
+  int remain = len - fixed_string_index;
+
+  if (remain <= 0) {
+    return 0;
+  }
+
+  if (size > remain) {
+    size = remain;
+  }
+
+  memcpy(dest, fixed_string+fixed_string_index, size);
+  fixed_string_index += size;
+  return size;
+}
+
+
 static void provoke_error(yy_error_code_t expect_code)
 {
   int t;
@@ -75,6 +111,7 @@ static void provoke_error(yy_error_code_t expect_code)
 
       /* Will hit an immediate input error. */
       t = yy_lex(&lexer);
+      printf("error: %s\n", yy_error_string(yy_get_error(&lexer)));
       assert(t == 0);
 
       assert(0==strcmp(yy_error_string(ecode),
@@ -89,6 +126,7 @@ static void provoke_error(yy_error_code_t expect_code)
 
       /* Will hit "no rule matches". */
       t = yy_lex(&lexer);
+      printf("error: %s\n", yy_error_string(yy_get_error(&lexer)));
       assert(t == 0);
 
       assert(0==strcmp(yy_error_string(ecode),
@@ -102,11 +140,27 @@ static void provoke_error(yy_error_code_t expect_code)
       remaining_xs = 100000;
 
       t = yy_lex(&lexer);
+      printf("error: %s\n", yy_error_string(yy_get_error(&lexer)));
       assert(t == 0);
 
       assert(0==strcmp(yy_error_string(ecode),
         "token is too large and input buffer cannot be expanded"));
       assert(strstr(edetail, "REJECT"));
+      break;
+    }
+
+    case yy_err_unread_overflow: {
+      lexer.yy_read_input_function = &read_input_fixed_string;
+      fixed_string = "unread";
+      fixed_string_index = 0;
+
+      t = yy_lex(&lexer);
+      printf("error: %s\n", yy_error_string(yy_get_error(&lexer)));
+      assert(t == 0);
+
+      assert(0==strcmp(yy_error_string(ecode),
+        "no space in buffer to unread a character"));
+      assert(edetail == NULL);
       break;
     }
 
@@ -128,5 +182,6 @@ int main()
   provoke_error(yy_err_input_error);
   provoke_error(yy_err_no_rule_matches);
   provoke_error(yy_err_input_buffer_cannot_expand);
+  provoke_error(yy_err_unread_overflow);
   return 0;
 }
