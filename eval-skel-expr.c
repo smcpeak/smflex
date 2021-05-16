@@ -97,8 +97,10 @@ static int eval_paren(eval_context_t *ctx, char const **expp)
 {
   skip_spaces(expp);
   if (**expp == '(') {
+    int inner;
     (*expp)++;
-    int inner = eval_or(ctx, expp);
+
+    inner = eval_or(ctx, expp);
 
     skip_spaces(expp);
     if (**expp != ')') {
