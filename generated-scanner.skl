@@ -367,7 +367,8 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 #  define yyterminate() return YY_NULL
 #endif
 
-/* Number of entries by which start-condition stack grows. */
+/* Number of entries by which start-condition stack grows, on top of
+ * doubling every time. */
 #ifndef YY_START_STACK_INCR
 #  define YY_START_STACK_INCR 25
 #endif
@@ -550,7 +551,6 @@ do_action:      /* This label is used only to access EOF actions. */
 %if do_yylineno
 #     undef yylineno
 %endif
-%# TODO: Remove things like YY_ECHO.
 
 %if option_flex_compat
       /* Remove flex aliases too. */
@@ -1859,8 +1859,21 @@ int main()
 %endif
 
 
-/* BEGIN cannot be used in section 3.  Instead, 'yy_set_start_state' is
- * used. */
-#undef BEGIN
+/* Remove undocumented YY_XXX macros I don't want leaking into the
+ * namespace of section 3. */
+#undef YY_ERROR
+#undef YY_NEW_FILE
+#undef YY_WRAPPER_OBJECT
+
+/* Remove documented YY_XXX macros, as they cannot be used in section 3.
+ * Most of them have yy_XXX alternatives that accept 'yy_lexer_t*'. */
+#undef BEGIN                /* TODO: Rename to 'YY_SET_START_STATE'. */
+#undef YY_START             /* TODO: Rename to 'YY_GET_START_STATE'. */
+#undef YY_LESS_TEXT
+#undef YY_CURRENT_BUFFER    /* TODO: Document as alias of the field. */
+#undef YY_FLUSH_BUFFER      /* TODO: Rename to 'YY_FLUSH_CURRENT_BUFFER'. */
+#undef YY_AT_BOL            /* TODO: Add yy_at_bol().  Deal with yym_at_bol(). */
+#undef YY_ECHO
+#undef yyterminate          /* TODO: Capitalize, underscore. */
 
 /* After this point, the user's section 3 code appears. */
