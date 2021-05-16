@@ -931,7 +931,7 @@ an action:
 
 <ul>
 
-<li id="yy-echo"><p><code>YY_ECHO</code> copies yytext to the scanner's output.
+<li id="yy_echo"><p><code>YY_ECHO</code> copies yytext to the scanner's output.
 
 <li><p><code>BEGIN</code> followed by the name of a
     <a href="#start-conditions">start condition</a>
@@ -1033,7 +1033,7 @@ an action:
     <p><code>yyless</code> is a macro; it can only be used in the
     <code>smflex</code> input file, not from other source files.
 
-<li><p id="yy-unread-character"><code>YY_UNREAD_CHARACTER(c)</code>
+<li><p id="yy_unread_character"><code>YY_UNREAD_CHARACTER(c)</code>
     puts the character <code>c</code> back onto the input stream. It
     will be the next character scanned. The
     <a href="test/unread-character-parenthesized.lex">following action</a> will take
@@ -1076,7 +1076,7 @@ an action:
     macro is not available.  Instead, you can call the
     <code>void yy_unread_character(yy_lexer_t *lexer, int c)</code> function.
 
-<li><p id="yy-read-character"><code>YY_READ_CHARACTER()</code>
+<li><p id="yy_read_character"><code>YY_READ_CHARACTER()</code>
     reads the next character from the input.  Once a character is read in
     this way, it is considered "consumed", and will not be subsequently
     matched by scanner rules.  For example, the
@@ -1229,14 +1229,14 @@ following public members:
 
 <dl>
 
-<dt id="yy-client-data"><code>void *yy_client_data;</code>
+<dt id="yy_client_data"><code>void *yy_client_data;</code>
 
     <dd><p>
     This pointer is available for use by the client of the API to
     associate any additional data with the <code>yy_lexer_t</code>
     object.  It is initially <code>NULL</code>.
 
-<dt id="yy-text"><code>char *yy_text;</code>
+<dt id="yy_text"><code>char *yy_text;</code>
 
     <dd><p>
     After a rule pattern has been matched, this points at the matched
@@ -1244,13 +1244,13 @@ following public members:
     valid while an action is executing; you must make a copy of the
     data to use it for longer than that.
 
-<dt id="yy-leng"><code>int yy_leng;</code>
+<dt id="yy_leng"><code>int yy_leng;</code>
 
     <dd><p>
     When <code>yy_text</code> is valid, <code>yy_leng</code> gives the
     length of the matched text, in bytes.
 
-<dt id="yy-input-stream"><code>yy_input_stream_t *yy_input_stream;</code>
+<dt id="yy_input_stream"><code>yy_input_stream_t *yy_input_stream;</code>
 
     <dd><p>
     Usually, this is a pointer to some object that acts as an input
@@ -1265,7 +1265,7 @@ following public members:
 
     <p>TODO: What exactly are the rules for changing this value?
 
-<dt id="yy-output-stream"><code>yy_output_stream_t *yy_output_stream;</code>
+<dt id="yy_output_stream"><code>yy_output_stream_t *yy_output_stream;</code>
 
     <dd><p>
     Similar to the preceding, this is normally an object capable of
@@ -1328,7 +1328,7 @@ following public members:
     option also has that effect.)  For demonstration purposes, it also
     lowercases all input as it is read.
 
-<dt id="yy-write-output-function">
+<dt id="yy_write_output_function">
     <code>int (*yy_write_output_function)(struct yy_lexer_struct *yy_lexer, void const *src, int size);</code>
 
     <dd><p>
@@ -1339,7 +1339,7 @@ following public members:
     <p>With default settings, the initial value is a function that
     writes to <code>yy_output_stream</code> using <code>fwrite</code>.
 
-    <p>The <a href="#yy-echo"><code>YY_ECHO</code></a> macro, which is
+    <p>The <a href="#yy_echo"><code>YY_ECHO</code></a> macro, which is
     implicitly used by the <a href="#default-rule">default rule</a>,
     calls this function.
 
@@ -1377,28 +1377,28 @@ following public members:
     The initial value is
     <a href="#yy_error_print_and_exit"><code>yy_error_print_and_exit</code></a>.
 
-<dt id="yy-lineno"><code>int yy_lineno;</code>
+<dt id="yy_lineno"><code>int yy_lineno;</code>
 
     <dd><p>
     When <code>%option yylineno</code> is set, this field exists, has
     initial value 1, and is incremented once for every newline character
     in <code>yy_text</code> when a token is matched.  It is also
     incremented for every newline seen by <a
-    href="#yy-read-character"><code>yy_read_character</code></a>, and
+    href="#yy_read_character"><code>yy_read_character</code></a>, and
     decremented once for every newline seen by <a
-    href="#yy-unread-character"><code>yy_unread_character</code></a>.
+    href="#yy_unread_character"><code>yy_unread_character</code></a>.
 
     <p>This value is not otherwise manipulated by the scanning engine.
     In particular, it is not affected by
-    <a href="#yy-restart"><code>yy_restart</code></a>,
-    <a href="#yy-switch-to-buffer"><code>yy_switch_to_buffer</code></a>,
+    <a href="#yy_restart"><code>yy_restart</code></a>,
+    <a href="#yy_switch_to_buffer"><code>yy_switch_to_buffer</code></a>,
     <a href="#yy_wrap_function"><code>yy_wrap_function</code></a> activity,
     etc.  If you want line numbers tracked across multiple input
     sources, you have to save and restore this value yourself at
     appropriate times.  The engine only knows to increment it when
     newline characters are matched.
 
-<dt id="yy-flex-debug"><code>int yy_flex_debug;</code>
+<dt id="yy_flex_debug"><code>int yy_flex_debug;</code>
 
     <dd><p>
     When <code>%option debug</code> is set, this field exists with
@@ -1465,7 +1465,7 @@ pointers in <code>yy_lexer_t</code>:
     Return an English string describing the given error
     <code>code</code> as a pointer to statically-allocated memory.
 
-<dt id="yy-check-for-memory-leaks"><code>void yy_check_for_memory_leaks(void);</code>
+<dt id="yy_check_for_memory_leaks"><code>void yy_check_for_memory_leaks(void);</code>
 
     <dd><p>
     Fail an assertion if there are any objects allocated, across all
@@ -1869,7 +1869,7 @@ However, you may want to use
 <code>yyin</code> yourself, for example (as shown in the example
 below) to close the file.
 
-<p id="yy-switch-to-buffer">
+<p id="yy_switch_to_buffer">
 You select a particular buffer to be the active input source with:
 
 <pre><code>
@@ -2196,7 +2196,7 @@ the rule actions.
     assign <code>yyin</code> at the new input file and then call the
     scanner again to continue scanning.
 
-<li><p id="yy-restart"><code>void yy_restart(FILE *new_file)</code>
+<li><p id="yy_restart"><code>void yy_restart(FILE *new_file)</code>
     may be called to point <code>yyin</code> at the new input file. The
     switch-over to the new file is immediate (any previously buffered-up
     input is lost). Note that calling <code>yy_restart()</code> with
@@ -2266,7 +2266,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dt><code>-d</code>
 
 <dd><p>Generate a scanner with the
-    <a href="#yy-flex-debug"><code>yy_flex_debug</code></a> field.
+    <a href="#yy_flex_debug"><code>yy_flex_debug</code></a> field.
 
 <dt><code>--flex-compat</code>
 
@@ -2710,7 +2710,7 @@ number are equivalent to <code>smflex</code> flags or their negation:
 <dt><code>yylineno</code>
 
 <dd><p>Generate a scanner that has
-    <a href="#yy-lineno"><code>yy_lineno</code></a>.
+    <a href="#yy_lineno"><code>yy_lineno</code></a>.
 
 <dt><code>yymore</code>
 
@@ -3994,7 +3994,7 @@ scanner over input:
 <dt><code>static void yym_check_for_memory_leaks()</code>
 
     <dd><p>Same as
-    <a href="#yy-check-for-memory-leaks"><code>yy_check_for_memory_leaks</code></a>.
+    <a href="#yy_check_for_memory_leaks"><code>yy_check_for_memory_leaks</code></a>.
 
 </dl>
 
