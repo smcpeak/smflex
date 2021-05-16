@@ -1346,12 +1346,16 @@ following public members:
 <dt id="yy_wrap_function"><code>int (*yy_wrap_function)(yy_lexer_t *yy_lexer);</code>
 
     <dd><p>
-    When the end of the current input is encountered, if this is not
-    <code>NULL</code> (which is its initial value), the scanner calls this to determine what to do
+    When the end of the current input is encountered,
+    the scanner calls this to determine what to do
     next.  It can return true, meaning is no more input, and the scanner
     will terminate.  It can instead return false (0) after setting up a
     new input source, meaning the scanner will continue scanning with
     that new input.
+
+    <p>
+    The initial value is
+    <a href="#yy_wrap_return_1"><code>yy_wrap_return_1</code></a>.
 
 <dt id="yy_error_function">
     <code>void (*yy_error_function)(yy_lexer_t *yy_lexer, yy_error_code_t code, char const *detail);</code>
@@ -1434,6 +1438,11 @@ to associated fields with the need for an explicit object:
 pointers in <code>yy_lexer_t</code>:
 
 <dl>
+
+<dt id="yy_wrap_return_1"><code>int yy_wrap_return_1(yy_lexer_t *yy_lexer);</code>
+
+    <dd><p>
+    Return 1, meaning no more files.
 
 <dt id="yy_error_print_and_exit">
     <code>void yy_error_print_and_exit(yy_lexer_t *yy_lexer, yy_error_code_t code, char const *detail);</code>

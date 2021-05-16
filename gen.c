@@ -1335,7 +1335,7 @@ static char const *lower_prefix_names[] = {
   "yy_trans_info_struct",
   "yy_trans_info_t",
   "yy_unread_character",
-  "yy_wrap",
+  "yy_wrap_return_1",
   "yy_write_output_with_fwrite",
 };
 

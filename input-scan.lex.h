@@ -161,12 +161,13 @@ struct input_scan_lexer_struct {
   int (*yy_write_output_function)(struct input_scan_lexer_struct *yy_lexer,
     void const *src, int size);
 
-  /* When the end of the current input is read, if it is not NULL, the
-   * scanner calls this to determine what to do next.  It can return
-   * true, meaning is no more input, and the scanner will terminate.  It
-   * can instead return false (0) after setting up a new input source,
-   * meaning the scanner will continue scanning with that new input.
-   * It is initially NULL.
+  /* When the end of the current input is read, the scanner calls this
+   * to determine what to do next.  It can return true, meaning is no
+   * more input, and the scanner will terminate.  It can instead return
+   * false (0) after setting up a new input source, meaning the scanner
+   * will continue scanning with that new input.
+   *
+   * The initial value is '&input_scan_wrap_return_1'.
    *
    * The type of the first parameter should be thought of as
    * 'input_scan_lexer_t*'. */
@@ -221,7 +222,7 @@ struct input_scan_lexer_struct {
    * this field is different from what BEGIN and YY_START use.*/
   int yy_start_state;
 
-  /* Flag which is used to allow input_scan_wrap()'s to do buffer switches
+  /* Flag which is used to allow yy_wrap()'s to do buffer switches
    * instead of setting up a fresh 'yy_input_stream'.
    * A bit of a hack ... */
   int yy_did_buffer_switch_on_eof;
@@ -326,6 +327,9 @@ int input_scan_read_input_with_fread(input_scan_lexer_t *yy_lexer,
  * is a 'FILE*'.*/
 int input_scan_write_output_with_fwrite(input_scan_lexer_t *yy_lexer,
   void const *dest, int size);
+
+/* Return 1, meaning no more files. */
+int input_scan_wrap_return_1(input_scan_lexer_t *yy_lexer);
 
 /* Print an error message to stderr and exit. */
 void input_scan_error_print_and_exit(input_scan_lexer_t *yy_lexer,

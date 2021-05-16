@@ -582,8 +582,7 @@ do_action:      /* This label is used only to access EOF actions. */
             case EOB_ACT_END_OF_FILE: {
               yy_lexer->yy_did_buffer_switch_on_eof = 0;
 
-              if (yy_lexer->yy_wrap_function == NULL ||
-                  yy_lexer->yy_wrap_function(yy_lexer)) {
+              if (yy_lexer->yy_wrap_function(yy_lexer)) {
                 /* Note: because we've taken care in
                  * yy_get_next_buffer() to have set up
                  * yy_text, we can now set up
@@ -655,7 +654,7 @@ void yy_construct(yy_lexer_t *yy_lexer)
   yy_lexer->yy_read_input_function   = &yy_read_input_with_fread;
 %endif
   yy_lexer->yy_write_output_function = &yy_write_output_with_fwrite;
-  yy_lexer->yy_wrap_function         = NULL;
+  yy_lexer->yy_wrap_function         = &yy_wrap_return_1;
   yy_lexer->yy_error_function        = &yy_error_print_and_exit;
 
 %if do_yylineno
@@ -1086,8 +1085,7 @@ int yy_read_character(yy_lexer_t *yy_lexer)
           /* fall through */
 
         case EOB_ACT_END_OF_FILE: {
-          if (yy_lexer->yy_wrap_function == NULL ||
-              yy_lexer->yy_wrap_function(yy_lexer)) {
+          if (yy_lexer->yy_wrap_function(yy_lexer)) {
             return EOF;
           }
 
@@ -1741,6 +1739,12 @@ int yy_write_output_with_fwrite(yy_lexer_t *yy_lexer,
   else {
     return -1;
   }
+}
+
+
+int yy_wrap_return_1(yy_lexer_t *yy_lexer)
+{
+  return 1;      /* No more files. */
 }
 
 

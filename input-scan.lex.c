@@ -2917,8 +2917,7 @@ case YY_STATE_EOF(LINEDIR):
             case EOB_ACT_END_OF_FILE: {
               yy_lexer->yy_did_buffer_switch_on_eof = 0;
 
-              if (yy_lexer->yy_wrap_function == NULL ||
-                  yy_lexer->yy_wrap_function(yy_lexer)) {
+              if (yy_lexer->yy_wrap_function(yy_lexer)) {
                 /* Note: because we've taken care in
                  * yy_get_next_buffer() to have set up
                  * yy_text, we can now set up
@@ -2986,7 +2985,7 @@ void input_scan_construct(input_scan_lexer_t *yy_lexer)
 
   yy_lexer->yy_read_input_function   = &input_scan_read_input_with_fread;
   yy_lexer->yy_write_output_function = &input_scan_write_output_with_fwrite;
-  yy_lexer->yy_wrap_function         = NULL;
+  yy_lexer->yy_wrap_function         = &input_scan_wrap_return_1;
   yy_lexer->yy_error_function        = &input_scan_error_print_and_exit;
 
   yy_lexer->yy_current_buffer = NULL;
@@ -3322,8 +3321,7 @@ int input_scan_read_character(input_scan_lexer_t *yy_lexer)
           /* fall through */
 
         case EOB_ACT_END_OF_FILE: {
-          if (yy_lexer->yy_wrap_function == NULL ||
-              yy_lexer->yy_wrap_function(yy_lexer)) {
+          if (yy_lexer->yy_wrap_function(yy_lexer)) {
             return EOF;
           }
 
@@ -3382,8 +3380,8 @@ void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer
   input_scan_load_buffer_state(yy_lexer);
 
   /* We don't actually know whether we did this switch during
-   * EOF (input_scan_wrap()) processing, but the only time this flag
-   * is looked at is after input_scan_wrap() is called, so it's safe
+   * EOF (yy_wrap()) processing, but the only time this flag
+   * is looked at is after yy_wrap() is called, so it's safe
    * to go ahead and always set it.
    */
   yy_lexer->yy_did_buffer_switch_on_eof = 1;
@@ -3732,6 +3730,12 @@ int input_scan_write_output_with_fwrite(input_scan_lexer_t *yy_lexer,
   else {
     return -1;
   }
+}
+
+
+int input_scan_wrap_return_1(input_scan_lexer_t *yy_lexer)
+{
+  return 1;      /* No more files. */
 }
 
 
