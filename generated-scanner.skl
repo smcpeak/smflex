@@ -1706,6 +1706,7 @@ static void yy_flex_free(void *ptr)
 {
   if (ptr) {
     yy_num_allocated_objects--;
+    YY_DEBUG_LOG_MEM("yy_flex_free", yy_num_allocated_objects);
   }
   free(ptr);
 }

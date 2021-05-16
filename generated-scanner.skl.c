@@ -1711,6 +1711,7 @@ const char *scanner_skl_contents[] = {
   "{",
   "  if (ptr) {",
   "    yy_num_allocated_objects--;",
+  "    YY_DEBUG_LOG_MEM(\"yy_flex_free\", yy_num_allocated_objects);",
   "  }",
   "  free(ptr);",
   "}",
