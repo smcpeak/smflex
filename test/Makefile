@@ -64,30 +64,37 @@ out/outfile-specified.yy.c: outfile.lex $(SMFLEX)
 	$(SMFLEX) $(SMFLEX_OPTS) $<
 
 # Extra compilation flags to add for certain tests.
-CFLAGS_FOR_large_token_yy := -DYY_ENABLE_DEBUG_LOG_CALL -DYY_ENABLE_DEBUG_LOG_MEM -DYY_ALLOCATOR_FAILURE_INJECTION
+CFLAGS_FOR_c_int_batch                      := -DYY_ENABLE_DEBUG_LOG_CALL
+CFLAGS_FOR_c_int_default                    := -DYY_ENABLE_DEBUG_LOG_CALL
+CFLAGS_FOR_c_int_interactive                := -DYY_ENABLE_DEBUG_LOG_CALL
+CFLAGS_FOR_c_int_interactive_set_int_0      := -DYY_ENABLE_DEBUG_LOG_CALL
+CFLAGS_FOR_c_int_interactive_set_int_isatty := -DYY_ENABLE_DEBUG_LOG_CALL
+CFLAGS_FOR_c_int_set_int_0                  := -DYY_ENABLE_DEBUG_LOG_CALL
+CFLAGS_FOR_c_int_set_int_1                  := -DYY_ENABLE_DEBUG_LOG_CALL
+CFLAGS_FOR_c_int_set_int_isatty             := -DYY_ENABLE_DEBUG_LOG_CALL
+CFLAGS_FOR_large_token := -DYY_ENABLE_DEBUG_LOG_CALL -DYY_ENABLE_DEBUG_LOG_MEM -DYY_ALLOCATOR_FAILURE_INJECTION
 
-# Given the name of a C source file without its extension, get the
-# CFLAGS to use when compiling that file.  This first maps hyphens and
-# dots to underscores, then looks for a 'CFLAGS_FOR_XXX' that matches,
-# yielding the empty string if there is none.
-GET_CFLAGS = $(CFLAGS_FOR_$(subst -,_,$(subst .,_,$(1))))
+CXXFLAGS_FOR_cpp_int_batch       := -DYY_ENABLE_DEBUG_LOG_CALL
+CXXFLAGS_FOR_cpp_int_default     := -DYY_ENABLE_DEBUG_LOG_CALL
+CXXFLAGS_FOR_cpp_int_set_int_1   := -DYY_ENABLE_DEBUG_LOG_CALL
+CXXFLAGS_FOR_cpp_int_interactive := -DYY_ENABLE_DEBUG_LOG_CALL
+
+# Given the name of a source file without its extension, get the
+# C[XX]FLAGS to use when compiling that file.  This first strips any
+# ".yy" extension, then maps hyphens and dots to underscores, then looks
+# for a 'C[XX]FLAGS_FOR_XXX' that matches, yielding the empty string if
+# there is none.
+GET_CFLAGS = $(CFLAGS_FOR_$(subst -,_,$(subst .,_,$(1:.yy=))))
+GET_CXXFLAGS = $(CXXFLAGS_FOR_$(subst -,_,$(subst .,_,$(1:.yy=))))
 
 # Compile a C file in out/.
 #
 # If the file name contains "c-int-", then add -DYY_ENABLE_DEBUG_LOG_CALL
 # to the compilation line to enable relevant diagnostic prinouts.
 #
-# TODO: Change the 'grep' to use GET_CFLAGS instead.
-#
 .PRECIOUS: out/%.o
 out/%.o: out/%.c
-	@if echo "$*" | grep --quiet "c-int-"; then \
-	  echo $(CC) -o$@ -c $(CFLAGS) -DYY_ENABLE_DEBUG_LOG_CALL $<; \
-	  $(CC) -o$@ -c $(CFLAGS) -DYY_ENABLE_DEBUG_LOG_CALL $<; \
-	else \
-	  echo $(CC) -o$@ -c $(CFLAGS) $(call GET_CFLAGS,$*) $<; \
-	  $(CC) -o$@ -c $(CFLAGS) $(call GET_CFLAGS,$*) $<; \
-	fi
+	$(CC) -o$@ -c $(CFLAGS) $(call GET_CFLAGS,$*) $<
 
 # Compile a C file in out/ as if it were C++.
 .PRECIOUS: out/%.c_as_cc.o
@@ -109,13 +116,7 @@ out/%.yy.cc: %.lexpp $(SMFLEX)
 # Compile C++ file in out/.
 .PRECIOUS: out/%.oo
 out/%.oo: out/%.cc
-	@if echo "$*" | grep --quiet "cpp-int-"; then \
-	  echo $(CXX) -o$@ -c $(CXXFLAGS) -DYY_ENABLE_DEBUG_LOG_CALL $<; \
-	  $(CXX) -o$@ -c $(CXXFLAGS) -DYY_ENABLE_DEBUG_LOG_CALL $<; \
-	else \
-	  echo $(CXX) -o$@ -c $(CXXFLAGS) $<; \
-	  $(CXX) -o$@ -c $(CXXFLAGS) $<; \
-	fi
+	$(CXX) -o$@ -c $(CXXFLAGS) $(call GET_CXXFLAGS,$*) $<
 
 # Link C object files in out/ to make an executable.
 .PRECIOUS: out/%.exe
