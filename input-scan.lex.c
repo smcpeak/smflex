@@ -3498,7 +3498,6 @@ void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_sta
 
 
 
-/* TODO: scan_string requires scan_bytes which requires scan_buffer */
 
 
 

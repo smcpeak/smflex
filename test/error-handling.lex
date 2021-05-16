@@ -3,8 +3,6 @@
 
 %option nodefault
 %option yy_scan_string
-%option yy_scan_bytes
-%option yy_scan_buffer
 
 %%
 
