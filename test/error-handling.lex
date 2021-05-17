@@ -39,7 +39,7 @@ static int read_input_fail(yy_lexer_t *yy_lexer,
 static yy_error_code_t ecode;
 static char const *edetail;
 
-static void record_error(yy_lexer_t *yy_lexer,
+static void record_error(yy_lexer_t const *yy_lexer,
                          yy_error_code_t code, char const *detail)
 {
   ecode = code;

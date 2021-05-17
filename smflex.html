@@ -1374,7 +1374,7 @@ following public members:
     <a href="#yy_wrap_return_1"><code>yy_wrap_return_1</code></a>.
 
 <dt id="yy_error_function">
-    <code>void (*yy_error_function)(yy_lexer_t *yy_lexer, yy_error_code_t code, char const *detail);</code>
+    <code>void (*yy_error_function)(yy_lexer_t const *yy_lexer, yy_error_code_t code, char const *detail);</code>
 
     <dd><p>
     When an error occurs during scanning, such as running out of memory
@@ -1489,7 +1489,7 @@ text matched by a rule:
     <dd><p>
     Set the start state of <code>yy_lexer</code> to <code>state</code>.
 
-<dt id="yy_get_start_state"><code>int yy_get_start_state(yy_lexer_t *yy_lexer);</code>
+<dt id="yy_get_start_state"><code>int yy_get_start_state(yy_lexer_t const *yy_lexer);</code>
 
     <dd><p>
     Get the current start state.
@@ -1514,7 +1514,7 @@ pointers in <code>yy_lexer_t</code>:
     Return 1, meaning no more files.
 
 <dt id="yy_error_print_and_exit">
-    <code>void yy_error_print_and_exit(yy_lexer_t *yy_lexer, yy_error_code_t code, char const *detail);</code>
+    <code>void yy_error_print_and_exit(yy_lexer_t const *yy_lexer, yy_error_code_t code, char const *detail);</code>
 
     <dd><p>
     Prints a message to standard error and exits with a non-zero exit code.
@@ -1884,7 +1884,7 @@ are available for manipulating the stack of start conditions:
     <dd><p>Pop the top of the stack and switch to it via
     <code>yy_set_start_state</code>.
 
-<dt id="yy_top_state"><code>int yy_top_state(yy_lexer_t *yy_lexer);</code>
+<dt id="yy_top_state"><code>int yy_top_state(yy_lexer_t const *yy_lexer);</code>
 
     <dd><p>Return the top of the stack without altering the stack's contents.
 

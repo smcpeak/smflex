@@ -166,15 +166,23 @@ struct input_scan_lexer_struct {
   /* Invoked when an error occurs during scanning.  The function may
    * return, in which case the scanner will try to recover by returning
    * control to the client (typically by pretending it hit the end of
-   * the input), but the scanner object should be regarded as broken
-   * after that point, and hence the client should stop trying to scan
-   * and call 'input_scan_destroy' to clean up instead.
+   * the input).  In C++, the function may also throw an exception.
+   *
+   * After this function has been called, the scanner object should be
+   * regarded as broken after that point, and hence the client should
+   * stop trying to scan and call 'input_scan_destroy' to clean up instead.
+   *
+   * The 'yy_lexer' parameter is a pointer to const because errors are
+   * sometimes reported from within functions that are not supposed to
+   * modify the lexer object.  Nothing catastrophic should happen if
+   * constness is cast away, but clients are encouraged to try to
+   * adhere to its restrictions.
    *
    * If not NULL, 'detail' is some additional bit of detail that may be
    * of use to a human, but is not useful for error recovery.
    *
    * The initial value is '&input_scan_error_print_and_exit'. */
-  void (*yy_error_function)(struct input_scan_lexer_struct *yy_lexer,
+  void (*yy_error_function)(struct input_scan_lexer_struct const *yy_lexer,
     input_scan_error_code_t code, char const *detail);
 
   /* -------- Semi-public members -------- */
@@ -289,7 +297,7 @@ void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_sta
 void input_scan_set_start_state(input_scan_lexer_t *yy_lexer, int state);
 
 /* Get the current start state. */
-int input_scan_get_start_state(input_scan_lexer_t *yy_lexer);
+int input_scan_get_start_state(input_scan_lexer_t const *yy_lexer);
 
 /* Set the start state to 'new_state', pushing the current start state
  * onto the state stack. */
@@ -334,7 +342,7 @@ int input_scan_write_output_with_fwrite(input_scan_lexer_t *yy_lexer,
 int input_scan_wrap_return_1(input_scan_lexer_t *yy_lexer);
 
 /* Print an error message to stderr and exit. */
-void input_scan_error_print_and_exit(input_scan_lexer_t *yy_lexer,
+void input_scan_error_print_and_exit(input_scan_lexer_t const *yy_lexer,
   input_scan_error_code_t code, char const *detail);
 
 /* -------- Diagnostics -------- */

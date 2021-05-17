@@ -20,7 +20,7 @@
 static yy_error_code_t ecode;
 static char const *edetail;
 
-static void ignore_error(yy_lexer_t *yy_lexer,
+static void record_error(yy_lexer_t const *yy_lexer,
                          yy_error_code_t code, char const *detail)
 {
   ecode = code;
@@ -59,7 +59,7 @@ int main()
 
   /* Deliberately cause an "API misuse" error. */
   assert(yy_get_error(&lexer) == yy_err_no_error);
-  lexer.yy_error_function = &ignore_error;
+  lexer.yy_error_function = &record_error;
   yy_pop_state(&lexer);
 
   /* Validate the error reporting. */

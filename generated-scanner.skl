@@ -332,7 +332,7 @@ static int yy_write_output_delegate(yy_lexer_t *yy_lexer,
   return YY_WRAPPER_OBJECT->yym_write_output(dest, size);
 }
 
-static void yy_error_delegate(yy_lexer_t *yy_lexer,
+static void yy_error_delegate(yy_lexer_t const *yy_lexer,
                               yy_error_code_t code, char const *detail)
 {
   YY_WRAPPER_OBJECT->yym_error(code, detail);
@@ -388,10 +388,27 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 #  define YY_START_STACK_INCR 25
 #endif
 
+
 /* Report an error.  This may return, in which case the scanner will
  * attempt to return control to the client so it can clean up. */
 #define YY_ERROR(code, detail) \
-  (yy_lexer->yy_error_function(yy_lexer, yy_lexer->yy_error_code = code, detail))
+  (yy_call_error_function(yy_lexer, code, detail))
+
+static void yy_call_error_function(yy_lexer_t const *yy_lexer,
+  yy_error_code_t code, char const *detail)
+{
+  /* Record the error in the lexer object, but only the first one. */
+  if (yy_lexer->yy_error_code == yy_err_no_error) {
+    /* Cast away constness.  I do not want to remove 'const' from the
+     * functions that are conceptually just queries, nor do I want to
+     * forgo enforcing prerequisites, nor do I want to abandon saving
+     * the error code. */
+    ((yy_lexer_t*)yy_lexer)->yy_error_code = code;
+  }
+
+  yy_lexer->yy_error_function(yy_lexer, code, detail);
+}
+
 
 /* Code executed at the beginning of each rule, after yy_text and yy_leng
  * have been set up.
@@ -1546,7 +1563,7 @@ void yyFlexLexer::yym_pop_state()
 
 
 %if option_yy_top_state
-int yy_top_state(yy_lexer_t *yy_lexer)
+int yy_top_state(yy_lexer_t const *yy_lexer)
 {
   if (yy_lexer->yy_start_stack_cur_size <= 0) {
     YY_ERROR(yy_err_api_misuse, "yy_top_state: state stack is empty");
@@ -1557,7 +1574,7 @@ int yy_top_state(yy_lexer_t *yy_lexer)
 }
 
 %if cpp_interface
-int yyFlexLexer::yym_top_state()
+int yyFlexLexer::yym_top_state() const
 {
   return yy_top_state(&yym_lexer_state);
 }
@@ -1609,7 +1626,7 @@ char const *yy_error_string(yy_error_code_t code)
 }
 
 
-void yy_error_print_and_exit(yy_lexer_t *yy_lexer,
+void yy_error_print_and_exit(yy_lexer_t const *yy_lexer,
   yy_error_code_t code, char const *detail)
 {
   if (detail) {
@@ -1643,7 +1660,7 @@ void yy_error_print_and_exit(yy_lexer_t *yy_lexer,
 
 
 %if cpp_interface
-void yyFlexLexer::yym_error(yy_error_code_t code, char const *detail)
+void yyFlexLexer::yym_error(yy_error_code_t code, char const *detail) const
 {
   /* This is the same as 'yy_error_print_and_exit', except using C++
    * iostreams. */
@@ -1756,13 +1773,13 @@ void yyFlexLexer::yym_set_start_state(int state)
 %endif
 
 
-int yy_get_start_state(yy_lexer_t *yy_lexer)
+int yy_get_start_state(yy_lexer_t const *yy_lexer)
 {
   return YY_GET_START_STATE();
 }
 
 %if cpp_interface
-int yyFlexLexer::yym_get_start_state()
+int yyFlexLexer::yym_get_start_state() const
 {
   return yy_get_start_state(&yym_lexer_state);
 }
