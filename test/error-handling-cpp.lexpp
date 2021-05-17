@@ -14,7 +14,7 @@
 
 username      std::cout << "USERNAME";
 reject        REJECT;  /* Use REJECT to make buffer unexpandable. */
-x+            std::cout << "saw " << yyleng << " xs\n";  /* TODO: yyleng? */
+x+            std::cout << "saw " << yyleng << " xs\n";
 
 unread        {
                 /* Unread a lot of characters so we hit the limit. */
