@@ -1129,7 +1129,7 @@ an action:
     macro is not available.  Instead, you can call the
     <code>int yy_read_character(yy_lexer_t *lexer)</code> function.
 
-<li><p><code>YY_FLUSH_BUFFER</code>
+<li><p><code>YY_FLUSH_CURRENT_BUFFER</code>
     flushes the scanner's internal buffer so that the next time the
     scanner attempts to match a token, it will first refill the buffer
     using
@@ -1193,7 +1193,7 @@ for compatibility with previous versions of <code>flex</code>,
 and because it can be used to switch input files in the middle
 of scanning. It can also be used to throw away the current input
 buffer, by calling it with an argument of <code>yyin</code>; but
-better is to use <code>YY_FLUSH_BUFFER</code> (see above). Note that
+better is to use <code>YY_FLUSH_CURRENT_BUFFER</code> (see above). Note that
 <code>yy_restart()</code> does <em>not</em> reset the start condition to
 <code>INITIAL</code> (see <a href="#start-conditions">Start Conditions</a>).
 
@@ -1977,7 +1977,7 @@ this function does <em>not</em> change the start condition.
 <p>to reclaim the storage associated with it.  If <code>buffer</code> is
 <code>NULL</code>, this function does nothing.
 
-<p>To discard data that has already been read and buffered from a
+<p id="yy_flush_buffer">To discard data that has already been read and buffered from a
 particular source, call:
 
 <pre><code>
@@ -4834,6 +4834,20 @@ run-time support library.  That has been removed as detailed below.
     scanner definition file.  This type is meant for external use, so
     that means it should be lowercase.
 
+<li><p><code>YY_FLUSH_BUFFER</code> has been renamed to
+    <code>YY_FLUSH_CURRENT_BUFFER</code>.
+
+    <p>Rationale: I have the function
+    <a href="#yy_flush_buffer"><code>yy_flush_buffer</code></a>, but
+    that requires a specific buffer object.  Since the behavior of the
+    macro acts on the current buffer only, the name ought to reflect
+    that.
+
+    <p>There is no compatibility alias for this one.  According to my
+    naming conventions, if it existed, <code>YY_FLUSH_BUFFER</code>
+    should be the same as <code>yy_flush_buffer(yy_lexer)</code>, but an
+    alias would violate that.
+
 </ul>
 
 <p>
@@ -4892,6 +4906,10 @@ Renaming summary:
     <td><code>YY_FATAL_ERROR</code>
     <td><a href="#yy_error_function"><code>yy_error_function</code></a>
     <td>Replacement rather than rename.
+  <tr>
+    <td><code>YY_FLUSH_BUFFER</code>
+    <td><code>YY_FLUSH_CURRENT_BUFFER</code>
+    <td>Old name is not defined, and there is no alias.
 </table>
 
 

@@ -200,7 +200,7 @@ struct input_scan_buffer_state_struct {
 #define YY_CURRENT_BUFFER (yy_lexer->yy_current_buffer)
 
 
-#define YY_FLUSH_BUFFER input_scan_flush_buffer(yy_lexer, yy_lexer->yy_current_buffer)
+#define YY_FLUSH_CURRENT_BUFFER input_scan_flush_buffer(yy_lexer, yy_lexer->yy_current_buffer)
 
 static void *yy_flex_alloc(size_t);
 static void yy_flex_free(void *);
@@ -3808,7 +3808,7 @@ int input_scan_wrap_return_1(input_scan_lexer_t *yy_lexer)
 #undef YY_GET_START_STATE
 #undef YY_LESS_TEXT
 #undef YY_CURRENT_BUFFER
-#undef YY_FLUSH_BUFFER      /* TODO: Rename to 'YY_FLUSH_CURRENT_BUFFER'. */
+#undef YY_FLUSH_CURRENT_BUFFER
 #undef YY_AT_BOL            /* TODO: Add yy_at_bol().  Deal with yym_at_bol(). */
 #undef YY_ECHO
 #undef yyterminate          /* TODO: Capitalize, underscore. */
