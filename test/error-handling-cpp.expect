@@ -1,0 +1,9 @@
+---- code 3 ----
+error: smflex scanner error: error reading input source
+---- code 6 ----
+error: smflex scanner error: no rule matches the input text
+---- code 4 ----
+error: smflex scanner error: token is too large and input buffer cannot be expanded: can't enlarge buffer because scanner uses REJECT
+---- code 8 ----
+saw 'unread'
+error: smflex scanner error: no space in buffer to unread a character

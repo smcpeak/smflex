@@ -238,6 +238,7 @@ all-df: out/discard-ml-comments-cpp.ok
 all-df: out/discard-ml-comments-top-state.ok
 all-df: out/elsa-lexer.ok
 all-df: out/error-handling.ok
+all-df: out/error-handling-cpp.ok
 all-df: out/expect-floats.ok
 all-df: out/gather-c-string.ok
 all-df: out/gather-c-string2.ok

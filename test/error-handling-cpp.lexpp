@@ -1,0 +1,183 @@
+/* error-handling-cpp.lexpp */
+/* Exercise handling of errors in C++ with exceptions. */
+
+%{
+#include <string.h>                    /* strcmp, strstr */
+%}
+
+%option c++
+%option nodefault
+%option yy_scan_string
+%option yy_unread_character
+
+%%
+
+username      std::cout << "USERNAME";
+reject        REJECT;  /* Use REJECT to make buffer unexpandable. */
+x+            std::cout << "saw " << yyleng << " xs\n";  /* TODO: yyleng? */
+
+unread        {
+                /* Unread a lot of characters so we hit the limit. */
+                int i;
+                std::cout << "saw 'unread'\n";
+                for (i=0; i<17000; i++) {
+                  /* The first error causes an exception to be thrown. */
+                  YY_UNREAD_CHARACTER('x');
+                }
+              }
+
+%%
+
+
+class InputFailLexer : public yyFlexLexer {
+public:
+  virtual int yym_read_input(void *dest, int size)
+  {
+    return -1;
+  }
+};
+
+
+class ReadXsLexer : public yyFlexLexer {
+public:      /* data */
+  int remaining_xs;
+
+public:      /* methods */
+  ReadXsLexer(int r)
+    : remaining_xs(r)
+  {}
+
+  virtual int yym_read_input(void *dest, int size)
+  {
+    if (remaining_xs <= 0) {
+      return 0;
+    }
+
+    if (size > remaining_xs) {
+      size = remaining_xs;
+    }
+
+    memset(dest, 'x', size);
+    remaining_xs -= size;
+    return size;
+  }
+};
+
+
+class ReadFixedStringLexer : public yyFlexLexer {
+public:      /* data */
+  char const *fixed_string;
+  int fixed_string_index;
+
+public:      /* methods */
+  ReadFixedStringLexer(char const *s)
+    : fixed_string(s),
+      fixed_string_index(0)
+  {}
+
+  /* Generate 'fixed_string'. */
+  virtual int yym_read_input(void *dest, int size)
+  {
+    int len = strlen(fixed_string);
+    int remain = len - fixed_string_index;
+
+    if (remain <= 0) {
+      return 0;
+    }
+
+    if (size > remain) {
+      size = remain;
+    }
+
+    memcpy(dest, fixed_string+fixed_string_index, size);
+    fixed_string_index += size;
+    return size;
+  }
+};
+
+
+static void provoke_error(yy_error_code_t expect_code)
+{
+  std::cout << "---- code " << expect_code << " ----\n";
+
+  switch (expect_code) {
+    case yy_err_input_error: {
+      InputFailLexer lexer;
+
+      /* Will hit an immediate input error. */
+      try {
+        lexer.yym_lex();
+        assert(!"should have failed");
+      }
+      catch (yyFlexLexer::LexError &e) {
+        std::cout << "error: " << e.what() << "\n";
+        assert(e.m_code = expect_code);
+        assert(e.m_detail == NULL);
+      }
+      break;
+    }
+
+    case yy_err_no_rule_matches: {
+      yyFlexLexer lexer;
+      yy_buffer_state_t *buf = lexer.yym_scan_string("something");
+      assert(buf);
+
+      /* Will hit "no rule matches". */
+      try {
+        lexer.yym_lex();
+        assert(!"should have failed");
+      }
+      catch (yyFlexLexer::LexError &e) {
+        std::cout << "error: " << e.what() << "\n";
+        assert(e.m_code = expect_code);
+        assert(e.m_detail == NULL);
+      }
+      break;
+    }
+
+    case yy_err_input_buffer_cannot_expand: {
+      ReadXsLexer lexer(100000);
+
+      try {
+        lexer.yym_lex();
+        assert(!"should have failed");
+      }
+      catch (yyFlexLexer::LexError &e) {
+        std::cout << "error: " << e.what() << "\n";
+        assert(e.m_code = expect_code);
+        assert(strstr(e.m_detail, "REJECT"));
+      }
+      break;
+    }
+
+    case yy_err_unread_overflow: {
+      ReadFixedStringLexer lexer("unread");
+
+      try {
+        lexer.yym_lex();
+        assert(!"should have failed");
+      }
+      catch (yyFlexLexer::LexError &e) {
+        std::cout << "error: " << e.what() << "\n";
+        assert(e.m_code = expect_code);
+        assert(e.m_detail == NULL);
+      }
+      break;
+    }
+
+    default:
+      assert(!"unhandled code");
+  }
+
+  yyFlexLexer::yym_check_for_memory_leaks();
+}
+
+
+int main()
+{
+  provoke_error(yy_err_input_error);
+  provoke_error(yy_err_no_rule_matches);
+  provoke_error(yy_err_input_buffer_cannot_expand);
+  provoke_error(yy_err_unread_overflow);
+  return 0;
+}

@@ -17,6 +17,7 @@
 #include <stddef.h>                    /* size_t */
 %if cpp_interface
 #include <iostream>                    /* std::istream, std::ostream */
+#include <string>                      /* std::string */
 %else
 #include <stdio.h>                     /* FILE */
 %endif
@@ -526,6 +527,16 @@ void yy_check_for_memory_leaks(void);
 #define yyFlexLexer_CLASS_DEFINED
 
 
+/* A declaration qualifier that says the method does not throw. */
+#ifndef YY_NOEXCEPT
+#  if __cplusplus >= 201103L
+#    define YY_NOEXCEPT noexcept
+#  else
+#    define YY_NOEXCEPT throw()
+#  endif
+#endif
+
+
 /* Wrapper class that provides a more convenient interface for C++.
  *
  * If "%option yyclass" is used, then this is a base class for a derived
@@ -537,6 +548,29 @@ void yy_check_for_memory_leaks(void);
  * the user might define in their derived class.
  */
 class yyFlexLexer {
+public:      /* types */
+  /* Exception thrown in response to 'yy_error_function'. */
+  class LexError : public std::exception {
+  public:      /* data */
+    /* Description of this exception. */
+    std::string m_what;
+
+    /* Error code indicating the nature of the error. */
+    yy_error_code_t m_code;
+
+    /* Nullable pointer to static storage containing a human-readable
+     * additional detail string. */
+    char const *m_detail;
+
+  public:      /* methods */
+    LexError(yy_error_code_t code, char const *detail) YY_NOEXCEPT;
+    LexError(LexError const &obj) YY_NOEXCEPT;
+    virtual ~LexError() YY_NOEXCEPT;
+
+    LexError& operator=(LexError const &obj) YY_NOEXCEPT;
+    virtual char const *what() const YY_NOEXCEPT;
+  };
+
 public:      /* methods */
   /* If 'arg_yyin' is specified, it becomes the input stream;
    * otherwise 'cin' (standard input) is used.  Similarly, if
@@ -652,8 +686,8 @@ public:      /* methods */
    * implementation returns 1. */
   virtual int yym_wrap();
 
-  /* Called when an error occurs.  The default behavior is to print a
-   * message to stderr and exit. */
+  /* Called when an error occurs.  The default behavior is to throw
+   * LexError. */
   virtual void yym_error(yy_error_code_t code, char const *detail) const;
 
 
