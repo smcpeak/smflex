@@ -3,6 +3,7 @@
 /* With C++ API. */
 
 %option c++
+%option yy_scan_string
 
 %{
 #include <string.h>                    /* memset */
@@ -83,6 +84,35 @@ void scan_length(int len, int countdown)
   yy_check_for_memory_leaks();
 }
 
+
+void scan_string(int countdown)
+{
+  cout << "--------- scan_string("
+       << countdown << ") ----------\n";
+
+  yy_alloc_failure_countdown = countdown;
+
+  {
+    yyFlexLexer lexer;
+
+    try {
+      yy_buffer_state_t *buf = lexer.yym_scan_string("abcdefghij");
+
+      while (lexer.yym_lex())
+        {}
+      cout << "yym_lex returned 0\n";
+
+      lexer.yym_delete_buffer(buf);
+    }
+    catch (yyFlexLexer::LexError &e) {
+      cout << "error: " << e.what() << "\n";
+    }
+  }
+
+  yy_check_for_memory_leaks();
+}
+
+
 int main()
 {
   scan_length(100, 0);
@@ -94,6 +124,11 @@ int main()
   scan_length(100000, 0);
 
   scan_length(100000, 4);
+
+  scan_string(0);
+  scan_string(1);
+  scan_string(2);
+  scan_string(3);
 
   return 0;
 }
