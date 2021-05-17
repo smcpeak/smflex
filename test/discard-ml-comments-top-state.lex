@@ -1,8 +1,10 @@
 /* discard-ml-comments-top-state.lex */
 /* Exercise 'yy_top_state'. */
+/* Also exercise flex-compat YY_START. */
 
 %option main
 %option stack
+%option flex-compat
 %option yy_top_state
 %x comment foo
 

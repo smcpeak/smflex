@@ -38,7 +38,7 @@
 
 /* Translate the current start state into a value that can be later handed
  * to YY_SET_START_STATE to return to the state. */
-#define YY_START ((yy_lexer->yy_start_state - 1) / 2)
+#define YY_GET_START_STATE() ((yy_lexer->yy_start_state - 1) / 2)
 
 /* Action number for EOF rule of a given start state. */
 #define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
@@ -2820,7 +2820,7 @@ YY_RULE_SETUP
 {
                           yylval = myesc((Char *) yytext);
 
-                          if (YY_START == FIRSTCCL)
+                          if (YY_GET_START_STATE() == FIRSTCCL)
                             YY_SET_START_STATE(CCL);
 
                           return CHAR;
@@ -2955,7 +2955,7 @@ case YY_STATE_EOF(LINEDIR):
                  */
                 yy_lexer->yy_c_buf_p = yy_lexer->yy_text + YY_MORE_ADJ;
 
-                yy_act = YY_STATE_EOF(YY_START);
+                yy_act = YY_STATE_EOF(YY_GET_START_STATE());
                 goto do_action;
               }
 
@@ -3577,7 +3577,8 @@ void yy_push_state(input_scan_lexer_t *yy_lexer, int new_state)
     yy_lexer->yy_start_stack_array = new_array;
   }
 
-  yy_lexer->yy_start_stack_array[yy_lexer->yy_start_stack_cur_size++] = YY_START;
+  yy_lexer->yy_start_stack_array[yy_lexer->yy_start_stack_cur_size++] =
+    YY_GET_START_STATE();
 
   YY_SET_START_STATE(new_state);
 }
@@ -3751,7 +3752,7 @@ void input_scan_set_start_state(input_scan_lexer_t *yy_lexer, int state)
 
 int input_scan_get_start_state(input_scan_lexer_t *yy_lexer)
 {
-  return YY_START;
+  return YY_GET_START_STATE();
 }
 
 
@@ -3804,7 +3805,7 @@ int input_scan_wrap_return_1(input_scan_lexer_t *yy_lexer)
 /* Remove documented YY_XXX macros, as they cannot be used in section 3.
  * Most of them have yy_XXX alternatives that accept 'input_scan_lexer_t*'. */
 #undef YY_SET_START_STATE
-#undef YY_START             /* TODO: Rename to 'YY_GET_START_STATE'. */
+#undef YY_GET_START_STATE
 #undef YY_LESS_TEXT
 #undef YY_CURRENT_BUFFER    /* TODO: Document as alias of the field. */
 #undef YY_FLUSH_BUFFER      /* TODO: Rename to 'YY_FLUSH_CURRENT_BUFFER'. */

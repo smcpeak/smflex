@@ -686,7 +686,7 @@ LEXOPT          [aceknopr]
 <SECT2,QUOTE,FIRSTCCL,CCL>{ESCSEQ}      {
                           yylval = myesc((Char *) yytext);
 
-                          if (YY_START == FIRSTCCL)
+                          if (YY_GET_START_STATE() == FIRSTCCL)
                             YY_SET_START_STATE(CCL);
 
                           return CHAR;

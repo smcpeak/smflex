@@ -35,5 +35,5 @@ beginfoo                YY_SET_START_STATE(foo); YY_ECHO;
    * and also check the current start state. */
 <INITIAL,foo>line_num   {
                           printf("[line_num %d in state %d]",
-                                 line_num, YY_START);
+                                 line_num, YY_GET_START_STATE());
                         }

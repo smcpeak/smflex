@@ -22,5 +22,5 @@ beginfoo                YY_SET_START_STATE(foo); YY_ECHO;
 
   /* This rule lets me query current start state. */
 <INITIAL,foo>state      {
-                          printf("[state %d]", YY_START);
+                          printf("[state %d]", YY_GET_START_STATE());
                         }

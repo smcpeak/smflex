@@ -931,12 +931,24 @@ an action:
 
 <ul>
 
-<li id="yy_echo"><p><code>YY_ECHO</code> copies yytext to the scanner's output.
+<li id="yy_echo"><p><code>YY_ECHO</code> copies
+    <a href="#yy_text"><code>yy_text</code></a>
+    to the scanner's output
+    (<a href="#yy_output_stream"><code>yy_output_stream</code></a>).
 
 <li id="YY_SET_START_STATE-macro"><p><code>YY_SET_START_STATE(s)</code>
     places the scanner in
     <a href="#start-conditions">start condition</a>
     <code>s</code>.
+
+    See also
+    <a href="#yy_set_start_state"><code>yy_set_start_state</code></a>.
+
+<li id="YY_GET_START_STATE-macro"><p><code>YY_GET_START_STATE</code>
+    returns the current start state.
+
+    See also
+    <a href="#yy_get_start_state"><code>yy_get_start_state</code></a>.
 
 <li><p><code>REJECT</code>
     directs the scanner to proceed on to the "second best" rule which
@@ -1734,11 +1746,11 @@ fashion:
 </code><!-- END example --></pre>
 
 <p>Furthermore, you can access the current start condition using the
-integer-valued <code>YY_START</code> macro. For example, the above
+integer-valued <code>YY_GET_START_STATE()</code> macro. For example, the above
 assignments to <code>comment_caller</code> could instead be written
 
 <pre><code>
-    comment_caller = YY_START;
+    comment_caller = YY_GET_START_STATE();
 </code></pre>
 
 <p>Beware that start conditions do not have their own name-space;
@@ -2276,7 +2288,7 @@ the rule actions.
     returns a <code>yy_buffer_state_t*</code> pointer to the current
     buffer.
 
-<li><p><code>YY_START</code>
+<li><p><code>YY_GET_START_STATE()</code>
     returns an integer value corresponding to the current start
     condition. You can subsequently use this value with
     <code>YY_SET_START_STATE</code> to return to that start condition.
@@ -4663,14 +4675,14 @@ run-time support library.  That has been removed as detailed below.
     <p>Replacement: Use <code>yy_create_buffer</code>.
 
 <li><p><code>YYSTATE</code>: <code>flex-2.5.4</code> accepted
-    <code>YYSTATE</code> as an alias for <code>YY_START</code>.
+    <code>YYSTATE</code> as an alias for <code>YY_GET_START_STATE</code>.
     That alias has been removed.
 
     <p>Rationale: The reason given for <code>YYSTATE</code> was
     compatibility with AT&amp;T <code>lex</code>, which I do not
     care about.
 
-    <p>Replacement: Use <code>YY_START</code>.
+    <p>Replacement: Use <code>YY_GET_START_STATE</code>.
 
 <li><p><code>struct yy_buffer_state</code>: The <code>flex-2.5.4</code>
     manual advertised that if you want to declare a pointer to a buffer
@@ -4771,6 +4783,19 @@ run-time support library.  That has been removed as detailed below.
     "leave" counterpart.
 
     <p>The old name is available with
+    <code>%option flex-compat</code>.
+
+<li><p>The <code>YY_START</code> macro has been replaced by
+    <a href="#YY_GET_START_STATE-macro"><code>YY_GET_START_STATE()</code></a>.
+    Note that the old macro was used without parentheses, while the new
+    one requires them.
+
+    <p>Rationale: The old name was a bit terse, and I wanted something
+    parallel with the new <code>YY_SET_START_STATE</code>.  The old
+    lack of parentheses clashes with my intended parallel use of
+    <a href="#yy_get_start_state"><code>yy_get_start_state</code></a>.
+
+    <p>The old name, which is used without parentheses, is available with
     <code>%option flex-compat</code>.
 
 <li><p>The <code>YY_INPUT</code> macro has been replaced by
