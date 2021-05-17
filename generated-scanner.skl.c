@@ -1551,7 +1551,7 @@ const char *scanner_skl_contents[] = {
   "%endif # option_stack",
   "",
   "",
-  "yy_error_code_t yy_get_error(yy_lexer_t *yy_lexer)",
+  "yy_error_code_t yy_get_error(yy_lexer_t const *yy_lexer)",
   "{",
   "  return yy_lexer->yy_error_code;",
   "}",

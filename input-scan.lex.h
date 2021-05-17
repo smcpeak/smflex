@@ -339,7 +339,7 @@ void input_scan_error_print_and_exit(input_scan_lexer_t *yy_lexer,
  * 'input_scan_err_no_error' if none has been.  This can be used in situations
  * where 'yy_error_function' returns in order to signal to the client
  * code that it must stop calling scanner functions. */
-input_scan_error_code_t input_scan_get_error(input_scan_lexer_t *yy_lexer);
+input_scan_error_code_t input_scan_get_error(input_scan_lexer_t const *yy_lexer);
 
 /* Return an English string describing the given error 'code' as a
  * pointer to statically-allocated memory. */

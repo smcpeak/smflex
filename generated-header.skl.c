@@ -496,7 +496,7 @@ const char *header_skl_contents[] = {
   " * 'yy_err_no_error' if none has been.  This can be used in situations",
   " * where 'yy_error_function' returns in order to signal to the client",
   " * code that it must stop calling scanner functions. */",
-  "yy_error_code_t yy_get_error(yy_lexer_t *yy_lexer);",
+  "yy_error_code_t yy_get_error(yy_lexer_t const *yy_lexer);",
   "",
   "/* Return an English string describing the given error 'code' as a",
   " * pointer to statically-allocated memory. */",

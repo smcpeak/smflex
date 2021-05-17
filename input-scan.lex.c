@@ -3600,7 +3600,7 @@ void yy_pop_state(input_scan_lexer_t *yy_lexer)
 
 
 
-input_scan_error_code_t input_scan_get_error(input_scan_lexer_t *yy_lexer)
+input_scan_error_code_t input_scan_get_error(input_scan_lexer_t const *yy_lexer)
 {
   return yy_lexer->yy_error_code;
 }
