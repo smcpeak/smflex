@@ -312,8 +312,11 @@ void input_scan_unread_character(input_scan_lexer_t *yy_lexer, int c);
  * yy_lexer reads its input one character at a time. */
 void input_scan_set_interactive(input_scan_lexer_t *yy_lexer, int is_interactive);
 
-/* Set whether 'yy_lexer' will regard itself as being at the beginning
+/* Get whether 'yy_lexer' will regard itself as being at the beginning
  * of a line (BOL), which is where "^" patterns can match. */
+int input_scan_get_bol(input_scan_lexer_t const *yy_lexer);
+
+/* Set the BOL condition. */
 void input_scan_set_bol(input_scan_lexer_t *yy_lexer, int at_bol);
 
 /* -------- Available methods for function pointers -------- */

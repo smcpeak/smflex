@@ -714,7 +714,7 @@ void gen_start_state()
   if (jacobson) {
     if (bol_needed) {
       indent_puts
-        ("yy_current_state = yy_start_state_list[yy_lexer->yy_start_state + YY_AT_BOL()];");
+        ("yy_current_state = yy_start_state_list[yy_lexer->yy_start_state + YY_GET_BOL()];");
     }
     else
       indent_puts("yy_current_state = yy_start_state_list[yy_lexer->yy_start_state];");
@@ -724,7 +724,7 @@ void gen_start_state()
     indent_puts("yy_current_state = yy_lexer->yy_start_state;");
 
     if (bol_needed)
-      indent_puts("yy_current_state += YY_AT_BOL();");
+      indent_puts("yy_current_state += YY_GET_BOL();");
 
     if (reject_used) {
       /* Set up for storing up states. */
@@ -1323,6 +1323,7 @@ static char const *lower_prefix_names[] = {
   "yy_error_print_and_exit",
   "yy_error_string",
   "yy_flush_buffer",
+  "yy_get_bol",
   "yy_get_error",
   "yy_get_start_state",
   "yy_init_buffer",

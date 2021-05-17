@@ -270,6 +270,26 @@ void yyFlexLexer::yym_set_interactive(int is_interactive)
 %endif
 
 
+int yy_get_bol(yy_lexer_t const *yy_lexer)
+{
+  if (!yy_lexer->yy_current_buffer) {
+    /* When we start reading, BOL will be true. */
+    return 1;
+  }
+  else {
+    return yy_lexer->yy_current_buffer->yy_at_bol;
+  }
+}
+
+%if cpp_interface
+bool yyFlexLexer::yym_get_bol() const
+{
+  return !!yy_get_bol(&yym_lexer_state);
+}
+%endif
+
+
+
 void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol)
 {
   if (!yy_create_buffer_if_needed(yy_lexer)) {
@@ -279,7 +299,7 @@ void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol)
 }
 
 %if cpp_interface
-void yyFlexLexer::yym_set_bol(int at_bol)
+void yyFlexLexer::yym_set_bol(bool at_bol)
 {
   yy_set_bol(&yym_lexer_state, at_bol);
 }
@@ -319,8 +339,6 @@ static void yy_error_delegate(yy_lexer_t *yy_lexer,
 }
 %endif # cpp_interface
 
-
-#define YY_AT_BOL() (yy_lexer->yy_current_buffer->yy_at_bol)
 
 %% yy_text_def: yy_text/yy_input_stream/yy_output_stream/yy_state_type_t/yy_lineno etc. def's & init go here
 
@@ -415,6 +433,7 @@ int yyFlexLexer::yym_lex()
        * in other functions, even those defined in sections 1 or 3. */
 #     define yytext (yy_lexer->yy_text)
 #     define yyleng (yy_lexer->yy_leng)
+#     define YY_GET_BOL() (yy_get_bol(yy_lexer))
 %if option_yy_read_character
 #     define YY_READ_CHARACTER() (yy_read_character(yy_lexer))
 %endif
@@ -433,6 +452,7 @@ int yyFlexLexer::yym_lex()
 #     define yyless(n) YY_LESS_TEXT(n)
 #     define BEGIN(s) YY_SET_START_STATE(s)
 #     define YY_START YY_GET_START_STATE()
+#     define YY_AT_BOL() YY_GET_BOL()
 %if option_yy_read_character
 #     define input() YY_READ_CHARACTER()
 #     define yyinput() YY_READ_CHARACTER()
@@ -1835,6 +1855,7 @@ int main()
 #undef yyless
 #undef BEGIN
 #undef YY_START
+#undef YY_AT_BOL
 %if option_yy_read_character
 #undef input
 #undef yyinput
@@ -1857,7 +1878,7 @@ int main()
 #undef YY_LESS_TEXT
 #undef YY_CURRENT_BUFFER
 #undef YY_FLUSH_CURRENT_BUFFER
-#undef YY_AT_BOL            /* TODO: Add yy_at_bol().  Deal with yym_at_bol(). */
+#undef YY_GET_BOL
 #undef YY_ECHO
 #undef yyterminate          /* TODO: Capitalize, underscore. */
 #undef yytext               /* TODO: Capitalize, underscore. */

@@ -2239,15 +2239,15 @@ is done as though at the beginning of a line. A non-zero macro argument
 makes rules anchored with
 <code>^</code> active, while a zero argument makes <code>^</code> rules inactive.
 
-<dt><code>YY_AT_BOL()</code>
+<dt id="YY_GET_BOL-macro"><code>YY_GET_BOL()</code>
 
 <dd>
-<p>The macro <code>YY_AT_BOL()</code> returns true if the next token
+<p>The macro <code>YY_GET_BOL()</code> returns true if the next token
 scanned from the current buffer will have <code>^</code> rules active, false
 otherwise.
 
 <p>See <a href="test/set-bol.lex"><code>test/set-bol.lex</code></a>
-for an example with <code>yy_set_bol</code> and <code>YY_AT_BOL</code>.
+for an example with <code>yy_set_bol</code> and <code>YY_GET_BOL</code>.
 
 <dt><code>YY_BREAK</code>
 
@@ -4848,6 +4848,13 @@ run-time support library.  That has been removed as detailed below.
     should be the same as <code>yy_flush_buffer(yy_lexer)</code>, but an
     alias would violate that.
 
+<li><p><code>YY_AT_BOL</code> has been renamed to <code>YY_GET_BOL</code>.
+
+    <p>Rationale: Everywhere else I use "GET", so "AT" is irregular.
+
+    <p>The old name is available with
+    <code>%option flex-compat</code>.
+
 </ul>
 
 <p>
@@ -4910,6 +4917,10 @@ Renaming summary:
     <td><code>YY_FLUSH_BUFFER</code>
     <td><code>YY_FLUSH_CURRENT_BUFFER</code>
     <td>Old name is not defined, and there is no alias.
+  <tr>
+    <td><code>YY_AT_BOL</code>
+    <td><code>YY_GET_BOL</code>
+    <td>Old name available with <code>%option flex-compat</code>.
 </table>
 
 
