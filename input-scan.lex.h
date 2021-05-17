@@ -132,7 +132,9 @@ struct input_scan_lexer_struct {
   /* Input source.  This is initially a FILE*, namely 'stdin'. */
   input_scan_input_stream_t *yy_input_stream;
 
-  /* Output sink.  This is initially a FILE*, namely 'stdout'. */
+  /* Output sink.  This is initially a FILE*, namely 'stdout'.  Since
+   * there is no buffering of output within 'smflex', this can be
+   * directly reassigned at any time. */
   input_scan_output_stream_t *yy_output_stream;
 
   /* Read up to 'size' bytes into 'dest'.  The presumed source of the
