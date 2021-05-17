@@ -9,6 +9,6 @@
 one              printf("ONE");
 two              printf("TWO");
 three            printf("THREE");
-get_debug        printf("[debug is %d]", yym_get_debug());
-"set_debug(0)"   yym_set_debug(0);
-"set_debug(1)"   yym_set_debug(1);
+get_debug        printf("[debug is %d]", yym_flex_debug());
+"set_debug(0)"   yym_set_flex_debug(0);
+"set_debug(1)"   yym_set_flex_debug(1);

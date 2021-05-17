@@ -4109,14 +4109,14 @@ can be used to inspect the token:
 
 <dl>
 
-<dt><code>void yym_set_debug(int flag)</code>
+<dt><code>void yym_set_flex_debug(int flag)</code>
 
 <dd><p>sets the debugging flag for the scanner, equivalent to assigning to
     <code>yy_flex_debug</code>. Note that you must build the scanner using
     <a href="#debug-option"><code>%option debug</code></a> to include
     debugging information in it.
 
-<dt><code>int yym_debug() const</code>
+<dt><code>int yym_flex_debug() const</code>
 
 <dd><p>returns the current setting of the debugging flag.
 
@@ -5051,10 +5051,10 @@ members:
     <td><code>yym_lineno</code>
   <tr>
     <td><code>debug</code>
-    <td><code>yym_get_debug</code>
+    <td><code>yym_flex_debug</code>
   <tr>
     <td><code>set_debug</code>
-    <td><code>yym_set_debug</code>
+    <td><code>yym_set_flex_debug</code>
   <tr>
     <td><code>LexerInput</code>
     <td><code>yym_read_input</code>

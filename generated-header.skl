@@ -550,6 +550,16 @@ public:      /* methods */
     { return yym_lexer_state.yy_input_stream; }
   yy_output_stream_t *yym_output_stream() const
     { return yym_lexer_state.yy_output_stream; }
+%if option_debug
+  int yym_flex_debug() const
+    { return yym_lexer_state.yy_flex_debug; }
+%endif
+
+  /* Setters for 'yy_lexer_t' writeable members. */
+%if option_debug
+  void yym_set_flex_debug(int flag)
+    { yym_lexer_state.yy_flex_debug = flag; }
+%endif
 
   /* The following "yym_" methods are all counterparts for the
    * corresponding "yy_" global functions that comprise the C interface.
@@ -634,11 +644,6 @@ public:      /* methods */
 
 %if do_yylineno
   int yym_lineno() const          { return yym_lexer_state.yy_lineno; }
-
-%endif
-%if option_debug
-  int yym_get_debug() const       { return yym_lexer_state.yy_flex_debug; }
-  void yym_set_debug(int flag)    { yym_lexer_state.yy_flex_debug = flag; }
 
 %endif
 protected:   /* data */
