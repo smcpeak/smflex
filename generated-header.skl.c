@@ -581,6 +581,8 @@ const char *header_skl_contents[] = {
   "  void yym_set_flex_debug(int flag)",
   "    { yym_lexer_state.yy_flex_debug = flag; }",
   "%endif",
+  "  yy_buffer_state_t *yym_current_buffer() const",
+  "    { return yym_lexer_state.yy_current_buffer; }",
   "",
   "  /* The following \"yym_\" methods are all counterparts for the",
   "   * corresponding \"yy_\" global functions that comprise the C interface.",

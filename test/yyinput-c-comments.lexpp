@@ -53,6 +53,7 @@ void dummy(yyFlexLexer &lexer)
   YY_BUFFER_STATE b;
   b = lexer.yym_create_buffer(&std::cin, YY_BUF_SIZE);
   lexer.yym_switch_to_buffer(b);
+  assert(lexer.yym_current_buffer() == b);
   lexer.yym_delete_buffer(b);
 
   /* Exercise not passing a size. */

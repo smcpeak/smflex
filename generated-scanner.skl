@@ -1855,7 +1855,7 @@ int main()
 #undef YY_SET_START_STATE
 #undef YY_GET_START_STATE
 #undef YY_LESS_TEXT
-#undef YY_CURRENT_BUFFER    /* TODO: Document as alias of the field. */
+#undef YY_CURRENT_BUFFER
 #undef YY_FLUSH_BUFFER      /* TODO: Rename to 'YY_FLUSH_CURRENT_BUFFER'. */
 #undef YY_AT_BOL            /* TODO: Add yy_at_bol().  Deal with yym_at_bol(). */
 #undef YY_ECHO

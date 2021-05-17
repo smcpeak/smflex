@@ -1440,14 +1440,25 @@ following public members:
     the two look the same as far as the scanner is concerned), or reaches
     an end-of-file.
 
+<dt id="yy_current_buffer"><code>yy_buffer_state_t *yy_current_buffer;</code>
+
+    <dd><p>
+    The input source we are currently reading from, and a buffer
+    in front of it.
+
+    <p>This member is <em>semi-public</em>, meaning it can be directly
+    read by the client, but cannot be directly written.  Instead, use
+    <a href="#yy_switch_to_buffer"><code>yy_switch_to_buffer</code></a>.
+
 </dl>
 
 <p>Within section 2 actions, several convenience macros provide access
 to associated fields without the need for an explicit object:
 
 <pre><code>
-    #define YY_TEXT (yy_lexer-&gt;yy_text)
-    #define YY_LENG (yy_lexer-&gt;yy_leng)
+    #define YY_TEXT           (yy_lexer-&gt;yy_text)
+    #define YY_LENG           (yy_lexer-&gt;yy_leng)
+    #define YY_CURRENT_BUFFER (yy_lexer-&gt;yy_current_buffer)
 </code></pre>
 
 <p>These functions are available for inspecting and manipulating the
