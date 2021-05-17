@@ -4120,14 +4120,14 @@ can be used to inspect the token:
 
 <dl>
 
-<dt><code>void yym_set_flex_debug(int flag)</code>
+<dt><code>void yym_set_flex_debug(bool flag)</code>
 
 <dd><p>sets the debugging flag for the scanner, equivalent to assigning to
     <code>yy_flex_debug</code>. Note that you must build the scanner using
     <a href="#debug-option"><code>%option debug</code></a> to include
     debugging information in it.
 
-<dt><code>int yym_flex_debug() const</code>
+<dt><code>bool yym_flex_debug() const</code>
 
 <dd><p>returns the current setting of the debugging flag.
 
