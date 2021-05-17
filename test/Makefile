@@ -89,6 +89,7 @@ CXXFLAGS_FOR_cpp_int_batch       := -DYY_ENABLE_DEBUG_LOG_CALL
 CXXFLAGS_FOR_cpp_int_default     := -DYY_ENABLE_DEBUG_LOG_CALL
 CXXFLAGS_FOR_cpp_int_set_int_1   := -DYY_ENABLE_DEBUG_LOG_CALL
 CXXFLAGS_FOR_cpp_int_interactive := -DYY_ENABLE_DEBUG_LOG_CALL
+CXXFLAGS_FOR_large_token_cpp     := $(MEM_TEST_FLAGS)
 
 # Given the name of a source file without its extension, get the
 # C[XX]FLAGS to use when compiling that file.  This first strips any
@@ -246,6 +247,7 @@ all-df: out/html-link-validator.ok
 all-df: out/input-buffers.ok
 all-df: out/input-c-comments.ok
 all-df: out/large-token.ok
+all-df: out/large-token-cpp.ok
 all-df: out/noreject-frob.ok
 all-df: out/normalize-whitespace.ok
 all-df: out/notrailing-context.ok

@@ -10,7 +10,6 @@
 #include <stdlib.h>          /* malloc, free, realloc, exit */
 #include <string.h>          /* strlen, memcpy */
 
-
 /* Defined within a generated scanner. */
 #define SMFLEX_SCANNER
 
@@ -1268,16 +1267,16 @@ static const short int yy_chk[2664] =
     yymore_used = true;
 
 
-#line 1272 "input-scan.lex.c"
+#line 1271 "input-scan.lex.c"
 #line 81 "input-scan.lex"
-#line 1274 "input-scan.lex.c"
+#line 1273 "input-scan.lex.c"
 #line 82 "input-scan.lex"
-#line 1276 "input-scan.lex.c"
+#line 1275 "input-scan.lex.c"
 #line 83 "input-scan.lex"
-#line 1278 "input-scan.lex.c"
+#line 1277 "input-scan.lex.c"
 #line 84 "input-scan.lex"
 
-#line 1281 "input-scan.lex.c"
+#line 1280 "input-scan.lex.c"
 #define SECT2 1
 #define SECT2PROLOG 2
 #define SECT3 3
@@ -1288,7 +1287,7 @@ static const short int yy_chk[2664] =
 #define NUM 8
 #define QUOTE 9
 #line 86 "input-scan.lex"
-#line 1292 "input-scan.lex.c"
+#line 1291 "input-scan.lex.c"
 #define FIRSTCCL 10
 #define CCL 11
 #define ACTION 12
@@ -1297,7 +1296,7 @@ static const short int yy_chk[2664] =
 #define ACTION_STRING 15
 #define PERCENT_BRACE_ACTION 16
 #line 87 "input-scan.lex"
-#line 1301 "input-scan.lex.c"
+#line 1300 "input-scan.lex.c"
 #define OPTION 17
 #define LINEDIR 18
 #line 88 "input-scan.lex"
@@ -1321,7 +1320,7 @@ static const short int yy_chk[2664] =
 
 
 
-#line 1325 "input-scan.lex.c"
+#line 1324 "input-scan.lex.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -1424,7 +1423,7 @@ int input_scan_lex(input_scan_lexer_t * const yy_lexer)
   Char nmdef[MAXLINE], myesc();
 
 
-#line 1428 "input-scan.lex.c"
+#line 1427 "input-scan.lex.c"
 
   if (yy_lexer->yy_init) {
     yy_lexer->yy_init = 0;
@@ -1508,19 +1507,19 @@ case 1:
 YY_RULE_SETUP
 #line 120 "input-scan.lex"
 indented_code = true; YY_SET_START_STATE(CODEBLOCK);
-#line 1512 "input-scan.lex.c"
+#line 1511 "input-scan.lex.c"
   YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 121 "input-scan.lex"
 ACTION_ECHO; yy_push_state(yy_lexer, COMMENT);
-#line 1518 "input-scan.lex.c"
+#line 1517 "input-scan.lex.c"
   YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 122 "input-scan.lex"
 yy_push_state(yy_lexer, LINEDIR);
-#line 1524 "input-scan.lex.c"
+#line 1523 "input-scan.lex.c"
   YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -1532,7 +1531,7 @@ YY_RULE_SETUP
                           doing_start_conditions = true;
                           return SCDECL;
                         }
-#line 1536 "input-scan.lex.c"
+#line 1535 "input-scan.lex.c"
   YY_BREAK
 case 5:
 YY_RULE_SETUP
@@ -1542,7 +1541,7 @@ YY_RULE_SETUP
                           doing_start_conditions = true;
                           return XSCDECL;
                         }
-#line 1546 "input-scan.lex.c"
+#line 1545 "input-scan.lex.c"
   YY_BREAK
 case 6:
 YY_RULE_SETUP
@@ -1553,14 +1552,14 @@ YY_RULE_SETUP
                           indented_code = false;
                           YY_SET_START_STATE(CODEBLOCK);
                         }
-#line 1557 "input-scan.lex.c"
+#line 1556 "input-scan.lex.c"
   YY_BREAK
 
 case 7:
 YY_RULE_SETUP
 #line 142 "input-scan.lex"
 /* discard */
-#line 1564 "input-scan.lex.c"
+#line 1563 "input-scan.lex.c"
   YY_BREAK
 
 case 8:
@@ -1574,7 +1573,7 @@ YY_RULE_SETUP
                           YY_SET_START_STATE(SECT2PROLOG);
                           return SECTEND;
                         }
-#line 1578 "input-scan.lex.c"
+#line 1577 "input-scan.lex.c"
   YY_BREAK
 
 case 9:
@@ -1588,27 +1587,27 @@ YY_RULE_SETUP
                           YY_SET_START_STATE(OPTION);
                           return OPTION_OP;
                         }
-#line 1592 "input-scan.lex.c"
+#line 1591 "input-scan.lex.c"
   YY_BREAK
 
 case 10:
 YY_RULE_SETUP
 #line 162 "input-scan.lex"
 ++linenum; ADD_ACTION_NL(); /* ignore */
-#line 1599 "input-scan.lex.c"
+#line 1598 "input-scan.lex.c"
   YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 163 "input-scan.lex"
 ++linenum; ADD_ACTION_NL(); /* ignore */
-#line 1605 "input-scan.lex.c"
+#line 1604 "input-scan.lex.c"
   YY_BREAK
 
 case 12:
 YY_RULE_SETUP
 #line 165 "input-scan.lex"
 synerr( _( "unrecognized '%' directive" ) );
-#line 1612 "input-scan.lex.c"
+#line 1611 "input-scan.lex.c"
   YY_BREAK
 
 case 13:
@@ -1619,14 +1618,14 @@ YY_RULE_SETUP
                           didadef = false;
                           YY_SET_START_STATE(PICKUPDEF);
                         }
-#line 1623 "input-scan.lex.c"
+#line 1622 "input-scan.lex.c"
   YY_BREAK
 
 case 14:
 YY_RULE_SETUP
 #line 173 "input-scan.lex"
 RETURNNAME;
-#line 1630 "input-scan.lex.c"
+#line 1629 "input-scan.lex.c"
   YY_BREAK
 case 15:
 YY_RULE_SETUP
@@ -1644,7 +1643,7 @@ YY_RULE_SETUP
                             ACTION_ECHO;
                           }
                         }
-#line 1648 "input-scan.lex.c"
+#line 1647 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -1654,25 +1653,25 @@ case 16:
 YY_RULE_SETUP
 #line 191 "input-scan.lex"
 ACTION_ECHO; yy_pop_state(yy_lexer);
-#line 1658 "input-scan.lex.c"
+#line 1657 "input-scan.lex.c"
   YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 192 "input-scan.lex"
 ACTION_ECHO;
-#line 1664 "input-scan.lex.c"
+#line 1663 "input-scan.lex.c"
   YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 193 "input-scan.lex"
 ACTION_ECHO;
-#line 1670 "input-scan.lex.c"
+#line 1669 "input-scan.lex.c"
   YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 194 "input-scan.lex"
 ++linenum; ACTION_ECHO;
-#line 1676 "input-scan.lex.c"
+#line 1675 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -1681,13 +1680,13 @@ case 20:
 YY_RULE_SETUP
 #line 198 "input-scan.lex"
 yy_pop_state(yy_lexer);
-#line 1685 "input-scan.lex.c"
+#line 1684 "input-scan.lex.c"
   YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 199 "input-scan.lex"
 linenum = myctoi( yytext );
-#line 1691 "input-scan.lex.c"
+#line 1690 "input-scan.lex.c"
   YY_BREAK
 
 case 22:
@@ -1698,13 +1697,13 @@ YY_RULE_SETUP
                           infilename = copy_string(yytext + 1);
                           infilename[strlen(infilename) - 1] = '\0';
                         }
-#line 1702 "input-scan.lex.c"
+#line 1701 "input-scan.lex.c"
   YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 206 "input-scan.lex"
 /* ignore spurious characters */
-#line 1708 "input-scan.lex.c"
+#line 1707 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -1717,14 +1716,14 @@ YY_RULE_SETUP
                           ADD_ACTION_NL();
                           YY_SET_START_STATE(INITIAL);
                         }
-#line 1721 "input-scan.lex.c"
+#line 1720 "input-scan.lex.c"
   YY_BREAK
 
 case 25:
 YY_RULE_SETUP
 #line 216 "input-scan.lex"
 ACTION_ECHO;
-#line 1728 "input-scan.lex.c"
+#line 1727 "input-scan.lex.c"
   YY_BREAK
 
 case 26:
@@ -1736,7 +1735,7 @@ YY_RULE_SETUP
                           if (indented_code)
                             YY_SET_START_STATE(INITIAL);
                         }
-#line 1740 "input-scan.lex.c"
+#line 1739 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -1746,7 +1745,7 @@ case 27:
 YY_RULE_SETUP
 #line 228 "input-scan.lex"
 /* separates name and definition */
-#line 1750 "input-scan.lex.c"
+#line 1749 "input-scan.lex.c"
   YY_BREAK
 
 case 28:
@@ -1764,7 +1763,7 @@ YY_RULE_SETUP
                           ndinstal(nmstr, nmdef);
                           didadef = true;
                         }
-#line 1768 "input-scan.lex.c"
+#line 1767 "input-scan.lex.c"
   YY_BREAK
 
 case 29:
@@ -1777,7 +1776,7 @@ YY_RULE_SETUP
                           ++linenum;
                           ADD_ACTION_NL();
                         }
-#line 1781 "input-scan.lex.c"
+#line 1780 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -1794,107 +1793,107 @@ YY_RULE_SETUP
                           line_directive_out_src();
                           YY_SET_START_STATE(INITIAL);
                         }
-#line 1798 "input-scan.lex.c"
+#line 1797 "input-scan.lex.c"
   YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 262 "input-scan.lex"
 option_sense = true;
-#line 1804 "input-scan.lex.c"
+#line 1803 "input-scan.lex.c"
   YY_BREAK
 
 case 32:
 YY_RULE_SETUP
 #line 264 "input-scan.lex"
 return '=';
-#line 1811 "input-scan.lex.c"
+#line 1810 "input-scan.lex.c"
   YY_BREAK
 
 case 33:
 YY_RULE_SETUP
 #line 266 "input-scan.lex"
 option_sense = ! option_sense;
-#line 1818 "input-scan.lex.c"
+#line 1817 "input-scan.lex.c"
   YY_BREAK
 
 case 34:
 YY_RULE_SETUP
 #line 268 "input-scan.lex"
 csize = option_sense ? 128 : 256;
-#line 1825 "input-scan.lex.c"
+#line 1824 "input-scan.lex.c"
   YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 269 "input-scan.lex"
 csize = option_sense ? 256 : 128;
-#line 1831 "input-scan.lex.c"
+#line 1830 "input-scan.lex.c"
   YY_BREAK
 
 case 36:
 YY_RULE_SETUP
 #line 271 "input-scan.lex"
 long_align = option_sense;
-#line 1838 "input-scan.lex.c"
+#line 1837 "input-scan.lex.c"
   YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 272 "input-scan.lex"
 backing_up_report = option_sense;
-#line 1844 "input-scan.lex.c"
+#line 1843 "input-scan.lex.c"
   YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 273 "input-scan.lex"
 interactive = ! option_sense;
-#line 1850 "input-scan.lex.c"
+#line 1849 "input-scan.lex.c"
   YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 274 "input-scan.lex"
 cpp_interface = option_sense;
-#line 1856 "input-scan.lex.c"
+#line 1855 "input-scan.lex.c"
   YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 275 "input-scan.lex"
 caseins = ! option_sense;
-#line 1862 "input-scan.lex.c"
+#line 1861 "input-scan.lex.c"
   YY_BREAK
 case 41:
 YY_RULE_SETUP
 #line 276 "input-scan.lex"
 caseins = option_sense;
-#line 1868 "input-scan.lex.c"
+#line 1867 "input-scan.lex.c"
   YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 277 "input-scan.lex"
 option_debug = option_sense;
-#line 1874 "input-scan.lex.c"
+#line 1873 "input-scan.lex.c"
   YY_BREAK
 case 43:
 YY_RULE_SETUP
 #line 278 "input-scan.lex"
 option_suppress_default_rule = ! option_sense;
-#line 1880 "input-scan.lex.c"
+#line 1879 "input-scan.lex.c"
   YY_BREAK
 case 44:
 YY_RULE_SETUP
 #line 279 "input-scan.lex"
 useecs = option_sense;
-#line 1886 "input-scan.lex.c"
+#line 1885 "input-scan.lex.c"
   YY_BREAK
 case 45:
 YY_RULE_SETUP
 #line 280 "input-scan.lex"
 synerr(_("\"fast\" has been renamed to \"jacobson\""));
-#line 1892 "input-scan.lex.c"
+#line 1891 "input-scan.lex.c"
   YY_BREAK
 case 46:
 YY_RULE_SETUP
 #line 281 "input-scan.lex"
 option_flex_compat = option_sense;
-#line 1898 "input-scan.lex.c"
+#line 1897 "input-scan.lex.c"
   YY_BREAK
 case 47:
 YY_RULE_SETUP
@@ -1903,13 +1902,13 @@ YY_RULE_SETUP
                           useecs = usemecs = false;
                           fulltbl = true;
                         }
-#line 1907 "input-scan.lex.c"
+#line 1906 "input-scan.lex.c"
   YY_BREAK
 case 48:
 YY_RULE_SETUP
 #line 286 "input-scan.lex"
 interactive = option_sense;
-#line 1913 "input-scan.lex.c"
+#line 1912 "input-scan.lex.c"
   YY_BREAK
 case 49:
 YY_RULE_SETUP
@@ -1918,123 +1917,123 @@ YY_RULE_SETUP
                           useecs = usemecs = false;
                           jacobson = true;
                         }
-#line 1922 "input-scan.lex.c"
+#line 1921 "input-scan.lex.c"
   YY_BREAK
 case 50:
 YY_RULE_SETUP
 #line 291 "input-scan.lex"
 option_main = option_sense;
-#line 1928 "input-scan.lex.c"
+#line 1927 "input-scan.lex.c"
   YY_BREAK
 case 51:
 YY_RULE_SETUP
 #line 292 "input-scan.lex"
 usemecs = option_sense;
-#line 1934 "input-scan.lex.c"
+#line 1933 "input-scan.lex.c"
   YY_BREAK
 case 52:
 YY_RULE_SETUP
 #line 293 "input-scan.lex"
 performance_report += option_sense ? 1 : -1;
-#line 1940 "input-scan.lex.c"
+#line 1939 "input-scan.lex.c"
   YY_BREAK
 case 53:
 YY_RULE_SETUP
 #line 294 "input-scan.lex"
 use_read = option_sense;
-#line 1946 "input-scan.lex.c"
+#line 1945 "input-scan.lex.c"
   YY_BREAK
 case 54:
 YY_RULE_SETUP
 #line 295 "input-scan.lex"
 reject_really_used = option_sense;
-#line 1952 "input-scan.lex.c"
+#line 1951 "input-scan.lex.c"
   YY_BREAK
 case 55:
 YY_RULE_SETUP
 #line 296 "input-scan.lex"
 option_stack = option_sense;
-#line 1958 "input-scan.lex.c"
+#line 1957 "input-scan.lex.c"
   YY_BREAK
 case 56:
 YY_RULE_SETUP
 #line 297 "input-scan.lex"
 printstats = option_sense;
-#line 1964 "input-scan.lex.c"
+#line 1963 "input-scan.lex.c"
   YY_BREAK
 case 57:
 YY_RULE_SETUP
 #line 298 "input-scan.lex"
 nowarn = ! option_sense;
-#line 1970 "input-scan.lex.c"
+#line 1969 "input-scan.lex.c"
   YY_BREAK
 case 58:
 YY_RULE_SETUP
 #line 299 "input-scan.lex"
 do_yylineno = option_sense;
-#line 1976 "input-scan.lex.c"
+#line 1975 "input-scan.lex.c"
   YY_BREAK
 case 59:
 YY_RULE_SETUP
 #line 300 "input-scan.lex"
 yymore_really_used = option_sense;
-#line 1982 "input-scan.lex.c"
+#line 1981 "input-scan.lex.c"
   YY_BREAK
 
 case 60:
 YY_RULE_SETUP
 #line 302 "input-scan.lex"
 option_yy_read_character   = option_sense;
-#line 1989 "input-scan.lex.c"
+#line 1988 "input-scan.lex.c"
   YY_BREAK
 case 61:
 YY_RULE_SETUP
 #line 303 "input-scan.lex"
 option_yy_scan_string      = option_sense;
-#line 1995 "input-scan.lex.c"
+#line 1994 "input-scan.lex.c"
   YY_BREAK
 case 62:
 YY_RULE_SETUP
 #line 304 "input-scan.lex"
 option_yy_scan_bytes       = option_sense;
-#line 2001 "input-scan.lex.c"
+#line 2000 "input-scan.lex.c"
   YY_BREAK
 case 63:
 YY_RULE_SETUP
 #line 305 "input-scan.lex"
 option_yy_scan_buffer      = option_sense;
-#line 2007 "input-scan.lex.c"
+#line 2006 "input-scan.lex.c"
   YY_BREAK
 case 64:
 YY_RULE_SETUP
 #line 306 "input-scan.lex"
 option_yy_top_state        = option_sense;
-#line 2013 "input-scan.lex.c"
+#line 2012 "input-scan.lex.c"
   YY_BREAK
 case 65:
 YY_RULE_SETUP
 #line 307 "input-scan.lex"
 option_yy_unread_character = option_sense;
-#line 2019 "input-scan.lex.c"
+#line 2018 "input-scan.lex.c"
   YY_BREAK
 
 case 66:
 YY_RULE_SETUP
 #line 309 "input-scan.lex"
 return OPT_OUTFILE;
-#line 2026 "input-scan.lex.c"
+#line 2025 "input-scan.lex.c"
   YY_BREAK
 case 67:
 YY_RULE_SETUP
 #line 310 "input-scan.lex"
 return OPT_PREFIX;
-#line 2032 "input-scan.lex.c"
+#line 2031 "input-scan.lex.c"
   YY_BREAK
 case 68:
 YY_RULE_SETUP
 #line 311 "input-scan.lex"
 return OPT_YYCLASS;
-#line 2038 "input-scan.lex.c"
+#line 2037 "input-scan.lex.c"
   YY_BREAK
 
 case 69:
@@ -2045,7 +2044,7 @@ YY_RULE_SETUP
                           nmstr[strlen(nmstr) - 1] = '\0';
                           return NAME;
                         }
-#line 2049 "input-scan.lex.c"
+#line 2048 "input-scan.lex.c"
   YY_BREAK
 
 case 70:
@@ -2055,7 +2054,7 @@ YY_RULE_SETUP
                           format_synerr(_("unrecognized %%option: %s"), yytext);
                           YY_SET_START_STATE(RECOVER);
                         }
-#line 2059 "input-scan.lex.c"
+#line 2058 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2063,7 +2062,7 @@ case 71:
 YY_RULE_SETUP
 #line 325 "input-scan.lex"
 ++linenum; ADD_ACTION_NL(); YY_SET_START_STATE(INITIAL);
-#line 2067 "input-scan.lex.c"
+#line 2066 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2072,20 +2071,20 @@ case 72:
 YY_RULE_SETUP
 #line 329 "input-scan.lex"
 ++bracelevel; YY_LESS_TEXT( 2 );      /* eat only %{ */
-#line 2076 "input-scan.lex.c"
+#line 2075 "input-scan.lex.c"
   YY_BREAK
 case 73:
 YY_RULE_SETUP
 #line 330 "input-scan.lex"
 --bracelevel; YY_LESS_TEXT( 2 );      /* eat only %} */
-#line 2082 "input-scan.lex.c"
+#line 2081 "input-scan.lex.c"
   YY_BREAK
 
 case 74:
 YY_RULE_SETUP
 #line 332 "input-scan.lex"
 ACTION_ECHO;    /* indented code in prolog */
-#line 2089 "input-scan.lex.c"
+#line 2088 "input-scan.lex.c"
   YY_BREAK
 
 case 75:
@@ -2101,20 +2100,20 @@ YY_RULE_SETUP
                           else
                             ACTION_ECHO;
                         }
-#line 2105 "input-scan.lex.c"
+#line 2104 "input-scan.lex.c"
   YY_BREAK
 
 case 76:
 YY_RULE_SETUP
 #line 345 "input-scan.lex"
 ACTION_ECHO;
-#line 2112 "input-scan.lex.c"
+#line 2111 "input-scan.lex.c"
   YY_BREAK
 case 77:
 YY_RULE_SETUP
 #line 346 "input-scan.lex"
 ++linenum; ACTION_ECHO;
-#line 2118 "input-scan.lex.c"
+#line 2117 "input-scan.lex.c"
   YY_BREAK
 
 case YY_STATE_EOF(SECT2PROLOG):
@@ -2124,7 +2123,7 @@ case YY_STATE_EOF(SECT2PROLOG):
                           sectnum = 0;
                           yyterminate(); /* to stop the parser */
                         }
-#line 2128 "input-scan.lex.c"
+#line 2127 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2136,7 +2135,7 @@ YY_RULE_SETUP
                           ++linenum;
                           ADD_ACTION_NL();
                         }
-#line 2140 "input-scan.lex.c"
+#line 2139 "input-scan.lex.c"
   YY_BREAK
 
 case 79:
@@ -2148,26 +2147,26 @@ YY_RULE_SETUP
                           bracelevel = 1;
                           YY_SET_START_STATE(PERCENT_BRACE_ACTION);
                         }
-#line 2152 "input-scan.lex.c"
+#line 2151 "input-scan.lex.c"
   YY_BREAK
 
 case 80:
 YY_RULE_SETUP
 #line 368 "input-scan.lex"
 YY_SET_START_STATE(SC); return '<';
-#line 2159 "input-scan.lex.c"
+#line 2158 "input-scan.lex.c"
   YY_BREAK
 case 81:
 YY_RULE_SETUP
 #line 369 "input-scan.lex"
 return '^';
-#line 2165 "input-scan.lex.c"
+#line 2164 "input-scan.lex.c"
   YY_BREAK
 case 82:
 YY_RULE_SETUP
 #line 370 "input-scan.lex"
 YY_SET_START_STATE(QUOTE); return '"';
-#line 2171 "input-scan.lex.c"
+#line 2170 "input-scan.lex.c"
   YY_BREAK
 case 83:
 *yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */
@@ -2176,7 +2175,7 @@ YY_DO_BEFORE_ACTION; /* set up yy_text again */
 YY_RULE_SETUP
 #line 371 "input-scan.lex"
 YY_SET_START_STATE(NUM); return '{';
-#line 2180 "input-scan.lex.c"
+#line 2179 "input-scan.lex.c"
   YY_BREAK
 case 84:
 *yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */
@@ -2185,7 +2184,7 @@ YY_DO_BEFORE_ACTION; /* set up yy_text again */
 YY_RULE_SETUP
 #line 372 "input-scan.lex"
 return '$';
-#line 2189 "input-scan.lex.c"
+#line 2188 "input-scan.lex.c"
   YY_BREAK
 
 case 85:
@@ -2201,7 +2200,7 @@ YY_RULE_SETUP
                             return '\n';
                           }
                         }
-#line 2205 "input-scan.lex.c"
+#line 2204 "input-scan.lex.c"
   YY_BREAK
 case 86:
 YY_RULE_SETUP
@@ -2224,7 +2223,7 @@ YY_RULE_SETUP
                           ++linenum;
                           return '\n';
                         }
-#line 2228 "input-scan.lex.c"
+#line 2227 "input-scan.lex.c"
   YY_BREAK
 
 case 87:
@@ -2236,14 +2235,14 @@ YY_RULE_SETUP
                           continued_action = false;
                           YY_SET_START_STATE(ACTION);
                         }
-#line 2240 "input-scan.lex.c"
+#line 2239 "input-scan.lex.c"
   YY_BREAK
 
 case 88:
 YY_RULE_SETUP
 #line 410 "input-scan.lex"
 /* allow indented rules */
-#line 2247 "input-scan.lex.c"
+#line 2246 "input-scan.lex.c"
   YY_BREAK
 
 case 89:
@@ -2264,7 +2263,7 @@ YY_RULE_SETUP
                             return '\n';
                           }
                         }
-#line 2268 "input-scan.lex.c"
+#line 2267 "input-scan.lex.c"
   YY_BREAK
 
 case 90:
@@ -2282,16 +2281,16 @@ YY_RULE_SETUP
                             return '\n';
                           }
                         }
-#line 2286 "input-scan.lex.c"
+#line 2285 "input-scan.lex.c"
   YY_BREAK
 
-#line 2289 "input-scan.lex.c"
+#line 2288 "input-scan.lex.c"
 case 91:
 case 92:
 YY_RULE_SETUP
 #line 442 "input-scan.lex"
 return EOF_OP;
-#line 2295 "input-scan.lex.c"
+#line 2294 "input-scan.lex.c"
   YY_BREAK
 
 case 93:
@@ -2302,7 +2301,7 @@ YY_RULE_SETUP
                           YY_SET_START_STATE(SECT3);
                           yyterminate(); /* to stop the parser */
                         }
-#line 2306 "input-scan.lex.c"
+#line 2305 "input-scan.lex.c"
   YY_BREAK
 
 case 94:
@@ -2339,7 +2338,7 @@ YY_RULE_SETUP
                             return '[';
                           }
                         }
-#line 2343 "input-scan.lex.c"
+#line 2342 "input-scan.lex.c"
   YY_BREAK
 
 case 95:
@@ -2375,20 +2374,20 @@ YY_RULE_SETUP
                             }
                           }
                         }
-#line 2379 "input-scan.lex.c"
+#line 2378 "input-scan.lex.c"
   YY_BREAK
 
 case 96:
 YY_RULE_SETUP
 #line 513 "input-scan.lex"
 return (unsigned char) yytext[0];
-#line 2386 "input-scan.lex.c"
+#line 2385 "input-scan.lex.c"
   YY_BREAK
 case 97:
 YY_RULE_SETUP
 #line 514 "input-scan.lex"
 RETURNCHAR;
-#line 2392 "input-scan.lex.c"
+#line 2391 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2398,13 +2397,13 @@ case 98:
 YY_RULE_SETUP
 #line 519 "input-scan.lex"
 return (unsigned char) yytext[0];
-#line 2402 "input-scan.lex.c"
+#line 2401 "input-scan.lex.c"
   YY_BREAK
 case 99:
 YY_RULE_SETUP
 #line 520 "input-scan.lex"
 YY_SET_START_STATE(SECT2); return '>';
-#line 2408 "input-scan.lex.c"
+#line 2407 "input-scan.lex.c"
   YY_BREAK
 case 100:
 *yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */
@@ -2413,13 +2412,13 @@ YY_DO_BEFORE_ACTION; /* set up yy_text again */
 YY_RULE_SETUP
 #line 521 "input-scan.lex"
 YY_SET_START_STATE(CARETISBOL); return '>';
-#line 2417 "input-scan.lex.c"
+#line 2416 "input-scan.lex.c"
   YY_BREAK
 case 101:
 YY_RULE_SETUP
 #line 522 "input-scan.lex"
 RETURNNAME;
-#line 2423 "input-scan.lex.c"
+#line 2422 "input-scan.lex.c"
   YY_BREAK
 case 102:
 YY_RULE_SETUP
@@ -2427,7 +2426,7 @@ YY_RULE_SETUP
 {
                           format_synerr(_("bad <start condition>: %s"), yytext);
                         }
-#line 2431 "input-scan.lex.c"
+#line 2430 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2435,7 +2434,7 @@ case 103:
 YY_RULE_SETUP
 #line 528 "input-scan.lex"
 YY_SET_START_STATE(SECT2); return '^';
-#line 2439 "input-scan.lex.c"
+#line 2438 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2444,13 +2443,13 @@ case 104:
 YY_RULE_SETUP
 #line 532 "input-scan.lex"
 RETURNCHAR;
-#line 2448 "input-scan.lex.c"
+#line 2447 "input-scan.lex.c"
   YY_BREAK
 case 105:
 YY_RULE_SETUP
 #line 533 "input-scan.lex"
 YY_SET_START_STATE(SECT2); return '"';
-#line 2454 "input-scan.lex.c"
+#line 2453 "input-scan.lex.c"
   YY_BREAK
 
 case 106:
@@ -2463,7 +2462,7 @@ YY_RULE_SETUP
                           ADD_ACTION_NL();
                           return '"';
                         }
-#line 2467 "input-scan.lex.c"
+#line 2466 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2476,7 +2475,7 @@ YY_DO_BEFORE_ACTION; /* set up yy_text again */
 YY_RULE_SETUP
 #line 546 "input-scan.lex"
 YY_SET_START_STATE(CCL); return '^';
-#line 2480 "input-scan.lex.c"
+#line 2479 "input-scan.lex.c"
   YY_BREAK
 case 108:
 *yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */
@@ -2485,13 +2484,13 @@ YY_DO_BEFORE_ACTION; /* set up yy_text again */
 YY_RULE_SETUP
 #line 547 "input-scan.lex"
 return '^';
-#line 2489 "input-scan.lex.c"
+#line 2488 "input-scan.lex.c"
   YY_BREAK
 case 109:
 YY_RULE_SETUP
 #line 548 "input-scan.lex"
 YY_SET_START_STATE(CCL); RETURNCHAR;
-#line 2495 "input-scan.lex.c"
+#line 2494 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2503,19 +2502,19 @@ YY_DO_BEFORE_ACTION; /* set up yy_text again */
 YY_RULE_SETUP
 #line 552 "input-scan.lex"
 return '-';
-#line 2507 "input-scan.lex.c"
+#line 2506 "input-scan.lex.c"
   YY_BREAK
 case 111:
 YY_RULE_SETUP
 #line 553 "input-scan.lex"
 RETURNCHAR;
-#line 2513 "input-scan.lex.c"
+#line 2512 "input-scan.lex.c"
   YY_BREAK
 case 112:
 YY_RULE_SETUP
 #line 554 "input-scan.lex"
 YY_SET_START_STATE(SECT2); return ']';
-#line 2519 "input-scan.lex.c"
+#line 2518 "input-scan.lex.c"
   YY_BREAK
 case 113:
 YY_RULE_SETUP
@@ -2525,7 +2524,7 @@ YY_RULE_SETUP
                           YY_SET_START_STATE(SECT2);
                           return ']';
                         }
-#line 2529 "input-scan.lex.c"
+#line 2528 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2534,73 +2533,73 @@ case 114:
 YY_RULE_SETUP
 #line 563 "input-scan.lex"
 YY_SET_START_STATE(CCL); return CCE_ALNUM;
-#line 2538 "input-scan.lex.c"
+#line 2537 "input-scan.lex.c"
   YY_BREAK
 case 115:
 YY_RULE_SETUP
 #line 564 "input-scan.lex"
 YY_SET_START_STATE(CCL); return CCE_ALPHA;
-#line 2544 "input-scan.lex.c"
+#line 2543 "input-scan.lex.c"
   YY_BREAK
 case 116:
 YY_RULE_SETUP
 #line 565 "input-scan.lex"
 YY_SET_START_STATE(CCL); return CCE_BLANK;
-#line 2550 "input-scan.lex.c"
+#line 2549 "input-scan.lex.c"
   YY_BREAK
 case 117:
 YY_RULE_SETUP
 #line 566 "input-scan.lex"
 YY_SET_START_STATE(CCL); return CCE_CNTRL;
-#line 2556 "input-scan.lex.c"
+#line 2555 "input-scan.lex.c"
   YY_BREAK
 case 118:
 YY_RULE_SETUP
 #line 567 "input-scan.lex"
 YY_SET_START_STATE(CCL); return CCE_DIGIT;
-#line 2562 "input-scan.lex.c"
+#line 2561 "input-scan.lex.c"
   YY_BREAK
 case 119:
 YY_RULE_SETUP
 #line 568 "input-scan.lex"
 YY_SET_START_STATE(CCL); return CCE_GRAPH;
-#line 2568 "input-scan.lex.c"
+#line 2567 "input-scan.lex.c"
   YY_BREAK
 case 120:
 YY_RULE_SETUP
 #line 569 "input-scan.lex"
 YY_SET_START_STATE(CCL); return CCE_LOWER;
-#line 2574 "input-scan.lex.c"
+#line 2573 "input-scan.lex.c"
   YY_BREAK
 case 121:
 YY_RULE_SETUP
 #line 570 "input-scan.lex"
 YY_SET_START_STATE(CCL); return CCE_PRINT;
-#line 2580 "input-scan.lex.c"
+#line 2579 "input-scan.lex.c"
   YY_BREAK
 case 122:
 YY_RULE_SETUP
 #line 571 "input-scan.lex"
 YY_SET_START_STATE(CCL); return CCE_PUNCT;
-#line 2586 "input-scan.lex.c"
+#line 2585 "input-scan.lex.c"
   YY_BREAK
 case 123:
 YY_RULE_SETUP
 #line 572 "input-scan.lex"
 YY_SET_START_STATE(CCL); return CCE_SPACE;
-#line 2592 "input-scan.lex.c"
+#line 2591 "input-scan.lex.c"
   YY_BREAK
 case 124:
 YY_RULE_SETUP
 #line 573 "input-scan.lex"
 YY_SET_START_STATE(CCL); return CCE_UPPER;
-#line 2598 "input-scan.lex.c"
+#line 2597 "input-scan.lex.c"
   YY_BREAK
 case 125:
 YY_RULE_SETUP
 #line 574 "input-scan.lex"
 YY_SET_START_STATE(CCL); return CCE_XDIGIT;
-#line 2604 "input-scan.lex.c"
+#line 2603 "input-scan.lex.c"
   YY_BREAK
 case 126:
 YY_RULE_SETUP
@@ -2611,7 +2610,7 @@ YY_RULE_SETUP
                           YY_SET_START_STATE(CCL);
                           return CCE_ALNUM;
                         }
-#line 2615 "input-scan.lex.c"
+#line 2614 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2623,20 +2622,20 @@ YY_RULE_SETUP
                           yylval = myctoi(yytext);
                           return NUMBER;
                         }
-#line 2627 "input-scan.lex.c"
+#line 2626 "input-scan.lex.c"
   YY_BREAK
 
 case 128:
 YY_RULE_SETUP
 #line 589 "input-scan.lex"
 return ',';
-#line 2634 "input-scan.lex.c"
+#line 2633 "input-scan.lex.c"
   YY_BREAK
 case 129:
 YY_RULE_SETUP
 #line 590 "input-scan.lex"
 YY_SET_START_STATE(SECT2); return '}';
-#line 2640 "input-scan.lex.c"
+#line 2639 "input-scan.lex.c"
   YY_BREAK
 
 case 130:
@@ -2647,7 +2646,7 @@ YY_RULE_SETUP
                           YY_SET_START_STATE(SECT2);
                           return '}';
                         }
-#line 2651 "input-scan.lex.c"
+#line 2650 "input-scan.lex.c"
   YY_BREAK
 
 case 131:
@@ -2660,7 +2659,7 @@ YY_RULE_SETUP
                           ADD_ACTION_NL();
                           return '}';
                         }
-#line 2664 "input-scan.lex.c"
+#line 2663 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2670,14 +2669,14 @@ case 132:
 YY_RULE_SETUP
 #line 609 "input-scan.lex"
 bracelevel = 0;
-#line 2674 "input-scan.lex.c"
+#line 2673 "input-scan.lex.c"
   YY_BREAK
 
 case 133:
 YY_RULE_SETUP
 #line 611 "input-scan.lex"
 ACTION_ECHO; yy_push_state(yy_lexer, COMMENT);
-#line 2681 "input-scan.lex.c"
+#line 2680 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2688,7 +2687,7 @@ YY_RULE_SETUP
                           ACTION_ECHO;
                           CHECK_REJECT(yytext);
                         }
-#line 2692 "input-scan.lex.c"
+#line 2691 "input-scan.lex.c"
   YY_BREAK
 case 135:
 YY_RULE_SETUP
@@ -2697,7 +2696,7 @@ YY_RULE_SETUP
                           ACTION_ECHO;
                           CHECK_YYMORE(yytext);
                         }
-#line 2701 "input-scan.lex.c"
+#line 2700 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2705,7 +2704,7 @@ case 136:
 YY_RULE_SETUP
 #line 624 "input-scan.lex"
 ACTION_ECHO;
-#line 2709 "input-scan.lex.c"
+#line 2708 "input-scan.lex.c"
   YY_BREAK
 case 137:
 YY_RULE_SETUP
@@ -2724,7 +2723,7 @@ YY_RULE_SETUP
                             YY_SET_START_STATE(SECT2);
                           }
                         }
-#line 2728 "input-scan.lex.c"
+#line 2727 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2741,37 +2740,37 @@ case 138:
 YY_RULE_SETUP
 #line 650 "input-scan.lex"
 ACTION_ECHO; ++bracelevel;
-#line 2745 "input-scan.lex.c"
+#line 2744 "input-scan.lex.c"
   YY_BREAK
 case 139:
 YY_RULE_SETUP
 #line 651 "input-scan.lex"
 ACTION_ECHO; --bracelevel;
-#line 2751 "input-scan.lex.c"
+#line 2750 "input-scan.lex.c"
   YY_BREAK
 case 140:
 YY_RULE_SETUP
 #line 652 "input-scan.lex"
 ACTION_ECHO;
-#line 2757 "input-scan.lex.c"
+#line 2756 "input-scan.lex.c"
   YY_BREAK
 case 141:
 YY_RULE_SETUP
 #line 653 "input-scan.lex"
 ACTION_ECHO;
-#line 2763 "input-scan.lex.c"
+#line 2762 "input-scan.lex.c"
   YY_BREAK
 case 142:
 YY_RULE_SETUP
 #line 654 "input-scan.lex"
 ACTION_ECHO; /* character constant */
-#line 2769 "input-scan.lex.c"
+#line 2768 "input-scan.lex.c"
   YY_BREAK
 case 143:
 YY_RULE_SETUP
 #line 655 "input-scan.lex"
 ACTION_ECHO; YY_SET_START_STATE(ACTION_STRING);
-#line 2775 "input-scan.lex.c"
+#line 2774 "input-scan.lex.c"
   YY_BREAK
 case 144:
 YY_RULE_SETUP
@@ -2789,13 +2788,13 @@ YY_RULE_SETUP
                             YY_SET_START_STATE(SECT2);
                           }
                         }
-#line 2793 "input-scan.lex.c"
+#line 2792 "input-scan.lex.c"
   YY_BREAK
 case 145:
 YY_RULE_SETUP
 #line 669 "input-scan.lex"
 ACTION_ECHO;
-#line 2799 "input-scan.lex.c"
+#line 2798 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2804,31 +2803,31 @@ case 146:
 YY_RULE_SETUP
 #line 673 "input-scan.lex"
 ACTION_ECHO;
-#line 2808 "input-scan.lex.c"
+#line 2807 "input-scan.lex.c"
   YY_BREAK
 case 147:
 YY_RULE_SETUP
 #line 674 "input-scan.lex"
 ACTION_ECHO;
-#line 2814 "input-scan.lex.c"
+#line 2813 "input-scan.lex.c"
   YY_BREAK
 case 148:
 YY_RULE_SETUP
 #line 675 "input-scan.lex"
 ++linenum; ACTION_ECHO;
-#line 2820 "input-scan.lex.c"
+#line 2819 "input-scan.lex.c"
   YY_BREAK
 case 149:
 YY_RULE_SETUP
 #line 676 "input-scan.lex"
 ACTION_ECHO; YY_SET_START_STATE(ACTION);
-#line 2826 "input-scan.lex.c"
+#line 2825 "input-scan.lex.c"
   YY_BREAK
 case 150:
 YY_RULE_SETUP
 #line 677 "input-scan.lex"
 ACTION_ECHO;
-#line 2832 "input-scan.lex.c"
+#line 2831 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2840,7 +2839,7 @@ case YY_STATE_EOF(ACTION_STRING):
                           synerr(_("EOF encountered inside an action"));
                           yyterminate();
                         }
-#line 2844 "input-scan.lex.c"
+#line 2843 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2855,7 +2854,7 @@ YY_RULE_SETUP
 
                           return CHAR;
                         }
-#line 2859 "input-scan.lex.c"
+#line 2858 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2864,12 +2863,12 @@ case 152:
 YY_RULE_SETUP
 #line 697 "input-scan.lex"
 out(yytext);   /* Copy section 3 to output. */
-#line 2868 "input-scan.lex.c"
+#line 2867 "input-scan.lex.c"
   YY_BREAK
 case YY_STATE_EOF(SECT3):
 #line 698 "input-scan.lex"
 sectnum = 0; yyterminate();
-#line 2873 "input-scan.lex.c"
+#line 2872 "input-scan.lex.c"
   YY_BREAK
 
 
@@ -2877,16 +2876,16 @@ case 153:
 YY_RULE_SETUP
 #line 701 "input-scan.lex"
 format_synerr(_("bad character: %s"), yytext);
-#line 2881 "input-scan.lex.c"
+#line 2880 "input-scan.lex.c"
   YY_BREAK
 
 case 154:
 YY_RULE_SETUP
 #line 703 "input-scan.lex"
-#line 2887 "input-scan.lex.c"
+#line 2886 "input-scan.lex.c"
   YY_ERROR(yy_err_no_rule_matches, NULL /*detail*/);
   return 0;
-#line 2890 "input-scan.lex.c"
+#line 2889 "input-scan.lex.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(SECT2):
 case YY_STATE_EOF(CODEBLOCK):
@@ -3488,8 +3487,8 @@ input_scan_buffer_state_t *input_scan_create_buffer(input_scan_lexer_t *yy_lexer
    */
   b->yy_ch_buf = (char*)yy_flex_alloc(b->yy_buf_size + 2);
   if (!b->yy_ch_buf) {
-    YY_ERROR(input_scan_err_out_of_memory, "input_scan_create_buffer: input buffer");
     yy_flex_free(b);
+    YY_ERROR(input_scan_err_out_of_memory, "input_scan_create_buffer: input buffer");
     return NULL;
   }
 

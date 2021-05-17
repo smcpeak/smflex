@@ -1,0 +1,99 @@
+/* large-token-cpp.lexpp */
+/* Exercise scanning a token so large it requires buffer reallocation. */
+/* With C++ API. */
+
+%option c++
+
+%{
+#include <string.h>                    /* memset */
+%}
+
+%%
+
+"abcdefghij"+       printf("saw %d letters in a row\n", yyleng);
+.|\n                /* nothing */
+
+%%
+
+class ReadAbcLexer : public yyFlexLexer {
+public:      /* data */
+  /* How many characters to supply. */
+  int total_length;
+
+  /* How many of that we have supplied. */
+  int supplied_length;
+
+public:      /* methods */
+  ReadAbcLexer(int len)
+    : total_length(len),
+      supplied_length(0)
+  {}
+
+  virtual int yym_read_input(void *dest, int size)
+  {
+    char *buf = (char*)dest;
+    int i;
+
+    if (supplied_length == total_length) {
+      return 0;
+    }
+
+    if (size > total_length - supplied_length) {
+      size = total_length - supplied_length;
+    }
+
+    for (i=0; i < size; i++) {
+      /* Data is "abcdefghij" over and over.  This pattern is meant to
+       * make it possible to recognize if something in the buffer logic
+       * corrupts the data.*/
+      buf[i] = (supplied_length % 10) + 'a';
+      supplied_length++;
+    }
+
+    return size;
+  }
+};
+
+
+/* Defined in the generated scanner when
+ * YY_ALLOCATOR_FAILURE_INJECTION is defined. */
+extern unsigned yy_alloc_failure_countdown;
+
+using std::cout;
+
+void scan_length(int len, int countdown)
+{
+  cout << "--------- scan_length(" << len << ", "
+       << countdown << ") ----------\n";
+
+  yy_alloc_failure_countdown = countdown;
+
+  {
+    ReadAbcLexer lexer(len);
+    try {
+      while (lexer.yym_lex())
+        {}
+      cout << "yym_lex returned 0\n";
+    }
+    catch (yyFlexLexer::LexError &e) {
+      cout << "error: " << e.what() << "\n";
+    }
+  }
+
+  yy_check_for_memory_leaks();
+}
+
+int main()
+{
+  scan_length(100, 0);
+  scan_length(100, 1);
+  scan_length(100, 2);
+
+  scan_length(1000, 0);
+  scan_length(10000, 0);
+  scan_length(100000, 0);
+
+  scan_length(100000, 4);
+
+  return 0;
+}
