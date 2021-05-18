@@ -197,13 +197,23 @@ struct input_scan_lexer_struct {
    * 'input_scan_err_no_error' if none has. */
   input_scan_error_code_t yy_error_code;
 
-  /* Holds the character overwritten by a NUL when 'yy_text' is formed. */
+  /* Holds the character overwritten by a NUL when 'yy_text' is formed.
+   *
+   * Generally, when we are not in the middle of the matching algorithm,
+   * 'yy_hold_char' contains the value that belongs in '*yy_c_buf_p'. */
   char yy_hold_char;
 
-  /* Number of characters read into yy_ch_buf. */
+  /* Number of characters in 'yy_current_buffer->yy_ch_buf' that need to
+   * be scanned, not including the two extra EOB markers.
+   *
+   * Invariant: 0 <= yy_n_chars <= yy_current_buffer->yy_buf_size
+   * Invariant: yy_current_buffer->yy_ch_buf[yy_n_chars+0] == 0
+   * Invariant: yy_current_buffer->yy_ch_buf[yy_n_chars+1] == 0
+   */
   int yy_n_chars;
 
-  /* Points to current character in buffer. */
+  /* Points to current character in buffer, i.e., the next character
+   * to scan. */
   char *yy_c_buf_p;
 
   /* True if we need to initialize inside 'input_scan_lex()'.
