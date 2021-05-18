@@ -260,12 +260,12 @@ struct yy_lexer_struct {
    * 'yy_hold_char' contains the value that belongs in '*yy_c_buf_p'. */
   char yy_hold_char;
 
-  /* Number of characters in 'yy_current_buffer->yy_ch_buf' that need to
+  /* Number of characters in 'yy_current_buffer->yy_buffer' that need to
    * be scanned, not including the two extra EOB markers.
    *
    * Invariant: 0 <= yy_n_chars <= yy_current_buffer->yy_buf_size
-   * Invariant: yy_current_buffer->yy_ch_buf[yy_n_chars+0] == YY_END_OF_BUFFER_CHAR
-   * Invariant: yy_current_buffer->yy_ch_buf[yy_n_chars+1] == YY_END_OF_BUFFER_CHAR
+   * Invariant: yy_current_buffer->yy_buffer[yy_n_chars+0] == YY_END_OF_BUFFER_CHAR
+   * Invariant: yy_current_buffer->yy_buffer[yy_n_chars+1] == YY_END_OF_BUFFER_CHAR
    */
   int yy_n_chars;
 
