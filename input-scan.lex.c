@@ -207,7 +207,7 @@ static void yy_flex_free(void *);
 
 
 
-static void input_scan_load_buffer_state(input_scan_lexer_t *yy_lexer);
+static void yy_load_current_buffer_state(input_scan_lexer_t *yy_lexer);
 static void input_scan_init_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *b,
                            input_scan_input_stream_t *file);
 
@@ -1448,7 +1448,7 @@ int input_scan_lex(input_scan_lexer_t * const yy_lexer)
       }
     }
 
-    input_scan_load_buffer_state(yy_lexer);
+    yy_load_current_buffer_state(yy_lexer);
   }
 
   /* Loop over all tokens in the input until end-of-file. */
@@ -3076,7 +3076,10 @@ void input_scan_destroy(input_scan_lexer_t *yy_lexer)
 
 
 
-/* Get more data by calling 'yy_read_input_function'. */
+/* Get more data by calling 'yy_read_input_function'.  Returns a
+ * non-negative integer number of bytes read (since a read error is
+ * treated like a 0-length read as part of error recovery), with 0
+ * signalling end of file. */
 static int yy_call_read_input(input_scan_lexer_t *yy_lexer, void *dest, int size)
 {
   int n;
@@ -3428,7 +3431,7 @@ void input_scan_restart(input_scan_lexer_t *yy_lexer, input_scan_input_stream_t 
   }
 
   input_scan_init_buffer(yy_lexer, yy_lexer->yy_current_buffer, input_file);
-  input_scan_load_buffer_state(yy_lexer);
+  yy_load_current_buffer_state(yy_lexer);
 }
 
 
@@ -3447,7 +3450,7 @@ void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer
   }
 
   yy_lexer->yy_current_buffer = new_buffer;
-  input_scan_load_buffer_state(yy_lexer);
+  yy_load_current_buffer_state(yy_lexer);
 
   /* We don't actually know whether we did this switch during
    * EOF (yy_wrap()) processing, but the only time this flag
@@ -3459,11 +3462,21 @@ void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer
 
 
 
-static void input_scan_load_buffer_state(input_scan_lexer_t *yy_lexer)
+/* Copy the fields from 'yy_lexer->yy_current_buffer' that are
+ * duplicated in the 'input_scan_lexer_t' structure.
+ *
+ * Also set up 'yy_text' and 'yy_hold_char'. */
+static void yy_load_current_buffer_state(input_scan_lexer_t *yy_lexer)
 {
-  yy_lexer->yy_n_chars = yy_lexer->yy_current_buffer->yy_n_chars;
-  yy_lexer->yy_text = yy_lexer->yy_c_buf_p = yy_lexer->yy_current_buffer->yy_buf_pos;
+  /* Copy duplicated fields. */
+  yy_lexer->yy_n_chars      = yy_lexer->yy_current_buffer->yy_n_chars;
+  yy_lexer->yy_c_buf_p      = yy_lexer->yy_current_buffer->yy_buf_pos;
   yy_lexer->yy_input_stream = yy_lexer->yy_current_buffer->yy_input_file;
+
+  /* Set up 'yy_text'.  TODO: Why is this necessary? */
+  yy_lexer->yy_text      =   yy_lexer->yy_c_buf_p;
+
+  /* Establish the 'yy_hold_char' invariant. */
   yy_lexer->yy_hold_char = *(yy_lexer->yy_c_buf_p);
 }
 
@@ -3558,7 +3571,7 @@ void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_sta
   b->yy_buffer_status = YY_BUFFER_NEW;
 
   if (b == yy_lexer->yy_current_buffer) {
-    input_scan_load_buffer_state(yy_lexer);
+    yy_load_current_buffer_state(yy_lexer);
   }
 }
 

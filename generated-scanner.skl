@@ -273,7 +273,7 @@ public:      /* methods */
 %endif
 
 
-static void yy_load_buffer_state(yy_lexer_t *yy_lexer);
+static void yy_load_current_buffer_state(yy_lexer_t *yy_lexer);
 static void yy_init_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *b,
                            yy_input_stream_t *file);
 
@@ -540,7 +540,7 @@ int yyFlexLexer::yym_lex()
       }
     }
 
-    yy_load_buffer_state(yy_lexer);
+    yy_load_current_buffer_state(yy_lexer);
   }
 
   /* Loop over all tokens in the input until end-of-file. */
@@ -877,7 +877,10 @@ int yyFlexLexer::yym_write_output(void const *dest, int size)
 %endif
 
 
-/* Get more data by calling 'yy_read_input_function'. */
+/* Get more data by calling 'yy_read_input_function'.  Returns a
+ * non-negative integer number of bytes read (since a read error is
+ * treated like a 0-length read as part of error recovery), with 0
+ * signalling end of file. */
 static int yy_call_read_input(yy_lexer_t *yy_lexer, void *dest, int size)
 {
   int n;
@@ -1240,7 +1243,7 @@ void yy_restart(yy_lexer_t *yy_lexer, yy_input_stream_t *input_file)
   }
 
   yy_init_buffer(yy_lexer, yy_lexer->yy_current_buffer, input_file);
-  yy_load_buffer_state(yy_lexer);
+  yy_load_current_buffer_state(yy_lexer);
 }
 
 %if cpp_interface
@@ -1265,7 +1268,7 @@ void yy_switch_to_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *new_buffer)
   }
 
   yy_lexer->yy_current_buffer = new_buffer;
-  yy_load_buffer_state(yy_lexer);
+  yy_load_current_buffer_state(yy_lexer);
 
   /* We don't actually know whether we did this switch during
    * EOF (yy_wrap()) processing, but the only time this flag
@@ -1283,11 +1286,21 @@ void yyFlexLexer::yym_switch_to_buffer(yy_buffer_state_t *new_buffer)
 %endif
 
 
-static void yy_load_buffer_state(yy_lexer_t *yy_lexer)
+/* Copy the fields from 'yy_lexer->yy_current_buffer' that are
+ * duplicated in the 'yy_lexer_t' structure.
+ *
+ * Also set up 'yy_text' and 'yy_hold_char'. */
+static void yy_load_current_buffer_state(yy_lexer_t *yy_lexer)
 {
-  yy_lexer->yy_n_chars = yy_lexer->yy_current_buffer->yy_n_chars;
-  yy_lexer->yy_text = yy_lexer->yy_c_buf_p = yy_lexer->yy_current_buffer->yy_buf_pos;
+  /* Copy duplicated fields. */
+  yy_lexer->yy_n_chars      = yy_lexer->yy_current_buffer->yy_n_chars;
+  yy_lexer->yy_c_buf_p      = yy_lexer->yy_current_buffer->yy_buf_pos;
   yy_lexer->yy_input_stream = yy_lexer->yy_current_buffer->yy_input_file;
+
+  /* Set up 'yy_text'.  TODO: Why is this necessary? */
+  yy_lexer->yy_text      =   yy_lexer->yy_c_buf_p;
+
+  /* Establish the 'yy_hold_char' invariant. */
   yy_lexer->yy_hold_char = *(yy_lexer->yy_c_buf_p);
 }
 
@@ -1400,7 +1413,7 @@ void yy_flush_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *b)
   b->yy_buffer_status = YY_BUFFER_NEW;
 
   if (b == yy_lexer->yy_current_buffer) {
-    yy_load_buffer_state(yy_lexer);
+    yy_load_current_buffer_state(yy_lexer);
   }
 }
 
