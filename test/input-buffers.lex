@@ -52,10 +52,10 @@ include[ ]+         YY_SET_START_STATE(incl);
           if (include_stack_len >= 1) {
             /* The current buffer is one we made, so clean it up. */
             yy_delete_buffer(yy_lexer, YY_CURRENT_BUFFER);
-            fclose(yyin);
+            fclose(YY_INPUT_STREAM);
 
             /* Return to the buffer on the top of the stack.  Note
-             * that this sets 'yyin'. */
+             * that this sets 'YY_INPUT_STREAM'. */
             yy_switch_to_buffer(yy_lexer, include_stack[--include_stack_len]);
           }
 

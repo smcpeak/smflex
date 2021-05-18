@@ -504,8 +504,8 @@ int yyFlexLexer::yym_lex()
 %if option_yy_unread_character
 #     define YY_UNREAD_CHARACTER(c) yy_unread_character(yy_lexer, c)
 %endif
-#     define yyin (yy_lexer->yy_input_stream)
-#     define yyout (yy_lexer->yy_output_stream)
+#     define YY_INPUT_STREAM (yy_lexer->yy_input_stream)
+#     define YY_OUTPUT_STREAM (yy_lexer->yy_output_stream)
 %if do_yylineno
 #     define yylineno (yy_lexer->yy_lineno)
 %endif
@@ -520,6 +520,8 @@ int yyFlexLexer::yym_lex()
 #     define yyterminate() YY_TERMINATE()
 #     define yytext YY_TEXT
 #     define yyleng YY_LENG
+#     define yyin YY_INPUT_STREAM
+#     define yyout YY_OUTPUT_STREAM
 %if option_yy_read_character
 #     define input() YY_READ_CHARACTER()
 #     define yyinput() YY_READ_CHARACTER()
@@ -2002,6 +2004,8 @@ int main()
 #undef yyterminate
 #undef yytext
 #undef yyleng
+#undef yyin
+#undef yyout
 %if option_yy_read_character
 #undef input
 #undef yyinput
@@ -2035,8 +2039,8 @@ int main()
 %if option_yy_unread_character
 #undef YY_UNREAD_CHARACTER
 %endif
-#undef yyin                 /* TODO: Capitalize, underscore. */
-#undef yyout                /* TODO: Capitalize, underscore. */
+#undef YY_INPUT_STREAM
+#undef YY_OUTPUT_STREAM
 %if do_yylineno
 #undef yylineno             /* TODO: Capitalize, underscore. */
 %endif

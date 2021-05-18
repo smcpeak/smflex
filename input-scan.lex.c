@@ -1416,8 +1416,8 @@ int input_scan_lex(input_scan_lexer_t * const yy_lexer)
 #     define YY_GET_BOL() (input_scan_get_bol(yy_lexer))
 #     define YY_READ_CHARACTER() (input_scan_read_character(yy_lexer))
 #     define YY_UNREAD_CHARACTER(c) input_scan_unread_character(yy_lexer, c)
-#     define yyin (yy_lexer->yy_input_stream)
-#     define yyout (yy_lexer->yy_output_stream)
+#     define YY_INPUT_STREAM (yy_lexer->yy_input_stream)
+#     define YY_OUTPUT_STREAM (yy_lexer->yy_output_stream)
 
 
 #line 108 "input-scan.lex"
@@ -3867,8 +3867,8 @@ int input_scan_wrap_return_1(input_scan_lexer_t *yy_lexer)
 #undef YY_LENG
 #undef YY_READ_CHARACTER
 #undef YY_UNREAD_CHARACTER
-#undef yyin                 /* TODO: Capitalize, underscore. */
-#undef yyout                /* TODO: Capitalize, underscore. */
+#undef YY_INPUT_STREAM
+#undef YY_OUTPUT_STREAM
 
 /* After this point, the user's section 3 code appears. */
 #line 703 "input-scan.lex"

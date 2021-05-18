@@ -1180,19 +1180,19 @@ returns the value 0) or one of its actions executes a <code>return</code>
 statement.
 
 <p>If the scanner reaches an end-of-file, subsequent calls are undefined
-unless either <code>yyin</code> is pointed at a new input file (in which
+unless either <code>YY_INPUT_STREAM</code> is pointed at a new input file (in which
 case scanning continues from that file), or <code>yy_restart()</code>
 is called. <code>yy_restart()</code> takes one argument, a <code>FILE *</code>
 pointer (which can be nil, if you've set up
 <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>
-to scan from a source other than <code>yyin</code>), and initializes
-<code>yyin</code> for scanning from that file. Essentially there is no
-difference between just assigning <code>yyin</code> to a new input file
+to scan from a source other than <code>YY_INPUT_STREAM</code>), and initializes
+<code>YY_INPUT_STREAM</code> for scanning from that file. Essentially there is no
+difference between just assigning <code>YY_INPUT_STREAM</code> to a new input file
 or using <code>yy_restart()</code> to do so; the latter is available
 for compatibility with previous versions of <code>flex</code>,
 and because it can be used to switch input files in the middle
 of scanning. It can also be used to throw away the current input
-buffer, by calling it with an argument of <code>yyin</code>; but
+buffer, by calling it with an argument of <code>YY_INPUT_STREAM</code>; but
 better is to use <code>YY_FLUSH_CURRENT_BUFFER</code> (see above). Note that
 <code>yy_restart()</code> does <em>not</em> reset the start condition to
 <code>INITIAL</code> (see <a href="#start-conditions">Start Conditions</a>).
@@ -1204,7 +1204,7 @@ then be called again and it will resume scanning where it left off.
 <p>If the scanner is built with the <code>-B</code> / <code>%option batch</code>
 option, the scanner uses
 block reads rather than simple <code>getc()</code> calls to read
-characters from <code>yyin</code>. The nature of how it gets its input
+characters from <code>YY_INPUT_STREAM</code>. The nature of how it gets its input
 can be controlled by setting
 <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
 
@@ -1224,7 +1224,7 @@ and <code>yy_scan_buffer()</code>. See the discussion of them in
 the section <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
 
 <p>The scanner writes its <code>YY_ECHO</code> output to the
-<code>yyout</code> global (default, stdout), which may be redefined by
+<code>YY_OUTPUT_STREAM</code> global (default, stdout), which may be redefined by
 the user simply by assigning it to some other <code>FILE</code> pointer.
 
 
@@ -2058,13 +2058,13 @@ passed to other routines (see below).
 
 <p>The <code>FILE</code>
 pointer in the call to <code>yy_create_buffer</code> is used to set
-the value of <code>yyin</code> while that buffer is the active
+the value of <code>yy_input_stream</code> while that buffer is the active
 input source.  Within the generated code,
-<code>yyin</code> is only used by <code>yy_read_input_function</code>; if you
-redefine <code>yy_read_input_function</code> so it no longer uses <code>yyin</code>,
+<code>yy_input_stream</code> is only used by <code>yy_read_input_function</code>; if you
+redefine <code>yy_read_input_function</code> so it no longer uses <code>yy_input_stream</code>,
 then you can safely pass <code>NULL</code> as the <code>FILE</code> pointer.
 However, you may want to use
-<code>yyin</code> yourself, for example (as shown in the example
+<code>yy_input_stream</code> yourself, for example (as shown in the example
 below) to close the file.
 
 <p id="yy_switch_to_buffer">
@@ -2077,7 +2077,7 @@ You select a particular buffer to be the active input source with:
 <p>This switches the scanner's input buffer so subsequent tokens will come
 from <code>new_buffer</code>.  <code>yy_switch_to_buffer()</code>
 may be used by <code>yy_wrap_function()</code> to set things up for continued scanning instead
-of opening a new file and pointing <code>yyin</code> at it.  Calling
+of opening a new file and pointing <code>yy_input_stream</code> at it.  Calling
 this function does <em>not</em> change the start condition.
 
 <p>When finished scanning from a buffer, call:
@@ -2151,10 +2151,10 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
               if (include_stack_len &gt;= 1) {
                 /* The current buffer is one we made, so clean it up. */
                 yy_delete_buffer(yy_lexer, YY_CURRENT_BUFFER);
-                fclose(yyin);
+                fclose(YY_INPUT_STREAM);
 
                 /* Return to the buffer on the top of the stack.  Note
-                 * that this sets 'yyin'. */
+                 * that this sets 'YY_INPUT_STREAM'. */
                 yy_switch_to_buffer(yy_lexer, include_stack[--include_stack_len]);
               }
 
@@ -2228,7 +2228,7 @@ by doing one of four things:
 
 <ul>
 
-<li><p>assigning <code>yyin</code> to a new input file;
+<li><p>assigning <code>YY_INPUT_STREAM</code> to a new input file;
 
 <li><p>executing a <code>return</code> statement;
 
@@ -2266,7 +2266,7 @@ strings.  For example:
              }
     &lt;&lt;EOF&gt;&gt;  {
                if (*++filelist)
-                 yyin = fopen(*filelist, "r");
+                 YY_INPUT_STREAM = fopen(*filelist, "r");
                else
                  YY_TERMINATE();
              }
@@ -2386,24 +2386,24 @@ the rule actions.
 <li><p><code>int YY_LENG</code>
     holds the length of the current token.
 
-<li><p><code>FILE *yyin</code>
+<li><p><code>FILE *YY_INPUT_STREAM</code>
     is the file which by default <code>smflex</code> reads from. It may be
     redefined but doing so only makes sense before scanning begins or
     after an EOF has been encountered. Changing it in the midst of
     scanning will have unexpected results since <code>smflex</code>
     buffers its input; use <code>yy_restart()</code> instead. Once
     scanning terminates because an end-of-file has been seen, you can
-    assign <code>yyin</code> at the new input file and then call the
+    assign <code>YY_INPUT_STREAM</code> at the new input file and then call the
     scanner again to continue scanning.
 
-<li><p id="yy_restart"><code>void yy_restart(FILE *new_file)</code>
-    may be called to point <code>yyin</code> at the new input file. The
+<li><p id="yy_restart"><code>void yy_restart(yy_lexer_t *yy_lexer, FILE *new_file)</code>
+    may be called to point <code>YY_INPUT_STREAM</code> at the new input file. The
     switch-over to the new file is immediate (any previously buffered-up
     input is lost). Note that calling <code>yy_restart()</code> with
-    <code>yyin</code> as an argument thus throws away the current input
+    <code>YY_INPUT_STREAM</code> as an argument thus throws away the current input
     buffer and continues scanning the same input file.
 
-<li><p><code>FILE *yyout</code>
+<li><p><code>FILE *YY_OUTPUT_STREAM</code>
     is the file to which <code>YY_ECHO</code> actions are done. It can be
     reassigned by the user.
 
@@ -2483,6 +2483,12 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
       <tr>
         <td><code>yyleng</code>
         <td><code>YY_LENG</code>
+      <tr>
+        <td><code>yyin</code>
+        <td><code>YY_INPUT_STREAM</code>
+      <tr>
+        <td><code>yyout</code>
+        <td><code>YY_OUTPUT_STREAM</code>
       <tr>
         <td><code>ECHO</code>
         <td><code>YY_ECHO</code>
@@ -2752,7 +2758,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     <a href="#input-read-method">Input Read Method</a> for a discussion
     of the performance effect.  Using
     <code>-Cr</code> can cause strange behavior if, for example, you read from
-    <code>yyin</code> using stdio prior to calling the scanner (because the
+    <code>yy_input_stream</code> using stdio prior to calling the scanner (because the
     scanner will miss whatever text your previous reads left in the stdio
     input buffer).
 
@@ -4164,9 +4170,9 @@ scanner over input:
 
 <dt><code>void yym_switch_streams(istream *new_in = NULL, ostream *new_out = NULL)</code>
 
-<dd><p>reassigns <code>yyin</code> to <code>new_in</code> (if not NULL)
-    and <code>yyout</code> to <code>new_out</code> (ditto), deleting the
-    previous input buffer if <code>yyin</code> is reassigned.  However,
+<dd><p>reassigns <code>yy_input_stream</code> to <code>new_in</code> (if not NULL)
+    and <code>yy_output_stream</code> to <code>new_out</code> (ditto), deleting the
+    previous input buffer if <code>yy_input_stream</code> is reassigned.  However,
     while <code>smflex</code> manages allocation and deallocation its own
     buffer objects, it does <em>not</em> deallocate any stream objects,
     so you have to arrange for that yourself.
@@ -4254,7 +4260,7 @@ can be used to inspect the token:
 <p>In addition, <code>yyFlexLexer</code> defines the following protected
 virtual functions which you can redefine in derived classes to adjust
 how the scanner gets access to its input.  By overriding these,
-<code>yyin</code> and <code>yyout</code> can be bypassed entirely:
+<code>yy_input_stream</code> and <code>yy_output_stream</code> can be bypassed entirely:
 
 <dl>
 
@@ -4708,11 +4714,11 @@ to be of continued value.
 
 <li><p><code>flex-2.5.4</code> accepts
     <code>%option stdinit</code>, which means to statically initialize
-    <code>yyin</code> and <code>yyout</code> to <code>stdin</code>
+    <code>YY_INPUT_STREAM</code> and <code>YY_OUTPUT_STREAM</code> to <code>stdin</code>
     and <code>stdout</code>.  <code>smflex</code> does not accept this
     option.
 
-    <p>Rationale: <code>yyin</code> and <code>yyout</code> are no
+    <p>Rationale: <code>YY_INPUT_STREAM</code> and <code>YY_OUTPUT_STREAM</code> are no
     longer global variables, so cannot be statically initialized.
     (And, as noted in the option description, doing so was not
     valid ANSI C anyway.)
@@ -4843,6 +4849,12 @@ is explained.
 
 <li><p>The <code>yytext</code> and <code>yyleng</code> macros have
     been renamed to <code>YY_TEXT</code> and <code>YY_LENG</code>.
+
+    <p><code>%option flex-compat</code> creates the old names as
+    aliases for the new names.
+
+<li><p>The <code>yyin</code> and <code>yyout</code> macros have
+    been renamed to <code>YY_INPUT_STREAM</code> and <code>YY_OUTPUT_STREAM</code>.
 
     <p><code>%option flex-compat</code> creates the old names as
     aliases for the new names.
@@ -5007,6 +5019,14 @@ Renaming summary:
   <tr>
     <td><code>yyleng</code>
     <td><code>YY_LENG</code>
+    <td>Old name available with <code>%option flex-compat</code>.
+  <tr>
+    <td><code>yyin</code>
+    <td><code>YY_INPUT_STREAM</code>
+    <td>Old name available with <code>%option flex-compat</code>.
+  <tr>
+    <td><code>yyout</code>
+    <td><code>YY_OUTPUT_STREAM</code>
     <td>Old name available with <code>%option flex-compat</code>.
   <tr>
     <td><code>input</code>
@@ -5333,7 +5353,7 @@ I have also found and fixed a few pre-existing bugs:
 
 <li><p>
     In <code>flex-2.5.4</code>, using a C++-interface scanner, it might
-    misclassify an input error reported by <code>yyin->fail()</code> as
+    misclassify an input error reported by <code>YY_INPUT_STREAM->fail()</code> as
     EOF, thus silently swallowing the error.  Now, the error will be
     reported like other input errors.  (Currently, that means exiting
     with a fatal error message, which isn't great, but is better than

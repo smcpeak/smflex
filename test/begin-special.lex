@@ -1,6 +1,10 @@
 /* begin-special.lex */
 /* Illustrate calling BEGIN on entry to yy_lex(). */
 
+%{
+#include <assert.h>                    /* assert */
+%}
+
 %option flex-compat
 
                 int enter_special;
@@ -9,6 +13,10 @@
 %%
                 if (enter_special) {
                   BEGIN(SPECIAL);
+
+                  /* Check the yyin and yyout aliases. */
+                  assert(YY_INPUT_STREAM == yyin);
+                  assert(YY_OUTPUT_STREAM == yyout);
                 }
 
 <SPECIAL>token  {      /* ... etc. ... */
