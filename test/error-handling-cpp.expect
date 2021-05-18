@@ -1,9 +1,60 @@
----- code 3 ----
+---- error reading input source ----
+[yy_flex_alloc: 65544]
+[yy_flex_alloc: 56]
+[yy_flex_alloc: 16386]
+[default behavior, so yy_is_interactive is: 0]
+[yy_flex_alloc: 49]
 error: smflex scanner error: error reading input source
----- code 6 ----
+[yy_flex_free: 3]
+[yy_flex_free: 2]
+[yy_flex_free: 1]
+[yy_flex_free: 0]
+---- no rule matches the input text ----
+[yy_flex_alloc: 65544]
+[yy_flex_alloc: 11]
+[yy_flex_alloc: 56]
+[setting yy_is_interactive to 0 in yy_scan_buffer: 0]
+[yy_flex_alloc: 53]
 error: smflex scanner error: no rule matches the input text
----- code 4 ----
+[yy_flex_free: 3]
+[yy_flex_free: 2]
+[yy_flex_free: 1]
+[yy_flex_free: 0]
+---- token is too large and input buffer cannot be expanded ----
+[yy_flex_alloc: 65544]
+[yy_flex_alloc: 56]
+[yy_flex_alloc: 16386]
+[default behavior, so yy_is_interactive is: 0]
+[n=8192 c=120]
+[n=8191 c=120]
+[yy_flex_alloc: 127]
 error: smflex scanner error: token is too large and input buffer cannot be expanded: can't enlarge buffer because scanner uses REJECT
----- code 8 ----
+[yy_flex_free: 3]
+[yy_flex_free: 2]
+[yy_flex_free: 1]
+[yy_flex_free: 0]
+---- no space in buffer to unread a character ----
+[yy_flex_alloc: 65544]
+[yy_flex_alloc: 56]
+[yy_flex_alloc: 16386]
+[default behavior, so yy_is_interactive is: 0]
+[n=6 c=117]
+[n=0 c=0]
 saw 'unread'
+[yy_flex_alloc: 63]
 error: smflex scanner error: no space in buffer to unread a character
+[yy_flex_free: 3]
+[yy_flex_free: 2]
+[yy_flex_free: 1]
+[yy_flex_free: 0]
+---- error reading input source ----
+[yy_flex_alloc: 65544]
+[yy_flex_alloc: 56]
+[yy_flex_alloc: 16386]
+[default behavior, so yy_is_interactive is: 0]
+[yy_flex_alloc: 49]
+[alloc_fail: 49]
+error: smflex scanner error (description unavailable due to failure in 'what()' method)
+[yy_flex_free: 2]
+[yy_flex_free: 1]
+[yy_flex_free: 0]

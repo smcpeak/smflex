@@ -98,7 +98,7 @@ public:      /* methods */
 
 static void provoke_error(yy_error_code_t expect_code)
 {
-  std::cout << "---- code " << expect_code << " ----\n";
+  std::cout << "---- " << yy_error_string(expect_code) << " ----\n";
 
   switch (expect_code) {
     case yy_err_input_error: {
@@ -111,7 +111,7 @@ static void provoke_error(yy_error_code_t expect_code)
       }
       catch (yyFlexLexer::LexError &e) {
         std::cout << "error: " << e.what() << "\n";
-        assert(e.m_code = expect_code);
+        assert(e.m_code == expect_code);
         assert(e.m_detail == NULL);
       }
       break;
@@ -129,7 +129,7 @@ static void provoke_error(yy_error_code_t expect_code)
       }
       catch (yyFlexLexer::LexError &e) {
         std::cout << "error: " << e.what() << "\n";
-        assert(e.m_code = expect_code);
+        assert(e.m_code == expect_code);
         assert(e.m_detail == NULL);
       }
       break;
@@ -144,7 +144,7 @@ static void provoke_error(yy_error_code_t expect_code)
       }
       catch (yyFlexLexer::LexError &e) {
         std::cout << "error: " << e.what() << "\n";
-        assert(e.m_code = expect_code);
+        assert(e.m_code == expect_code);
         assert(strstr(e.m_detail, "REJECT"));
       }
       break;
@@ -159,7 +159,7 @@ static void provoke_error(yy_error_code_t expect_code)
       }
       catch (yyFlexLexer::LexError &e) {
         std::cout << "error: " << e.what() << "\n";
-        assert(e.m_code = expect_code);
+        assert(e.m_code == expect_code);
         assert(e.m_detail == NULL);
       }
       break;
@@ -173,11 +173,19 @@ static void provoke_error(yy_error_code_t expect_code)
 }
 
 
+/* Defined in the generated scanner when
+ * YY_ALLOCATOR_FAILURE_INJECTION is defined. */
+extern unsigned yy_alloc_failure_countdown;
+
 int main()
 {
   provoke_error(yy_err_input_error);
   provoke_error(yy_err_no_rule_matches);
   provoke_error(yy_err_input_buffer_cannot_expand);
   provoke_error(yy_err_unread_overflow);
+
+  yy_alloc_failure_countdown = 4;
+  provoke_error(yy_err_input_error);
+
   return 0;
 }

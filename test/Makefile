@@ -89,6 +89,7 @@ CXXFLAGS_FOR_cpp_int_batch       := -DYY_ENABLE_DEBUG_LOG_CALL
 CXXFLAGS_FOR_cpp_int_default     := -DYY_ENABLE_DEBUG_LOG_CALL
 CXXFLAGS_FOR_cpp_int_set_int_1   := -DYY_ENABLE_DEBUG_LOG_CALL
 CXXFLAGS_FOR_cpp_int_interactive := -DYY_ENABLE_DEBUG_LOG_CALL
+CXXFLAGS_FOR_error_handling_cpp  := $(MEM_TEST_FLAGS)
 CXXFLAGS_FOR_large_token_cpp     := $(MEM_TEST_FLAGS)
 
 # Given the name of a source file without its extension, get the
