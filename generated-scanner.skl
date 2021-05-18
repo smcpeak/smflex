@@ -1729,74 +1729,74 @@ void yy_error_print_and_exit(yy_lexer_t const *yy_lexer,
 
 %if cpp_interface
 
-yyFlexLexer::LexError::LexError(yy_error_code_t code, char const *detail) YY_NOEXCEPT
+yyFlexLexer::yyLexError::yyLexError(yy_error_code_t code, char const *detail) YY_NOEXCEPT
   : std::exception(),
-    m_what(NULL),
-    m_code(code),
-    m_detail(detail)
+    yym_what(NULL),
+    yym_code(code),
+    yym_detail(detail)
 {}
 
-yyFlexLexer::LexError::LexError(LexError const &obj) YY_NOEXCEPT
+yyFlexLexer::yyLexError::yyLexError(yyLexError const &obj) YY_NOEXCEPT
   : std::exception(obj),
-    m_what(NULL),            /* Do not copy obj.m_what! */
-    m_code(obj.m_code),
-    m_detail(obj.m_detail)
+    yym_what(NULL),            /* Do not copy obj.yym_what! */
+    yym_code(obj.yym_code),
+    yym_detail(obj.yym_detail)
 {}
 
-yyFlexLexer::LexError::~LexError() YY_NOEXCEPT
+yyFlexLexer::yyLexError::~yyLexError() YY_NOEXCEPT
 {
-  clearWhat();
+  yym_clear_what();
 }
 
-void yyFlexLexer::LexError::clearWhat() YY_NOEXCEPT
+void yyFlexLexer::yyLexError::yym_clear_what() YY_NOEXCEPT
 {
-  if (m_what) {
-    /* I use the 'flex' allocation functions for 'm_what' so I can
+  if (yym_what) {
+    /* I use the 'flex' allocation functions for 'yym_what' so I can
      * use their debug and failure injection facilities. */
-    yy_flex_free(m_what);
-    m_what = NULL;
+    yy_flex_free(yym_what);
+    yym_what = NULL;
   }
 }
 
-yyFlexLexer::LexError& yyFlexLexer::LexError::operator=(LexError const &obj) YY_NOEXCEPT
+yyFlexLexer::yyLexError& yyFlexLexer::yyLexError::operator=(yyLexError const &obj) YY_NOEXCEPT
 {
   if (this != &obj) {
     this->std::exception::operator=(obj);
 
-    /* We do not copy obj.m_what because of the risk of throwing.  But
+    /* We do not copy obj.yym_what because of the risk of throwing.  But
      * we can't leave the old data either. */
-    this->clearWhat();
+    this->yym_clear_what();
 
-    this->m_code = obj.m_code;
-    this->m_detail = obj.m_detail;
+    this->yym_code = obj.yym_code;
+    this->yym_detail = obj.yym_detail;
   }
   return *this;
 }
 
-char const *yyFlexLexer::LexError::what() const YY_NOEXCEPT
+char const *yyFlexLexer::yyLexError::what() const YY_NOEXCEPT
 {
   try {
-    if (!m_what) {
+    if (!yym_what) {
       /* Build the message. */
       std::ostringstream oss;
-      if (m_detail) {
-        oss << "smflex scanner error: " << yy_error_string(m_code)
-            << ": " << m_detail;
+      if (yym_detail) {
+        oss << "smflex scanner error: " << yy_error_string(yym_code)
+            << ": " << yym_detail;
       }
       else {
-        oss << "smflex scanner error: " << yy_error_string(m_code);
+        oss << "smflex scanner error: " << yy_error_string(yym_code);
       }
 
-      /* Transfer it into 'm_what'. */
+      /* Transfer it into 'yym_what'. */
       std::string str = oss.str();
-      m_what = (char*)yy_flex_alloc(str.size()+1);
-      if (!m_what) {
+      yym_what = (char*)yy_flex_alloc(str.size()+1);
+      if (!yym_what) {
         throw std::bad_alloc();        /* Go to the 'catch'. */
       }
-      strcpy(m_what, str.c_str());
+      strcpy(yym_what, str.c_str());
     }
 
-    return m_what;
+    return yym_what;
   }
   catch (...) {
     return "smflex scanner error (description unavailable due to failure in 'what()' method)";
@@ -1805,7 +1805,7 @@ char const *yyFlexLexer::LexError::what() const YY_NOEXCEPT
 
 void yyFlexLexer::yym_error(yy_error_code_t code, char const *detail) const
 {
-  throw LexError(code, detail);
+  throw yyLexError(code, detail);
 }
 
 %endif

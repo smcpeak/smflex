@@ -109,10 +109,10 @@ static void provoke_error(yy_error_code_t expect_code)
         lexer.yym_lex();
         assert(!"should have failed");
       }
-      catch (yyFlexLexer::LexError &e) {
+      catch (yyFlexLexer::yyLexError &e) {
         std::cout << "error: " << e.what() << "\n";
-        assert(e.m_code == expect_code);
-        assert(e.m_detail == NULL);
+        assert(e.yym_code == expect_code);
+        assert(e.yym_detail == NULL);
       }
       break;
     }
@@ -127,10 +127,10 @@ static void provoke_error(yy_error_code_t expect_code)
         lexer.yym_lex();
         assert(!"should have failed");
       }
-      catch (yyFlexLexer::LexError &e) {
+      catch (yyFlexLexer::yyLexError &e) {
         std::cout << "error: " << e.what() << "\n";
-        assert(e.m_code == expect_code);
-        assert(e.m_detail == NULL);
+        assert(e.yym_code == expect_code);
+        assert(e.yym_detail == NULL);
       }
       break;
     }
@@ -142,10 +142,10 @@ static void provoke_error(yy_error_code_t expect_code)
         lexer.yym_lex();
         assert(!"should have failed");
       }
-      catch (yyFlexLexer::LexError &e) {
+      catch (yyFlexLexer::yyLexError &e) {
         std::cout << "error: " << e.what() << "\n";
-        assert(e.m_code == expect_code);
-        assert(strstr(e.m_detail, "REJECT"));
+        assert(e.yym_code == expect_code);
+        assert(strstr(e.yym_detail, "REJECT"));
       }
       break;
     }
@@ -157,10 +157,10 @@ static void provoke_error(yy_error_code_t expect_code)
         lexer.yym_lex();
         assert(!"should have failed");
       }
-      catch (yyFlexLexer::LexError &e) {
+      catch (yyFlexLexer::yyLexError &e) {
         std::cout << "error: " << e.what() << "\n";
-        assert(e.m_code == expect_code);
-        assert(e.m_detail == NULL);
+        assert(e.yym_code == expect_code);
+        assert(e.yym_detail == NULL);
       }
       break;
     }

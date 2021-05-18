@@ -76,7 +76,7 @@ void scan_length(int len, int countdown)
         {}
       cout << "yym_lex returned 0\n";
     }
-    catch (yyFlexLexer::LexError &e) {
+    catch (yyFlexLexer::yyLexError &e) {
       cout << "error: " << e.what() << "\n";
     }
   }
@@ -104,7 +104,7 @@ void scan_string(int countdown)
 
       lexer.yym_delete_buffer(buf);
     }
-    catch (yyFlexLexer::LexError &e) {
+    catch (yyFlexLexer::yyLexError &e) {
       cout << "error: " << e.what() << "\n";
     }
   }
