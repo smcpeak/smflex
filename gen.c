@@ -1379,25 +1379,6 @@ static char const *look_up_skel_identifier(char const *id, int len)
     return option_yyclass;
   }
 
-  if (str_eq_substr("YY_INPUT_STREAM_TYPE", id, len)) {
-    /* TODO: This choice should be independent of 'cpp_interface'. */
-    if (cpp_interface) {
-      return "std::istream";
-    }
-    else {
-      return "FILE";
-    }
-  }
-
-  if (str_eq_substr("YY_OUTPUT_STREAM_TYPE", id, len)) {
-    if (cpp_interface) {
-      return "std::ostream";
-    }
-    else {
-      return "FILE";
-    }
-  }
-
   if (str_eq_substr("yy_header_file_name", id, len)) {
     /* This is for use in an #include directive that pulls in the header
      * from the generated scanner implementation file.  We remove path
