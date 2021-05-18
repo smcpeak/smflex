@@ -1979,7 +1979,7 @@ nowarn = ! option_sense;
 case 58:
 YY_RULE_SETUP
 #line 299 "input-scan.lex"
-do_yylineno = option_sense;
+option_yylineno = option_sense;
 #line 1984 "input-scan.lex.c"
   YY_BREAK
 case 59:

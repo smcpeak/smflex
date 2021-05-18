@@ -232,7 +232,7 @@ struct yy_lexer_struct {
   void (*yy_error_function)(struct yy_lexer_struct const *yy_lexer,
     yy_error_code_t code, char const *detail);
 
-%if do_yylineno
+%if option_yylineno
   /* Current line number in the input being scanned.  See the
    * description in the manual for additional details. */
   int yy_lineno;
@@ -629,7 +629,7 @@ public:      /* methods */
     { return yym_lexer_state.yy_input_stream; }
   yy_output_stream_t *yym_output_stream() const
     { return yym_lexer_state.yy_output_stream; }
-%if do_yylineno
+%if option_yylineno
   int yym_lineno() const
     { return yym_lexer_state.yy_lineno; }
 %endif

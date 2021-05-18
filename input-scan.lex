@@ -296,7 +296,7 @@ LEXOPT          [aceknopr]
         stack           option_stack = option_sense;
         verbose         printstats = option_sense;
         warn            nowarn = ! option_sense;
-        yylineno        do_yylineno = option_sense;
+        yylineno        option_yylineno = option_sense;
         yymore          yymore_really_used = option_sense;
 
         yy_read_character     option_yy_read_character   = option_sense;

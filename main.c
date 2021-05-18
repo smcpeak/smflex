@@ -81,7 +81,7 @@ static char smflex_version[] = SMFLEX_VERSION;
 
 int printstats, syntaxerror, eofseen, option_debug, trace, nowarn;
 int option_suppress_default_rule;
-int interactive, caseins, do_yylineno, useecs, fulltbl, usemecs;
+int interactive, caseins, option_yylineno, useecs, fulltbl, usemecs;
 int jacobson, gen_line_dirs, performance_report, backing_up_report;
 int cpp_interface, long_align, use_read, csize;
 int yymore_used, reject_used, real_reject, continued_action, in_rule;
@@ -219,7 +219,7 @@ void check_options()
 {
   int i;
 
-  if (do_yylineno)
+  if (option_yylineno)
     /* This should really be "maintain_backup_tables = true" */
     reject_really_used = true;
 
@@ -237,7 +237,7 @@ void check_options()
     if (interactive)
       flexerror(_("-Cf/-CJ and -I are incompatible"));
 
-    if (do_yylineno)
+    if (option_yylineno)
       flexerror(_("-Cf/-CJ and %option yylineno are incompatible"));
 
     if (fulltbl && jacobson)
@@ -489,7 +489,7 @@ void flexinit(int argc, char **argv)
   caseins = false;
   cpp_interface = backing_up_report = option_debug = fulltbl = false;
   jacobson = long_align = nowarn = yymore_used = continued_action = false;
-  do_yylineno = in_rule = reject_used = false;
+  option_yylineno = in_rule = reject_used = false;
   yymore_really_used = reject_really_used = unspecified;
   option_stack = false;
   csize = unspecified;
@@ -787,7 +787,7 @@ void readin()
       fprintf(stderr,
               _("-I (interactive) entails a large (10x) performance penalty\n"));
 
-    if (do_yylineno) {
+    if (option_yylineno) {
       fprintf(stderr,
               _("%%option yylineno entails a large performance penalty (maybe; see manual)\n"));
     }
@@ -813,7 +813,7 @@ void readin()
   if ((fulltbl || jacobson) && reject_used) {
     if (real_reject)
       flexerror(_("REJECT cannot be used with -Cf or -CJ"));
-    else if (do_yylineno)
+    else if (option_yylineno)
       flexerror(_("%option yylineno cannot be used with -Cf or -CJ"));
     else
       flexerror(_("variable trailing context rules cannot be used with -Cf or -CJ"));

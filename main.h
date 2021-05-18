@@ -33,7 +33,7 @@ void usage(void);
  * option_suppress_default_rule - if true (-s), suppress the default rule
  * interactive - if true (-I), generate an interactive scanner
  * caseins - if true (-i), generate a case-insensitive scanner
- * do_yylineno - if true, generate code to maintain yylineno
+ * option_yylineno - if true, generate code to maintain yylineno
  * useecs - if true (-Ce flag), use equivalence classes
  * fulltbl - if true (-Cf flag), don't compress the DFA state table
  * usemecs - if true (-Cm flag), use meta-equivalence classes
@@ -65,7 +65,7 @@ void usage(void);
 
 extern int printstats, syntaxerror, eofseen, option_debug, trace, nowarn;
 extern int option_suppress_default_rule;
-extern int interactive, caseins, do_yylineno;
+extern int interactive, caseins, option_yylineno;
 extern int useecs, fulltbl, usemecs, jacobson;
 extern int gen_line_dirs, performance_report, backing_up_report;
 extern int cpp_interface, long_align, use_read;
