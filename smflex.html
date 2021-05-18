@@ -2504,6 +2504,9 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
       <tr>
         <td><code>unput</code>
         <td><code>YY_UNREAD_CHARACTER</code>
+      <tr>
+        <td><code>yylineno</code>
+        <td><code>YY_LINENO</code>
     </table>
 
     <p>Additionally, this option adds to to the generated header file the
@@ -4990,6 +4993,12 @@ is explained.
     <p>The old name is available with
     <code>%option flex-compat</code>.
 
+<li><p><code>yylineno</code> has been renamed to
+    <code>YY_LINENO</code>.
+
+    <p>The old name is available with
+    <code>%option flex-compat</code>.
+
 </ul>
 
 <p>
@@ -5075,6 +5084,10 @@ Renaming summary:
   <tr>
     <td><code>yyterminate</code>
     <td><a href="#YY_TERMINATE-macro"><code>YY_TERMINATE</code></a>
+    <td>Old name available with <code>%option flex-compat</code>.
+  <tr>
+    <td><code>yylineno</code>
+    <td><code>YY_LINENO</code>
     <td>Old name available with <code>%option flex-compat</code>.
 </table>
 

@@ -62,7 +62,7 @@ id=\"[^"]+\"       {
   /* Intra-document link. */
 href=\"#[^"]+\"    {
                      assert(numLinks < MAX_LINKS);
-                     links[numLinks].lineNumber = yylineno;
+                     links[numLinks].lineNumber = YY_LINENO;
                      links[numLinks].anchor = my_strndup(YY_TEXT+7, YY_LENG-8);
                      numLinks++;
                    }
@@ -73,7 +73,7 @@ href=\"[^:"]+\"    {
                      FILE *fp = fopen(fname, "r");
                      if (!fp) {
                        printf("Link on line %d to \"%s\": cannot open file.\n",
-                              yylineno, fname);
+                              YY_LINENO, fname);
                        numErrors++;
                      }
                      else {
