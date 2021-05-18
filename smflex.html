@@ -5309,9 +5309,18 @@ members:
 <h2 id="new-features">New Features</h2>
 
 <p>
-There is are a few new features:
+There is a few new features:
 
 <ul>
+
+<li><p>
+    Re-entrancy: scanners are re-entrant for both the C and C++ APIs.
+    That means any scanner can be instantiated any number of times,
+    used concurrently from different threads, etc.  (Each scanner
+    instance can only be used from one thread though.)  In
+    <code>flex-2.5.4</code>, only C++ scanners were re-entrant.
+    I understand that <code>flex-2.6.4</code> has a re-entrant
+    scanner feature that works for C too, although I have not tried it.
 
 <li><p>
     <code>flex-2.5.4</code> did not allow <code>%option c++</code> to be
@@ -5329,6 +5338,46 @@ There is are a few new features:
     limitation because the C++ scanner reads from <code>istream</code>,
     which can read from memory, but it was a needless discrepancy.
     These are now all compatible.
+
+<li><p>
+    Run-time behavior customization: In <code>flex-2.5.4</code>, the
+    input method and response to errors can only be configured by
+    changing the <code>YY_INPUT</code> and <code>YY_FATAL_ERROR</code>
+    macro definitions.  In <code>smflex</code>, those (along with
+    <code>yy_wrap</code>) are controlled using function pointers in
+    the C API and virtual functions in the C++ API.
+
+<li><p>
+    Improved error handling: Errors are reported using an enumeration
+    of codes to allow recovery depending on the error type.  When
+    using the C++ API, the error handler can throw exceptions (and
+    does so by default) and the scanner will not leak memory when
+    that happens (whereas it would in <code>flex-2.5.4</code>).
+
+<li><p>
+    More consistent and informative names: the names exposed and
+    documented as part of the APIs have been overhauled to follow
+    consistent <a href="#naming-conventions">naming conventions</a>
+    and to be individually more informative about what they do.
+    This makes it easier to learn the API and understand a scanner
+    definition.
+
+<li><p>
+    Improved relationship between C and C++ APIs: in
+    <code>flex-2.5.4</code>, the two APIs were mostly separate.  Among
+    other consequences, this led to idiosyncratic differences where
+    choices diverged.  In <code>smflex</code>, the C++ API is simply a
+    client of the C API, acting as a wrapper.  The only way the C++ API
+    is privileged over any other client is that the main scanning
+    function is defined as a direct member of <code>yyFlexLexer</code>
+    (or the specified derived class when using <code>%option yyclass</code>).
+    The reasons for this are (1) it allows scanner
+    actions to be within the scope of all of the members of the derived
+    class, and (2) it saves the overhead of an extra function call per
+    scanned token.  Aside from those two aspects, a user could create
+    their own C++ wrapper around the C API with equivalent functionality to
+    <code>yyFlexLexer</code>, which is important because it means the
+    C API is just as expressive and flexible as the C++ API.
 
 </ul>
 
