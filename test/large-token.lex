@@ -7,7 +7,7 @@
 
 %%
 
-"abcdefghij"+       printf("saw %d letters in a row\n", yyleng);
+"abcdefghij"+       printf("saw %d letters in a row\n", YY_LENG);
 .|\n                /* nothing */
 
 %%

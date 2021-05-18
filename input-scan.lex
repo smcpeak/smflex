@@ -38,7 +38,7 @@
 #include <string.h>                    /* strcpy, strlen, etc. */
 
 
-#define ACTION_ECHO add_action(yytext)
+#define ACTION_ECHO add_action(YY_TEXT)
 #define ACTION_IFDEF(def, should_define) \
   { \
     if (should_define) \
@@ -57,11 +57,11 @@
 #define MARK_END_OF_PROLOG mark_prolog();
 
 #define RETURNCHAR \
-  yylval = (unsigned char) yytext[0]; \
+  yylval = (unsigned char) YY_TEXT[0]; \
   return CHAR;
 
 #define RETURNNAME \
-  strcpy( nmstr, yytext ); \
+  strcpy( nmstr, YY_TEXT ); \
   return NAME;
 
 #define PUT_BACK_STRING(str, start) \
@@ -165,7 +165,7 @@ LEXOPT          [aceknopr]
         ^"%"[^sxaceknopr{}].*   synerr( _( "unrecognized '%' directive" ) );
 
         ^{NAME}         {
-                          strcpy(nmstr, yytext);
+                          strcpy(nmstr, YY_TEXT);
                           didadef = false;
                           YY_SET_START_STATE(PICKUPDEF);
                         }
@@ -196,11 +196,11 @@ LEXOPT          [aceknopr]
 
 <LINEDIR>{
         \n              yy_pop_state(yy_lexer);
-        [[:digit:]]+    linenum = myctoi( yytext );
+        [[:digit:]]+    linenum = myctoi( YY_TEXT );
 
         \"[^"\n]*\"     {
                           flex_free((void *) infilename);
-                          infilename = copy_string(yytext + 1);
+                          infilename = copy_string(YY_TEXT + 1);
                           infilename[strlen(infilename) - 1] = '\0';
                         }
         .               /* ignore spurious characters */
@@ -228,7 +228,7 @@ LEXOPT          [aceknopr]
         {WS}            /* separates name and definition */
 
         {NOT_WS}.*      {
-                          strcpy((char *) nmdef, yytext);
+                          strcpy((char *) nmdef, YY_TEXT);
 
                           /* Skip trailing whitespace. */
                           for (i = strlen((char *) nmdef) - 1;
@@ -311,13 +311,13 @@ LEXOPT          [aceknopr]
         yyclass         return OPT_YYCLASS;
 
         \"[^"\n]*\"     {
-                          strcpy(nmstr, yytext + 1);
+                          strcpy(nmstr, YY_TEXT + 1);
                           nmstr[strlen(nmstr) - 1] = '\0';
                           return NAME;
                         }
 
         (([a-mo-z]|n[a-np-z])[[:alpha:]\-+]*)|. {
-                          format_synerr(_("unrecognized %%option: %s"), yytext);
+                          format_synerr(_("unrecognized %%option: %s"), YY_TEXT);
                           YY_SET_START_STATE(RECOVER);
                         }
 }
@@ -401,7 +401,7 @@ LEXOPT          [aceknopr]
                         }
 
         ^{WS}"/*"       {
-                          YY_LESS_TEXT(yyleng - 2); /* put back '/', '*' */
+                          YY_LESS_TEXT(YY_LENG - 2); /* put back '/', '*' */
                           bracelevel = 0;
                           continued_action = false;
                           YY_SET_START_STATE(ACTION);
@@ -450,7 +450,7 @@ LEXOPT          [aceknopr]
         "["({FIRST_CCL_CHAR}|{CCL_EXPR})({CCL_CHAR}|{CCL_EXPR})*        {
                           int cclval;
 
-                          strcpy(nmstr, yytext);
+                          strcpy(nmstr, YY_TEXT);
 
                           /* Check to see if we've already encountered this
                            * ccl.
@@ -483,8 +483,8 @@ LEXOPT          [aceknopr]
                           Char *nmdefptr;
                           Char *ndlookup();
 
-                          strcpy(nmstr, yytext + 1);
-                          nmstr[yyleng - 2] = '\0'; /* chop trailing brace */
+                          strcpy(nmstr, YY_TEXT + 1);
+                          nmstr[YY_LENG - 2] = '\0'; /* chop trailing brace */
 
                           if ((nmdefptr = ndlookup(nmstr)) == 0)
                             format_synerr(_("undefined definition {%s}"), nmstr);
@@ -510,18 +510,18 @@ LEXOPT          [aceknopr]
                           }
                         }
 
-        [/|*+?.(){}]    return (unsigned char) yytext[0];
+        [/|*+?.(){}]    return (unsigned char) YY_TEXT[0];
         .               RETURNCHAR;
 }
 
 
 <SC>{
-        [,*]            return (unsigned char) yytext[0];
+        [,*]            return (unsigned char) YY_TEXT[0];
         ">"             YY_SET_START_STATE(SECT2); return '>';
         ">"/^           YY_SET_START_STATE(CARETISBOL); return '>';
         {SCNAME}        RETURNNAME;
         .               {
-                          format_synerr(_("bad <start condition>: %s"), yytext);
+                          format_synerr(_("bad <start condition>: %s"), YY_TEXT);
                         }
 }
 
@@ -574,7 +574,7 @@ LEXOPT          [aceknopr]
         "[:xdigit:]"    YY_SET_START_STATE(CCL); return CCE_XDIGIT;
         {CCL_EXPR}      {
                           format_synerr(_("bad character class expression: %s"),
-                                        yytext);
+                                        YY_TEXT);
                           YY_SET_START_STATE(CCL);
                           return CCE_ALNUM;
                         }
@@ -582,7 +582,7 @@ LEXOPT          [aceknopr]
 
 <NUM>{
         [[:digit:]]+    {
-                          yylval = myctoi(yytext);
+                          yylval = myctoi(YY_TEXT);
                           return NUMBER;
                         }
 
@@ -613,11 +613,11 @@ LEXOPT          [aceknopr]
         <CODEBLOCK,ACTION>{
                 "reject"        {
                           ACTION_ECHO;
-                          CHECK_REJECT(yytext);
+                          CHECK_REJECT(YY_TEXT);
                         }
                 "yymore"        {
                           ACTION_ECHO;
-                          CHECK_YYMORE(yytext);
+                          CHECK_YYMORE(YY_TEXT);
                         }
         }
 
@@ -684,7 +684,7 @@ LEXOPT          [aceknopr]
 
 
 <SECT2,QUOTE,FIRSTCCL,CCL>{ESCSEQ}      {
-                          yylval = myesc((Char *) yytext);
+                          yylval = myesc((Char *) YY_TEXT);
 
                           if (YY_GET_START_STATE() == FIRSTCCL)
                             YY_SET_START_STATE(CCL);
@@ -694,11 +694,11 @@ LEXOPT          [aceknopr]
 
 
 <SECT3>{
-        .*(\n?)         out(yytext);   /* Copy section 3 to output. */
+        .*(\n?)         out(YY_TEXT);   /* Copy section 3 to output. */
         <<EOF>>         sectnum = 0; YY_TERMINATE();
 }
 
-<*>.|\n                 format_synerr(_("bad character: %s"), yytext);
+<*>.|\n                 format_synerr(_("bad character: %s"), YY_TEXT);
 
 %%
 

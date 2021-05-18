@@ -32,7 +32,7 @@
 
   \\[0-7]{1,3} {
           /* Octal escape sequence. */
-          int result = (int)strtol(yytext+1, NULL /*endp*/, 8 /*base*/);
+          int result = (int)strtol(YY_TEXT+1, NULL /*endp*/, 8 /*base*/);
           assert(0 <= result && result <= 0xFF);
           *string_buf_ptr++ = result;
         }
@@ -40,7 +40,7 @@
   \\[0-9]+ {
           /* generate error - bad escape sequence; something
            * like '\48' or '\0777777' */
-          printf("bad escape sequence: \"%s\"\n", yytext);
+          printf("bad escape sequence: \"%s\"\n", YY_TEXT);
         }
 
   \\n   *string_buf_ptr++ = '\n';
@@ -49,10 +49,10 @@
   \\b   *string_buf_ptr++ = '\b';
   \\f   *string_buf_ptr++ = '\f';
 
-  \\(.|\n)  *string_buf_ptr++ = yytext[1];
+  \\(.|\n)  *string_buf_ptr++ = YY_TEXT[1];
 
   [^\\\n\"]+        {
-          char *p = yytext;
+          char *p = YY_TEXT;
           while (*p) {
             *string_buf_ptr++ = *p++;
           }

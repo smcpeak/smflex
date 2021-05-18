@@ -1,8 +1,8 @@
 get_bol1[AT_BOL1: 0]
 get_bol2
 [AT_BOL2: 1][leading space: "  "]leading
-not[non-leading space: " "]leading
+not[non-leading space: " ", 1 chars]leading
 set_bol[leading space: " "]leading
 clear_bol
-[non-leading space: "  "]notleading
+[non-leading space: "  ", 2 chars]notleading
 more

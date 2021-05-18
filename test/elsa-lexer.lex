@@ -225,9 +225,9 @@ static enum TokenType alternateKeyword_tokFunc(enum TokenType t, char const *tex
 static void err(char const *);
 static void whitespace();
 
-#define tok(t) tokFunc(t, yytext, yyleng)
-#define svalTok(t) svalTokFunc(t, yytext, yyleng)
-#define alternateKeyword_tok(t) alternateKeyword_tokFunc(t, yytext, yyleng)
+#define tok(t) tokFunc(t, YY_TEXT, YY_LENG)
+#define svalTok(t) svalTokFunc(t, YY_TEXT, YY_LENG)
+#define alternateKeyword_tok(t) alternateKeyword_tokFunc(t, YY_TEXT, YY_LENG)
 
 
 %}

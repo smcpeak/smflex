@@ -16,10 +16,10 @@
 "token" {
     {
       int i;
-      /* Copy yytext because unput() trashes yytext */
-      char *yycopy = strdup(yytext);
+      /* Copy YY_TEXT because unput() trashes YY_TEXT */
+      char *yycopy = strdup(YY_TEXT);
       unput(')');
-      for (i = yyleng - 1; i >= 0; --i) {
+      for (i = YY_LENG - 1; i >= 0; --i) {
         unput(yycopy[i]);
       }
       unput('(');

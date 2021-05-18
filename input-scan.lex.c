@@ -1237,7 +1237,7 @@ static const short int yy_chk[2664] =
 #include <string.h>                    /* strcpy, strlen, etc. */
 
 
-#define ACTION_ECHO add_action(yytext)
+#define ACTION_ECHO add_action(YY_TEXT)
 #define ACTION_IFDEF(def, should_define) \
   { \
     if (should_define) \
@@ -1256,11 +1256,11 @@ static const short int yy_chk[2664] =
 #define MARK_END_OF_PROLOG mark_prolog();
 
 #define RETURNCHAR \
-  yylval = (unsigned char) yytext[0]; \
+  yylval = (unsigned char) YY_TEXT[0]; \
   return CHAR;
 
 #define RETURNNAME \
-  strcpy( nmstr, yytext ); \
+  strcpy( nmstr, YY_TEXT ); \
   return NAME;
 
 #define PUT_BACK_STRING(str, start) \
@@ -1411,8 +1411,8 @@ int input_scan_lex(input_scan_lexer_t * const yy_lexer)
       /* Prepare convenience aliases for important data.
        * These aliases can only be used directly within actions, not
        * in other functions, even those defined in sections 1 or 3. */
-#     define yytext (yy_lexer->yy_text)
-#     define yyleng (yy_lexer->yy_leng)
+#     define YY_TEXT (yy_lexer->yy_text)
+#     define YY_LENG (yy_lexer->yy_leng)
 #     define YY_GET_BOL() (input_scan_get_bol(yy_lexer))
 #     define YY_READ_CHARACTER() (input_scan_read_character(yy_lexer))
 #     define YY_UNREAD_CHARACTER(c) input_scan_unread_character(yy_lexer, c)
@@ -1623,7 +1623,7 @@ case 13:
 YY_RULE_SETUP
 #line 167 "input-scan.lex"
 {
-                          strcpy(nmstr, yytext);
+                          strcpy(nmstr, YY_TEXT);
                           didadef = false;
                           YY_SET_START_STATE(PICKUPDEF);
                         }
@@ -1694,7 +1694,7 @@ yy_pop_state(yy_lexer);
 case 21:
 YY_RULE_SETUP
 #line 199 "input-scan.lex"
-linenum = myctoi( yytext );
+linenum = myctoi( YY_TEXT );
 #line 1699 "input-scan.lex.c"
   YY_BREAK
 
@@ -1703,7 +1703,7 @@ YY_RULE_SETUP
 #line 201 "input-scan.lex"
 {
                           flex_free((void *) infilename);
-                          infilename = copy_string(yytext + 1);
+                          infilename = copy_string(YY_TEXT + 1);
                           infilename[strlen(infilename) - 1] = '\0';
                         }
 #line 1710 "input-scan.lex.c"
@@ -1761,7 +1761,7 @@ case 28:
 YY_RULE_SETUP
 #line 230 "input-scan.lex"
 {
-                          strcpy((char *) nmdef, yytext);
+                          strcpy((char *) nmdef, YY_TEXT);
 
                           /* Skip trailing whitespace. */
                           for (i = strlen((char *) nmdef) - 1;
@@ -2049,7 +2049,7 @@ case 69:
 YY_RULE_SETUP
 #line 313 "input-scan.lex"
 {
-                          strcpy(nmstr, yytext + 1);
+                          strcpy(nmstr, YY_TEXT + 1);
                           nmstr[strlen(nmstr) - 1] = '\0';
                           return NAME;
                         }
@@ -2060,7 +2060,7 @@ case 70:
 YY_RULE_SETUP
 #line 319 "input-scan.lex"
 {
-                          format_synerr(_("unrecognized %%option: %s"), yytext);
+                          format_synerr(_("unrecognized %%option: %s"), YY_TEXT);
                           YY_SET_START_STATE(RECOVER);
                         }
 #line 2067 "input-scan.lex.c"
@@ -2239,7 +2239,7 @@ case 87:
 YY_RULE_SETUP
 #line 403 "input-scan.lex"
 {
-                          YY_LESS_TEXT(yyleng - 2); /* put back '/', '*' */
+                          YY_LESS_TEXT(YY_LENG - 2); /* put back '/', '*' */
                           bracelevel = 0;
                           continued_action = false;
                           YY_SET_START_STATE(ACTION);
@@ -2319,7 +2319,7 @@ YY_RULE_SETUP
 {
                           int cclval;
 
-                          strcpy(nmstr, yytext);
+                          strcpy(nmstr, YY_TEXT);
 
                           /* Check to see if we've already encountered this
                            * ccl.
@@ -2357,8 +2357,8 @@ YY_RULE_SETUP
                           Char *nmdefptr;
                           Char *ndlookup();
 
-                          strcpy(nmstr, yytext + 1);
-                          nmstr[yyleng - 2] = '\0'; /* chop trailing brace */
+                          strcpy(nmstr, YY_TEXT + 1);
+                          nmstr[YY_LENG - 2] = '\0'; /* chop trailing brace */
 
                           if ((nmdefptr = ndlookup(nmstr)) == 0)
                             format_synerr(_("undefined definition {%s}"), nmstr);
@@ -2389,7 +2389,7 @@ YY_RULE_SETUP
 case 96:
 YY_RULE_SETUP
 #line 513 "input-scan.lex"
-return (unsigned char) yytext[0];
+return (unsigned char) YY_TEXT[0];
 #line 2394 "input-scan.lex.c"
   YY_BREAK
 case 97:
@@ -2405,7 +2405,7 @@ RETURNCHAR;
 case 98:
 YY_RULE_SETUP
 #line 519 "input-scan.lex"
-return (unsigned char) yytext[0];
+return (unsigned char) YY_TEXT[0];
 #line 2410 "input-scan.lex.c"
   YY_BREAK
 case 99:
@@ -2433,7 +2433,7 @@ case 102:
 YY_RULE_SETUP
 #line 523 "input-scan.lex"
 {
-                          format_synerr(_("bad <start condition>: %s"), yytext);
+                          format_synerr(_("bad <start condition>: %s"), YY_TEXT);
                         }
 #line 2439 "input-scan.lex.c"
   YY_BREAK
@@ -2615,7 +2615,7 @@ YY_RULE_SETUP
 #line 575 "input-scan.lex"
 {
                           format_synerr(_("bad character class expression: %s"),
-                                        yytext);
+                                        YY_TEXT);
                           YY_SET_START_STATE(CCL);
                           return CCE_ALNUM;
                         }
@@ -2628,7 +2628,7 @@ case 127:
 YY_RULE_SETUP
 #line 584 "input-scan.lex"
 {
-                          yylval = myctoi(yytext);
+                          yylval = myctoi(YY_TEXT);
                           return NUMBER;
                         }
 #line 2635 "input-scan.lex.c"
@@ -2694,7 +2694,7 @@ YY_RULE_SETUP
 #line 614 "input-scan.lex"
 {
                           ACTION_ECHO;
-                          CHECK_REJECT(yytext);
+                          CHECK_REJECT(YY_TEXT);
                         }
 #line 2700 "input-scan.lex.c"
   YY_BREAK
@@ -2703,7 +2703,7 @@ YY_RULE_SETUP
 #line 618 "input-scan.lex"
 {
                           ACTION_ECHO;
-                          CHECK_YYMORE(yytext);
+                          CHECK_YYMORE(YY_TEXT);
                         }
 #line 2709 "input-scan.lex.c"
   YY_BREAK
@@ -2856,7 +2856,7 @@ case 151:
 YY_RULE_SETUP
 #line 686 "input-scan.lex"
 {
-                          yylval = myesc((Char *) yytext);
+                          yylval = myesc((Char *) YY_TEXT);
 
                           if (YY_GET_START_STATE() == FIRSTCCL)
                             YY_SET_START_STATE(CCL);
@@ -2871,7 +2871,7 @@ YY_RULE_SETUP
 case 152:
 YY_RULE_SETUP
 #line 697 "input-scan.lex"
-out(yytext);   /* Copy section 3 to output. */
+out(YY_TEXT);   /* Copy section 3 to output. */
 #line 2876 "input-scan.lex.c"
   YY_BREAK
 case YY_STATE_EOF(SECT3):
@@ -2884,7 +2884,7 @@ sectnum = 0; YY_TERMINATE();
 case 153:
 YY_RULE_SETUP
 #line 701 "input-scan.lex"
-format_synerr(_("bad character: %s"), yytext);
+format_synerr(_("bad character: %s"), YY_TEXT);
 #line 2889 "input-scan.lex.c"
   YY_BREAK
 
@@ -3863,8 +3863,8 @@ int input_scan_wrap_return_1(input_scan_lexer_t *yy_lexer)
 #undef YY_GET_BOL
 #undef YY_ECHO
 #undef YY_TERMINATE
-#undef yytext               /* TODO: Capitalize, underscore. */
-#undef yyleng               /* TODO: Capitalize, underscore. */
+#undef YY_TEXT
+#undef YY_LENG
 #undef YY_READ_CHARACTER
 #undef YY_UNREAD_CHARACTER
 #undef yyin                 /* TODO: Capitalize, underscore. */

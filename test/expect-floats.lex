@@ -14,7 +14,7 @@
 expect-floats       YY_SET_START_STATE(expect);
 
 <expect>[0-9]+"."[0-9]+  {
-                      printf("found a float: %f\n", atof(yytext));
+                      printf("found a float: %f\n", atof(YY_TEXT));
                     }
 <expect>\n          {
                       /* That's the end of the line, so we need another
@@ -24,7 +24,7 @@ expect-floats       YY_SET_START_STATE(expect);
                     }
 
 [0-9]+              {
-                      printf("found an integer: %d\n", atoi(yytext));
+                      printf("found an integer: %d\n", atoi(YY_TEXT));
                     }
 
 "."                 printf("found a dot\n");

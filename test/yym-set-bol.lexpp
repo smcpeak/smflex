@@ -7,7 +7,7 @@
 %%
 set_bol      YY_ECHO; yym_set_bol(1);
 clear_bol\n  YY_ECHO; yym_set_bol(0);
-^[ ]+        printf("[leading space: \"%s\"]", yytext);
-[ ]+         printf("[non-leading space: \"%s\"]", yytext);
+^[ ]+        printf("[leading space: \"%s\"]", YY_TEXT);
+[ ]+         printf("[non-leading space: \"%s\"]", YY_TEXT);
 get_bol1     YY_ECHO; printf("[AT_BOL1: %d]", YY_GET_BOL());
 get_bol2\n   YY_ECHO; printf("[AT_BOL2: %d]", yym_get_bol());

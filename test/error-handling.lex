@@ -14,7 +14,7 @@
 
 username      printf("USERNAME");
 reject        REJECT;  /* Use REJECT to make buffer unexpandable. */
-x+            printf("saw %d xs\n", yyleng);
+x+            printf("saw %d xs\n", YY_LENG);
 
 unread        {
                 /* Unread a lot of characters so we hit the limit. */

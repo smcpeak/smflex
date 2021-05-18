@@ -418,31 +418,31 @@ other than a newline (indicated by the "." regular expression).
     %%
 
     {DIGIT}+              {
-                            printf("An integer: %s (%d)\n", yytext,
-                                   atoi(yytext));
+                            printf("An integer: %s (%d)\n", YY_TEXT,
+                                   atoi(YY_TEXT));
                           }
 
     {DIGIT}+"."{DIGIT}*   {
-                            printf("A float: %s (%g)\n", yytext,
-                                   atof(yytext));
+                            printf("A float: %s (%g)\n", YY_TEXT,
+                                   atof(YY_TEXT));
                           }
 
       /* Comments can go between rules, but must be indented. */
     if|then|begin|end|procedure|function|program        {
-                            printf("A keyword: %s\n", yytext);
+                            printf("A keyword: %s\n", YY_TEXT);
                           }
 
-    {ID}                  printf("An identifier: %s\n", yytext);
+    {ID}                  printf("An identifier: %s\n", YY_TEXT);
 
-    "'"[^'\n]*"'"         printf("A string: %s\n", yytext);
+    "'"[^'\n]*"'"         printf("A string: %s\n", YY_TEXT);
 
-    [+*/()-]              printf("An operator: %s\n", yytext);
-    [;.,]                 printf("A punctuator: %s\n", yytext);
+    [+*/()-]              printf("An operator: %s\n", YY_TEXT);
+    [;.,]                 printf("A punctuator: %s\n", YY_TEXT);
 
     "{"[^}]*"}"           /* eat up comments, including multi-line */
     [ \t\n]+              /* eat up whitespace */
 
-    .                     printf("Unrecognized character: %s\n", yytext);
+    .                     printf("Unrecognized character: %s\n", YY_TEXT);
 
     %%
 
@@ -853,8 +853,8 @@ aspect.
 
 <p>Once the match is determined, the text corresponding to the match
 (called the <em>token</em>) is made available in the global character
-pointer <code>yytext</code>, and its length in the global integer
-<code>yyleng</code>. The <em>action</em> corresponding to the matched
+pointer <code>YY_TEXT</code>, and its length in the global integer
+<code>YY_LENG</code>. The <em>action</em> corresponding to the matched
 pattern is then executed (a more detailed description of <a href="#actions">actions</a> follows),
 and then the remaining input is scanned for another match.
 
@@ -915,11 +915,11 @@ statements to return a value to whatever routine called
 continues processing tokens from where it last left off until it either
 reaches the end of the file or executes a return.
 
-<p>Actions are free to modify <code>yytext</code> except for
+<p>Actions are free to modify <code>YY_TEXT</code> except for
 lengthening it (adding characters to its end--these will overwrite
 later characters in the input stream).
 
-<p>Actions are free to modify <code>yyleng</code> except they should
+<p>Actions are free to modify <code>YY_LENG</code> except they should
 not do so if the action also includes use of <code>yymore()</code>
 (see below).
 
@@ -954,7 +954,7 @@ an action:
     directs the scanner to proceed on to the "second best" rule which
     matched the input (or a prefix of the input). The rule is chosen as
     described above in "How the Input is Matched", and
-    <code>yytext</code> and <code>yyleng</code> set up appropriately. It
+    <code>YY_TEXT</code> and <code>YY_LENG</code> set up appropriately. It
     may either be one which matched as much text as the originally
     chosen rule but came later in the <code>smflex</code> input file, or
     one which matched less text. For example, the
@@ -999,7 +999,7 @@ an action:
 <li><p><code>yymore()</code>
     tells the scanner that the next time it matches a rule, the
     corresponding token should be <em>appended</em> onto the current
-    value of <code>yytext</code> rather than replacing it. For example,
+    value of <code>YY_TEXT</code> rather than replacing it. For example,
     given the input "mega-kludge" the
     <a href="test/yymore-mega-kludge.lex">following</a> will write
     "mega-mega-kludge" to the output:
@@ -1012,13 +1012,13 @@ an action:
 
     <p>First "mega-" is matched and echoed to the output. Then "kludge"
     is matched, but the previous "mega-" is still hanging around at the
-    beginning of <code>yytext</code> so the <code>YY_ECHO</code> for the "kludge"
+    beginning of <code>YY_TEXT</code> so the <code>YY_ECHO</code> for the "kludge"
     rule will actually write "mega-kludge".
 
     <p>Two notes regarding use of <code>yymore()</code>. First,
-    <code>yymore()</code> depends on the value of <code>yyleng</code>
+    <code>yymore()</code> depends on the value of <code>YY_LENG</code>
     correctly reflecting the size of the current token, so you must not modify
-    <code>yyleng</code> if you are using <code>yymore()</code>. Second,
+    <code>YY_LENG</code> if you are using <code>yymore()</code>. Second,
     the presence of <code>yymore()</code> in the scanner's action entails
     a minor performance penalty in the scanner's matching speed.
 
@@ -1059,10 +1059,10 @@ an action:
     <pre><!-- BEGIN example: "unread-character-parenthesized.lex" fragment=true indent=0 --><code>
     {
       int i;
-      /* Copy yytext because YY_UNREAD_CHARACTER() trashes yytext */
-      char *yycopy = strdup(yytext);
+      /* Copy YY_TEXT because YY_UNREAD_CHARACTER() trashes YY_TEXT */
+      char *yycopy = strdup(YY_TEXT);
       YY_UNREAD_CHARACTER(')');
-      for (i = yyleng - 1; i &gt;= 0; --i) {
+      for (i = YY_LENG - 1; i &gt;= 0; --i) {
         YY_UNREAD_CHARACTER(yycopy[i]);
       }
       YY_UNREAD_CHARACTER('(');
@@ -1077,8 +1077,8 @@ an action:
     <p>An important potential problem when using <code>YY_UNREAD_CHARACTER()</code>
     is that
     a call to <code>YY_UNREAD_CHARACTER()</code> <em>destroys</em> the contents of
-    <code>yytext</code>, starting with its rightmost character and devouring
-    one character to the left with each call. If you need the value of yytext
+    <code>YY_TEXT</code>, starting with its rightmost character and devouring
+    one character to the left with each call. If you need the value of YY_TEXT
     preserved after a call to <code>YY_UNREAD_CHARACTER()</code> (as in the above example),
     you must first copy it elsewhere.
 
@@ -1226,6 +1226,119 @@ the section <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
 <p>The scanner writes its <code>YY_ECHO</code> output to the
 <code>yyout</code> global (default, stdout), which may be redefined by
 the user simply by assigning it to some other <code>FILE</code> pointer.
+
+
+<h2 id="naming-conventions">Naming Conventions</h2>
+
+<p>The generated code output of <code>smflex</code> adheres to the
+following naming conventions.
+
+<p>In the C API:
+
+<ul>
+
+<li><p>All functions have names that begin with
+    "<code>yy_</code>" (lowercase, with underscore) and are
+    entirely lowercase with underscores after that.
+
+<li><p>All data members begin with "<code>yy_</code>".
+
+<li><p>All macros have names that begin with "<code>YY_</code>".
+    Furthermore, when a macro does the same job as a function
+    except for not requiring a <code>yy_lexer_t*</code> argument,
+    the macro name is the same as the function name except it is
+    entirely capitalized
+    (for example:
+    <a href="#YY_LESS_TEXT-macro"><code>YY_LESS_TEXT</code></a> and
+    <a href="#yy_less_text"><code>yy_less_text</code></a>).
+
+    <p>Similarly, when a macro provides access to a public data
+    member, but without specifying the <code>yy_lexer_t*</code>,
+    it has the same name as the member but entirely capitalized
+    (for example:
+    <a href="#YY_TEXT-macro"><code>YY_TEXT</code></a> and
+    <a href="#yy_text"><code>yy_text</code></a>).
+
+<li><p>All typedef names begin with "<code>yy_</code>" and
+    end with "<code>_t</code>".
+
+<li><p>All structure names begin with "<code>yy_</code>" and
+    end with "<code>_struct</code>".
+
+<li><p>All enumeration names begin with "<code>yy_</code>" and
+    end with "<code>_enum</code>".
+
+<li><p>All enumerator names begin with "<code>yy_err_</code>".
+
+</ul>
+
+<p>In the C++ API:
+
+<ul>
+
+<li><p>The one global scope class, <code>yyFlexLexer</code>,
+    begins with "<code>yy</code>".
+
+<li><p>All members of that class (except <code>LexError</code>)
+    begin with "<code>yym_</code>".
+
+</ul>
+
+<p>
+Every entity that appears at global scope (where any macro is regarded
+as being at global scope) in the generated header file,
+or is defined in the generated scanner file and has external linkage,
+has a lowercase "yy" prefix.  When the <code>-P</code> (prefix) option is used,
+the "yy" prefix is replaced with the specified string.
+
+<p>Exceptions:
+
+<ul>
+
+<li><p>The generated header has a multiple <code>#include</code> guard
+    symbol whose name depends on the name of the header.  No "YY_"
+    prefix is added to it.
+
+<li><p>When using <code>option c++</code>, the macro
+    <code>YY_NOEXCEPT</code> is defined.  Its prefix is not affected
+    by the <code>-P</code> option.
+
+</ul>
+
+<p>
+The rationale for these naming rules is:
+
+<ul>
+
+<li><p>The ubiquitous "yy" prefix ensures forward compatibility by
+    ensuring new names introduced by <code>smflex</code> will not
+    collide with user-defined identifiers, so long as users refrain
+    from using the "yy" or "YY" prefix on their names.
+
+<li><p>The exclusive use of uppercase for macros makes the presence of
+    macros apparent.  This helps reinforce that there is an underlying
+    general API (the functions with lowercase names) and a parallel set
+    of convenience macros (with uppercase names) that can be used from
+    section 2 rule actions, but not elsewhere.  Without a clear naming
+    convention, this could be confusing.
+
+<li><p>Overall consistency makes the rules easier to learn and use.
+
+<li><p>The underscore is important for the
+    <code>-P</code> (prefix) option.  Without an underscore, there is
+    no visual separation between the specified prefix and the name
+    that follows.  And users cannot simply put an underscore into the
+    prefix because, since some names do have the underscore, that
+    would produce names with two consecutive underscores, which are
+    reserved in C++.
+
+</ul>
+
+<p>Of course, the
+<a href="#option-flex-compat"><code>%option flex-compat</code></a>
+option introduces aliases that break these rules in many ways, thereby
+losing a significant portion of the benefits.  That why it is best to
+avoid long-term use of those aliases.
 
 
 <h2 id="yy_lexer_t">The yy_lexer_t structure</h2>
@@ -1456,8 +1569,8 @@ following public members:
 to associated fields without the need for an explicit object:
 
 <pre><code>
-    #define YY_TEXT           (yy_lexer-&gt;yy_text)
-    #define YY_LENG           (yy_lexer-&gt;yy_leng)
+    <span id="YY_TEXT-macro">#define YY_TEXT           (yy_lexer-&gt;yy_text)</span>
+    <span id="YY_LENG-macro">#define YY_LENG           (yy_lexer-&gt;yy_leng)</span>
     #define YY_CURRENT_BUFFER (yy_lexer-&gt;yy_current_buffer)
 </code></pre>
 
@@ -1695,7 +1808,7 @@ the floating-point number 123.456:
     expect-floats       YY_SET_START_STATE(expect);
 
     &lt;expect&gt;[0-9]+"."[0-9]+  {
-                          printf("found a float: %f\n", atof(yytext));
+                          printf("found a float: %f\n", atof(YY_TEXT));
                         }
     &lt;expect&gt;\n          {
                           /* That's the end of the line, so we need another
@@ -1705,7 +1818,7 @@ the floating-point number 123.456:
                         }
 
     [0-9]+              {
-                          printf("found an integer: %d\n", atoi(yytext));
+                          printf("found an integer: %d\n", atoi(YY_TEXT));
                         }
 
     "."                 printf("found a dot\n");
@@ -1796,7 +1909,7 @@ using exclusive start conditions, including expanded escape sequences
 
     &lt;str&gt;\\[0-7]{1,3} {
               /* Octal escape sequence. */
-              int result = (int)strtol(yytext+1, NULL /*endp*/, 8 /*base*/);
+              int result = (int)strtol(YY_TEXT+1, NULL /*endp*/, 8 /*base*/);
               assert(0 &lt;= result &amp;&amp; result &lt;= 0xFF);
               *string_buf_ptr++ = result;
             }
@@ -1804,7 +1917,7 @@ using exclusive start conditions, including expanded escape sequences
     &lt;str&gt;\\[0-9]+ {
               /* generate error - bad escape sequence; something
                * like '\48' or '\0777777' */
-              printf("bad escape sequence: \"%s\"\n", yytext);
+              printf("bad escape sequence: \"%s\"\n", YY_TEXT);
             }
 
     &lt;str&gt;\\n  *string_buf_ptr++ = '\n';
@@ -1813,10 +1926,10 @@ using exclusive start conditions, including expanded escape sequences
     &lt;str&gt;\\b  *string_buf_ptr++ = '\b';
     &lt;str&gt;\\f  *string_buf_ptr++ = '\f';
 
-    &lt;str&gt;\\(.|\n)  *string_buf_ptr++ = yytext[1];
+    &lt;str&gt;\\(.|\n)  *string_buf_ptr++ = YY_TEXT[1];
 
     &lt;str&gt;[^\\\n\"]+        {
-              char *p = yytext;
+              char *p = YY_TEXT;
               while (*p) {
                 *string_buf_ptr++ = *p++;
               }
@@ -2015,9 +2128,9 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
     &lt;incl&gt;[^\n]+      { /* got the include file name */
               yy_buffer_state_t *newbuf;
 
-              FILE *fp = fopen(yytext, "r");
+              FILE *fp = fopen(YY_TEXT, "r");
               if (!fp) {
-                fprintf(stderr, "Cannot open include file: \"%s\".\n", yytext);
+                fprintf(stderr, "Cannot open include file: \"%s\".\n", YY_TEXT);
                 exit(2);
               }
 
@@ -2171,7 +2284,7 @@ strings.  For example:
 <dd>
 <p>The macro <code>YY_USER_ACTION</code> can be defined to provide an
 action which is always executed prior to the matched rule's action. For
-example, it could be <code>#define</code>d to call a routine to convert <code>yytext</code> to
+example, it could be <code>#define</code>d to call a routine to convert <code>YY_TEXT</code> to
 lower-case. When <code>YY_USER_ACTION</code> is invoked, the variable
 <code>yy_act</code> gives the number of the matched rule; rules are numbered
 starting with 1. Suppose you want to profile how often each of your
@@ -2268,10 +2381,10 @@ the rule actions.
 
 <ul>
 
-<li><p><code>char *yytext</code> holds the text of the current token. It may
+<li><p><code>char *YY_TEXT</code> holds the text of the current token. It may
     be modified but not lengthened (you cannot append characters to the end).
 
-<li><p><code>int yyleng</code>
+<li><p><code>int YY_LENG</code>
     holds the length of the current token.
 
 <li><p><code>FILE *yyin</code>
@@ -2329,7 +2442,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
     %%
 
-    [0-9]+        yylval = atoi( yytext ); return TOK_NUMBER;
+    [0-9]+        yylval = atoi( YY_TEXT ); return TOK_NUMBER;
 </code></pre>
 
 
@@ -2356,7 +2469,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dd><p>Generate a scanner with the
     <a href="#yy_flex_debug"><code>yy_flex_debug</code></a> field.
 
-<dt><code>--flex-compat</code>
+<dt id="option-flex-compat"><code>--flex-compat</code>
 
 <dd><p>Activate some aliases in section 2 (rules) that provide partial
     compatibility with <code>flex</code>:
@@ -2365,6 +2478,12 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
       <tr>
         <th>Compatibility alias
         <th>New name
+      <tr>
+        <td><code>yytext</code>
+        <td><code>YY_TEXT</code>
+      <tr>
+        <td><code>yyleng</code>
+        <td><code>YY_LENG</code>
       <tr>
         <td><code>ECHO</code>
         <td><code>YY_ECHO</code>
@@ -2406,7 +2525,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dd><p>Generate a <em>case-insensitive</em>
     scanner. The case of letters given in the <code>smflex</code> input patterns
     will be ignored, and tokens in the input will be matched regardless
-    of case. The matched text given in <code>yytext</code> will have the
+    of case. The matched text given in <code>YY_TEXT</code> will have the
     preserved case (i.e., it will not be folded).
 
 <dt><code>-n</code>
@@ -3852,7 +3971,7 @@ one that's easier to implement) arises from the fact that the longer the
 tokens matched, the faster the scanner will run. This is because with long
 tokens the processing of most input characters takes place in the (short)
 inner scanning loop, and does not often have to go through the additional
-work of setting up the scanning environment (e.g., <code>yytext</code>)
+work of setting up the scanning environment (e.g., <code>YY_TEXT</code>)
 for the action. Recall the scanner for C comments:
 
 <pre><code>
@@ -3983,7 +4102,7 @@ rules which match <em>short</em> amounts of text if it's anticipated
 that the text will often include NUL's.
 
 <p>Another final note regarding performance:
-dynamically resizing <code>yytext</code>
+dynamically resizing <code>YY_TEXT</code>
 to accommodate huge tokens is a slow process because it
 requires that the (huge) token be rescanned from the beginning. Thus if
 performance is vital, you should attempt to match "large" quantities of
@@ -4102,12 +4221,12 @@ can be used to inspect the token:
 <dt><code>const char *yym_text()</code>
 
 <dd><p>returns the text of the most recently matched token, the equivalent
-    of <code>yytext</code>.
+    of <code>YY_TEXT</code>.
 
 <dt><code>int yym_leng()</code>
 
 <dd><p>returns the length of the most recently matched token, the equivalent
-    of <code>yyleng</code>.
+    of <code>YY_LENG</code>.
 
 <dt><code>int yym_lineno() const</code>
 
@@ -4373,7 +4492,7 @@ to be of continued value.
     <p>Replacement: Use <code>-I</code> explicitly if desired.
 
 <li><p><code>flex-2.5.4</code> accepts <code>%option array</code>,
-    which tells it to declare <code>yytext</code> as a static array
+    which tells it to declare <code>YY_TEXT</code> as a static array
     and copy scanned tokens into it, rather than it being a pointer
     into the read buffer.  This option has been removed, along with
     <code>%option pointer</code>, which was its opposite (and the
@@ -4715,22 +4834,24 @@ run-time support library.  That has been removed as detailed below.
 
 <h2 id="renamed-entities">Renamed Entities</h2>
 
-<p>Several entities have been renamed:
+<p>Many entities have been renamed.  Most of the renaming is motivated
+by the desire to have consistent, informative
+<a href="#naming-conventions">naming conventions</a>.  For cases where
+there is rationale beyond conformance to the naming conventions, that
+is explained.
 
 <ul>
+
+<li><p>The <code>yytext</code> and <code>yyleng</code> macros have
+    been renamed to <code>YY_TEXT</code> and <code>YY_LENG</code>.
+
+    <p><code>%option flex-compat</code> creates the old names as
+    aliases for the new names.
 
 <li><p>The <code>yyrestart</code> and
     <code>yylex</code> functions have been renamed to
     <code>yy_restart</code> and
     <code>yy_lex</code>, respectively.
-
-    <p>Rationale: I want to encourage the use of <code>-P</code>
-    (prefix).  That option only produces good-looking names if there
-    is an underscore separating the "yy" from the rest of the name
-    (and the prefix cannot end with an underscore, because that would
-    produce identifiers with two underscores in a row, which are
-    reserved in C++).
-    This also makes these functions consistent with the rest.
 
 <li><p>The <code>input()</code> and <code>yyinput()</code> macros have
     been renamed to <code>YY_READ_CHARACTER()</code>.
@@ -4765,9 +4886,6 @@ run-time support library.  That has been removed as detailed below.
 
 <li><p>The <code>ECHO</code> macro has been renamed to
     <code>YY_ECHO</code>.
-
-    <p>Rationale: This is a continuation of the theme of adding "YY_"
-    to all names.
 
     <p>With <code>%option flex-compat</code>, <code>ECHO</code> is
     available as an alias for <code>YY_ECHO</code>.
@@ -4858,8 +4976,6 @@ run-time support library.  That has been removed as detailed below.
 <li><p><code>yyterminate</code> has been renamed to
     <code>YY_TERMINATE</code>.
 
-    <p>Rationale: Naming convention.
-
     <p>The old name is available with
     <code>%option flex-compat</code>.
 
@@ -4885,6 +5001,14 @@ Renaming summary:
     <td><code>yywrap</code>
     <td><a href="#yy_wrap_function"><code>yy_wrap_function</code></a>
     <td>Replacement rather than rename.
+  <tr>
+    <td><code>yytext</code>
+    <td><code>YY_TEXT</code>
+    <td>Old name available with <code>%option flex-compat</code>.
+  <tr>
+    <td><code>yyleng</code>
+    <td><code>YY_LENG</code>
+    <td>Old name available with <code>%option flex-compat</code>.
   <tr>
     <td><code>input</code>
     <td><code>YY_READ_CHARACTER</code>
@@ -5399,7 +5523,7 @@ while the generated scanner is running:
     <dd><p>
     You used <code>YY_UNREAD_CHARACTER()</code> to push back so much
     text that the scanner's buffer could not hold both the pushed-back
-    text and the current token in <code>yytext</code>. Ideally the
+    text and the current token in <code>YY_TEXT</code>. Ideally the
     scanner should dynamically resize the buffer in this case, but at
     present it does not.
 
@@ -5439,7 +5563,7 @@ in <em>fixed</em> trailing context being turned into the more expensive
     xyz/def
 </code></pre>
 
-<p>Use of <code>YY_UNREAD_CHARACTER()</code> invalidates yytext and yyleng.
+<p>Use of <code>YY_UNREAD_CHARACTER()</code> invalidates YY_TEXT and YY_LENG.
 
 <p>Pattern-matching of NUL's is substantially slower than matching
 other characters.

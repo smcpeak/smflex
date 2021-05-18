@@ -28,9 +28,9 @@ include[ ]+         YY_SET_START_STATE(incl);
 <incl>[^\n]+      { /* got the include file name */
           yy_buffer_state_t *newbuf;
 
-          FILE *fp = fopen(yytext, "r");
+          FILE *fp = fopen(YY_TEXT, "r");
           if (!fp) {
-            fprintf(stderr, "Cannot open include file: \"%s\".\n", yytext);
+            fprintf(stderr, "Cannot open include file: \"%s\".\n", YY_TEXT);
             exit(2);
           }
 

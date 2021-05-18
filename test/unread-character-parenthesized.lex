@@ -15,10 +15,10 @@
     /* BEGIN: example fragment */
     {
       int i;
-      /* Copy yytext because YY_UNREAD_CHARACTER() trashes yytext */
-      char *yycopy = strdup(yytext);
+      /* Copy YY_TEXT because YY_UNREAD_CHARACTER() trashes YY_TEXT */
+      char *yycopy = strdup(YY_TEXT);
       YY_UNREAD_CHARACTER(')');
-      for (i = yyleng - 1; i >= 0; --i) {
+      for (i = YY_LENG - 1; i >= 0; --i) {
         YY_UNREAD_CHARACTER(yycopy[i]);
       }
       YY_UNREAD_CHARACTER('(');

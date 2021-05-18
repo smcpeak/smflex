@@ -13,31 +13,31 @@ ID       [a-zA-Z][a-zA-Z0-9]*
 %%
 
 {DIGIT}+              {
-                        printf("An integer: %s (%d)\n", yytext,
-                               atoi(yytext));
+                        printf("An integer: %s (%d)\n", YY_TEXT,
+                               atoi(YY_TEXT));
                       }
 
 {DIGIT}+"."{DIGIT}*   {
-                        printf("A float: %s (%g)\n", yytext,
-                               atof(yytext));
+                        printf("A float: %s (%g)\n", YY_TEXT,
+                               atof(YY_TEXT));
                       }
 
   /* Comments can go between rules, but must be indented. */
 if|then|begin|end|procedure|function|program        {
-                        printf("A keyword: %s\n", yytext);
+                        printf("A keyword: %s\n", YY_TEXT);
                       }
 
-{ID}                  printf("An identifier: %s\n", yytext);
+{ID}                  printf("An identifier: %s\n", YY_TEXT);
 
-"'"[^'\n]*"'"         printf("A string: %s\n", yytext);
+"'"[^'\n]*"'"         printf("A string: %s\n", YY_TEXT);
 
-[+*/()-]              printf("An operator: %s\n", yytext);
-[;.,]                 printf("A punctuator: %s\n", yytext);
+[+*/()-]              printf("An operator: %s\n", YY_TEXT);
+[;.,]                 printf("A punctuator: %s\n", YY_TEXT);
 
 "{"[^}]*"}"           /* eat up comments, including multi-line */
 [ \t\n]+              /* eat up whitespace */
 
-.                     printf("Unrecognized character: %s\n", yytext);
+.                     printf("Unrecognized character: %s\n", YY_TEXT);
 
 %%
 

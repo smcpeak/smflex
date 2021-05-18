@@ -71,7 +71,7 @@ static void lexer_emit(enum Lexer1TokenType, char const *text, int len);
 /* Record a token fragment. */
 static void collector_append(char const *text, int len);
 
-#define COLLECTOR yytext, yyleng
+#define COLLECTOR YY_TEXT, YY_LENG
 
 %}
 
@@ -162,55 +162,55 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
 
   /* identifier: e.g. foo */
 {LETTER}{ALNUM}* {
-  lexer_emit(L1_IDENTIFIER, yytext, yyleng);
+  lexer_emit(L1_IDENTIFIER, YY_TEXT, YY_LENG);
 }
 
   /* integer literal; dec, oct, or hex */
 [1-9][0-9]*{INT_SUFFIX}?           |
 [0][0-7]*{INT_SUFFIX}?             |
 [0][xX][0-9A-Fa-f]+{INT_SUFFIX}?   {
-  lexer_emit(L1_INT_LITERAL, yytext, yyleng);
+  lexer_emit(L1_INT_LITERAL, YY_TEXT, YY_LENG);
 }
 
   /* floating literal */
 {DIGITS}"."{DIGITS}?([eE]{SIGN}?{DIGITS})?{FLOAT_SUFFIX}?   |
 {DIGITS}"."?([eE]{SIGN}?{DIGITS})?{FLOAT_SUFFIX}?	    |
 "."{DIGITS}([eE]{SIGN}?{DIGITS})?{FLOAT_SUFFIX}?	    {
-  lexer_emit(L1_FLOAT_LITERAL, yytext, yyleng);
+  lexer_emit(L1_FLOAT_LITERAL, YY_TEXT, YY_LENG);
 }
 
   /* ----- string literal ------- */
   /* intial */
 "L"?{QUOTE}   {
-  collector_append(yytext, yyleng);
+  collector_append(YY_TEXT, YY_LENG);
   YY_SET_START_STATE(ST_STRING);
 }
 
   /* continuation */
 <ST_STRING>({STRCHAR}|{ESCAPE})*   {
-  collector_append(yytext, yyleng);
+  collector_append(YY_TEXT, YY_LENG);
 }
 
   /* final */
 <ST_STRING>{QUOTE} {
-  collector_append(yytext, yyleng);
+  collector_append(YY_TEXT, YY_LENG);
   lexer_emit(L1_STRING_LITERAL, COLLECTOR);
   YY_SET_START_STATE(INITIAL);
 }
 
   /* dsw: user-defined qualifier; example: $tainted */
 \${ALNUM}+ {
-  lexer_emit(L1_UDEF_QUAL, yytext, yyleng);
+  lexer_emit(L1_UDEF_QUAL, YY_TEXT, YY_LENG);
 }
 
   /* final, error */
 <ST_STRING>{EOL}   |
 <ST_STRING><<EOF>> {
-  if (yytext[0] == '\n') {
-    collector_append(yytext, yyleng);
+  if (YY_TEXT[0] == '\n') {
+    collector_append(YY_TEXT, YY_LENG);
   }
   else {
-    /* when matching <<EOF>>, yytext[0]=0 and yyleng=1 (possibly
+    /* when matching <<EOF>>, YY_TEXT[0]=0 and YY_LENG=1 (possibly
      * a bug in flex; its man page doesn't specify what it does), so we
      * get an extra NUL in the collected token, which I don't want */
   }
@@ -218,7 +218,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
   lexer_emit(L1_STRING_LITERAL, COLLECTOR);
   YY_SET_START_STATE(INITIAL);
 
-  if (yytext[0] != '\n') {
+  if (YY_TEXT[0] != '\n') {
     YY_TERMINATE();     	  /* flex man page says to do this for <<EOF>> */
   }
 }
@@ -226,7 +226,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
 
   /* character literal */
 "L"?{TICK}({CCCHAR}|{ESCAPE})*{TICK}   {
-  lexer_emit(L1_CHAR_LITERAL, yytext, yyleng);
+  lexer_emit(L1_CHAR_LITERAL, YY_TEXT, YY_LENG);
 }
 
 
@@ -236,7 +236,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
 ".*"|"->*"|"/"|"%"|"<<"|">>"|"<"|"<="|">"|">="     	         |
 "=="|"!="|"^"|"|"|"&&"|"||"|"?"|":"|"="|"*="|"/="|"%="|"+="      |
 "-="|"&="|"^="|"|="|"<<="|">>="|","|"..."|";"|"{"|"}"|"==>"      {
-  lexer_emit(L1_OPERATOR, yytext, yyleng);
+  lexer_emit(L1_OPERATOR, YY_TEXT, YY_LENG);
 }
 
   /* preprocessor */
@@ -245,36 +245,36 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
    * I want to deal with that (I originally was using '^', but that
    * interacts badly with the whitespace rule) */
 "#"{PPCHAR}*({BACKSL}{NL}{PPCHAR}*)*   {
-  lexer_emit(L1_PREPROCESSOR, yytext, yyleng);
+  lexer_emit(L1_PREPROCESSOR, YY_TEXT, YY_LENG);
 }
 
   /* whitespace */
   /* 10/20/02: added '\r' to accomodate files coming from Windows */
 [ \t\n\f\v\r]+  {
-  lexer_emit(L1_WHITESPACE, yytext, yyleng);
+  lexer_emit(L1_WHITESPACE, YY_TEXT, YY_LENG);
 }
 
   /* C++ comment */
   /* we don't match the \n because that way this works at EOF */
 "//"{NOTNL}*    {
-  lexer_emit(L1_COMMENT, yytext, yyleng);
+  lexer_emit(L1_COMMENT, YY_TEXT, YY_LENG);
 }
 
   /* ------- C comment --------- */
   /* initial */
 "/""*"     {
-  collector_append(yytext, yyleng);
+  collector_append(YY_TEXT, YY_LENG);
   YY_SET_START_STATE(ST_C_COMMENT);
 }
 
   /* continuation */
 <ST_C_COMMENT>([^*]|"*"[^/])*   {
-  collector_append(yytext, yyleng);
+  collector_append(YY_TEXT, YY_LENG);
 }
 
   /* final */
 <ST_C_COMMENT>"*/"     {
-  collector_append(yytext, yyleng);
+  collector_append(YY_TEXT, YY_LENG);
   lexer_emit(L1_COMMENT, COLLECTOR);
   YY_SET_START_STATE(INITIAL);
 }
@@ -287,7 +287,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
 
   /* illegal */
 .  {
-  lexer_emit(L1_ILLEGAL, yytext, yyleng);
+  lexer_emit(L1_ILLEGAL, YY_TEXT, YY_LENG);
 }
 
 

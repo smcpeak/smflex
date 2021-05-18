@@ -56,20 +56,20 @@ WS          [ \t\n]
   /* 'id' attributes define anchors. */
 id=\"[^"]+\"       {
                      assert(numAnchors < MAX_ANCHORS);
-                     anchors[numAnchors++] = my_strndup(yytext+4, yyleng-5);
+                     anchors[numAnchors++] = my_strndup(YY_TEXT+4, YY_LENG-5);
                    }
 
   /* Intra-document link. */
 href=\"#[^"]+\"    {
                      assert(numLinks < MAX_LINKS);
                      links[numLinks].lineNumber = yylineno;
-                     links[numLinks].anchor = my_strndup(yytext+7, yyleng-8);
+                     links[numLinks].anchor = my_strndup(YY_TEXT+7, YY_LENG-8);
                      numLinks++;
                    }
 
   /* Relative link to a local file.  See if we can open it. */
 href=\"[^:"]+\"    {
-                     char *fname = my_strndup(yytext+6, yyleng-7);
+                     char *fname = my_strndup(YY_TEXT+6, YY_LENG-7);
                      FILE *fp = fopen(fname, "r");
                      if (!fp) {
                        printf("Link on line %d to \"%s\": cannot open file.\n",
