@@ -307,9 +307,8 @@ and reference sections:
 <li><a href="#performance-considerations">Performance Considerations</a>:
     how to make your scanner go as fast as possible
 
-<li><a href="#generating-cpp-scanners">Generating C++ Scanners</a>:
-    the (experimental) facility for generating C++
-    scanner classes
+<li><a href="#cpp-api">C++ API</a>: The optional C++ API
+    for running generated scanners.
 
 <li><a href="#incompatibilities-with-flex">Incompatibilities with Flex</a>:
     how Scott McPeak's <code>smflex</code> differs from
@@ -1161,7 +1160,7 @@ parameter.
 
 <p>TODO: Rename this section to "The C API".
 
-<p>The output of <code>smflex</code> is the file <code>lex.yy.c</code>,
+<p id="yy_lex">The output of <code>smflex</code> is the file <code>lex.yy.c</code>,
 which contains the scanning routine <code>yy_lex()</code>, a number of
 tables used by it for matching tokens, and a number of auxiliary routines
 and macros. By default, <code>yy_lex()</code> is defined as follows:
@@ -2673,8 +2672,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dt><code>-+</code>
 
 <dd><p>Generate a scanner with a C++ rather than C interface. See
-    <a href="#generating-cpp-scanners">Generating C++ Scanners</a>
-    for details.
+    <a href="#cpp-api">C++ API</a> for details.
 
 <dt><code>-C[aefFmr]*</code>
 
@@ -2814,11 +2812,25 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <dt><code>-ooutput</code>
 
-<dd><p>Write the scanner to the file <code>output</code>
-    instead of <code>lex.yy.c</code>.  When using <code>-+</code>,
-    the generated header file is written to the same name, except its
-    extension is replaced with <code>.h</code> (if there is no
+<dd><p>Write the scanner implementation to the file <code>output</code>
+    instead of <code>lex.yy.c</code>.  Also write the scanner header
+    file to <code>output</code>, except with its extension changed to
+    <code>.h</code> (if there is no
     extension, <code>.h</code> is appended).
+
+    <p>
+    For example, <code>-ohello.c</code> generates
+    <code>hello.c</code> and <code>hello.h</code>.
+
+    <p>
+    <strong>Recommendation</strong>: Specify an output file that is
+    the same name as the input file except with <code>.c</code> or
+    <code>.cc</code> appended.  This way, the name of the source file
+    is embedded in the name of the generated file, making the
+    relationship clear.  For example, if the scanner source file is
+    called <code>hello.lex</code>, then you should specify
+    <code>-ohello.lex.c</code> to generate <code>hello.lex.c</code>
+    and <code>hello.lex.h</code>.
 
 <dt id="prefix-option"><code>-Pprefix</code>
 
@@ -2845,7 +2857,9 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     <p><strong>Recommendation</strong>: Always use <code>-P</code>
     or its equivalent <code>%option prefix</code>.  You never know
     when you (or someone else) will want to combine two scanners in
-    one program, and renaming afterward can be a hassle.
+    one program, and renaming afterward can be a hassle.  If the
+    name of your scanner definition is <code>hello.lex</code>, then
+    specify <code>-Phello</code>.
 
 </dl>
 
@@ -2966,7 +2980,7 @@ option). It informs <code>smflex</code> that you have derived
 <code>smflex</code> will place your actions in the member function
 <code>foo::yym_lex()</code> instead of <code>yyFlexLexer::yym_lex()</code>.
 See
-<a href="#generating-cpp-scanners">Generating C++ Scanners</a>
+<a href="#cpp-api">C++ API</a>
 for additional information.
 
 <p>Certain <code>smflex</code> functions are only generated if their
@@ -4119,43 +4133,40 @@ about 8K characters per token.
 
 
 <!-- ======================================================= -->
-<h1 id="generating-cpp-scanners">GENERATING C++ SCANNERS</h1>
+<h1 id="cpp-api">C++ API</h1>
 
 <p><code>smflex</code> provides two different ways to generate scanners
-for use with C++. The first way is to simply compile a C-interface scanner generated
-by <code>smflex</code> using a C++ compiler instead of a C compiler. You
-should not encounter any compilations errors (please report any you
-find). You can
+for use with C++. The first way is to simply compile a scanner that
+uses the C API using a C++ compiler instead of a C compiler.  You can
 then use C++ code in your rule actions instead of C code.
 
 <p>Alternatively, you can use <code>smflex</code> to generate a
-C++-interface scanner class by using the <code>-+</code> option (or,
-equivalently, <code>%option c++</code>).  When using this option,
-<code>smflex</code> generates <em>two</em> output files, by default called
-<code>lex.yy.h</code> and <code>lex.yy.cc</code>.  You can use
-<code>-o</code> or <code>%option outfile</code> to change the name of
-the <code>.cc</code> file; the <code>.h</code> file name then is computed
-by replacing the former's extension with <code>.h</code>.
+scanner with a C++ API by using the <code>-+</code> option (or,
+equivalently, <code>%option c++</code>).  That is what the
+remainder of this section describes.
 
-<p>The header file defines a C++ class, by default called
-<code>yyFlexLexer</code>, that encapsulates the scanner state.  Among
-other things, that means you can instantiate more than one scanner
-instance at a time.  The name of the scanner class can be changed with
+<p>The header file defines a class, by default called
+<code>yyFlexLexer</code>, that acts as a wrapper around
+<a href="#yy_lexer_t"><code>yy_lexer_t</code></a>.
+The name of the scanner class can be changed with
 the <a href="#prefix-option"><code>-P</code></a> command line option or
 the <code>%option prefix</code> input file option: a specified prefix
 of <code>foo</code> generates a class called <code>fooFlexLexer</code>.
-Furthermore, if you
-use <code>%option yyclass</code>, then you can define a class that
-inherits <code>yyFlexLexer</code> in order to add additional members.
 
-<p>The C++ file implements the methods of the scanner class, the most
-important being the <code>yym_lex()</code> method, which returns scanned
-tokens one at a time.  When <code>option %yyclass</code> is used, the
-<code>yym_lex()</code> method is a member of the derived class, so the
+<p>The generated scanner file implements the methods of the scanner class, the most
+important being the <code>yym_lex()</code> method, which runs the
+rule actions and, if the actions return token codes, returns those
+codes one at a time.
+
+<p>
+If you specify <code>%option yyclass="DerivedClass"</code>, then the
+<code>yym_lex()</code> method is emitted as a member of
+<code>DerivedClass</code>.  You then define <code>DerivedClass</code>
+and have it inherit <code>yyFlexLexer</code>.  This way, the rule
 actions you write can access all of its members.
 
-<p>The following scanner class methods manage the process of running the
-scanner over input:
+<p>The following <code>yyFlexLexer</code> methods manage the process of
+running the scanner over input:
 
 <dl>
 
@@ -4167,7 +4178,8 @@ scanner over input:
 
 <dt><code>int yym_lex()</code>
 
-<dd><p>performs the same role as <code>yy_lex()</code> does for ordinary <code>smflex</code>
+<dd><p>performs the same role as <a href="#yy_lex"><code>yy_lex</code></a>
+    does for C API
     scanners: it scans the input stream, consuming tokens, until a rule's
     action returns a value.
 
@@ -4223,18 +4235,18 @@ can be used to inspect the token:
 
 <dt><code>const char *yym_text()</code>
 
-<dd><p>returns the text of the most recently matched token, the equivalent
-    of <code>YY_TEXT</code>.
+    <dd><p>Return the text of the most recently matched token, the equivalent
+    of <a href="#yy_text"><code>yy_text</code></a>.
 
 <dt><code>int yym_leng()</code>
 
-<dd><p>returns the length of the most recently matched token, the equivalent
-    of <code>YY_LENG</code>.
+    <dd><p>Return the length of the most recently matched token, the equivalent
+    of <a href="#yy_leng"><code>yy_leng</code></a>.
 
 <dt><code>int yym_lineno() const</code>
 
-<dd><p>returns the current input line number.  This method only exists
-    if <code>%option yylineno</code> has been used.
+    <dd><p>Return the current input line number, like
+    <a href="#yy_lineno"><code>yy_lineno</code></a>.
 
 </dl>
 
@@ -4296,43 +4308,22 @@ can be used to inspect the token:
 
 </dl>
 
-<p>In addition, <code>yyFlexLexer</code> defines the following protected
-virtual functions which you can redefine in derived classes to adjust
-how the scanner gets access to its input.  By overriding these,
-<code>yy_input_stream</code> and <code>yy_output_stream</code> can be bypassed entirely:
+<p>These methods, which can be overridden in a derived class, are used
+by the scanner engine to read input and write output:
 
 <dl>
 
-<dt><code>virtual int yym_LexerInput(char *buf, int max_size)</code>
+<dt><code>virtual int yym_read_input(void *dest, int size);</code>
 
-<dd><p>reads up to <code>max_size</code> characters into <code>buf</code> and
-    returns the number of characters read. To indicate end-of-input, return 0
-    characters.
+    <dd><p>This works like
+    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
 
-    <p>The base class implementation tests
-    <code>yy_current_buffer-&gt;yy_is_interactive</code>
-    to decide whether to read input one character at a time.  If you
-    override this method, you may wish to do likewise.
+<dt><code>virtual int yym_write_output(void const *dest, int size);</code>
 
-<dt><code>virtual void yym_LexerOutput(const char *buf, int size)</code>
-
-<dd><p>writes out <code>size</code> characters from the buffer
-    <code>buf</code>, which, while NUL-terminated, may also contain "internal"
-    NUL's if the scanner's rules can match text with NUL's in them.
-
-<dt><code>virtual void yym_LexerError(const char *msg)</code>
-
-<dd><p>reports a fatal error message. The default version of this function
-    writes the message to the stream <code>cerr</code> and exits.
+    <dd><p>Like
+    <a href="#yy_write_output_function"><code>yy_write_output_function</code></a>.
 
 </dl>
-
-<p>Note that a <code>yyFlexLexer</code> object contains its
-<em>entire</em> scanning state. Thus you can use such objects to create
-reentrant scanners. You can instantiate multiple instances of the same
-<code>yyFlexLexer</code> class, and you can also combine multiple C++
-scanner classes together in the same program using the <code>-P</code>
-option discussed above.
 
 <p>Here is an <a href="test/cpp-manual-example.lexpp">example</a>
 of a simple C++ scanner:
