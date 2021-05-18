@@ -1138,10 +1138,10 @@ an action:
     <code>yy_flush_buffer()</code> function, described in
     <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
 
-<li><p><code>yyterminate()</code>
+<li id="YY_TERMINATE-macro"><p><code>YY_TERMINATE()</code>
     can be used in lieu of a return statement in an action. It
     terminates the scanner and returns a 0 to the scanner's caller,
-    indicating "all done". By default, <code>yyterminate()</code> is
+    indicating "all done". By default, <code>YY_TERMINATE()</code> is
     also called when an end-of-file is encountered. It is a macro and
     may be redefined.
 
@@ -2048,7 +2048,7 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
 
               else {
                 /* All done. */
-                yyterminate();
+                YY_TERMINATE();
               }
             }
 </code><!-- END example --></pre>
@@ -2120,7 +2120,7 @@ by doing one of four things:
 
 <li><p>executing a <code>return</code> statement;
 
-<li><p>executing the special <code>yyterminate()</code> action;
+<li><p>executing the special <code>YY_TERMINATE()</code> action;
 
 <li><p>or, switching to a new buffer using <code>yy_switch_to_buffer()</code>
     as shown in the example in
@@ -2150,13 +2150,13 @@ strings.  For example:
 
     &lt;quote&gt;&lt;&lt;EOF&gt;&gt;   {
                error("unterminated quote");
-               yyterminate();
+               YY_TERMINATE();
              }
     &lt;&lt;EOF&gt;&gt;  {
                if (*++filelist)
                  yyin = fopen(*filelist, "r");
                else
-                 yyterminate();
+                 YY_TERMINATE();
              }
 </code></pre>
 
@@ -4855,6 +4855,14 @@ run-time support library.  That has been removed as detailed below.
     <p>The old name is available with
     <code>%option flex-compat</code>.
 
+<li><p><code>yyterminate</code> has been renamed to
+    <code>YY_TERMINATE</code>.
+
+    <p>Rationale: Naming convention.
+
+    <p>The old name is available with
+    <code>%option flex-compat</code>.
+
 </ul>
 
 <p>
@@ -4916,10 +4924,14 @@ Renaming summary:
   <tr>
     <td><code>YY_FLUSH_BUFFER</code>
     <td><code>YY_FLUSH_CURRENT_BUFFER</code>
-    <td>Old name is not defined, and there is no alias.
+    <td>No alias available.
   <tr>
     <td><code>YY_AT_BOL</code>
     <td><code>YY_GET_BOL</code>
+    <td>Old name available with <code>%option flex-compat</code>.
+  <tr>
+    <td><code>yyterminate</code>
+    <td><a href="#YY_TERMINATE-macro"><code>YY_TERMINATE</code></a>
     <td>Old name available with <code>%option flex-compat</code>.
 </table>
 

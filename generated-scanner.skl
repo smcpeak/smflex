@@ -42,8 +42,10 @@
 #define YY_SMFLEX_MINOR_VERSION 0
 
 
-/* Returned upon end-of-file. */
-#define YY_NULL 0
+/* Returned value from yy_lex() upon end-of-file.  This macro is used
+ * to make the occurrences more readily identifiable; the value must
+ * be specifically 0 because that is what the documentation uses. */
+#define YY_EOF_TOKEN_CODE 0
 
 /* Promotes a possibly negative, possibly signed char to an unsigned
  * integer for use as an array index.  If the signed char is negative,
@@ -69,6 +71,10 @@
 /* Special action meaning "start processing a new file". */
 #define YY_NEW_FILE yy_restart(yy_lexer, yy_lexer->yy_input_stream)
 
+/* Two copies of this character are placed into the read buffer,
+ * right after the data that was read from the input.  This is used
+ * to signal the state machine logic that it has reached the end of
+ * the buffered data, so it must stop and read more. */
 #define YY_END_OF_BUFFER_CHAR 0
 
 /* Size of default input buffer. */
@@ -415,12 +421,12 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
                            yy_lexer->yy_text, yy_lexer->yy_leng))
 #endif
 
-/* No semi-colon after return; correct usage is to write "yyterminate();" -
+/* No semi-colon after return; correct usage is to write "YY_TERMINATE();" -
  * we don't want an extra ';' after the "return" because that will cause
  * some compilers to complain about unreachable statements.
  */
-#ifndef yyterminate
-#  define yyterminate() return YY_NULL
+#ifndef YY_TERMINATE
+#  define YY_TERMINATE() return YY_EOF_TOKEN_CODE
 #endif
 
 /* Number of entries by which start-condition stack grows, on top of
@@ -511,6 +517,7 @@ int yyFlexLexer::yym_lex()
 #     define BEGIN(s) YY_SET_START_STATE(s)
 #     define YY_START YY_GET_START_STATE()
 #     define YY_AT_BOL() YY_GET_BOL()
+#     define yyterminate() YY_TERMINATE()
 %if option_yy_read_character
 #     define input() YY_READ_CHARACTER()
 #     define yyinput() YY_READ_CHARACTER()
@@ -689,8 +696,8 @@ do_action:      /* This label is used only to access EOF actions. */
                  * yy_c_buf_p so that if some total
                  * hoser (like smflex itself) wants to
                  * call the scanner after we return the
-                 * YY_NULL, it'll still work - another
-                 * YY_NULL will get returned.
+                 * YY_EOF_TOKEN_CODE, it'll still work - another
+                 * YY_EOF_TOKEN_CODE will get returned.
                  */
                 yy_lexer->yy_c_buf_p = yy_lexer->yy_text + YY_MORE_ADJ;
 
@@ -1990,6 +1997,7 @@ int main()
 #undef BEGIN
 #undef YY_START
 #undef YY_AT_BOL
+#undef yyterminate
 %if option_yy_read_character
 #undef input
 #undef yyinput
@@ -2014,7 +2022,7 @@ int main()
 #undef YY_FLUSH_CURRENT_BUFFER
 #undef YY_GET_BOL
 #undef YY_ECHO
-#undef yyterminate          /* TODO: Capitalize, underscore. */
+#undef YY_TERMINATE
 #undef yytext               /* TODO: Capitalize, underscore. */
 #undef yyleng               /* TODO: Capitalize, underscore. */
 %if option_yy_read_character

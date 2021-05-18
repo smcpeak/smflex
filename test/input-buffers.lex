@@ -61,6 +61,6 @@ include[ ]+         YY_SET_START_STATE(incl);
 
           else {
             /* All done. */
-            yyterminate();
+            YY_TERMINATE();
           }
         }

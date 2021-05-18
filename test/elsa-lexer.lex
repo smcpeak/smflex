@@ -515,7 +515,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
    * and there is no newline before the EOF */
 "L"?{QUOTE}({STRCHAR}|{ESCAPE})*{BACKSL}? {
   err("unterminated string literal");
-  yyterminate();
+  YY_TERMINATE();
 }
 
 
@@ -540,7 +540,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
     err("at EOF, unterminated string literal; support for newlines in string "
         "literals is presently turned on, maybe the missing quote should have "
         "been much earlier in the file?");
-    yyterminate();
+    YY_TERMINATE();
   }
 }
 
@@ -559,7 +559,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
   /* unterminated character literal */
 "L"?{TICK}({CCCHAR}|{ESCAPE})*{BACKSL}?  {
   err("unterminated character literal");
-  yyterminate();
+  YY_TERMINATE();
 }
 
 
@@ -611,7 +611,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
   /* unterminated C comment */
 "/""*"([^*]|"*"*[^*/])*"*"*        {
   err("unterminated /""*...*""/ comment");
-  yyterminate();
+  YY_TERMINATE();
 }
 
 
@@ -621,7 +621,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
 }
 
 <<EOF>> {
-  yyterminate();
+  YY_TERMINATE();
 }
 
 

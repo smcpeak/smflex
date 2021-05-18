@@ -1218,7 +1218,7 @@ void make_tables()
 
   if (did_eof_rule) {
     indent_up();
-    indent_puts("yyterminate();");
+    indent_puts("YY_TERMINATE();");
     indent_down();
   }
 

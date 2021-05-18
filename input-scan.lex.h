@@ -207,8 +207,8 @@ struct input_scan_lexer_struct {
    * be scanned, not including the two extra EOB markers.
    *
    * Invariant: 0 <= yy_n_chars <= yy_current_buffer->yy_buf_size
-   * Invariant: yy_current_buffer->yy_ch_buf[yy_n_chars+0] == 0
-   * Invariant: yy_current_buffer->yy_ch_buf[yy_n_chars+1] == 0
+   * Invariant: yy_current_buffer->yy_ch_buf[yy_n_chars+0] == YY_END_OF_BUFFER_CHAR
+   * Invariant: yy_current_buffer->yy_ch_buf[yy_n_chars+1] == YY_END_OF_BUFFER_CHAR
    */
   int yy_n_chars;
 

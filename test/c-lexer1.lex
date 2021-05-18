@@ -219,7 +219,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
   YY_SET_START_STATE(INITIAL);
 
   if (yytext[0] != '\n') {
-    yyterminate();     	  /* flex man page says to do this for <<EOF>> */
+    YY_TERMINATE();     	  /* flex man page says to do this for <<EOF>> */
   }
 }
 

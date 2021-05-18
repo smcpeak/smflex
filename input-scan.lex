@@ -348,7 +348,7 @@ LEXOPT          [aceknopr]
         <<EOF>>         {
                           mark_prolog();
                           sectnum = 0;
-                          yyterminate(); /* to stop the parser */
+                          YY_TERMINATE(); /* to stop the parser */
                         }
 }
 
@@ -444,7 +444,7 @@ LEXOPT          [aceknopr]
         ^"%%".*         {
                           sectnum = 3;
                           YY_SET_START_STATE(SECT3);
-                          yyterminate(); /* to stop the parser */
+                          YY_TERMINATE(); /* to stop the parser */
                         }
 
         "["({FIRST_CCL_CHAR}|{CCL_EXPR})({CCL_CHAR}|{CCL_EXPR})*        {
@@ -679,7 +679,7 @@ LEXOPT          [aceknopr]
 
 <COMMENT,ACTION,ACTION_STRING><<EOF>>   {
                           synerr(_("EOF encountered inside an action"));
-                          yyterminate();
+                          YY_TERMINATE();
                         }
 
 
@@ -695,7 +695,7 @@ LEXOPT          [aceknopr]
 
 <SECT3>{
         .*(\n?)         out(yytext);   /* Copy section 3 to output. */
-        <<EOF>>         sectnum = 0; yyterminate();
+        <<EOF>>         sectnum = 0; YY_TERMINATE();
 }
 
 <*>.|\n                 format_synerr(_("bad character: %s"), yytext);

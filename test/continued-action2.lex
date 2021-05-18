@@ -3,6 +3,9 @@
 
 %option main
 
+/* Toss in a test of the 'yyterminate' compatibility macro. */
+%option flex-compat
+
 %%
 
 <<EOF>> |
