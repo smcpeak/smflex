@@ -52,7 +52,7 @@
   \\(.|\n)  *string_buf_ptr++ = YY_TEXT[1];
 
   [^\\\n\"]+        {
-          char *p = YY_TEXT;
+          char const *p = YY_TEXT;
           while (*p) {
             *string_buf_ptr++ = *p++;
           }

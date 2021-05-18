@@ -109,26 +109,6 @@ struct input_scan_lexer_struct {
    * NULL. */
   void *yy_client_data;
 
-  /* After a rule pattern has been matched, this is set to point at the
-   * matched text within 'yy_current_buffer', temporarily
-   * NUL-terminated.
-   *
-   * This pointer is only valid while an action is executing, or between
-   * when input_scan_lex() returns a non-zero value and the next invocation of a
-   * input_scan_lex(), or any function that modifies the read buffer except for
-   * input_scan_less_text().
-   *
-   * NOTE: Within section 2 actions, there is also a 'YY_TEXT' macro
-   * that expands to 'yy_lexer->yy_text'. */
-  char *yy_text;
-
-  /* After a rule pattern has been matched, this is set to the length
-   * of the matched text, in bytes.
-   *
-   * NOTE: As with 'yy_text', this field has an associated 'YY_LENG'
-   * macro active in section 2 actions. */
-  int yy_leng;
-
   /* Input source.  This is initially a FILE*, namely 'stdin'. */
   input_scan_input_stream_t *yy_input_stream;
 
@@ -188,6 +168,26 @@ struct input_scan_lexer_struct {
     input_scan_error_code_t code, char const *detail);
 
   /* -------- Semi-public members -------- */
+  /* After a rule pattern has been matched, this is set to point at the
+   * matched text within 'yy_current_buffer', temporarily
+   * NUL-terminated.
+   *
+   * This pointer is only valid while an action is executing, or between
+   * when input_scan_lex() returns a non-zero value and the next invocation of a
+   * input_scan_lex(), or any function that modifies the read buffer except for
+   * input_scan_less_text().
+   *
+   * NOTE: Within section 2 actions, there is also a 'YY_TEXT' macro
+   * that expands to 'yy_lexer->yy_text'. */
+  char const *yy_text;
+
+  /* After a rule pattern has been matched, this is set to the length
+   * of the matched text, in bytes.
+   *
+   * NOTE: As with 'yy_text', this field has an associated 'YY_LENG'
+   * macro active in section 2 actions. */
+  int yy_leng;
+
   /* The input source we are currently reading from, and a buffer
    * in front of it. */
   input_scan_buffer_state_t *yy_current_buffer;

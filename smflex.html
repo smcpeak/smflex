@@ -914,13 +914,8 @@ statements to return a value to whatever routine called
 continues processing tokens from where it last left off until it either
 reaches the end of the file or executes a return.
 
-<p>Actions are free to modify <code>YY_TEXT</code> except for
-lengthening it (adding characters to its end--these will overwrite
-later characters in the input stream).
-
-<p>Actions are free to modify <code>YY_LENG</code> except they should
-not do so if the action also includes use of <code>yymore()</code>
-(see below).
+<p>Actions must not directly change <code>YY_TEXT</code> (either the pointer
+value or its pointed-to contents) nor <code>YY_LENG</code>.
 
 
 <h2 id="action-macros">Action Macros</h2>
@@ -1363,20 +1358,6 @@ following public members:
     associate any additional data with the <code>yy_lexer_t</code>
     object.  It is initially <code>NULL</code>.
 
-<dt id="yy_text"><code>char *yy_text;</code>
-
-    <dd><p>
-    After a rule pattern has been matched, this points at the matched
-    text within the scanning buffer.  It is NUL-terminated.  It is only
-    valid while an action is executing; you must make a copy of the
-    data to use it for longer than that.
-
-<dt id="yy_leng"><code>int yy_leng;</code>
-
-    <dd><p>
-    When <code>yy_text</code> is valid, <code>yy_leng</code> gives the
-    length of the matched text, in bytes.
-
 <dt id="yy_input_stream"><code>yy_input_stream_t *yy_input_stream;</code>
 
     <dd><p>
@@ -1550,6 +1531,28 @@ following public members:
     reaches the end of its input buffer (or encounters a NUL; at this point,
     the two look the same as far as the scanner is concerned), or reaches
     an end-of-file.
+
+</dl>
+
+<p><code>yy_lexer_t</code> contains the following "semi-public"
+members, meaning it is permissible to directly read them, but not
+permissible to directly change them:
+
+<dl>
+
+<dt id="yy_text"><code>char const *yy_text;</code>
+
+    <dd><p>
+    After a rule pattern has been matched, this points at the matched
+    text within the scanning buffer.  It is NUL-terminated.  It is only
+    valid while an action is executing; you must make a copy of the
+    data to use it for longer than that.
+
+<dt id="yy_leng"><code>int yy_leng;</code>
+
+    <dd><p>
+    When <code>yy_text</code> is valid, <code>yy_leng</code> gives the
+    length of the matched text, in bytes.
 
 <dt id="yy_current_buffer"><code>yy_buffer_state_t *yy_current_buffer;</code>
 
@@ -1927,7 +1930,7 @@ using exclusive start conditions, including expanded escape sequences
     &lt;str&gt;\\(.|\n)  *string_buf_ptr++ = YY_TEXT[1];
 
     &lt;str&gt;[^\\\n\"]+        {
-              char *p = YY_TEXT;
+              char const *p = YY_TEXT;
               while (*p) {
                 *string_buf_ptr++ = *p++;
               }
@@ -2379,8 +2382,8 @@ the rule actions.
 
 <ul>
 
-<li><p><code>char *YY_TEXT</code> holds the text of the current token. It may
-    be modified but not lengthened (you cannot append characters to the end).
+<li><p><code>char const *YY_TEXT</code> holds the text of the current token.
+    It may not be modified.
 
 <li><p><code>int YY_LENG</code>
     holds the length of the current token.
@@ -4189,7 +4192,7 @@ can be used to inspect the token:
 
 <dl>
 
-<dt><code>const char *yym_text()</code>
+<dt><code>char const *yym_text()</code>
 
     <dd><p>Return the text of the most recently matched token, the equivalent
     of <a href="#yy_text"><code>yy_text</code></a>.
@@ -4762,6 +4765,21 @@ run-time support library.  That has been removed as detailed below.
 <p>Some features have been removed:
 
 <ul>
+
+<li><p>In <code>flex-2.5.4</code>, it was allowed for user actions to
+    modify <code>yy_text</code> (and perhaps <code>yy_leng</code>; the
+    documentation was unclear).  In <code>smflex</code> both fields are
+    read-only, and modification of the contents of <code>yy_text</code>
+    is only permissible through the documented APIs.
+
+    <p>Rationale: There are several important invariants that the
+    scanner engine maintains involving these variables.  Allowing the
+    user to modify them directly is an invitation to bugs and
+    incompatibility.  I see no compelling reason to allow it, so I do
+    not.  If you know of a compelling reason, feel free to file a
+    feature request.  In the meantime, casting away the
+    <code>const</code>ness will work (I can't stop you!), at the
+    risk of aforementioned bugs and incompatibilities.
 
 <li><p><code>YY_DECL</code>: In <code>flex-2.5.4</code>, you could
     <code>#define YY_DECL</code> to change the name and signature of the

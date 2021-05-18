@@ -2911,6 +2911,10 @@ case YY_STATE_EOF(OPTION):
 case YY_STATE_EOF(LINEDIR):
   YY_TERMINATE();
 
+/* Variant of 'yy_text' that is not a pointer to 'const'.  This is only
+ * for use by the scanner internals, not user actions. */
+#define YY_TEXT_NONCONST ((char*)(yy_lexer->yy_text))
+
       case YY_END_OF_BUFFER: {
         /* Amount of text matched not including the EOB char. */
         int yy_amount_of_matched_text = (int)(yy_cp - yy_lexer->yy_text) - 1;
@@ -2945,7 +2949,7 @@ case YY_STATE_EOF(LINEDIR):
           /* This was really a NUL. */
           input_scan_state_type_t yy_next_state;
 
-          yy_lexer->yy_c_buf_p = yy_lexer->yy_text + yy_amount_of_matched_text;
+          yy_lexer->yy_c_buf_p = YY_TEXT_NONCONST + yy_amount_of_matched_text;
 
           yy_current_state = yy_get_previous_state(yy_lexer);
 
@@ -2960,7 +2964,7 @@ case YY_STATE_EOF(LINEDIR):
 
           yy_next_state = yy_try_NUL_trans(yy_lexer, yy_current_state);
 
-          yy_bp = yy_lexer->yy_text + YY_MORE_ADJ;
+          yy_bp = YY_TEXT_NONCONST + YY_MORE_ADJ;
 
           if (yy_next_state) {
             /* Consume the NUL. */
@@ -2991,7 +2995,7 @@ case YY_STATE_EOF(LINEDIR):
                  * YY_EOF_TOKEN_CODE, it'll still work - another
                  * YY_EOF_TOKEN_CODE will get returned.
                  */
-                yy_lexer->yy_c_buf_p = yy_lexer->yy_text + YY_MORE_ADJ;
+                yy_lexer->yy_c_buf_p = YY_TEXT_NONCONST + YY_MORE_ADJ;
 
                 yy_act = YY_STATE_EOF(YY_GET_START_STATE());
                 goto do_action;
@@ -3006,12 +3010,12 @@ case YY_STATE_EOF(LINEDIR):
             }
 
             case EOB_ACT_CONTINUE_SCAN:
-              yy_lexer->yy_c_buf_p = yy_lexer->yy_text + yy_amount_of_matched_text;
+              yy_lexer->yy_c_buf_p = YY_TEXT_NONCONST + yy_amount_of_matched_text;
 
               yy_current_state = yy_get_previous_state(yy_lexer);
 
               yy_cp = yy_lexer->yy_c_buf_p;
-              yy_bp = yy_lexer->yy_text + YY_MORE_ADJ;
+              yy_bp = YY_TEXT_NONCONST + YY_MORE_ADJ;
               goto yy_match;
 
             case EOB_ACT_LAST_MATCH:
@@ -3021,7 +3025,7 @@ case YY_STATE_EOF(LINEDIR):
               yy_current_state = yy_get_previous_state(yy_lexer);
 
               yy_cp = yy_lexer->yy_c_buf_p;
-              yy_bp = yy_lexer->yy_text + YY_MORE_ADJ;
+              yy_bp = YY_TEXT_NONCONST + YY_MORE_ADJ;
               goto yy_find_action;
           } /* switch (yy_get_next_buffer()) */
         }
@@ -3125,7 +3129,7 @@ static int yy_call_read_input(input_scan_lexer_t *yy_lexer, void *dest, int size
 static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
 {
   char *dest = yy_lexer->yy_current_buffer->yy_ch_buf;
-  char *source = yy_lexer->yy_text;
+  char *source = YY_TEXT_NONCONST;
   int number_to_move, i;
   int ret_val;
 
@@ -3264,7 +3268,7 @@ static input_scan_state_type_t yy_get_previous_state(input_scan_lexer_t *yy_lexe
   yy_current_state = yy_lexer->yy_start_state;
   yy_current_state += YY_GET_BOL();
 
-  for (yy_cp = yy_lexer->yy_text + YY_MORE_ADJ;
+  for (yy_cp = YY_TEXT_NONCONST + YY_MORE_ADJ;
        yy_cp < yy_lexer->yy_c_buf_p;
        ++yy_cp) {
     YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
@@ -3317,7 +3321,7 @@ static input_scan_state_type_t yy_try_NUL_trans(input_scan_lexer_t *yy_lexer, in
 
 void input_scan_unread_character(input_scan_lexer_t *yy_lexer, int c)
 {
-  char *yy_bp = yy_lexer->yy_text;
+  char *yy_bp = YY_TEXT_NONCONST;
   char *yy_cp = yy_lexer->yy_c_buf_p;
 
   /* undo effects of setting up yy_text */
@@ -3409,7 +3413,7 @@ int input_scan_read_character(input_scan_lexer_t *yy_lexer)
         }
 
         case EOB_ACT_CONTINUE_SCAN:
-          yy_lexer->yy_c_buf_p = yy_lexer->yy_text + offset;
+          yy_lexer->yy_c_buf_p = YY_TEXT_NONCONST + offset;
           break;
       }
     }
@@ -3735,10 +3739,10 @@ void input_scan_less_text(input_scan_lexer_t *yy_lexer, int new_yy_leng)
   }
 
   /* Undo effects of setting up yy_text. */
-  yy_lexer->yy_text[yy_lexer->yy_leng] = yy_lexer->yy_hold_char;
+  YY_TEXT_NONCONST[yy_lexer->yy_leng] = yy_lexer->yy_hold_char;
 
   /* Move the end-of-token pointer to the specified location. */
-  yy_lexer->yy_c_buf_p = yy_lexer->yy_text + new_yy_leng;
+  yy_lexer->yy_c_buf_p = YY_TEXT_NONCONST + new_yy_leng;
   yy_lexer->yy_leng = new_yy_leng;
 
   /* Re-insert the temporary NUL terminator. */
@@ -3854,6 +3858,7 @@ int input_scan_wrap_return_1(input_scan_lexer_t *yy_lexer)
 #undef YY_ERROR
 #undef YY_NEW_FILE
 #undef YY_WRAPPER_OBJECT
+#undef YY_TEXT_NONCONST
 
 /* Remove documented YY_XXX macros, as they cannot be used in section 3.
  * Most of them have yy_XXX alternatives that accept 'input_scan_lexer_t*'. */

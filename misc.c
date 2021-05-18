@@ -115,7 +115,7 @@ void *allocate_array(int size, size_t element_size)
 
 
 /* all_lower - true if a string is all lower-case */
-int all_lower(char *str)
+int all_lower(char const *str)
 {
   while (*str) {
     if (!smflex_isascii((Char) * str) || !islower(*str))
@@ -128,7 +128,7 @@ int all_lower(char *str)
 
 
 /* all_upper - true if a string is all upper-case */
-int all_upper(char *str)
+int all_upper(char const *str)
 {
   while (*str) {
     if (!smflex_isascii((Char) * str) || !isupper(*str))
@@ -545,7 +545,7 @@ void mkdata(int value)
 
 
 /* myctoi - return the integer represented by a string of digits */
-int myctoi(char array[])
+int myctoi(char const *array)
 {
   int val = 0;
 

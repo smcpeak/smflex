@@ -11,7 +11,7 @@
 /* These are implemented in section 3 of input-parse.y.c.
  * See the definitions there for documentation. */
 extern void build_eof_action(void);
-extern void format_synerr(char msg[], char arg[]);
+extern void format_synerr(char const *msg, char const *arg);
 extern void synerr(char str[]);
 extern void format_warn(char msg[], char arg[]);
 extern void warn(char str[]);

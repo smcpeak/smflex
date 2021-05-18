@@ -2426,7 +2426,7 @@ void build_eof_action()
 
 
 /* format_synerr - write out formatted syntax error */
-void format_synerr(char msg[], char arg[])
+void format_synerr(char const *msg, char const *arg)
 {
   char errmsg[MAXLINE];
 
