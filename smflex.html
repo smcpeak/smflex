@@ -2470,52 +2470,8 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dt id="option-flex-compat"><code>--flex-compat</code>
 
 <dd><p>Activate some aliases in section 2 (rules) that provide partial
-    compatibility with <code>flex</code>:
-
-    <table>
-      <tr>
-        <th>Compatibility alias
-        <th>New name
-      <tr>
-        <td><code>yytext</code>
-        <td><code>YY_TEXT</code>
-      <tr>
-        <td><code>yyleng</code>
-        <td><code>YY_LENG</code>
-      <tr>
-        <td><code>yyin</code>
-        <td><code>YY_INPUT_STREAM</code>
-      <tr>
-        <td><code>yyout</code>
-        <td><code>YY_OUTPUT_STREAM</code>
-      <tr>
-        <td><code>ECHO</code>
-        <td><code>YY_ECHO</code>
-      <tr>
-        <td><code>yyless</code>
-        <td><code>YY_LESS_TEXT</code>
-      <tr>
-        <td><code>input</code>
-        <td><code>YY_READ_CHARACTER</code>
-      <tr>
-        <td><code>yyinput</code>
-        <td><code>YY_READ_CHARACTER</code>
-      <tr>
-        <td><code>unput</code>
-        <td><code>YY_UNREAD_CHARACTER</code>
-      <tr>
-        <td><code>yylineno</code>
-        <td><code>YY_LINENO</code>
-    </table>
-
-    <p>Additionally, this option adds to to the generated header file the
-    following typedef, which is used in <code>flex</code> to access the
-    <a href="#multiple-input-buffers">Multiple Input Buffers</a>
-    functions:
-
-    <pre><code>
-        typedef yy_buffer_state_t *YY_BUFFER_STATE;
-    </code></pre>
+    compatibility with <code>flex</code>.  See
+    <a href="#renamed-entities">Renamed Entities</a> for details.
 
     <p>The intent of this option is to make it a bit easier to experiment
     with <code>smflex</code> during a transition period, rather than
@@ -4867,167 +4823,9 @@ run-time support library.  That has been removed as detailed below.
 
 <h2 id="renamed-entities">Renamed Entities</h2>
 
-<p>Many entities have been renamed.  Most of the renaming is motivated
-by the desire to have consistent, informative
-<a href="#naming-conventions">naming conventions</a>.  For cases where
-there is rationale beyond conformance to the naming conventions, that
-is explained.
-
-<ul>
-
-<li><p>The <code>yytext</code> and <code>yyleng</code> macros have
-    been renamed to <code>YY_TEXT</code> and <code>YY_LENG</code>.
-
-    <p><code>%option flex-compat</code> creates the old names as
-    aliases for the new names.
-
-<li><p>The <code>yyin</code> and <code>yyout</code> macros have
-    been renamed to <code>YY_INPUT_STREAM</code> and <code>YY_OUTPUT_STREAM</code>.
-
-    <p><code>%option flex-compat</code> creates the old names as
-    aliases for the new names.
-
-<li><p>The <code>yyrestart</code> and
-    <code>yylex</code> functions have been renamed to
-    <code>yy_restart</code> and
-    <code>yy_lex</code>, respectively.
-
-<li><p>The <code>input()</code> and <code>yyinput()</code> macros have
-    been renamed to <code>YY_READ_CHARACTER()</code>.
-
-    <p>Rationale: The old name <code>input()</code> was inconsistent due to not using the
-    "yy" prefix.  It was also strange because it would be called
-    <code>yyinput()</code> when generating a C++ interface, causing a
-    needless difference between the two.  The latter was then easily
-    confused with <code>YY_INPUT</code>, a completely different macro.
-    The new name uses the "YY_"
-    prefix for forward compatibility and has a clearer, more unique name.
-
-    <p>However, <code>%option flex-compat</code> will introduce both
-    <code>input</code> and <code>yyinput</code> as aliases for
-    <code>YY_READ_CHARACTER</code>.
-
-<li><p>The <code>yywrap</code> function has been replaced by
-    <a href="#yy_wrap_function"><code>yy_wrap_function</code></a>.
-
-    <p>See the discussion of the removal of
-    <a href="#option-yywrap-removed"><code>%option yywrap</code></a>.
-
-<li><p>The <code>unput()</code> macro has
-    been renamed to <code>YY_UNREAD_CHARACTER()</code>.
-
-    <p>Rationale: Similar to the preceding.  Plus, "unput" is a weird
-    name because it does not "undo put"; instead it is more like
-    "undo input", with needlessly confusing contraction.
-
-    <p>With <code>%option flex-compat</code>, <code>unput()</code> is
-    available as an alias for <code>YY_UNREAD_CHARACTER()</code>.
-
-<li><p>The <code>ECHO</code> macro has been renamed to
-    <code>YY_ECHO</code>.
-
-    <p>With <code>%option flex-compat</code>, <code>ECHO</code> is
-    available as an alias for <code>YY_ECHO</code>.
-
-<li><p>The <code>yyless</code> macro has been renamed to
-    <code>YY_LESS_TEXT</code>.
-
-    <p>Rationale: In addition to adding "YY_" to and capitalizing all
-    macro names, I added "_TEXT" to clarify what we are getting less of.
-
-    <p>With <code>%option flex-compat</code>, <code>yyless</code> is
-    available as an alias for <code>YY_LESS_TEXT</code>.
-
-<li><p>The <code>BEGIN</code> macro has been renamed to
-    <a href="#YY_SET_START_STATE-macro"><code>YY_SET_START_STATE</code></a>.
-    Additionally, it now requires a parenthesized argument, whereas in
-    <code>flex</code> it is legal to write "<code>BEGIN s;</code>" to
-    change to start condition <code>s</code>
-
-    <p>Rationale: The new name adheres to my naming convention and
-    has a clearer purpose.  In particular, it is weird how the old
-    name uses "BEGIN" for both the act of entering and leaving a
-    special parsing mode.  The new name does not imply there is a
-    "leave" counterpart.
-
-    <p>The old name is available with
-    <code>%option flex-compat</code>.
-
-<li><p>The <code>YY_START</code> macro has been replaced by
-    <a href="#YY_GET_START_STATE-macro"><code>YY_GET_START_STATE()</code></a>.
-    Note that the old macro was used without parentheses, while the new
-    one requires them.
-
-    <p>Rationale: The old name was a bit terse, and I wanted something
-    parallel with the new <code>YY_SET_START_STATE</code>.  The old
-    lack of parentheses clashes with my intended parallel use of
-    <a href="#yy_get_start_state"><code>yy_get_start_state</code></a>.
-
-    <p>The old name, which is used without parentheses, is available with
-    <code>%option flex-compat</code>.
-
-<li><p>The <code>YY_INPUT</code> macro has been replaced by
-    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
-
-    <p>Rationale: Using macros to configure the scanner is somewhat
-    fragile (due to C syntax quirks) and limited (it can only access
-    what is in scope where it is used), and it requires modifying the
-    scanner and recompiling.  A function pointer is much more flexible.
-
-<li><p>The <code>YY_FATAL_ERROR</code> macro has been replaced by
-    <a href="#yy_error_function"><code>yy_error_function</code></a>.
-
-    <p>Rationale: Function pointers are more flexible than macros.
-
-<li><p>The <code>YY_BUFFER_STATE</code> type (implicitly a pointer) has
-    been renamed to <code>yy_buffer_state_t*</code> (explicitly a
-    pointer).
-
-    <p>Rationale: Making the pointerness implicit offers no additional
-    flexibility, while slightly increasing the potential for confusion.
-    More importantly, I am trying to organize the names so that
-    lowercase names are consistently exported as part of the external
-    API, while uppercase names are those only usable from within the
-    scanner definition file.  This type is meant for external use, so
-    that means it should be lowercase.
-
-<li><p><code>YY_FLUSH_BUFFER</code> has been renamed to
-    <code>YY_FLUSH_CURRENT_BUFFER</code>.
-
-    <p>Rationale: I have the function
-    <a href="#yy_flush_buffer"><code>yy_flush_buffer</code></a>, but
-    that requires a specific buffer object.  Since the behavior of the
-    macro acts on the current buffer only, the name ought to reflect
-    that.
-
-    <p>There is no compatibility alias for this one.  According to my
-    naming conventions, if it existed, <code>YY_FLUSH_BUFFER</code>
-    should be the same as <code>yy_flush_buffer(yy_lexer)</code>, but an
-    alias would violate that.
-
-<li><p><code>YY_AT_BOL</code> has been renamed to <code>YY_GET_BOL</code>.
-
-    <p>Rationale: Everywhere else I use "GET", so "AT" is irregular.
-
-    <p>The old name is available with
-    <code>%option flex-compat</code>.
-
-<li><p><code>yyterminate</code> has been renamed to
-    <code>YY_TERMINATE</code>.
-
-    <p>The old name is available with
-    <code>%option flex-compat</code>.
-
-<li><p><code>yylineno</code> has been renamed to
-    <code>YY_LINENO</code>.
-
-    <p>The old name is available with
-    <code>%option flex-compat</code>.
-
-</ul>
-
-<p>
-Renaming summary:
+<p>Many entities have been renamed, as summarized in the following
+table.  Some have aliases that can be enabled with
+<a href="#option-flex-compat"><code>%option flex-compat</code></a>.
 
 <table>
   <tr>
@@ -5115,6 +4913,121 @@ Renaming summary:
     <td><code>YY_LINENO</code>
     <td>Old name available with <code>%option flex-compat</code>.
 </table>
+
+<p>Most of the renaming is motivated
+by the desire to have consistent, informative
+<a href="#naming-conventions">naming conventions</a>.  For cases where
+there is rationale beyond conformance to the naming conventions, that
+is explained below:
+
+<ul>
+
+<li><p>The <code>input()</code> and <code>yyinput()</code> macros have
+    been renamed to <code>YY_READ_CHARACTER()</code>.
+
+    <p>Rationale: The old name <code>input()</code> was inconsistent due to not using the
+    "yy" prefix.  It was also strange because it would be called
+    <code>yyinput()</code> when generating a C++ interface, causing a
+    needless difference between the two.  The latter was then easily
+    confused with <code>YY_INPUT</code>, a completely different macro.
+    The new name uses the "YY_"
+    prefix for forward compatibility and has a clearer, more unique name.
+
+    <p>However, <code>%option flex-compat</code> will introduce both
+    <code>input</code> and <code>yyinput</code> as aliases for
+    <code>YY_READ_CHARACTER</code>.
+
+<li><p>The <code>unput()</code> macro has
+    been renamed to <code>YY_UNREAD_CHARACTER()</code>.
+
+    <p>Rationale: "unput" is a weird
+    name because it does not "undo put"; instead it is more like
+    "undo input", with needlessly confusing contraction.
+
+<li><p>The <code>yywrap</code> function has been replaced by
+    <a href="#yy_wrap_function"><code>yy_wrap_function</code></a>.
+
+    <p>See the discussion of the removal of
+    <a href="#option-yywrap-removed"><code>%option yywrap</code></a>.
+
+<li><p>The <code>yyless</code> macro has been renamed to
+    <code>YY_LESS_TEXT</code>.
+
+    <p>Rationale: In addition to adding "YY_" to and capitalizing all
+    macro names, I added "_TEXT" to clarify what we are getting less of.
+
+<li><p>The <code>BEGIN</code> macro has been renamed to
+    <a href="#YY_SET_START_STATE-macro"><code>YY_SET_START_STATE</code></a>.
+    Additionally, it now requires a parenthesized argument, whereas in
+    <code>flex</code> it is legal to write "<code>BEGIN s;</code>" to
+    change to start condition <code>s</code>
+
+    <p>Rationale: The new name
+    has a clearer purpose.  In particular, it is weird how the old
+    name uses "BEGIN" for both the act of entering and leaving a
+    special parsing mode.  The new name does not imply there is a
+    "leave" counterpart.
+
+<li><p>The <code>YY_START</code> macro has been replaced by
+    <a href="#YY_GET_START_STATE-macro"><code>YY_GET_START_STATE()</code></a>.
+    Note that the old macro was used without parentheses, while the new
+    one requires them.
+
+    <p>Rationale: The old name was a bit terse, and I wanted something
+    parallel with the new <code>YY_SET_START_STATE</code>.  The old
+    lack of parentheses clashes with my intended parallel use of
+    <a href="#yy_get_start_state"><code>yy_get_start_state</code></a>.
+
+<li><p>The <code>YY_INPUT</code> macro has been replaced by
+    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
+
+    <p>Rationale: Using macros to configure the scanner is somewhat
+    fragile (due to C syntax quirks) and limited (it can only access
+    what is in scope where it is used), and it requires modifying the
+    scanner and recompiling.  A function pointer is much more flexible.
+
+<li><p>The <code>YY_FATAL_ERROR</code> macro has been replaced by
+    <a href="#yy_error_function"><code>yy_error_function</code></a>.
+
+    <p>Rationale: Function pointers are more flexible than macros.
+
+<li><p>The <code>YY_BUFFER_STATE</code> type (implicitly a pointer) has
+    been renamed to <code>yy_buffer_state_t*</code> (explicitly a
+    pointer).
+
+    <p>Rationale: Making the pointerness implicit offers no additional
+    flexibility, while slightly increasing the potential for confusion.
+    More importantly, I am trying to organize the names so that
+    lowercase names are consistently exported as part of the external
+    API, while uppercase names are those only usable from within the
+    scanner definition file.  This type is meant for external use, so
+    that means it should be lowercase.
+
+<li><p><code>YY_FLUSH_BUFFER</code> has been renamed to
+    <code>YY_FLUSH_CURRENT_BUFFER</code>.
+
+    <p>Rationale: I have the function
+    <a href="#yy_flush_buffer"><code>yy_flush_buffer</code></a>, but
+    that requires a specific buffer object.  Since the behavior of the
+    macro acts on the current buffer only, the name ought to reflect
+    that.
+
+    <p>There is no compatibility alias for this one.  According to my
+    naming conventions, if it existed, <code>YY_FLUSH_BUFFER</code>
+    should be the same as <code>yy_flush_buffer(yy_lexer)</code>, but an
+    alias would violate that.
+
+<li><p><code>YY_AT_BOL</code> has been renamed to <code>YY_GET_BOL</code>.
+
+    <p>Rationale: Everywhere else I use "GET", so "AT" is irregular.
+
+<li><p><code>yyterminate</code> has been renamed to
+    <code>YY_TERMINATE</code>.
+
+<li><p><code>yylineno</code> has been renamed to
+    <code>YY_LINENO</code>.
+
+</ul>
 
 
 <h2 id="changed-function-signatures">Changed Function Signatures</h2>
