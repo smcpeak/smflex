@@ -3657,6 +3657,7 @@ input_scan_error_code_t input_scan_get_error(input_scan_lexer_t const *yy_lexer)
 }
 
 
+
 /* Table of error messages. */
 static char const * const yy_error_string_table[] = {
   "no error",
@@ -3688,6 +3689,7 @@ char const *input_scan_error_string(input_scan_error_code_t code)
     return "invalid error code";
   }
 }
+
 
 
 void input_scan_error_print_and_exit(input_scan_lexer_t const *yy_lexer,

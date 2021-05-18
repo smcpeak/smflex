@@ -4214,11 +4214,6 @@ scanner over input:
 <dd><p>Same as the C interface.
     (<a href="test/discard-ml-comments-cpp.lexpp">Example.</a>)
 
-<dt><code>static void yym_check_for_memory_leaks()</code>
-
-    <dd><p>Same as
-    <a href="#yy_check_for_memory_leaks"><code>yy_check_for_memory_leaks</code></a>.
-
 </dl>
 
 <p>When <code>yym_lex()</code> returns a non-zero value, these methods
@@ -4243,20 +4238,61 @@ can be used to inspect the token:
 
 </dl>
 
+<p>These methods and class support error reporting and recovery:
+
+<dl>
+
+<dt id="yym_get_error"><code><a href="#yy_error_code_t">yy_error_code_t</a> yym_get_error() const;</code>
+
+    <dd><p>Same as
+    <a href="#yy_get_error"><code>yy_get_error</code></a>.
+
+<dt id="yym_error_string"><code>static char const *yym_error_string(yy_error_code_t code);</code>
+
+    <dd><p>Same as
+    <a href="#yy_error_string"><code>yy_error_string</code></a>.
+
+<dt id="yym_error"><code>virtual void yym_error(yy_error_code_t code, char const *detail) const;</code>
+
+    <dd><p>When an error occurs during scanning, this method is
+    invoked.  Its parameters have the same meaning as in
+    <a href="#yy_error_function"><code>yy_error_function</code></a>.
+    The default implementation throws
+    <code>yyFlexLexer::yyLexError</code>, which has these members:
+
+    <dl>
+
+    <dt id="yym_what"><code>yy_error_code_t yym_code;</code>
+
+        <dd><p>The <code>code</code> parameter of <code>yym_error</code>.
+
+    <dt id="yym_detail"><code>char const *yym_detail;</code>
+
+        <dd><p>The <code>detail</code> parameter.
+
+    </dl>
+
+</dl>
+
 <p>These methods support scanner debugging:
 
 <dl>
 
 <dt><code>void yym_set_flex_debug(bool flag)</code>
 
-<dd><p>sets the debugging flag for the scanner, equivalent to assigning to
+    <dd><p>sets the debugging flag for the scanner, equivalent to assigning to
     <code>yy_flex_debug</code>. Note that you must build the scanner using
     <a href="#debug-option"><code>%option debug</code></a> to include
     debugging information in it.
 
 <dt><code>bool yym_flex_debug() const</code>
 
-<dd><p>returns the current setting of the debugging flag.
+    <dd><p>returns the current setting of the debugging flag.
+
+<dt><code>static void yym_check_for_memory_leaks()</code>
+
+    <dd><p>Same as
+    <a href="#yy_check_for_memory_leaks"><code>yy_check_for_memory_leaks</code></a>.
 
 </dl>
 

@@ -687,9 +687,9 @@ public:      /* methods */
   void yym_set_interactive(int is_interactive);
   bool yym_get_bol() const;
   void yym_set_bol(bool at_bol);
+  yy_error_code_t yym_get_error() const;
 
-  /* Provide static method versions of the functions that do not accept
-   * a 'yy_lexer_t*' so the entire C API is wrapped. */
+  static char const *yym_error_string(yy_error_code_t code);
   static void yym_check_for_memory_leaks();
 
   /* Read up to 'size' bytes into 'dest', returning the number of bytes
