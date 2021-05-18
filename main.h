@@ -99,7 +99,6 @@ extern int option_flex_compat;
  * linenum - current input line number
  * out_linenum - current output line number
  * scanner_skl_ind - index into "scanner_skl_contents" array
- * yyin - input file
  * backing_up_file - file to summarize backing-up states to
  * infilename - name of input file
  * outfilename - name of output file
