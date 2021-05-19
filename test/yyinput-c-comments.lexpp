@@ -51,7 +51,7 @@ void dummy(yyFlexLexer &lexer)
   /* Simply test that 'YY_BUFFER_STATE' is exported when
    * %option flex-compat is specified. */
   YY_BUFFER_STATE b;
-  b = lexer.yym_create_buffer(&std::cin, YY_BUF_SIZE);
+  b = lexer.yym_create_buffer(&std::cin, 8192);
   lexer.yym_switch_to_buffer(b);
   assert(lexer.yym_current_buffer() == b);
   lexer.yym_delete_buffer(b);

@@ -2046,7 +2046,7 @@ input source.
 mechanism for creating and switching between multiple input buffers. An
 input buffer is created by using:
 
-<pre><code>
+<pre><code id="yy_create_buffer">
     yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer, FILE *file, int size)
 </code></pre>
 
@@ -4161,7 +4161,7 @@ running the scanner over input:
     <code>%option yyclass</code>).
 
 <dt><code>yym_switch_to_buffer()</code>,
-    <code>yym_create_buffer()</code>,
+    <code id="yym_create_buffer">yym_create_buffer()</code>,
     <code>yym_flush_buffer()</code>,
     <code>yym_delete_buffer()</code>, and
     <code>yym_restart()</code>
@@ -4835,6 +4835,22 @@ run-time support library.  That has been removed as detailed below.
     of the types needed to use the API, as well as the API functions
     themselves (which also would have needed to have been conjured when
     using <code>flex-2.5.4</code>).
+
+<li><p><code>YY_BUF_SIZE</code>: <code>flex-2.5.4</code> exposes a
+    macro called <code>YY_BUF_SIZE</code> with value 16384 to user code in
+    sections 2 and 3.  This macro has been removed.
+
+    <p>Rationale: It is an internal implementation detail that scanners
+    should not use.  The reason it was previously documented was that
+    <a href="#yy_create_buffer"><code>yy_create_buffer</code></a> and
+    <a href="#yym_create_buffer"><code>yym_create_buffer</code></a>
+    accept a <code>size</code> parameter, and there was a need to
+    give the client a default value.  In <code>smflex</code>, the
+    client can pass 0 to get the same effect.
+
+    <p>Replacement: Either pass 0 as the <code>size</code> or pass an
+    explicit non-zero size.  If this value was being used for some
+    other purpose, replace it with 16384.
 
 </ul>
 

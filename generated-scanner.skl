@@ -78,7 +78,7 @@
 #define YY_END_OF_BUFFER_CHAR 0
 
 /* Size of default input buffer. */
-#define YY_BUF_SIZE 16384
+#define YY_DEFAULT_BUF_ALLOC_SIZE 16384
 
 /* Define a macro that, when enabled, causes certain printouts to go
  * to stdout.  The intent is to use this as part of tests in order to
@@ -206,18 +206,22 @@ struct yy_buffer_state_struct {
   yy_input_stream_t *yy_input_file;
 
   /* Pointer to the beginning of the input buffer.  The allocated
-   * space in the buffer is 'yy_buf_size+2'.  The buffer is owned
+   * space in the buffer is 'yy_buf_alloc_size+2'.  The buffer is owned
    * by this structure if 'yy_is_our_buffer'. */
   char *yy_buffer;
 
   /* Points to current character in buffer, i.e., the next character
-   * to scan. */
+   * to scan.
+   *
+   * Invariant: yy_buffer <= yy_buf_pos
+   * Invariant:              yy_buf_pos <= yy_buffer + yy_n_chars + 2
+   *
+   * I am not sure about being able to reach the +2 location. */
   char *yy_buf_pos;
 
-  /* Size of input buffer in bytes, not including room for EOB
-   * characters.
-   */
-  size_t yy_buf_size;
+  /* Allocated size of input buffer in bytes, not including room for EOB
+   * characters. */
+  size_t yy_buf_alloc_size;
 
   /* Number of characters read into yy_buffer, not including EOB
    * characters.
@@ -312,7 +316,7 @@ static int yy_create_buffer_if_needed(yy_lexer_t *yy_lexer)
 {
   if (!yy_lexer->yy_current_buffer) {
     yy_lexer->yy_current_buffer =
-      yy_create_buffer(yy_lexer, yy_lexer->yy_input_stream, YY_BUF_SIZE);
+      yy_create_buffer(yy_lexer, yy_lexer->yy_input_stream, YY_DEFAULT_BUF_ALLOC_SIZE);
     if (!yy_lexer->yy_current_buffer) {
       return 0;
     }
@@ -568,7 +572,7 @@ int yyFlexLexer::yym_lex()
 
     if (!yy_lexer->yy_current_buffer) {
       yy_lexer->yy_current_buffer =
-        yy_create_buffer(yy_lexer, yy_lexer->yy_input_stream, YY_BUF_SIZE);
+        yy_create_buffer(yy_lexer, yy_lexer->yy_input_stream, YY_DEFAULT_BUF_ALLOC_SIZE);
       if (!yy_lexer->yy_current_buffer) {
         /* Error already reported, just try to get out. */
         return 0;
@@ -821,7 +825,7 @@ void yy_construct(yy_lexer_t *yy_lexer)
 %endif
 %if reject_used
   yy_lexer->yy_state_buf =
-    (yy_state_type_t*)yy_flex_alloc(sizeof(yy_state_type_t) * (YY_BUF_SIZE+2));
+    (yy_state_type_t*)yy_flex_alloc(sizeof(yy_state_type_t) * (YY_DEFAULT_BUF_ALLOC_SIZE+2));
   yy_lexer->yy_state_ptr = NULL;
   yy_lexer->yy_full_match = NULL;
   yy_lexer->yy_lp = 0;
@@ -884,7 +888,7 @@ yyFlexLexer::~yyFlexLexer()
 void yyFlexLexer::yym_switch_streams(yy_input_stream_t *new_in)
 {
   yym_delete_buffer(yym_lexer_state.yy_current_buffer);
-  yym_switch_to_buffer(yym_create_buffer(new_in, YY_BUF_SIZE));
+  yym_switch_to_buffer(yym_create_buffer(new_in, YY_DEFAULT_BUF_ALLOC_SIZE));
 }
 
 
@@ -1005,7 +1009,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
   }
 
   else {
-    int num_to_read = yy_lexer->yy_current_buffer->yy_buf_size - number_to_move - 1;
+    int num_to_read = yy_lexer->yy_current_buffer->yy_buf_alloc_size - number_to_move - 1;
 
     while (num_to_read <= 0) {  /* Not enough room in the buffer - grow it. */
 %if reject_used
@@ -1024,11 +1028,11 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
         char *new_buffer;
 
         /* Check for arithemtic overflow calculating new size. */
-        if (b->yy_buf_size > (YY_SIZE_T_MAX-2) / 2) {
+        if (b->yy_buf_alloc_size > (YY_SIZE_T_MAX-2) / 2) {
           YY_ERROR(yy_err_input_buffer_at_max_size, NULL /*detail*/);
           return EOB_ACT_END_OF_FILE;
         }
-        new_size = b->yy_buf_size * 2;
+        new_size = b->yy_buf_alloc_size * 2;
 
         /* Allocate a new buffer. */
         YY_DEBUG_LOG_MEM("allocate new buffer", new_size + 2);
@@ -1039,12 +1043,12 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
         }
 
         /* Copy the old data, including the EOB characters. */
-        memcpy(new_buffer, b->yy_buffer, b->yy_buf_size + 2);
+        memcpy(new_buffer, b->yy_buffer, b->yy_buf_alloc_size + 2);
 
         /* Release the old buffer and update the fields. */
         yy_flex_free(b->yy_buffer);
         b->yy_buffer = new_buffer;
-        b->yy_buf_size = new_size;
+        b->yy_buf_alloc_size = new_size;
       }
       else {
         /* This happens if we think we need more input to get a match,
@@ -1057,7 +1061,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
 
       yy_lexer->yy_c_buf_p = &b->yy_buffer[yy_c_buf_p_offset];
 
-      num_to_read = yy_lexer->yy_current_buffer->yy_buf_size - number_to_move - 1;
+      num_to_read = yy_lexer->yy_current_buffer->yy_buf_alloc_size - number_to_move - 1;
 %endif
     }
 
@@ -1146,7 +1150,7 @@ void yy_unread_character(yy_lexer_t *yy_lexer, int c)
     /* +2 for EOB chars. */
     int number_to_move = yy_lexer->yy_n_chars + 2;
     char *dest = &yy_lexer->yy_current_buffer->yy_buffer[
-      yy_lexer->yy_current_buffer->yy_buf_size + 2];
+      yy_lexer->yy_current_buffer->yy_buf_alloc_size + 2];
     char *source =
       &yy_lexer->yy_current_buffer->yy_buffer[number_to_move];
 
@@ -1157,7 +1161,7 @@ void yy_unread_character(yy_lexer_t *yy_lexer, int c)
     yy_cp += (int)(dest - source);
     yy_bp += (int)(dest - source);
     yy_lexer->yy_current_buffer->yy_n_chars =
-      yy_lexer->yy_n_chars = yy_lexer->yy_current_buffer->yy_buf_size;
+      yy_lexer->yy_n_chars = yy_lexer->yy_current_buffer->yy_buf_alloc_size;
 
     if (yy_cp < yy_lexer->yy_current_buffer->yy_buffer + 2) {
       YY_ERROR(yy_err_unread_overflow, NULL /*detail*/);
@@ -1275,7 +1279,7 @@ void yy_restart(yy_lexer_t *yy_lexer, yy_input_stream_t *input_file)
 {
   if (!yy_lexer->yy_current_buffer) {
     yy_lexer->yy_current_buffer =
-      yy_create_buffer(yy_lexer, yy_lexer->yy_input_stream, YY_BUF_SIZE);
+      yy_create_buffer(yy_lexer, yy_lexer->yy_input_stream, YY_DEFAULT_BUF_ALLOC_SIZE);
     if (!yy_lexer->yy_current_buffer) {
       return;     /* Error already reported, try to recover. */
     }
@@ -1356,15 +1360,15 @@ yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer,
   }
 
   if (size == 0) {
-    /* Unspecified size becomes 'YY_BUF_SIZE'. */
-    size = YY_BUF_SIZE;
+    /* Unspecified size becomes 'YY_DEFAULT_BUF_ALLOC_SIZE'. */
+    size = YY_DEFAULT_BUF_ALLOC_SIZE;
   }
-  b->yy_buf_size = size;
+  b->yy_buf_alloc_size = size;
 
   /* yy_buffer has to be 2 characters longer than the size given because
    * we need to put in 2 end-of-buffer characters.
    */
-  b->yy_buffer = (char*)yy_flex_alloc(b->yy_buf_size + 2);
+  b->yy_buffer = (char*)yy_flex_alloc(b->yy_buf_alloc_size + 2);
   if (!b->yy_buffer) {
     yy_flex_free(b);
     YY_ERROR(yy_err_out_of_memory, "yy_create_buffer: input buffer");
@@ -1485,11 +1489,11 @@ yy_buffer_state_t *yy_scan_buffer(yy_lexer_t *yy_lexer,
     return NULL;
   }
 
-  b->yy_buf_size = size - 2;    /* "- 2" to take care of EOB's */
+  b->yy_buf_alloc_size = size - 2;    /* "- 2" to take care of EOB's */
   b->yy_buf_pos = b->yy_buffer = base;
   b->yy_is_our_buffer = 0;
   b->yy_input_file = 0;
-  b->yy_n_chars = b->yy_buf_size;
+  b->yy_n_chars = b->yy_buf_alloc_size;
   YY_DEBUG_LOG_CALL("setting yy_is_interactive to 0 in yy_scan_buffer", 0);
   b->yy_is_interactive = 0;
   b->yy_at_bol = 1;
@@ -2062,6 +2066,7 @@ int main()
 #undef YY_NEW_FILE
 #undef YY_WRAPPER_OBJECT
 #undef YY_TEXT_NONCONST
+#undef YY_DEFAULT_BUF_ALLOC_SIZE
 
 /* Remove documented YY_XXX macros, as they cannot be used in section 3.
  * Most of them have yy_XXX alternatives that accept 'yy_lexer_t*'. */
