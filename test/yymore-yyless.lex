@@ -12,8 +12,8 @@ int lessArg = 6;
 
 abc      {
            printf("[\"%s\", %d]\n", YY_TEXT, YY_LENG);
-           printf("[yymore]\n");
-           yymore();
+           printf("[YY_MORE_TEXT]\n");
+           YY_MORE_TEXT();
          }
 
 def      {

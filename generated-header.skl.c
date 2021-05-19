@@ -331,7 +331,7 @@ const char *header_skl_contents[] = {
   "",
   "%endif",
   "%if option_yymore",
-  "  /* This is set when 'yymore()' is called.  Then, before we start the",
+  "  /* This is set when 'YY_MORE_TEXT()' is called.  Then, before we start the",
   "   * next match search, it causes 'yy_more_len' to be set, and then",
   "   * the flag is cleared.  So, it simply means to set 'yy_more_len'. */",
   "  int yy_more_flag;",

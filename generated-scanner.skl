@@ -477,10 +477,10 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 %endif
 
 %if option_yymore
-#define yymore() (yy_lexer->yy_more_flag = 1)
+#define YY_MORE_TEXT() (yy_lexer->yy_more_flag = 1)
 #define YY_MORE_LEN yy_lexer->yy_more_len
 %else
-#define yymore() yymore_used_but_option_yymore_not_specified
+#define YY_MORE_TEXT() YY_MORE_TEXT_used_but_option_yymore_not_specified
 #define YY_MORE_LEN 0
 %endif
 
@@ -595,6 +595,9 @@ int yyFlexLexer::yym_lex()
       /* flex compatibility aliases. */
 #     define ECHO YY_ECHO
 #     define yyless(n) YY_LESS_TEXT(n)
+%if option_yymore
+#     define yymore() YY_MORE_TEXT()
+%endif
 #     define BEGIN(s) YY_SET_START_STATE(s)
 #     define YY_START YY_GET_START_STATE()
 #     define YY_AT_BOL() YY_GET_BOL()
@@ -2130,6 +2133,9 @@ int main()
       /* Remove flex compatibility aliases. */
 #undef ECHO
 #undef yyless
+%if option_yymore
+#undef yymore
+%endif
 #undef BEGIN
 #undef YY_START
 #undef YY_AT_BOL

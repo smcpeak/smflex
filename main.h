@@ -51,7 +51,7 @@ void usage(void);
  *   otherwise, use fread().
  * csize - size of character set for the scanner we're generating;
  *   128 for 7-bit chars and 256 for 8-bit
- * option_yymore - if true, yymore() is enabled
+ * option_yymore - if true, YY_MORE_TEXT() is enabled
  * reject_used - if true, generate back-up tables for REJECT macro
  * real_reject - if true, scanner really uses REJECT (as opposed to just
  *   having "reject" set for variable trailing context)

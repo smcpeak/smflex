@@ -789,7 +789,7 @@ void readin()
 
     if (performance_report > 1) {
       if (option_yymore)
-        fprintf(stderr, _("yymore() entails a minor performance penalty\n"));
+        fprintf(stderr, _("YY_MORE_TEXT() entails a minor performance penalty\n"));
     }
 
     if (reject_used)

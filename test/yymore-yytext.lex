@@ -5,6 +5,9 @@
 %option yy_read_character
 %option yymore
 
+/* Exercise the 'yymore' alias. */
+%option flex-compat
+
 /* We do not test unreading here.  The updated documentation makes it
  * clear the effects are undefined. */
 

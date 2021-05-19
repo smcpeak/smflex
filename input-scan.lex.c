@@ -1229,7 +1229,7 @@ static const short int yy_chk[2649] =
  * any uses of REJECT which smflex missed. */
 #define REJECT reject_used_but_not_detected
 
-#define yymore() yymore_used_but_option_yymore_not_specified
+#define YY_MORE_TEXT() YY_MORE_TEXT_used_but_option_yymore_not_specified
 #define YY_MORE_LEN 0
 
 #define INITIAL 0
