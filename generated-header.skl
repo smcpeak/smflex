@@ -14,7 +14,6 @@
 %# user has defined, all names contributed to the global namespace
 %# must begin with "yy" or "YY".
 %#
-#include <stddef.h>                    /* size_t */
 %if cpp_interface
 #include <iostream>                    /* std::istream, std::ostream */
 %else
@@ -84,7 +83,7 @@ typedef enum yy_error_code_enum {
 
   /* A single token was larger than the size of the input buffer, and
    * it cannot be expanded because the new size would not be
-   * representable with 'size_t'. */
+   * representable with 'int'. */
   yy_err_input_buffer_at_max_size,
 
   /* The default rule has been suppressed, and none of the
@@ -439,7 +438,7 @@ yy_buffer_state_t *yy_scan_bytes(yy_lexer_t *yy_lexer, const char *bytes, int le
  * the input to scan.  See the description in the manual.
  *
  * If out of memory, returns NULL after calling 'yy_error_function'. */
-yy_buffer_state_t *yy_scan_buffer(yy_lexer_t *yy_lexer, char *base, size_t size);
+yy_buffer_state_t *yy_scan_buffer(yy_lexer_t *yy_lexer, char *base, int size);
 
 %endif
 /* -------- Manipulating the start state -------- */
@@ -673,7 +672,7 @@ public:      /* methods */
   yy_buffer_state_t *yym_scan_bytes(const char *bytes, int len);
 %endif
 %if option_yy_scan_buffer
-  yy_buffer_state_t *yym_scan_buffer(char *base, size_t size);
+  yy_buffer_state_t *yym_scan_buffer(char *base, int size);
 %endif
   void yym_set_start_state(int state);
   int yym_get_start_state() const;

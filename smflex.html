@@ -2199,7 +2199,7 @@ copy by using:
 
 <dl>
 
-<dt><code>yy_scan_buffer(yy_lexer_t *yy_lexer, char *base, size_t size)</code>
+<dt><code>yy_scan_buffer(yy_lexer_t *yy_lexer, char *base, int size)</code>
 
 <dd><p>scans in place the buffer starting at <code>base</code>, consisting
     of <code>size</code> bytes, the last two bytes of which <em>must</em> be
@@ -5555,7 +5555,7 @@ while the generated scanner is running:
     <dd><p>
     A single token was larger than the size of the input buffer, and it
     cannot be expanded because the new size would not be representable
-    with <code>size_t</code>.
+    with <code>int</code>.
 
 <dt id="yy_err_no_rule_matches"><code>yy_err_no_rule_matches</code>:
 

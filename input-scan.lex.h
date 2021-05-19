@@ -8,7 +8,6 @@
 #ifndef INPUT_SCAN_LEX_H
 #define INPUT_SCAN_LEX_H
 
-#include <stddef.h>                    /* size_t */
 #include <stdio.h>                     /* FILE */
 
 #ifdef __cplusplus
@@ -54,7 +53,7 @@ typedef enum input_scan_error_code_enum {
 
   /* A single token was larger than the size of the input buffer, and
    * it cannot be expanded because the new size would not be
-   * representable with 'size_t'. */
+   * representable with 'int'. */
   yy_err_input_buffer_at_max_size,
 
   /* The default rule has been suppressed, and none of the
