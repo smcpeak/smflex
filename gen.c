@@ -1491,10 +1491,10 @@ static int eval_skel_identifier(void *extra_, char const *id, int len)
   COND_FLAG(option_yy_unread_character)
   COND_FLAG(option_yyclass)
   COND_FLAG(option_yylineno)
+  COND_FLAG(option_yymore)
   COND_FLAG(reject_used)
   COND_FLAG(use_read)
   COND_FLAG(variable_trailing_context_rules)
-  COND_FLAG(yymore_used)
 
   COND_INTVAR(num_backing_up)
 

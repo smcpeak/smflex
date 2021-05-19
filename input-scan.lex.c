@@ -1323,7 +1323,7 @@ static const short int yy_chk[2664] =
 
 #define CHECK_YYMORE(str) \
   if (all_lower(str)) \
-    yymore_used = true;
+    option_yymore = true;
 
 
 #line 1330 "input-scan.lex.c"

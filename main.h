@@ -51,7 +51,7 @@ void usage(void);
  *   otherwise, use fread().
  * csize - size of character set for the scanner we're generating;
  *   128 for 7-bit chars and 256 for 8-bit
- * yymore_used - if true, yymore() is used in input rules
+ * option_yymore - if true, yymore() is enabled
  * reject_used - if true, generate back-up tables for REJECT macro
  * real_reject - if true, scanner really uses REJECT (as opposed to just
  *   having "reject" set for variable trailing context)
@@ -70,7 +70,7 @@ extern int useecs, fulltbl, usemecs, jacobson;
 extern int gen_line_dirs, performance_report, backing_up_report;
 extern int cpp_interface, long_align, use_read;
 extern int csize;
-extern int yymore_used, reject_used, real_reject, continued_action, in_rule;
+extern int option_yymore, reject_used, real_reject, continued_action, in_rule;
 extern int yymore_really_used, reject_really_used;
 
 /* Initially false, set to true by "%option stack".  This controls

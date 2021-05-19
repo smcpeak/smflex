@@ -74,7 +74,7 @@
 
 #define CHECK_YYMORE(str) \
   if (all_lower(str)) \
-    yymore_used = true;
+    option_yymore = true;
 %}
 
 %option caseless nodefault outfile="input-scan.lex.c" stack
