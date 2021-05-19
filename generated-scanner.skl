@@ -639,7 +639,14 @@ int yyFlexLexer::yym_lex()
 
   /* Loop over all tokens in the input until end-of-file. */
   while (1) {
-%% yymore_loop_top: yymore()-related code goes here
+%if yymore_used
+    yy_lexer->yy_more_len = 0;
+    if (yy_lexer->yy_more_flag) {
+      yy_lexer->yy_more_len = yy_lexer->yy_buf_cur_pos - yy_lexer->yy_text;
+      yy_lexer->yy_more_flag = 0;
+    }
+%endif
+
     yy_cp = yy_lexer->yy_buf_cur_pos;
 
     /* Support of yy_text. */

@@ -1116,21 +1116,9 @@ void make_tables()
 
   line_directive_out(scanner_c_file, 0);
 
-  skelout_upto("yymore_loop_top");
-
-  set_indent(2);
-
-  if (yymore_used) {
-    indent_puts("yy_lexer->yy_more_len = 0;");
-    indent_puts("if (yy_lexer->yy_more_flag)");
-    indent_lbrace();
-    indent_puts("yy_lexer->yy_more_len = yy_lexer->yy_buf_cur_pos - yy_lexer->yy_text;");
-    indent_puts("yy_lexer->yy_more_flag = 0;");
-    indent_rbrace();
-  }
-
   skelout_upto("find_next_match");
 
+  set_indent(2);
   gen_start_state();
 
   /* Note, don't use any indentation. */
