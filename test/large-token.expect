@@ -1,5 +1,5 @@
 --------- scan_length(100) ----------
-[yy_flex_alloc: 56]
+[yy_flex_alloc: 64]
 [yy_flex_alloc: 16386]
 [default behavior, so yy_is_interactive is: 0]
 [n=100 c=97]
@@ -9,17 +9,17 @@ saw 100 letters in a row
 [yy_flex_free: 1]
 [yy_flex_free: 0]
 --------- scan_length(100) ----------
-[yy_flex_alloc: 56]
-[alloc_fail: 56]
+[yy_flex_alloc: 64]
+[alloc_fail: 64]
 lexing failed: out of memory
 --------- scan_length(100) ----------
-[yy_flex_alloc: 56]
+[yy_flex_alloc: 64]
 [yy_flex_alloc: 16386]
 [alloc_fail: 16386]
 [yy_flex_free: 0]
 lexing failed: out of memory
 --------- scan_length(1000) ----------
-[yy_flex_alloc: 56]
+[yy_flex_alloc: 64]
 [yy_flex_alloc: 16386]
 [default behavior, so yy_is_interactive is: 0]
 [n=1000 c=97]
@@ -29,7 +29,7 @@ saw 1000 letters in a row
 [yy_flex_free: 1]
 [yy_flex_free: 0]
 --------- scan_length(10000) ----------
-[yy_flex_alloc: 56]
+[yy_flex_alloc: 64]
 [yy_flex_alloc: 16386]
 [default behavior, so yy_is_interactive is: 0]
 [n=8192 c=97]
@@ -40,7 +40,7 @@ saw 10000 letters in a row
 [yy_flex_free: 1]
 [yy_flex_free: 0]
 --------- scan_length(100000) ----------
-[yy_flex_alloc: 56]
+[yy_flex_alloc: 64]
 [yy_flex_alloc: 16386]
 [default behavior, so yy_is_interactive is: 0]
 [n=8192 c=97]
@@ -71,7 +71,7 @@ saw 100000 letters in a row
 [yy_flex_free: 1]
 [yy_flex_free: 0]
 --------- scan_length(100000) ----------
-[yy_flex_alloc: 56]
+[yy_flex_alloc: 64]
 [yy_flex_alloc: 16386]
 [default behavior, so yy_is_interactive is: 0]
 [n=8192 c=97]
