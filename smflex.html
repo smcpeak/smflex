@@ -1039,7 +1039,7 @@ an action:
     macro is not available.  Instead, you can call the
     <a href="#yy_less_text"><code>yy_less_text</code></a> function.
 
-<li><p id="yy_unread_character"><code>YY_UNREAD_CHARACTER(c)</code>
+<li id="YY_UNREAD_CHARACTER-macro"><p id="yy_unread_character"><code>YY_UNREAD_CHARACTER(c)</code>
     puts the character <code>c</code> back onto the input stream. It
     will be the next character scanned. The
     <a href="test/unread-character-parenthesized.lex">following action</a> will take
@@ -1064,12 +1064,11 @@ an action:
     back at the <em>beginning</em> of the input stream, pushing back strings
     must be done back-to-front.
 
-    <p>An important potential problem when using <code>YY_UNREAD_CHARACTER()</code>
-    is that
-    a call to <code>YY_UNREAD_CHARACTER()</code> <em>destroys</em> the contents of
-    <code>YY_TEXT</code>, starting with its rightmost character and devouring
-    one character to the left with each call. If you need the value of YY_TEXT
-    preserved after a call to <code>YY_UNREAD_CHARACTER()</code> (as in the above example),
+    <p>Calling <code>YY_UNREAD_CHARACTER()</code> invalidates
+    <code>YY_TEXT</code> and <code>YY_LENG</code>.  Any use of these
+    variables after unreading results in undefined behavior.
+    If you need the value of <a href="#YY_TEXT-macro"><code>YY_TEXT</code></a>
+    after a call to <code>YY_UNREAD_CHARACTER()</code> (as in the above example),
     you must first copy it elsewhere.
 
     <p>Finally, note that you cannot put back <code>EOF</code> to attempt
@@ -4848,6 +4847,22 @@ run-time support library.  That has been removed as detailed below.
     <p>Replacement: Either pass 0 as the <code>size</code> or pass an
     explicit non-zero size.  If this value was being used for some
     other purpose, replace it with 16384.
+
+<li><p>In <code>flex-2.5.4</code>, it was permissible to access
+    <code>YY_TEXT</code> after calling
+    <a href="#YY_UNREAD_CHARACTER-macro"><code>YY_UNREAD_CHARACTER</code></a>.
+    This is no longer permitted.
+
+    <p>Rationale: Although the manual discouraged doing so, and did
+    not fully document what would happen, it did not explicitly
+    prohibit accessing <code>YY_TEXT</code>.  Doing so had screwy,
+    unpredictable effects, so was unlikely to be useful.  To keep
+    things simple and enhance inter-version compatibility, I am
+    simply prohibiting such use.
+
+    <p>Replacement: Make a copy of <code>YY_TEXT</code> before calling
+    <code>YY_UNREAD_CHARACTER</code> (which was also the advice given
+    in the <code>flex-2.5.4</code> manual).
 
 </ul>
 
