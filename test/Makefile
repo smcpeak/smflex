@@ -290,6 +290,7 @@ all-df: out/yym-set-bol.ok
 all-df: out/yym-set-start-state.ok
 all-df: out/yym-wrap.ok
 all-d : out/yymore-mega-kludge.ok
+all-df: out/yymore-yytext.ok
 all-df: out/zap-me.ok
 
 # Add the right set of tests to 'all'.
