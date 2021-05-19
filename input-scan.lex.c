@@ -3376,6 +3376,8 @@ void input_scan_unread_character(input_scan_lexer_t *yy_lexer, int c)
   char *yy_bp = YY_TEXT_NONCONST;
   char *yy_cp = yy_lexer->yy_buf_cur_pos;
 
+  YY_API_PRECONDITION(0 <= c && c <= 255);
+
   /* undo effects of setting up yy_text */
   *yy_cp = yy_lexer->yy_hold_char;
 

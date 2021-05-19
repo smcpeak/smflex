@@ -1073,7 +1073,8 @@ an action:
     you must first copy it elsewhere.
 
     <p>Finally, note that you cannot put back <code>EOF</code> to attempt
-    to mark the input stream with an end-of-file.
+    to mark the input stream with an end-of-file.  The argument
+    <code>c</code> must be in [0,255].
 
     <p>Use of this macro requires
     <code>%option yy_unread_character</code>.
