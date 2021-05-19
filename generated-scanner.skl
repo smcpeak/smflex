@@ -153,16 +153,17 @@
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
 
-/* Return all but the first 'n' matched characters back to the input
- * stream.  This definition only works in section 3 where the local
- * variables 'yy_cp' and 'yy_bp' are present. */
+/* Return all but the first 'new_yy_leng' matched characters back to the
+ * input stream.  This definition only works in section 2 where the
+ * local variables 'yy_cp' and 'yy_bp' are present. */
 #define YY_LESS_TEXT(new_yy_leng) \
-  if (1) { \
+  do { \
+    YY_API_PRECONDITION(0 <= new_yy_leng && new_yy_leng <= YY_LENG); \
     /* Undo effects of setting up yy_text. */ \
     *yy_cp = yy_lexer->yy_hold_char; \
-    yy_lexer->yy_buf_cur_pos = yy_cp = yy_bp + new_yy_leng - YY_MORE_ADJ; \
+    yy_lexer->yy_buf_cur_pos = yy_cp = yy_bp + new_yy_leng - YY_MORE_LEN; \
     YY_DO_BEFORE_ACTION; /* set up yy_text again */ \
-  } else ((void)0)
+  } while (0)
 
 
 
@@ -477,10 +478,10 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 
 %if yymore_used
 #define yymore() (yy_lexer->yy_more_flag = 1)
-#define YY_MORE_ADJ yy_lexer->yy_more_len
+#define YY_MORE_LEN yy_lexer->yy_more_len
 %else
 #define yymore() yymore_used_but_not_detected
-#define YY_MORE_ADJ 0
+#define YY_MORE_LEN 0
 %endif
 
 %% user_section1: user's section 1 definitions go here
@@ -766,7 +767,7 @@ do_action:      /* This label is used only to access EOF actions. */
 
           yy_next_state = yy_try_NUL_trans(yy_lexer, yy_current_state);
 
-          yy_bp = YY_TEXT_NONCONST + YY_MORE_ADJ;
+          yy_bp = YY_TEXT_NONCONST + YY_MORE_LEN;
 
           if (yy_next_state) {
             /* Consume the NUL. */
@@ -796,7 +797,7 @@ do_action:      /* This label is used only to access EOF actions. */
                  * YY_EOF_TOKEN_CODE, it'll still work - another
                  * YY_EOF_TOKEN_CODE will get returned.
                  */
-                yy_lexer->yy_buf_cur_pos = YY_TEXT_NONCONST + YY_MORE_ADJ;
+                yy_lexer->yy_buf_cur_pos = YY_TEXT_NONCONST + YY_MORE_LEN;
 
                 yy_act = YY_STATE_EOF(YY_GET_START_STATE());
                 goto do_action;
@@ -817,7 +818,7 @@ do_action:      /* This label is used only to access EOF actions. */
               yy_current_state = yy_get_previous_state(yy_lexer);
 
               yy_cp = yy_lexer->yy_buf_cur_pos;
-              yy_bp = YY_TEXT_NONCONST + YY_MORE_ADJ;
+              yy_bp = YY_TEXT_NONCONST + YY_MORE_LEN;
               goto yy_match;
 
             case EOB_ACT_LAST_MATCH:
@@ -827,7 +828,7 @@ do_action:      /* This label is used only to access EOF actions. */
               yy_current_state = yy_get_previous_state(yy_lexer);
 
               yy_cp = yy_lexer->yy_buf_cur_pos;
-              yy_bp = YY_TEXT_NONCONST + YY_MORE_ADJ;
+              yy_bp = YY_TEXT_NONCONST + YY_MORE_LEN;
               goto yy_find_action;
           } /* switch (yy_get_next_buffer()) */
         }
@@ -1042,7 +1043,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
   }
 
   if (yy_lexer->yy_current_buffer->yy_fill_buffer == 0) { /* Don't try to fill the buffer, so this is an EOF. */
-    if (yy_lexer->yy_buf_cur_pos - yy_lexer->yy_text - YY_MORE_ADJ == 1) {
+    if (yy_lexer->yy_buf_cur_pos - yy_lexer->yy_text - YY_MORE_LEN == 1) {
       /* We matched a single character, the EOB, so
        * treat this as a final EOF.
        */
@@ -1145,7 +1146,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
   }
 
   if (yy_lexer->yy_buf_data_len == 0) {
-    if (number_to_move == YY_MORE_ADJ) {
+    if (number_to_move == YY_MORE_LEN) {
       ret_val = EOB_ACT_END_OF_FILE;
       yy_restart(yy_lexer, yy_lexer->yy_input_stream);
     }
@@ -1178,7 +1179,7 @@ static yy_state_type_t yy_get_previous_state(yy_lexer_t *yy_lexer)
 
 %% prev_start_to_current: code to get the start state into yy_current_state goes here
 
-  for (yy_cp = YY_TEXT_NONCONST + YY_MORE_ADJ;
+  for (yy_cp = YY_TEXT_NONCONST + YY_MORE_LEN;
        yy_cp < yy_lexer->yy_buf_cur_pos;
        ++yy_cp) {
 %% prev_find_next_state: code to find the next state goes here
