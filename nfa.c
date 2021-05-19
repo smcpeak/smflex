@@ -233,7 +233,7 @@ void finish_rule(int mach, int variable_trail_rule,
       /* Do trailing context magic to not match the trailing
        * characters.
        */
-      char *scanner_cp = "yy_lexer->yy_c_buf_p = yy_cp";
+      char *scanner_cp = "yy_lexer->yy_buf_cur_pos = yy_cp";
       char *scanner_bp = "yy_bp";
 
       add_action

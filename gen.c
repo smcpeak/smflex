@@ -647,7 +647,7 @@ void gen_NUL_trans()
     /* We're going to need yy_cp lying around for the call
      * below to gen_backing_up().
      */
-    indent_puts("char *yy_cp = yy_lexer->yy_c_buf_p;");
+    indent_puts("char *yy_cp = yy_lexer->yy_buf_cur_pos;");
 
   outc('\n');
 
@@ -685,7 +685,7 @@ void gen_NUL_trans()
     if (reject_used) {
       /* Only stack this state if it's a transition we
        * actually make.  If we stack it on a jam, then
-       * the state stack and yy_c_buf_p get out of sync.
+       * the state stack and yy_buf_cur_pos get out of sync.
        */
       indent_puts("if ( ! yy_is_jam )");
       indent_up();
@@ -1174,7 +1174,7 @@ void make_tables()
     indent_puts("yy_lexer->yy_more_len = 0;");
     indent_puts("if (yy_lexer->yy_more_flag)");
     indent_lbrace();
-    indent_puts("yy_lexer->yy_more_len = yy_lexer->yy_c_buf_p - yy_lexer->yy_text;");
+    indent_puts("yy_lexer->yy_more_len = yy_lexer->yy_buf_cur_pos - yy_lexer->yy_text;");
     indent_puts("yy_lexer->yy_more_flag = 0;");
     indent_rbrace();
   }
@@ -1232,7 +1232,7 @@ void make_tables()
   set_indent(6);
 
   if (jacobson || fulltbl)
-    indent_puts("yy_cp = yy_lexer->yy_c_buf_p;");
+    indent_puts("yy_cp = yy_lexer->yy_buf_cur_pos;");
 
   else {                        /* compressed table */
     if (!reject_used && !interactive) {
@@ -1248,7 +1248,7 @@ void make_tables()
        * yy_current_state was set up by
        * yy_get_previous_state().
        */
-      indent_puts("yy_cp = yy_lexer->yy_c_buf_p;");
+      indent_puts("yy_cp = yy_lexer->yy_buf_cur_pos;");
   }
 
 

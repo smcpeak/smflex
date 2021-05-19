@@ -199,7 +199,7 @@ struct input_scan_lexer_struct {
   /* Holds the character overwritten by a NUL when 'yy_text' is formed.
    *
    * Generally, when we are not in the middle of the matching algorithm,
-   * 'yy_hold_char' contains the value that belongs in '*yy_c_buf_p'. */
+   * 'yy_hold_char' contains the value that belongs in '*yy_buf_cur_pos'. */
   char yy_hold_char;
 
   /* Number of characters in 'yy_current_buffer->yy_buffer' that need to
@@ -214,12 +214,12 @@ struct input_scan_lexer_struct {
   /* Points to current character in buffer, i.e., the next character
    * to scan.
    *
-   * Invariant: yy_current_buffer->yy_buffer <= yy_c_buf_p
-   * Invariant: yy_c_buf_p <= yy_current_buffer->yy_buffer + yy_buf_data_len + 2
+   * Invariant: yy_current_buffer->yy_buffer <= yy_buf_cur_pos
+   * Invariant: yy_buf_cur_pos <= yy_current_buffer->yy_buffer + yy_buf_data_len + 2
    *
-   * I'm not sure, but I think it is possible for yy_c_buf_p to reach
+   * I'm not sure, but I think it is possible for yy_buf_cur_pos to reach
    * the one-past-the-end location, i.e., yy_buf_data_len + 2. */
-  char *yy_c_buf_p;
+  char *yy_buf_cur_pos;
 
   /* True if we need to initialize inside 'input_scan_lex()'.
    *

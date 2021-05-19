@@ -126,7 +126,7 @@
   if (1) { \
     /* Undo effects of setting up yy_text. */ \
     *yy_cp = yy_lexer->yy_hold_char; \
-    yy_lexer->yy_c_buf_p = yy_cp = yy_bp + new_yy_leng - YY_MORE_ADJ; \
+    yy_lexer->yy_buf_cur_pos = yy_cp = yy_bp + new_yy_leng - YY_MORE_ADJ; \
     YY_DO_BEFORE_ACTION; /* set up yy_text again */ \
   } else ((void)0)
 
@@ -184,11 +184,11 @@ struct input_scan_buffer_state_struct {
   /* Points to current character in buffer, i.e., the next character
    * to scan.
    *
-   * Invariant: yy_buffer <= yy_buf_pos
-   * Invariant:              yy_buf_pos <= yy_buffer + yy_buf_data_len + 2
+   * Invariant: yy_buffer <= yy_buf_cur_pos
+   * Invariant:              yy_buf_cur_pos <= yy_buffer + yy_buf_data_len + 2
    *
    * I am not sure about being able to reach the +2 location. */
-  char *yy_buf_pos;
+  char *yy_buf_cur_pos;
 
   /* The relationship among the four preceding fields is summarized in
    * this diagram:
@@ -199,7 +199,7 @@ struct input_scan_buffer_state_struct {
    *   [ already scanned   yet to scan 0 0   available space 0 0 ]
    *                       ^           ^
    *                       |           |
-   *                   yy_buf_pos  yy_buf_data_len
+   *              yy_buf_cur_pos  yy_buf_data_len
    *
    * The "0 0" at yy_buf_data_len must always be there.  The "0 0" at
    * yy_buf_alloc_size is space reserved to put the zeros in when
@@ -329,7 +329,7 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer);
   yy_lexer->yy_leng = (int) (yy_cp - yy_bp); \
   yy_lexer->yy_hold_char = *yy_cp; \
   *yy_cp = '\0'; \
-  yy_lexer->yy_c_buf_p = yy_cp;
+  yy_lexer->yy_buf_cur_pos = yy_cp;
 
 #define YY_NUM_RULES 154
 #define YY_END_OF_BUFFER 155
@@ -1505,7 +1505,7 @@ int input_scan_lex(input_scan_lexer_t * const yy_lexer)
 
   /* Loop over all tokens in the input until end-of-file. */
   while (1) {
-    yy_cp = yy_lexer->yy_c_buf_p;
+    yy_cp = yy_lexer->yy_buf_cur_pos;
 
     /* Support of yy_text. */
     *yy_cp = yy_lexer->yy_hold_char;
@@ -2225,7 +2225,7 @@ YY_SET_START_STATE(QUOTE); return '"';
   YY_BREAK
 case 83:
 *yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */
-yy_lexer->yy_c_buf_p = yy_cp = yy_bp + 1;
+yy_lexer->yy_buf_cur_pos = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yy_text again */
 YY_RULE_SETUP
 #line 371 "input-scan.lex"
@@ -2234,7 +2234,7 @@ YY_SET_START_STATE(NUM); return '{';
   YY_BREAK
 case 84:
 *yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */
-yy_lexer->yy_c_buf_p = yy_cp = yy_bp + 1;
+yy_lexer->yy_buf_cur_pos = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yy_text again */
 YY_RULE_SETUP
 #line 372 "input-scan.lex"
@@ -2462,7 +2462,7 @@ YY_SET_START_STATE(SECT2); return '>';
   YY_BREAK
 case 100:
 *yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */
-yy_lexer->yy_c_buf_p = yy_cp = yy_bp + 1;
+yy_lexer->yy_buf_cur_pos = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yy_text again */
 YY_RULE_SETUP
 #line 521 "input-scan.lex"
@@ -2525,7 +2525,7 @@ YY_RULE_SETUP
 
 case 107:
 *yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */
-yy_lexer->yy_c_buf_p = yy_cp = yy_bp + 1;
+yy_lexer->yy_buf_cur_pos = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yy_text again */
 YY_RULE_SETUP
 #line 546 "input-scan.lex"
@@ -2534,7 +2534,7 @@ YY_SET_START_STATE(CCL); return '^';
   YY_BREAK
 case 108:
 *yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */
-yy_lexer->yy_c_buf_p = yy_cp = yy_bp + 1;
+yy_lexer->yy_buf_cur_pos = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yy_text again */
 YY_RULE_SETUP
 #line 547 "input-scan.lex"
@@ -2552,7 +2552,7 @@ YY_SET_START_STATE(CCL); RETURNCHAR;
 
 case 110:
 *yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */
-yy_lexer->yy_c_buf_p = yy_cp = yy_bp + 1;
+yy_lexer->yy_buf_cur_pos = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yy_text again */
 YY_RULE_SETUP
 #line 552 "input-scan.lex"
@@ -2983,19 +2983,20 @@ case YY_STATE_EOF(LINEDIR):
           yy_lexer->yy_current_buffer->yy_buf_status = YY_BUF_STATUS_NORMAL;
         }
 
-        /* Note that here we test for yy_c_buf_p "<=" to the position
-         * of the first EOB in the buffer, since yy_c_buf_p will
+        /* Note that here we test for yy_buf_cur_pos "<=" to the position
+         * of the first EOB in the buffer, since yy_buf_cur_pos will
          * already have been incremented past the NUL character
          * (since all states make transitions on EOB to the
          * end-of-buffer state).  Contrast this with the test
          * in input().
          */
-        if (yy_lexer->yy_c_buf_p <=
+        if (yy_lexer->yy_buf_cur_pos <=
               &yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_buf_data_len]) {
           /* This was really a NUL. */
           input_scan_state_type_t yy_next_state;
 
-          yy_lexer->yy_c_buf_p = YY_TEXT_NONCONST + yy_amount_of_matched_text;
+          yy_lexer->yy_buf_cur_pos =
+            YY_TEXT_NONCONST + yy_amount_of_matched_text;
 
           yy_current_state = yy_get_previous_state(yy_lexer);
 
@@ -3014,7 +3015,7 @@ case YY_STATE_EOF(LINEDIR):
 
           if (yy_next_state) {
             /* Consume the NUL. */
-            yy_cp = ++(yy_lexer->yy_c_buf_p);
+            yy_cp = ++(yy_lexer->yy_buf_cur_pos);
             yy_current_state = yy_next_state;
             goto yy_match;
           }
@@ -3035,13 +3036,13 @@ case YY_STATE_EOF(LINEDIR):
                 /* Note: because we've taken care in
                  * yy_get_next_buffer() to have set up
                  * yy_text, we can now set up
-                 * yy_c_buf_p so that if some total
+                 * yy_buf_cur_pos so that if some total
                  * hoser (like smflex itself) wants to
                  * call the scanner after we return the
                  * YY_EOF_TOKEN_CODE, it'll still work - another
                  * YY_EOF_TOKEN_CODE will get returned.
                  */
-                yy_lexer->yy_c_buf_p = YY_TEXT_NONCONST + YY_MORE_ADJ;
+                yy_lexer->yy_buf_cur_pos = YY_TEXT_NONCONST + YY_MORE_ADJ;
 
                 yy_act = YY_STATE_EOF(YY_GET_START_STATE());
                 goto do_action;
@@ -3056,21 +3057,22 @@ case YY_STATE_EOF(LINEDIR):
             }
 
             case EOB_ACT_CONTINUE_SCAN:
-              yy_lexer->yy_c_buf_p = YY_TEXT_NONCONST + yy_amount_of_matched_text;
+              yy_lexer->yy_buf_cur_pos =
+                YY_TEXT_NONCONST + yy_amount_of_matched_text;
 
               yy_current_state = yy_get_previous_state(yy_lexer);
 
-              yy_cp = yy_lexer->yy_c_buf_p;
+              yy_cp = yy_lexer->yy_buf_cur_pos;
               yy_bp = YY_TEXT_NONCONST + YY_MORE_ADJ;
               goto yy_match;
 
             case EOB_ACT_LAST_MATCH:
-              yy_lexer->yy_c_buf_p =
+              yy_lexer->yy_buf_cur_pos =
                 &yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_buf_data_len];
 
               yy_current_state = yy_get_previous_state(yy_lexer);
 
-              yy_cp = yy_lexer->yy_c_buf_p;
+              yy_cp = yy_lexer->yy_buf_cur_pos;
               yy_bp = YY_TEXT_NONCONST + YY_MORE_ADJ;
               goto yy_find_action;
           } /* switch (yy_get_next_buffer()) */
@@ -3109,7 +3111,7 @@ void input_scan_construct(input_scan_lexer_t *yy_lexer)
   yy_lexer->yy_hold_char = 0;
   yy_lexer->yy_buf_data_len = 0;
 
-  yy_lexer->yy_c_buf_p = NULL;
+  yy_lexer->yy_buf_cur_pos = NULL;
   yy_lexer->yy_init = 1;
   yy_lexer->yy_start_state = 0;
   yy_lexer->yy_did_buffer_switch_on_eof = 0;
@@ -3179,14 +3181,14 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
   int number_to_move, i;
   int ret_val;
 
-  if (yy_lexer->yy_c_buf_p >
+  if (yy_lexer->yy_buf_cur_pos >
         &yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_buf_data_len + 1]) {
     YY_ERROR(input_scan_err_internal_error, "end of buffer missed");
     return EOB_ACT_END_OF_FILE;
   }
 
   if (yy_lexer->yy_current_buffer->yy_fill_buffer == 0) { /* Don't try to fill the buffer, so this is an EOF. */
-    if (yy_lexer->yy_c_buf_p - yy_lexer->yy_text - YY_MORE_ADJ == 1) {
+    if (yy_lexer->yy_buf_cur_pos - yy_lexer->yy_text - YY_MORE_ADJ == 1) {
       /* We matched a single character, the EOB, so
        * treat this as a final EOF.
        */
@@ -3204,7 +3206,7 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
   /* Try to read more data. */
 
   /* First move last chars to start of buffer. */
-  number_to_move = (int) (yy_lexer->yy_c_buf_p - yy_lexer->yy_text) - 1;
+  number_to_move = (int) (yy_lexer->yy_buf_cur_pos - yy_lexer->yy_text) - 1;
 
   for (i = 0; i < number_to_move; ++i) {
     *(dest++) = *(source++);
@@ -3225,7 +3227,7 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
       /* just a shorter name for the current buffer */
       input_scan_buffer_state_t *b = yy_lexer->yy_current_buffer;
 
-      int yy_c_buf_p_offset = (int) (yy_lexer->yy_c_buf_p - b->yy_buffer);
+      int yy_c_buf_p_offset = (int) (yy_lexer->yy_buf_cur_pos - b->yy_buffer);
 
       if (b->yy_is_our_buffer) {
         int new_size;
@@ -3263,7 +3265,7 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
         return EOB_ACT_END_OF_FILE;
       }
 
-      yy_lexer->yy_c_buf_p = &b->yy_buffer[yy_c_buf_p_offset];
+      yy_lexer->yy_buf_cur_pos = &b->yy_buffer[yy_c_buf_p_offset];
 
       num_to_read = yy_lexer->yy_current_buffer->yy_buf_alloc_size - number_to_move - 1;
     }
@@ -3317,7 +3319,7 @@ static input_scan_state_type_t yy_get_previous_state(input_scan_lexer_t *yy_lexe
   yy_current_state += YY_GET_BOL();
 
   for (yy_cp = YY_TEXT_NONCONST + YY_MORE_ADJ;
-       yy_cp < yy_lexer->yy_c_buf_p;
+       yy_cp < yy_lexer->yy_buf_cur_pos;
        ++yy_cp) {
     YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
     if ( yy_accept[yy_current_state] )
@@ -3346,7 +3348,7 @@ static input_scan_state_type_t yy_get_previous_state(input_scan_lexer_t *yy_lexe
 static input_scan_state_type_t yy_try_NUL_trans(input_scan_lexer_t *yy_lexer, input_scan_state_type_t yy_current_state)
 {
   int yy_is_jam;
-  char *yy_cp = yy_lexer->yy_c_buf_p;
+  char *yy_cp = yy_lexer->yy_buf_cur_pos;
 
   YY_CHAR yy_c = 1;
   if ( yy_accept[yy_current_state] )
@@ -3370,7 +3372,7 @@ static input_scan_state_type_t yy_try_NUL_trans(input_scan_lexer_t *yy_lexer, in
 void input_scan_unread_character(input_scan_lexer_t *yy_lexer, int c)
 {
   char *yy_bp = YY_TEXT_NONCONST;
-  char *yy_cp = yy_lexer->yy_c_buf_p;
+  char *yy_cp = yy_lexer->yy_buf_cur_pos;
 
   /* undo effects of setting up yy_text */
   *yy_cp = yy_lexer->yy_hold_char;
@@ -3405,7 +3407,7 @@ void input_scan_unread_character(input_scan_lexer_t *yy_lexer, int c)
 
   yy_lexer->yy_text = yy_bp;
   yy_lexer->yy_hold_char = *yy_cp;
-  yy_lexer->yy_c_buf_p = yy_cp;
+  yy_lexer->yy_buf_cur_pos = yy_cp;
 }
 
 
@@ -3415,22 +3417,22 @@ int input_scan_read_character(input_scan_lexer_t *yy_lexer)
 {
   int c;
 
-  *(yy_lexer->yy_c_buf_p) = yy_lexer->yy_hold_char;
+  *(yy_lexer->yy_buf_cur_pos) = yy_lexer->yy_hold_char;
 
-  if (*(yy_lexer->yy_c_buf_p) == YY_END_OF_BUFFER_CHAR) {
-    /* yy_c_buf_p now points to the character we want to return.
+  if (*(yy_lexer->yy_buf_cur_pos) == YY_END_OF_BUFFER_CHAR) {
+    /* yy_buf_cur_pos now points to the character we want to return.
      * If this occurs *before* the EOB characters, then it's a
      * valid NUL; if not, then we've hit the end of the buffer.
      */
-    if (yy_lexer->yy_c_buf_p <
+    if (yy_lexer->yy_buf_cur_pos <
           &yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_buf_data_len]) {
       /* This was really a NUL. */
-      *(yy_lexer->yy_c_buf_p) = '\0';
+      *(yy_lexer->yy_buf_cur_pos) = '\0';
     }
 
     else { /* need more input */
-      int offset = yy_lexer->yy_c_buf_p - yy_lexer->yy_text;
-      ++(yy_lexer->yy_c_buf_p);
+      int offset = yy_lexer->yy_buf_cur_pos - yy_lexer->yy_text;
+      ++(yy_lexer->yy_buf_cur_pos);
 
       switch (yy_get_next_buffer(yy_lexer)) {
         case EOB_ACT_LAST_MATCH:
@@ -3462,15 +3464,15 @@ int input_scan_read_character(input_scan_lexer_t *yy_lexer)
         }
 
         case EOB_ACT_CONTINUE_SCAN:
-          yy_lexer->yy_c_buf_p = YY_TEXT_NONCONST + offset;
+          yy_lexer->yy_buf_cur_pos = YY_TEXT_NONCONST + offset;
           break;
       }
     }
   }
 
-  c = *(unsigned char *)yy_lexer->yy_c_buf_p;   /* cast for 8-bit char's */
-  *(yy_lexer->yy_c_buf_p) = '\0';     /* preserve yy_text */
-  yy_lexer->yy_hold_char = *++(yy_lexer->yy_c_buf_p);
+  c = *(unsigned char *)yy_lexer->yy_buf_cur_pos;   /* cast for 8-bit char's */
+  *(yy_lexer->yy_buf_cur_pos) = '\0';     /* preserve yy_text */
+  yy_lexer->yy_hold_char = *++(yy_lexer->yy_buf_cur_pos);
 
   yy_lexer->yy_current_buffer->yy_at_bol = (c == '\n');
 
@@ -3503,8 +3505,8 @@ void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer
 
   if (yy_lexer->yy_current_buffer) {
     /* Flush out information for old buffer. */
-    *(yy_lexer->yy_c_buf_p) = yy_lexer->yy_hold_char;
-    yy_lexer->yy_current_buffer->yy_buf_pos = yy_lexer->yy_c_buf_p;
+    *(yy_lexer->yy_buf_cur_pos) = yy_lexer->yy_hold_char;
+    yy_lexer->yy_current_buffer->yy_buf_cur_pos  = yy_lexer->yy_buf_cur_pos;
     yy_lexer->yy_current_buffer->yy_buf_data_len = yy_lexer->yy_buf_data_len;
   }
 
@@ -3529,14 +3531,14 @@ static void yy_load_current_buffer_state(input_scan_lexer_t *yy_lexer)
 {
   /* Copy duplicated fields. */
   yy_lexer->yy_buf_data_len = yy_lexer->yy_current_buffer->yy_buf_data_len;
-  yy_lexer->yy_c_buf_p      = yy_lexer->yy_current_buffer->yy_buf_pos;
+  yy_lexer->yy_buf_cur_pos  = yy_lexer->yy_current_buffer->yy_buf_cur_pos;
   yy_lexer->yy_input_stream = yy_lexer->yy_current_buffer->yy_input_file;
 
   /* Set up 'yy_text'.  TODO: Why is this necessary? */
-  yy_lexer->yy_text      =   yy_lexer->yy_c_buf_p;
+  yy_lexer->yy_text      =   yy_lexer->yy_buf_cur_pos;
 
   /* Establish the 'yy_hold_char' invariant. */
-  yy_lexer->yy_hold_char = *(yy_lexer->yy_c_buf_p);
+  yy_lexer->yy_hold_char = *(yy_lexer->yy_buf_cur_pos);
 }
 
 
@@ -3627,7 +3629,7 @@ void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_sta
   b->yy_buffer[0] = YY_END_OF_BUFFER_CHAR;
   b->yy_buffer[1] = YY_END_OF_BUFFER_CHAR;
 
-  b->yy_buf_pos = &b->yy_buffer[0];
+  b->yy_buf_cur_pos = &b->yy_buffer[0];
 
   b->yy_at_bol = 1;
   b->yy_buf_status = YY_BUF_STATUS_NEW;
@@ -3795,12 +3797,12 @@ void input_scan_less_text(input_scan_lexer_t *yy_lexer, int new_yy_leng)
   YY_TEXT_NONCONST[yy_lexer->yy_leng] = yy_lexer->yy_hold_char;
 
   /* Move the end-of-token pointer to the specified location. */
-  yy_lexer->yy_c_buf_p = YY_TEXT_NONCONST + new_yy_leng;
+  yy_lexer->yy_buf_cur_pos = YY_TEXT_NONCONST + new_yy_leng;
   yy_lexer->yy_leng = new_yy_leng;
 
   /* Re-insert the temporary NUL terminator. */
-  yy_lexer->yy_hold_char = *(yy_lexer->yy_c_buf_p);
-  *(yy_lexer->yy_c_buf_p) = '\0';
+  yy_lexer->yy_hold_char = *(yy_lexer->yy_buf_cur_pos);
+  *(yy_lexer->yy_buf_cur_pos) = '\0';
 }
 
 
