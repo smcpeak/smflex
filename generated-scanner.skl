@@ -455,7 +455,35 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
   *yy_cp = '\0';                                         \
   yy_lexer->yy_buf_cur_pos = yy_cp;
 
-%% dfa_tables: data tables for the DFA and the user's section 1 definitions go here
+%% dfa_tables: data tables for the DFA
+
+%if reject_used
+#define REJECT do { \
+  *yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */ \
+  yy_cp = yy_lexer->yy_full_match; /* restore poss. backed-over text */ \
+%if variable_trailing_context_rules \
+  yy_lexer->yy_lp = yy_lexer->yy_full_lp; /* restore orig. accepting pos. */ \
+  yy_lexer->yy_state_ptr = yy_lexer->yy_full_state; /* restore orig. state */ \
+  yy_current_state = *(yy_lexer->yy_state_ptr); /* restore curr. state */ \
+%endif \
+  ++(yy_lexer->yy_lp); \
+  goto find_rule; \
+} while (0)
+%else
+/* The intent behind this definition is that it'll catch
+ * any uses of REJECT which smflex missed. */
+#define REJECT reject_used_but_not_detected
+%endif
+
+%if yymore_used
+#define yymore() (yy_lexer->yy_more_flag = 1)
+#define YY_MORE_ADJ yy_lexer->yy_more_len
+%else
+#define yymore() yymore_used_but_not_detected
+#define YY_MORE_ADJ 0
+%endif
+
+%% user_section1: user's section 1 definitions go here
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.

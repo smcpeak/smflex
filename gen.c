@@ -1082,46 +1082,14 @@ void make_tables()
     dataend();
   }
 
-  if (reject_used) {
-    if (variable_trailing_context_rules) {
-      out_hex("#define YY_TRAILING_MASK 0x%x\n",
-              (unsigned int) YY_TRAILING_MASK);
-      out_hex("#define YY_TRAILING_HEAD_MASK 0x%x\n",
-              (unsigned int) YY_TRAILING_HEAD_MASK);
-    }
-
-    outn("#define REJECT \\");
-    outn("{ \\");
-    outn("*yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */ \\");
-    outn("yy_cp = yy_lexer->yy_full_match; /* restore poss. backed-over text */ \\");
-
-    if (variable_trailing_context_rules) {
-      outn("yy_lexer->yy_lp = yy_lexer->yy_full_lp; /* restore orig. accepting pos. */ \\");
-      outn("yy_lexer->yy_state_ptr = yy_lexer->yy_full_state; /* restore orig. state */ \\");
-      outn("yy_current_state = *(yy_lexer->yy_state_ptr); /* restore curr. state */ \\");
-    }
-
-    outn("++(yy_lexer->yy_lp); \\");
-    outn("goto find_rule; \\");
-    outn("}");
+  if (reject_used && variable_trailing_context_rules) {
+    out_hex("#define YY_TRAILING_MASK 0x%x\n",
+            (unsigned int) YY_TRAILING_MASK);
+    out_hex("#define YY_TRAILING_HEAD_MASK 0x%x\n",
+            (unsigned int) YY_TRAILING_HEAD_MASK);
   }
 
-  else {
-    outn("/* The intent behind this definition is that it'll catch");
-    outn(" * any uses of REJECT which smflex missed.");
-    outn(" */");
-    outn("#define REJECT reject_used_but_not_detected");
-  }
-
-  if (yymore_used) {
-    indent_puts("#define yymore() (yy_lexer->yy_more_flag = 1)");
-    indent_puts("#define YY_MORE_ADJ yy_lexer->yy_more_len");
-  }
-
-  else {
-    indent_puts("#define yymore() yymore_used_but_not_detected");
-    indent_puts("#define YY_MORE_ADJ 0");
-  }
+  skelout_upto("user_section1");
 
   out_with_line_directive_substitution(&action_array[defs1_offset]);
 
