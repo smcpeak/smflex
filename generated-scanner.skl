@@ -442,13 +442,17 @@ static yy_state_type_t yy_try_NUL_trans(yy_lexer_t *yy_lexer, yy_state_type_t cu
 static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 
 /* Done after the current pattern has been matched and before the
- * corresponding action - sets up yy_text.
- */
-#define YY_DO_BEFORE_ACTION \
-  yy_lexer->yy_text = yy_bp; \
-%% yymore_yy_text: code to fiddle yy_text and yy_leng for yymore() goes here
-  yy_lexer->yy_hold_char = *yy_cp; \
-  *yy_cp = '\0'; \
+ * corresponding action - sets up yy_text. */
+#define YY_DO_BEFORE_ACTION                              \
+  yy_lexer->yy_text = yy_bp;                             \
+%if yymore_used                                          \
+  yy_lexer->yy_text -= yy_lexer->yy_more_len;            \
+  yy_lexer->yy_leng = (int) (yy_cp - yy_lexer->yy_text); \
+%else                                                    \
+  yy_lexer->yy_leng = (int) (yy_cp - yy_bp);             \
+%endif                                                   \
+  yy_lexer->yy_hold_char = *yy_cp;                       \
+  *yy_cp = '\0';                                         \
   yy_lexer->yy_buf_cur_pos = yy_cp;
 
 %% dfa_tables: data tables for the DFA and the user's section 1 definitions go here
@@ -1246,11 +1250,11 @@ int yy_read_character(yy_lexer_t *yy_lexer)
 
       switch (yy_get_next_buffer(yy_lexer)) {
         case EOB_ACT_LAST_MATCH:
-          /* This happens because yy_g_n_b()
+          /* This happens because yy_get_next_buffer()
            * sees that we've accumulated a
            * token and flags that we need to
            * try matching the token before
-           * proceeding.  But for input(),
+           * proceeding.  But for yy_read_character(),
            * there's no matching to consider.
            * So convert the EOB_ACT_LAST_MATCH
            * to EOB_ACT_END_OF_FILE.
@@ -1281,7 +1285,16 @@ int yy_read_character(yy_lexer_t *yy_lexer)
   }
 
   c = *(unsigned char *)yy_lexer->yy_buf_cur_pos;   /* cast for 8-bit char's */
+
+  /* Note: We are putting a NUL and then (in the next statement)
+   * advancing 'yy_buf_cur_pos' and grabbing a new 'yy_hold_char'.
+   * That means nothing will remember the character originally in
+   * this spot (except for 'c', the value we are about to return).
+   *
+   * This means that successive 'yy_read_character' calls overwrite
+   * characters after 'yy_text' with NULs, one by one. */
   *(yy_lexer->yy_buf_cur_pos) = '\0';     /* preserve yy_text */
+
   yy_lexer->yy_hold_char = *++(yy_lexer->yy_buf_cur_pos);
 
 %if bol_needed

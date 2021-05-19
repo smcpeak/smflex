@@ -1006,24 +1006,6 @@ void make_tables()
   int i;
   int did_eof_rule = false;
 
-  skelout_upto("yymore_yy_text");
-
-  /* First, take care of YY_DO_BEFORE_ACTION depending on yymore
-   * being used.
-   */
-  set_indent(1);
-
-  if (yymore_used) {
-    indent_puts("yy_lexer->yy_text -= yy_lexer->yy_more_len; \\");
-    indent_puts("yy_lexer->yy_leng = (int) (yy_cp - yy_lexer->yy_text); \\");
-  }
-
-  else {
-    indent_puts("yy_lexer->yy_leng = (int) (yy_cp - yy_bp); \\");
-  }
-
-  set_indent(0);
-
   skelout_upto("dfa_tables");
 
 

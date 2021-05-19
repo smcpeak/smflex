@@ -233,7 +233,17 @@ int evaluate_skel_expr(eval_context_t *ctx, char const *expr)
   res = eval_or(ctx, &expr);
 
   skip_spaces(&expr);
-  if (*expr != '\0') {
+
+  if (expr[0] == '\0') {
+    /* Fine; usual case. */
+  }
+  else if (expr[0] == '\\' && expr[1] == '\0') {
+    /* Allow a single trailing backslash so if I use %if within a
+     * macro definition I can consistently have backslashes at the
+     * end of every line, which makes the syntax highlighting work
+     * better in my editor. */
+  }
+  else {
     ctx->fatal_error(ctx->extra, "extra syntax after expression", expr);
     return 0;
   }
