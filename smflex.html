@@ -1009,11 +1009,7 @@ an action:
     beginning of <code>YY_TEXT</code> so the <code>YY_ECHO</code> for the "kludge"
     rule will actually write "mega-kludge".
 
-    <p>Two notes regarding use of <code>yymore()</code>. First,
-    <code>yymore()</code> depends on the value of <code>YY_LENG</code>
-    correctly reflecting the size of the current token, so you must not modify
-    <code>YY_LENG</code> if you are using <code>yymore()</code>. Second,
-    the presence of <code>yymore()</code> in the scanner's action entails
+    <p>The presence of <code>yymore()</code> in the scanner's action entails
     a minor performance penalty in the scanner's matching speed.
 
 <li id="YY_LESS_TEXT-macro"><p><code>YY_LESS_TEXT(n)</code>
