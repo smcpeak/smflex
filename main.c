@@ -85,7 +85,7 @@ int interactive, caseins, option_yylineno, useecs, fulltbl, usemecs;
 int jacobson, gen_line_dirs, performance_report, backing_up_report;
 int cpp_interface, long_align, use_read, csize;
 int option_yymore, reject_used, real_reject, continued_action, in_rule;
-int yymore_really_used, reject_really_used;
+int reject_really_used;
 
 int option_stack;
 
@@ -490,7 +490,7 @@ void flexinit(int argc, char **argv)
   cpp_interface = backing_up_report = option_debug = fulltbl = false;
   jacobson = long_align = nowarn = option_yymore = continued_action = false;
   option_yylineno = in_rule = reject_used = false;
-  yymore_really_used = reject_really_used = unspecified;
+  reject_really_used = unspecified;
   option_stack = false;
   csize = unspecified;
   interactive = false;
@@ -771,11 +771,6 @@ void readin()
 
   else
     backing_up_file = NULL;
-
-  if (yymore_really_used == true)
-    option_yymore = true;
-  else if (yymore_really_used == false)
-    option_yymore = false;
 
   if (reject_really_used == true)
     reject_used = true;

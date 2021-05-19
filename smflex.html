@@ -990,7 +990,7 @@ an action:
     is a <em>branch</em>; code immediately following it in the action will
     <em>not</em> be executed.
 
-<li><p><code>yymore()</code>
+<li id="yymore"><p><code>yymore()</code>
     tells the scanner that the next time it matches a rule, the
     corresponding token should be <em>appended</em> onto the current
     value of <code>YY_TEXT</code> rather than replacing it. For example,
@@ -999,6 +999,7 @@ an action:
     "mega-mega-kludge" to the output:
 
     <pre><!-- BEGIN example: "yymore-mega-kludge.lex" fragment=true indent=8 --><code>
+        %option yymore
         %%
         mega-    YY_ECHO; yymore();
         kludge   YY_ECHO;
@@ -1009,7 +1010,8 @@ an action:
     beginning of <code>YY_TEXT</code> so the <code>YY_ECHO</code> for the "kludge"
     rule will actually write "mega-kludge".
 
-    <p>The presence of <code>yymore()</code> in the scanner's action entails
+    <p><code>%option yymore</code> must be set to use this macro.  That
+    option entails
     a minor performance penalty in the scanner's matching speed.
 
 <li id="YY_LESS_TEXT-macro"><p><code>YY_LESS_TEXT(n)</code>
@@ -2902,12 +2904,9 @@ number are equivalent to <code>smflex</code> flags or their negation:
 <dd><p>Generate a scanner that has
     <a href="#yy_lineno"><code>yy_lineno</code></a>.
 
-<dt><code>yymore</code>
+<dt id="option-yymore"><code>yymore</code>
 
-<dd><p>Enable <code>yymore()</code> even if <code>smflex</code> does not
-    see any uses of it among the actions.  Conversely,
-    <code>noyymore</code> disables <code>yymore()</code> even if it
-    seems to be used.
+<dd><p>Enable <a href="#yymore"><code>yymore()</code></a>.
 
 </dl>
 
@@ -4864,6 +4863,15 @@ run-time support library.  That has been removed as detailed below.
     <code>YY_UNREAD_CHARACTER</code> (which was also the advice given
     in the <code>flex-2.5.4</code> manual).
 
+<li><p><code>flex-2.5.4</code> would scan the text of rule actions,
+    looking for uses of <a href="#yymore"><code>yymore</code></a> in
+    order to automatically enable it.  That has been removed.
+
+    <p>Rationale: I think it is weird and surprising behavior.  I
+    prefer explicit indication of which optional features to enable.
+
+    <p>Replacement: Add <code>%option yymore</code>.
+
 </ul>
 
 
@@ -5515,15 +5523,12 @@ generated scanner:
 <dl>
 
 <dt><p><code>reject_used_but_not_detected undefined</code> or
-    <code>yymore_used_but_not_detected undefined</code>
+    <code>yymore_used_but_option_yymore_not_specified undefined</code>
 
 <dd>These indicate that the scanner uses <code>REJECT</code>
-or <code>yymore()</code> but that <code>smflex</code> failed to notice the
-fact, meaning that <code>smflex</code> scanned the first two sections
-looking for occurrences of these actions and failed to find any,
-but somehow you snuck some in (via a #include file, for example). Use
-<code>%option reject</code> or <code>%option yymore</code> to indicate
-to <code>smflex</code> that you really do use these features.
+or <code>yymore()</code> but the appropriate option
+(<code>%option reject</code> or <code>%option yymore</code>)
+was not set.
 
 </dl>
 

@@ -58,8 +58,6 @@ void usage(void);
  * continued_action - true if this rule's action is to "fall through" to
  *   the next rule's action (i.e., the '|' action)
  * in_rule - true if we're inside an individual rule, false if not.
- * yymore_really_used - whether to treat yymore() as really used, regardless
- *   of what we think based on references to it in the user's actions.
  * reject_really_used - same for REJECT
  */
 
@@ -71,7 +69,7 @@ extern int gen_line_dirs, performance_report, backing_up_report;
 extern int cpp_interface, long_align, use_read;
 extern int csize;
 extern int option_yymore, reject_used, real_reject, continued_action, in_rule;
-extern int yymore_really_used, reject_really_used;
+extern int reject_really_used;
 
 /* Initially false, set to true by "%option stack".  This controls
  * whether we emit the functions for manipulating the state stack. */

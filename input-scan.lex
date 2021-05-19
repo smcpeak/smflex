@@ -72,9 +72,6 @@
   if (all_upper(str)) \
     reject_used = true;
 
-#define CHECK_YYMORE(str) \
-  if (all_lower(str)) \
-    option_yymore = true;
 %}
 
 %option caseless nodefault outfile="input-scan.lex.c" stack
@@ -297,7 +294,7 @@ LEXOPT          [aceknopr]
         verbose         printstats = option_sense;
         warn            nowarn = ! option_sense;
         yylineno        option_yylineno = option_sense;
-        yymore          yymore_really_used = option_sense;
+        yymore          option_yymore = option_sense;
 
         yy_read_character     option_yy_read_character   = option_sense;
         yy_scan_string        option_yy_scan_string      = option_sense;
@@ -614,10 +611,6 @@ LEXOPT          [aceknopr]
                 "reject"        {
                           ACTION_ECHO;
                           CHECK_REJECT(YY_TEXT);
-                        }
-                "yymore"        {
-                          ACTION_ECHO;
-                          CHECK_YYMORE(YY_TEXT);
                         }
         }
 

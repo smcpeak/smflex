@@ -2,6 +2,7 @@
 /* Test 'yymore()' followed by 'YY_LESS_TEXT()'. */
 
 %option main
+%option yymore
 
 %{
 int lessArg = 6;

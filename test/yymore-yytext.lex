@@ -3,6 +3,7 @@
 
 %option main
 %option yy_read_character
+%option yymore
 
 /* We do not test unreading here.  The updated documentation makes it
  * clear the effects are undefined. */

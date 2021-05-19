@@ -485,7 +485,7 @@ const char *scanner_skl_contents[] = {
   "#define yymore() (yy_lexer->yy_more_flag = 1)",
   "#define YY_MORE_LEN yy_lexer->yy_more_len",
   "%else",
-  "#define yymore() yymore_used_but_not_detected",
+  "#define yymore() yymore_used_but_option_yymore_not_specified",
   "#define YY_MORE_LEN 0",
   "%endif",
   "",
