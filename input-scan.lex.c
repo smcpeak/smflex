@@ -179,13 +179,13 @@ struct input_scan_buffer_state_struct {
   /* Number of characters read into yy_buffer, not including EOB
    * characters.
    */
-  int yy_n_chars;
+  int yy_buf_data_len;
 
   /* Points to current character in buffer, i.e., the next character
    * to scan.
    *
    * Invariant: yy_buffer <= yy_buf_pos
-   * Invariant:              yy_buf_pos <= yy_buffer + yy_n_chars + 2
+   * Invariant:              yy_buf_pos <= yy_buffer + yy_buf_data_len + 2
    *
    * I am not sure about being able to reach the +2 location. */
   char *yy_buf_pos;
@@ -199,11 +199,11 @@ struct input_scan_buffer_state_struct {
    *   [ already scanned   yet to scan 0 0   available space 0 0 ]
    *                       ^           ^
    *                       |           |
-   *                   yy_buf_pos  yy_n_chars
+   *                   yy_buf_pos  yy_buf_data_len
    *
-   * The "0 0" at yy_n_chars must always be there.  The "0 0" at
+   * The "0 0" at yy_buf_data_len must always be there.  The "0 0" at
    * yy_buf_alloc_size is space reserved to put the zeros in when
-   * yy_n_chars == yy_buf_alloc_size, but otherwise need not be
+   * yy_buf_data_len == yy_buf_alloc_size, but otherwise need not be
    * present. */
 
   /* Whether we "own" the buffer - i.e., we know we created it,
@@ -2978,7 +2978,7 @@ case YY_STATE_EOF(LINEDIR):
            * this is the first action (other than possibly a
            * back-up) that will match for the new input source.
            */
-          yy_lexer->yy_n_chars = yy_lexer->yy_current_buffer->yy_n_chars;
+          yy_lexer->yy_buf_data_len = yy_lexer->yy_current_buffer->yy_buf_data_len;
           yy_lexer->yy_current_buffer->yy_input_file = yy_lexer->yy_input_stream;
           yy_lexer->yy_current_buffer->yy_buf_status = YY_BUF_STATUS_NORMAL;
         }
@@ -2991,7 +2991,7 @@ case YY_STATE_EOF(LINEDIR):
          * in input().
          */
         if (yy_lexer->yy_c_buf_p <=
-              &yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_n_chars]) {
+              &yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_buf_data_len]) {
           /* This was really a NUL. */
           input_scan_state_type_t yy_next_state;
 
@@ -3066,7 +3066,7 @@ case YY_STATE_EOF(LINEDIR):
 
             case EOB_ACT_LAST_MATCH:
               yy_lexer->yy_c_buf_p =
-                &yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_n_chars];
+                &yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_buf_data_len];
 
               yy_current_state = yy_get_previous_state(yy_lexer);
 
@@ -3107,7 +3107,7 @@ void input_scan_construct(input_scan_lexer_t *yy_lexer)
   yy_lexer->yy_error_code = input_scan_err_no_error;
 
   yy_lexer->yy_hold_char = 0;
-  yy_lexer->yy_n_chars = 0;
+  yy_lexer->yy_buf_data_len = 0;
 
   yy_lexer->yy_c_buf_p = NULL;
   yy_lexer->yy_init = 1;
@@ -3179,7 +3179,8 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
   int number_to_move, i;
   int ret_val;
 
-  if (yy_lexer->yy_c_buf_p > &yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_n_chars + 1]) {
+  if (yy_lexer->yy_c_buf_p >
+        &yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_buf_data_len + 1]) {
     YY_ERROR(input_scan_err_internal_error, "end of buffer missed");
     return EOB_ACT_END_OF_FILE;
   }
@@ -3213,7 +3214,8 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
     /* don't do the read, it's not guaranteed to return an EOF,
      * just force an EOF
      */
-    yy_lexer->yy_current_buffer->yy_n_chars = yy_lexer->yy_n_chars = 0;
+    yy_lexer->yy_buf_data_len = 0;
+    yy_lexer->yy_current_buffer->yy_buf_data_len = 0;
   }
 
   else {
@@ -3271,15 +3273,15 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
     }
 
     /* Read in more data. */
-    yy_lexer->yy_n_chars =
+    yy_lexer->yy_buf_data_len =
       yy_call_read_input(yy_lexer,
         &yy_lexer->yy_current_buffer->yy_buffer[number_to_move],
         num_to_read);
 
-    yy_lexer->yy_current_buffer->yy_n_chars = yy_lexer->yy_n_chars;
+    yy_lexer->yy_current_buffer->yy_buf_data_len = yy_lexer->yy_buf_data_len;
   }
 
-  if (yy_lexer->yy_n_chars == 0) {
+  if (yy_lexer->yy_buf_data_len == 0) {
     if (number_to_move == YY_MORE_ADJ) {
       ret_val = EOB_ACT_END_OF_FILE;
       input_scan_restart(yy_lexer, yy_lexer->yy_input_stream);
@@ -3295,9 +3297,9 @@ static int yy_get_next_buffer(input_scan_lexer_t *yy_lexer)
     ret_val = EOB_ACT_CONTINUE_SCAN;
   }
 
-  yy_lexer->yy_n_chars += number_to_move;
-  yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_n_chars] = YY_END_OF_BUFFER_CHAR;
-  yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_n_chars + 1] = YY_END_OF_BUFFER_CHAR;
+  yy_lexer->yy_buf_data_len += number_to_move;
+  yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_buf_data_len] = YY_END_OF_BUFFER_CHAR;
+  yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_buf_data_len + 1] = YY_END_OF_BUFFER_CHAR;
 
   yy_lexer->yy_text = &yy_lexer->yy_current_buffer->yy_buffer[0];
 
@@ -3376,7 +3378,7 @@ void input_scan_unread_character(input_scan_lexer_t *yy_lexer, int c)
   if (yy_cp < yy_lexer->yy_current_buffer->yy_buffer + 2) {
     /* need to shift things up to make room */
     /* +2 for EOB chars. */
-    int number_to_move = yy_lexer->yy_n_chars + 2;
+    int number_to_move = yy_lexer->yy_buf_data_len + 2;
     char *dest = &yy_lexer->yy_current_buffer->yy_buffer[
       yy_lexer->yy_current_buffer->yy_buf_alloc_size + 2];
     char *source =
@@ -3388,8 +3390,9 @@ void input_scan_unread_character(input_scan_lexer_t *yy_lexer, int c)
 
     yy_cp += (int)(dest - source);
     yy_bp += (int)(dest - source);
-    yy_lexer->yy_current_buffer->yy_n_chars =
-      yy_lexer->yy_n_chars = yy_lexer->yy_current_buffer->yy_buf_alloc_size;
+    yy_lexer->yy_current_buffer->yy_buf_data_len =
+      yy_lexer->yy_buf_data_len =
+        yy_lexer->yy_current_buffer->yy_buf_alloc_size;
 
     if (yy_cp < yy_lexer->yy_current_buffer->yy_buffer + 2) {
       YY_ERROR(input_scan_err_unread_overflow, NULL /*detail*/);
@@ -3420,7 +3423,7 @@ int input_scan_read_character(input_scan_lexer_t *yy_lexer)
      * valid NUL; if not, then we've hit the end of the buffer.
      */
     if (yy_lexer->yy_c_buf_p <
-          &yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_n_chars]) {
+          &yy_lexer->yy_current_buffer->yy_buffer[yy_lexer->yy_buf_data_len]) {
       /* This was really a NUL. */
       *(yy_lexer->yy_c_buf_p) = '\0';
     }
@@ -3502,7 +3505,7 @@ void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer
     /* Flush out information for old buffer. */
     *(yy_lexer->yy_c_buf_p) = yy_lexer->yy_hold_char;
     yy_lexer->yy_current_buffer->yy_buf_pos = yy_lexer->yy_c_buf_p;
-    yy_lexer->yy_current_buffer->yy_n_chars = yy_lexer->yy_n_chars;
+    yy_lexer->yy_current_buffer->yy_buf_data_len = yy_lexer->yy_buf_data_len;
   }
 
   yy_lexer->yy_current_buffer = new_buffer;
@@ -3525,7 +3528,7 @@ void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer
 static void yy_load_current_buffer_state(input_scan_lexer_t *yy_lexer)
 {
   /* Copy duplicated fields. */
-  yy_lexer->yy_n_chars      = yy_lexer->yy_current_buffer->yy_n_chars;
+  yy_lexer->yy_buf_data_len = yy_lexer->yy_current_buffer->yy_buf_data_len;
   yy_lexer->yy_c_buf_p      = yy_lexer->yy_current_buffer->yy_buf_pos;
   yy_lexer->yy_input_stream = yy_lexer->yy_current_buffer->yy_input_file;
 
@@ -3615,7 +3618,7 @@ void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_sta
     return;
   }
 
-  b->yy_n_chars = 0;
+  b->yy_buf_data_len = 0;
 
   /* We always need two end-of-buffer characters.  The first causes
    * a transition to the end-of-buffer state.  The second causes
