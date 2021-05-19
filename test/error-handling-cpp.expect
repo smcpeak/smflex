@@ -1,6 +1,6 @@
 ---- error reading input source ----
 [yy_flex_alloc: 65544]
-[yy_flex_alloc: 56]
+[yy_flex_alloc: 40]
 [yy_flex_alloc: 16386]
 [default behavior, so yy_is_interactive is: 0]
 [yy_flex_alloc: 49]
@@ -12,7 +12,7 @@ error: smflex scanner error: error reading input source
 ---- no rule matches the input text ----
 [yy_flex_alloc: 65544]
 [yy_flex_alloc: 11]
-[yy_flex_alloc: 56]
+[yy_flex_alloc: 40]
 [setting yy_is_interactive to 0 in yy_scan_buffer: 0]
 [yy_flex_alloc: 53]
 error: smflex scanner error: no rule matches the input text
@@ -22,7 +22,7 @@ error: smflex scanner error: no rule matches the input text
 [yy_flex_free: 0]
 ---- token is too large and input buffer cannot be expanded ----
 [yy_flex_alloc: 65544]
-[yy_flex_alloc: 56]
+[yy_flex_alloc: 40]
 [yy_flex_alloc: 16386]
 [default behavior, so yy_is_interactive is: 0]
 [n=8192 c=120]
@@ -35,7 +35,7 @@ error: smflex scanner error: token is too large and input buffer cannot be expan
 [yy_flex_free: 0]
 ---- no space in buffer to unread a character ----
 [yy_flex_alloc: 65544]
-[yy_flex_alloc: 56]
+[yy_flex_alloc: 40]
 [yy_flex_alloc: 16386]
 [default behavior, so yy_is_interactive is: 0]
 [n=6 c=117]
@@ -49,7 +49,7 @@ error: smflex scanner error: no space in buffer to unread a character
 [yy_flex_free: 0]
 ---- error reading input source ----
 [yy_flex_alloc: 65544]
-[yy_flex_alloc: 56]
+[yy_flex_alloc: 40]
 [yy_flex_alloc: 16386]
 [default behavior, so yy_is_interactive is: 0]
 [yy_flex_alloc: 49]
