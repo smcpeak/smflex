@@ -164,8 +164,8 @@ typedef enum yy_buf_status_enum {
 struct input_scan_buffer_state_struct {
   /* Source from which we are reading and buffering.  Note that whether
    * we truly use this is up to 'yy_read_function'; the scanner engine
-   * merely promises to pass 'yy_input_file' to that function. */
-  input_scan_input_stream_t *yy_input_file;
+   * merely promises to pass 'yy_input_stream' to that function. */
+  input_scan_input_stream_t *yy_input_stream;
 
   /* Pointer to the beginning of the input buffer.  The allocated
    * space in the buffer is 'yy_buf_alloc_size+2'.  The buffer is owned
@@ -2981,8 +2981,8 @@ case YY_STATE_EOF(LINEDIR):
            * back-up) that will match for the new input source.
            */
           yy_lexer->yy_buf_data_len = yy_lexer->yy_current_buffer->yy_buf_data_len;
-          yy_lexer->yy_current_buffer->yy_input_file = yy_lexer->yy_input_stream;
-          yy_lexer->yy_current_buffer->yy_buf_status = YY_BUF_STATUS_NORMAL;
+          yy_lexer->yy_current_buffer->yy_input_stream = yy_lexer->yy_input_stream;
+          yy_lexer->yy_current_buffer->yy_buf_status   = YY_BUF_STATUS_NORMAL;
         }
 
         /* Note that here we test for yy_buf_cur_pos "<=" to the position
@@ -3534,7 +3534,7 @@ static void yy_load_current_buffer_state(input_scan_lexer_t *yy_lexer)
   /* Copy duplicated fields. */
   yy_lexer->yy_buf_data_len = yy_lexer->yy_current_buffer->yy_buf_data_len;
   yy_lexer->yy_buf_cur_pos  = yy_lexer->yy_current_buffer->yy_buf_cur_pos;
-  yy_lexer->yy_input_stream = yy_lexer->yy_current_buffer->yy_input_file;
+  yy_lexer->yy_input_stream = yy_lexer->yy_current_buffer->yy_input_stream;
 
   /* Set up 'yy_text'.  TODO: Why is this necessary? */
   yy_lexer->yy_text      =   yy_lexer->yy_buf_cur_pos;
@@ -3608,7 +3608,7 @@ static void input_scan_init_buffer(input_scan_lexer_t *yy_lexer,
 {
   input_scan_flush_buffer(yy_lexer, b);
 
-  b->yy_input_file = file;
+  b->yy_input_stream = file;
   b->yy_fill_buffer = 1;
 
   b->yy_is_interactive = 0;
