@@ -3483,6 +3483,8 @@ void input_scan_restart(input_scan_lexer_t *yy_lexer, input_scan_input_stream_t 
   }
 
   input_scan_init_buffer(yy_lexer, yy_lexer->yy_current_buffer, input_file);
+
+  /* Copy the cur_pos, data_len, and input_stream from current_buffer. */
   yy_load_current_buffer_state(yy_lexer);
 }
 
@@ -3495,13 +3497,18 @@ void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer
   }
 
   if (yy_lexer->yy_current_buffer) {
-    /* Flush out information for old buffer. */
+    /* Replace the hold character so the old read buffer is intact. */
     *(yy_lexer->yy_buf_cur_pos) = yy_lexer->yy_hold_char;
+
+    /* Save the duplicate fields back into the old buffer so they can
+     * be restored when we later switch back. */
     yy_lexer->yy_current_buffer->yy_buf_cur_pos  = yy_lexer->yy_buf_cur_pos;
     yy_lexer->yy_current_buffer->yy_buf_data_len = yy_lexer->yy_buf_data_len;
   }
 
   yy_lexer->yy_current_buffer = new_buffer;
+
+  /* Load the duplicate fields. */
   yy_load_current_buffer_state(yy_lexer);
 
   /* We don't actually know whether we did this switch during
@@ -3579,7 +3586,7 @@ void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_st
   }
 
   if (yy_lexer->yy_current_buffer == b) {
-    /* Safety measure. */
+    /* Return to the state of not having a current buffer. */
     yy_lexer->yy_current_buffer = NULL;
   }
 

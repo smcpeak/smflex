@@ -188,7 +188,8 @@ struct input_scan_lexer_struct {
   int yy_leng;
 
   /* The input source we are currently reading from, and a buffer
-   * in front of it. */
+   * in front of it.  Initially NULL.  If it remains NULL when input_scan_lex()
+   * is first called, it will be created then. */
   input_scan_buffer_state_t *yy_current_buffer;
 
   /* -------- Private members -------- */
@@ -264,7 +265,10 @@ void input_scan_construct(input_scan_lexer_t *yy_lexer);
 /* Destroy the contents of 'yy_lexer'.  This deallocates any
  * dynamically-allocated memory acquired by the scanner engine.  The
  * object itself is not deallocated; that is the client's
- * responsibility. */
+ * responsibility.
+ *
+ * If the lexer has a current buffer, the current buffer is deallocated
+ * by calling 'input_scan_delete_buffer'. */
 void input_scan_destroy(input_scan_lexer_t *yy_lexer);
 
 /* Given a lexer object initialized with 'input_scan_construct', and possibly
@@ -277,7 +281,11 @@ int input_scan_lex(input_scan_lexer_t *yy_lexer);
 
 /* Abandon whatever input (if any) 'yy_lexer' was scanning, and start
  * scanning 'input_file'.  This is how to choose what to scan;
- * otherwise, the scanner reads standard input. */
+ * otherwise, the scanner reads standard input.
+ *
+ * If there was no current buffer, a new buffer is allocated.
+ * Otherwise, the current buffer is repurposed to read from
+ * 'input_file', flushing that buffer in the process. */
 void input_scan_restart(input_scan_lexer_t *yy_lexer, input_scan_input_stream_t *input_file);
 
 /* -------- Manipulating matched text -------- */
@@ -298,10 +306,18 @@ void input_scan_less_text(input_scan_lexer_t *yy_lexer, int new_yy_leng);
 input_scan_buffer_state_t *input_scan_create_buffer(input_scan_lexer_t *yy_lexer, input_scan_input_stream_t *file,
                                     int size);
 
-/* Make 'new_buffer' the active input source for 'yy_lexer'. */
+/* Make 'new_buffer' the active input source for 'yy_lexer'.  The old
+ * buffer is not remembered by the lexer in any way; it is up to the
+ * client to do so.  (The old buffer is also not freed.)
+ *
+ * This does nothing if 'new_buffer' is already the current buffer. */
 void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *new_buffer);
 
-/* Deallocate 'b' and release any resources associated with it. */
+/* Deallocate 'b' and release any resources associated with it.  This
+ * does nothing if 'b' is NULL.
+ *
+ * If 'b' is the current buffer of 'yy_lexer', then afterward the
+ * current buffer is NULL. */
 void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *b);
 
 /* Discard any already-read data from the input source associated with
