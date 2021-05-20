@@ -64,9 +64,6 @@
 /* Action number for EOF rule of a given start state. */
 #define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
 
-/* Special action meaning "start processing a new file". */
-#define YY_NEW_FILE yy_restart(yy_lexer, yy_lexer->yy_input_stream)
-
 /* Two copies of this character are placed into the read buffer,
  * right after the data that was read from the input.  This is used
  * to signal the state machine logic that it has reached the end of
@@ -804,7 +801,7 @@ do_action:      /* This label is used only to access EOF actions. */
 
               else {
                 if (!yy_lexer->yy_did_buffer_switch_on_eof) {
-                  YY_NEW_FILE;
+                  yy_restart(yy_lexer, yy_lexer->yy_input_stream);
                 }
               }
               break;
@@ -1300,7 +1297,7 @@ int yy_read_character(yy_lexer_t *yy_lexer)
           }
 
           if (!yy_lexer->yy_did_buffer_switch_on_eof) {
-            YY_NEW_FILE;
+            yy_restart(yy_lexer, yy_lexer->yy_input_stream);
           }
 
           return yy_read_character(yy_lexer);
@@ -2158,7 +2155,6 @@ int main()
 /* Remove undocumented YY_XXX macros I don't want leaking into the
  * namespace of section 3. */
 #undef YY_ERROR
-#undef YY_NEW_FILE
 #undef YY_WRAPPER_OBJECT
 #undef YY_TEXT_NONCONST
 #undef YY_DEFAULT_BUF_ALLOC_SIZE
