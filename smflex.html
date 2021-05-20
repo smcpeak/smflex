@@ -4137,15 +4137,6 @@ running the scanner over input:
     scanners: it scans the input stream, consuming tokens, until a rule's
     action returns a value.
 
-<dt><code>void yym_switch_streams(istream *new_in = NULL, ostream *new_out = NULL)</code>
-
-<dd><p>reassigns <code>yy_input_stream</code> to <code>new_in</code> (if not NULL)
-    and <code>yy_output_stream</code> to <code>new_out</code> (ditto), deleting the
-    previous input buffer if <code>yy_input_stream</code> is reassigned.  However,
-    while <code>smflex</code> manages allocation and deallocation its own
-    buffer objects, it does <em>not</em> deallocate any stream objects,
-    so you have to arrange for that yourself.
-
 <dt><code>virtual int yym_wrap()</code>
 
 <dd><p>This behaves like
@@ -5182,7 +5173,7 @@ compared to <code>flex-2.5.4</code>:
     <code>smflex</code>, the C++ is a wrapper around the C, so
     collisions between them are undesirable.
 
-    <p>There were also some members, like <code>switch_streams</code>,
+    <p>There were also some members, like <code>LexerInput</code>,
     that had no prefix.  These are a problem for compatibility between
     versions since they can collide with user-defined members of a
     derived class.
@@ -5193,10 +5184,36 @@ compared to <code>flex-2.5.4</code>:
     <p>Rationale: It was not very useful, and created an overload
     of an important method, which is confusing.
 
-    <p>Replacement: The replacement for <code>yylex(i,o)</code> is
-    to call <code>yym_switch_streams(i,o)</code> and then
-    <code>yym_lex()</code>, which is precisely what the old method
-    did.
+    <p>Replacement: The replacement for <code>yylex(i,o)</code> is:
+
+    <pre><code>
+        yym_restart(i);
+        yym_set_output_stream(o);
+    </code></pre>
+
+<li><p>The method <code>switch_streams</code> has been removed.
+
+    <p>Rationale: It was unnecessary and had strange semantics.
+
+    <p>Replacement: The semantically equivalent replacement for
+    <code>switch_streams(i,o)</code> is:
+
+    <pre><code>
+      if (i) {
+        yym_delete_buffer(yym_current_buffer());
+        yym_restart(i);
+      }
+      if (o) {
+        yym_set_output_stream(o);
+      }
+    </code></pre>
+
+    <p>However, the most common usage is to set the initial stream to
+    scan, in which case the replacement is simply:
+
+    <pre><code>
+      yym_restart(i);
+    </code></pre>
 
 <li><p>The methods <code>LexerInput</code>, <code>LexerOutput</code>,
     and <code>LexerError</code>
@@ -5230,7 +5247,7 @@ members:
     <td><code>yym_lex</code>
   <tr>
     <td><code>switch_streams</code>
-    <td><code>yym_switch_streams</code>
+    <td><code>(removed)</code>
   <tr>
     <td><code>yywrap</code>
     <td><code>yym_wrap</code>

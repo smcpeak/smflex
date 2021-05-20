@@ -745,20 +745,6 @@ public:      /* methods */
    * yyLexError. */
   virtual void yym_error(yy_error_code_t code, char const *detail) const;
 
-
-  /* ---------------------------------------------------------- */
-  /* The class interface below this point is still in a somewhat
-   * haphazard state. */
-
-
-  /* Switch to new input/output streams.  A NULL stream pointer
-   * indicates "keep the current one".
-   *
-   * The scanner core does *not* delete these objects; the client is
-   * responsible for deallocation if needed. */
-  /* TODO: I am in the process of removing this. */
-  void yym_switch_streams(yy_input_stream_t *new_in);
-
 protected:   /* data */
   /* Underlying lexer state, around which this class is a wrapper.
    * According to the principles of this API, this member should be

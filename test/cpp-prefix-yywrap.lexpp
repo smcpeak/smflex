@@ -36,7 +36,7 @@ int DerivedLexer::yym_wrap()
       exit(2);
     }
 
-    yym_switch_streams(secondFile);
+    yym_restart(secondFile);
 
     /* Not done, keep going. */
     return 0;
@@ -52,9 +52,12 @@ int DerivedLexer::yym_wrap()
 
 int main()
 {
-  DerivedLexer lexer;
-  while (lexer.yym_lex())
-    {}
+  {
+    DerivedLexer lexer;
+    while (lexer.yym_lex())
+      {}
+  }
+  MyLexer_check_for_memory_leaks();
   return 0;
 }
 

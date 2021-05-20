@@ -38,7 +38,7 @@ int MyLexer::yym_wrap()
       exit(2);
     }
 
-    yym_switch_streams(in);
+    yym_restart(in);
 
     /* Not done, keep going. */
     return 0;
@@ -53,9 +53,12 @@ int MyLexer::yym_wrap()
 
 int main()
 {
-  MyLexer lexer;
-  while (lexer.yym_lex())
-    {}
+  {
+    MyLexer lexer;
+    while (lexer.yym_lex())
+      {}
+  }
+  yy_check_for_memory_leaks();
   return 0;
 }
 

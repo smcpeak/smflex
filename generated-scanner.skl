@@ -953,12 +953,6 @@ yyFlexLexer::~yyFlexLexer()
   yy_destroy(&yym_lexer_state);
 }
 
-void yyFlexLexer::yym_switch_streams(yy_input_stream_t *new_in)
-{
-  yym_delete_buffer(yym_lexer_state.yy_current_buffer);
-  yym_switch_to_buffer(yym_create_buffer(new_in, YY_DEFAULT_BUF_ALLOC_SIZE));
-}
-
 
 int yyFlexLexer::yym_read_input(void *dest, int size)
 {
