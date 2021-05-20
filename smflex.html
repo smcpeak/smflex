@@ -2113,9 +2113,15 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
     %x incl
 
     %{
+    /* Stack of in-flight buffers. */
     #define MAX_INCLUDE_DEPTH 10
     yy_buffer_state_t *include_stack[MAX_INCLUDE_DEPTH];
     int include_stack_len = 0;
+
+    /* List of files to process at top level. */
+    char const *file_list[3] =
+      { "input-buffers.input2", "input-buffers.input3", "input-buffers.input4" };
+    int file_list_index = 0;
     %}
 
     %%
@@ -2147,15 +2153,29 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
             }
 
     &lt;&lt;EOF&gt;&gt; {
-              /* We are done with the current buffer. */
+              /* Finished with this file; close it. */
+              fclose(YY_INPUT_STREAM);
+
               if (include_stack_len &gt;= 1) {
                 /* The current buffer is one we made, so clean it up. */
                 yy_delete_buffer(yy_lexer, YY_CURRENT_BUFFER);
-                fclose(YY_INPUT_STREAM);
 
                 /* Return to the buffer on the top of the stack.  Note
                  * that this sets 'YY_INPUT_STREAM'. */
                 yy_switch_to_buffer(yy_lexer, include_stack[--include_stack_len]);
+              }
+
+              else if (file_list_index &lt; 3) {
+                /* Open the next top-level file. */
+                char const *fname = file_list[file_list_index++];
+                FILE *fp = fopen(fname, "r");
+                if (!fp) {
+                  fprintf(stderr, "Cannot open top-level file: \"%s\".\n", fname);
+                  exit(2);
+                }
+
+                /* Begin scanning it, continuing to use the current buffer. */
+                yy_restart(yy_lexer, fp);
               }
 
               else {
