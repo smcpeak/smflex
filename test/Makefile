@@ -248,6 +248,7 @@ all-df: out/gather-c-string.ok
 all-df: out/gather-c-string2.ok
 all-df: out/html-link-validator.ok
 all-df: out/input-buffers.ok
+all-df: out/input-buffers-with-read.ok
 all-df: out/input-c-comments.ok
 all-df: out/large-token.ok
 all-df: out/large-token-cpp.ok
@@ -304,12 +305,12 @@ ifeq ($(TEST_CONFIG),default)
   all: all-d
 endif
 
-# These tests read additional files.  (I do not think I have all of
-# these dependencies quite right.)
+# These tests read additional files.  (I am probably missing some.)
 out/cpp-prefix-yywrap.ok: cppscan-yywrap.input2
 out/cpp-prefix-yywrap2-yyclass.ok: cppscan-yywrap.input2
 out/cppscan-yywrap.ok: cppscan-yywrap.input2
 out/input-buffers.ok: input-buffers.input2 input-buffers.input3 input-buffers.input4
+out/input-buffers-with-read.ok: input-buffers-with-read.input2 input-buffers.input3 input-buffers.input4
 out/two-buffers.ok: two-buffers.input2
 out/two-buffers-cpp.ok: two-buffers-cpp.input2
 out/username-yywrap.ok: username-yywrap.input2
