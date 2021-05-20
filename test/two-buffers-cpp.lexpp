@@ -1,0 +1,58 @@
+/* two-buffers-cpp.lexpp */
+/* Make two buffers and interleave their input. */
+
+%{
+#include <assert.h>                    /* assert */
+#include <fstream>                     /* ifstream */
+
+yy_buffer_state_t *bufs[2];
+int curBuf = 0;
+%}
+
+%option c++
+
+%%
+
+.|\n     {
+           YY_ECHO;
+
+           /* Alternate between the buffers.  Whichever hits EOF first
+            * should cause scanning to stop. */
+           curBuf = !curBuf;
+           yym_switch_to_buffer(bufs[curBuf]);
+         }
+
+%%
+
+void runLexer()
+{
+  std::ifstream streams[2];
+  int i;
+  yyFlexLexer lexer;
+
+  streams[0].open("two-buffers.input", std::ios::binary);
+  assert(streams[0]);
+  streams[1].open("two-buffers.input2", std::ios::binary);
+  assert(streams[1]);
+
+  for (i=0; i < 2; i++) {
+    bufs[i] = lexer.yym_create_buffer(&streams[i]);
+    assert(bufs[i]);
+  }
+
+  lexer.yym_switch_to_buffer(bufs[0]);
+
+  while (lexer.yym_lex())
+    {}
+
+  for (i=0; i < 2; i++) {
+    lexer.yym_delete_buffer(bufs[i]);
+  }
+}
+
+int main()
+{
+  runLexer();
+  yy_check_for_memory_leaks();
+  return 0;
+}

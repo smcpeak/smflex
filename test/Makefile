@@ -84,6 +84,7 @@ CFLAGS_FOR_c_int_set_int_1                  := -DYY_ENABLE_DEBUG_LOG_CALL
 CFLAGS_FOR_c_int_set_int_isatty             := -DYY_ENABLE_DEBUG_LOG_CALL
 CFLAGS_FOR_large_token      := $(MEM_TEST_FLAGS)
 CFLAGS_FOR_scan_string_only := $(MEM_TEST_FLAGS)
+CFLAGS_FOR_two_buffers      := $(MEM_TEST_FLAGS)
 
 CXXFLAGS_FOR_cpp_int_batch       := -DYY_ENABLE_DEBUG_LOG_CALL
 CXXFLAGS_FOR_cpp_int_default     := -DYY_ENABLE_DEBUG_LOG_CALL
@@ -91,6 +92,7 @@ CXXFLAGS_FOR_cpp_int_set_int_1   := -DYY_ENABLE_DEBUG_LOG_CALL
 CXXFLAGS_FOR_cpp_int_interactive := -DYY_ENABLE_DEBUG_LOG_CALL
 CXXFLAGS_FOR_error_handling_cpp  := $(MEM_TEST_FLAGS)
 CXXFLAGS_FOR_large_token_cpp     := $(MEM_TEST_FLAGS)
+CXXFLAGS_FOR_two_buffers_cpp     := $(MEM_TEST_FLAGS)
 
 # Given the name of a source file without its extension, get the
 # C[XX]FLAGS to use when compiling that file.  This first strips any
@@ -267,6 +269,8 @@ all-df: out/scan-string-only.ok
 all-df: out/set-bol.ok
 all-df: out/stack-api.ok
 all-d : out/trailing-context.ok
+all-df: out/two-buffers.ok
+all-df: out/two-buffers-cpp.ok
 all-df: out/unput-parenthesized.ok
 all-d : out/username-full.ok
 all-d : out/username-jacobson.ok
@@ -306,6 +310,8 @@ out/cpp-prefix-yywrap.ok: cppscan-yywrap.input2
 out/cpp-prefix-yywrap2-yyclass.ok: cppscan-yywrap.input2
 out/cppscan-yywrap.ok: cppscan-yywrap.input2
 out/input-buffers.ok: input-buffers.input2 input-buffers.input3 input-buffers.input4
+out/two-buffers.ok: two-buffers.input2
+out/two-buffers-cpp.ok: two-buffers-cpp.input2
 out/username-yywrap.ok: username-yywrap.input2
 out/yy-wrap-function.ok: yy-wrap-function.input2
 out/yym-wrap.ok: username-yywrap.input2
