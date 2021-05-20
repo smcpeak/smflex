@@ -108,9 +108,6 @@ struct input_scan_lexer_struct {
    * NULL. */
   void *yy_client_data;
 
-  /* Input source.  This is initially a FILE*, namely 'stdin'. */
-  input_scan_input_stream_t *yy_input_stream;
-
   /* Output sink.  This is initially a FILE*, namely 'stdout'.  Since
    * there is no buffering of output within 'smflex', this can be
    * directly reassigned at any time. */
@@ -167,6 +164,9 @@ struct input_scan_lexer_struct {
     input_scan_error_code_t code, char const *detail);
 
   /* -------- Semi-public members -------- */
+  /* Input source.  This is initially a FILE*, namely 'stdin'. */
+  input_scan_input_stream_t *yy_input_stream;
+
   /* After a rule pattern has been matched, this is set to point at the
    * matched text within 'yy_current_buffer', temporarily
    * NUL-terminated.
@@ -238,11 +238,6 @@ struct input_scan_lexer_struct {
    * this field is different from what 'input_scan_set_start_state' and
    * 'input_scan_get_start_state' use (they differ by some arithmetic).*/
   int yy_start_state;
-
-  /* Flag which is used to allow yy_wrap()'s to do buffer switches
-   * instead of setting up a fresh 'yy_input_stream'.
-   * A bit of a hack ... */
-  int yy_did_buffer_switch_on_eof;
 
   /* These are related to backing up when REJECT is *not* used. */
   input_scan_state_type_t yy_last_accepting_state;

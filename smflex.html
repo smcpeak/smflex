@@ -449,7 +449,7 @@ other than a newline (indicated by the "." regular expression).
     {
       yy_lexer_t lexer;
       yy_construct(&amp;lexer);
-      lexer.yy_input_stream = (argc &gt;= 2)? fopen(argv[1], "r") : stdin;
+      yy_restart(&amp;lexer, (argc &gt;= 2)? fopen(argv[1], "r") : stdin);
       yy_lex(&amp;lexer);
       yy_destroy(&amp;lexer);
       return 0;
@@ -1165,29 +1165,26 @@ and macros. By default, <code>yy_lex()</code> is defined as follows:
     }
 </code></pre>
 
+<p>Observe that it has a parameter called <code>yy_lexer</code> of
+type <code>yy_lexer_t*</code>.  This parameter is needed when calling
+most of the C API functions (e.g.,
+<a href="#yy_less_text"><code>yy_less_text</code></a>)
+although the more commonly-used among them have macros with
+the same name but spelled with all capital letters
+(e.g., <a href="#YY_LESS_TEXT-macro"><code>YY_LESS_TEXT</code></a>)
+that do not require
+<code>yy_lexer</code> (because it is implicit).
+
 <p>Whenever <code>yy_lex()</code> is called, it scans tokens from the
-input file <code>yy_lexer-&gt;yy_input_stream</code> (which defaults to stdin). It
+input file <code>yy_lexer-&gt;yy_input_stream</code> (which defaults to <code>stdin</code>). It
 continues until it either reaches an end-of-file (at which point it
 returns the value 0) or one of its actions executes a <code>return</code>
 statement.
 
-<p>If the scanner reaches an end-of-file, subsequent calls are undefined
-unless either <code>YY_INPUT_STREAM</code> is pointed at a new input file (in which
-case scanning continues from that file), or <code>yy_restart()</code>
-is called. <code>yy_restart()</code> takes one argument, a <code>FILE *</code>
-pointer (which can be nil, if you've set up
-<a href="#yy_read_input_function"><code>yy_read_input_function</code></a>
-to scan from a source other than <code>YY_INPUT_STREAM</code>), and initializes
-<code>YY_INPUT_STREAM</code> for scanning from that file. Essentially there is no
-difference between just assigning <code>YY_INPUT_STREAM</code> to a new input file
-or using <code>yy_restart()</code> to do so; the latter is available
-for compatibility with previous versions of <code>flex</code>,
-and because it can be used to switch input files in the middle
-of scanning. It can also be used to throw away the current input
-buffer, by calling it with an argument of <code>YY_INPUT_STREAM</code>; but
-better is to use <code>YY_FLUSH_CURRENT_BUFFER</code> (see above). Note that
-<code>yy_restart()</code> does <em>not</em> reset the start condition to
-<code>INITIAL</code> (see <a href="#start-conditions">Start Conditions</a>).
+<p>If the scanner reaches an end-of-file, you must call either
+<a href="#yy_restart"><code>yy_restart</code></a> or
+<a href="#yy_switch_to_buffer"><code>yy_switch_to_buffer</code></a> before calling
+<code>yy_lex</code> again.
 
 <p>If <code>yy_lex()</code> stops scanning due to executing a
 <code>return</code> statement in one of the actions, the scanner may
@@ -1356,21 +1353,6 @@ following public members:
     associate any additional data with the <code>yy_lexer_t</code>
     object.  It is initially <code>NULL</code>.
 
-<dt id="yy_input_stream"><code>yy_input_stream_t *yy_input_stream;</code>
-
-    <dd><p>
-    Usually, this is a pointer to some object that acts as an input
-    source for the scanner.  However, exactly what it is, and whether it
-    is even used, are determined by <code>yy_read_input_function</code>,
-    and hence ultimately up to the client.  Consequently, the type
-    <code>yy_input_stream_t</code> is more of a default or a suggestion
-    than a requirement.
-
-    <p>When using the C API, this is initialized to <code>stdin</code>,
-    which has type <code>FILE*</code>.
-
-    <p>TODO: What exactly are the rules for changing this value?
-
 <dt id="yy_output_stream"><code>yy_output_stream_t *yy_output_stream;</code>
 
     <dd><p>
@@ -1538,6 +1520,22 @@ permissible to directly change them:
 
 <dl>
 
+<dt id="yy_input_stream"><code>yy_input_stream_t *yy_input_stream;</code>
+
+    <dd><p>
+    Usually, this is a pointer to some object that acts as an input
+    source for the scanner.  However, exactly what it is, and whether it
+    is even used, are determined by <code>yy_read_input_function</code>,
+    and hence ultimately up to the client.  Consequently, the type
+    <code>yy_input_stream_t</code> is more of a default or a suggestion
+    than a requirement.
+
+    <p>When using the C API, this is initialized to <code>stdin</code>,
+    which has type <code>FILE*</code>.
+
+    <p>To change this value, call
+    <a href="#yy_restart"><code>yy_restart</code></a>.
+
 <dt id="yy_text"><code>char const *yy_text;</code>
 
     <dd><p>
@@ -1558,8 +1556,7 @@ permissible to directly change them:
     The input source we are currently reading from, and a buffer
     in front of it.
 
-    <p>This member is <em>semi-public</em>, meaning it can be directly
-    read by the client, but cannot be directly written.  Instead, use
+    <p>To change this value, call
     <a href="#yy_switch_to_buffer"><code>yy_switch_to_buffer</code></a>.
 
 </dl>
@@ -2077,8 +2074,9 @@ You select a particular buffer to be the active input source with:
 <p>This switches the scanner's input buffer so subsequent tokens will come
 from <code>new_buffer</code>.  <code>yy_switch_to_buffer()</code>
 may be used by <code>yy_wrap_function()</code> to set things up for continued scanning instead
-of opening a new file and pointing <code>yy_input_stream</code> at it.  Calling
-this function does <em>not</em> change the start condition.
+of opening a new file and
+calling <a href="#yy_restart"><code>yy_restart</code></a>.
+Calling this function does <em>not</em> change the start condition.
 
 <p>When finished scanning from a buffer, call:
 
@@ -2244,17 +2242,19 @@ for an example demonstrating each of these functions.
 <p>The special rule "<code>&lt;&lt;EOF&gt;&gt;</code>" indicates actions which are to
 be taken when an end-of-file is encountered and <code>yy_wrap_function()</code> returns non-zero
 (i.e., indicates no further files to process). The action must finish
-by doing one of four things:
+by doing one of:
 
 <ul>
 
-<li><p>assigning <code>YY_INPUT_STREAM</code> to a new input file;
+<li><p>calling <a href="#yy_restart"><code>yy_restart</code></a> to scan a new file;
 
 <li><p>executing a <code>return</code> statement;
 
-<li><p>executing the special <code>YY_TERMINATE()</code> action;
+<li><p>executing the special <code>YY_TERMINATE()</code> action
+    (which acts like a <code>return</code> statement); or
 
-<li><p>or, switching to a new buffer using <code>yy_switch_to_buffer()</code>
+<li><p>switching to a new buffer using
+    <a href="#yy_switch_to_buffer"><code>yy_switch_to_buffer</code></a>
     as shown in the example in
     <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
 
@@ -2286,7 +2286,7 @@ strings.  For example:
              }
     &lt;&lt;EOF&gt;&gt;  {
                if (*++filelist)
-                 YY_INPUT_STREAM = fopen(*filelist, "r");
+                 yy_restart(yy_lexer, fopen(*filelist, "r"));
                else
                  YY_TERMINATE();
              }
@@ -2356,7 +2356,7 @@ interactive, as demonstrated by
 <a href="test/c-int-interactive-set-int-isatty.lex"><code>test/c-int-interactive-set-int-isatty.lex</code></a>:
 
 <pre><!-- BEGIN example: "c-int-interactive-set-int-isatty.lex" fragment=true indent=2 --><code>
-    lexer.yy_input_stream = stdin;
+    yy_restart(&amp;lexer, stdin);
     yy_set_interactive(&amp;lexer, isatty(fileno(stdin)) &gt; 0);
     while (yy_lex(&amp;lexer))
       {}
@@ -2407,14 +2407,8 @@ the rule actions.
     holds the length of the current token.
 
 <li><p><code>FILE *YY_INPUT_STREAM</code>
-    is the file which by default <code>smflex</code> reads from. It may be
-    redefined but doing so only makes sense before scanning begins or
-    after an EOF has been encountered. Changing it in the midst of
-    scanning will have unexpected results since <code>smflex</code>
-    buffers its input; use <code>yy_restart()</code> instead. Once
-    scanning terminates because an end-of-file has been seen, you can
-    assign <code>YY_INPUT_STREAM</code> at the new input file and then call the
-    scanner again to continue scanning.
+    is the file which by default <code>smflex</code> reads from.
+    To change this value, call <code>yy_restart</code>.
 
 <li><p id="yy_restart"><code>void yy_restart(yy_lexer_t *yy_lexer, FILE *new_file)</code>
     may be called to point <code>YY_INPUT_STREAM</code> at the new input file. The
@@ -2422,6 +2416,9 @@ the rule actions.
     input is lost). Note that calling <code>yy_restart()</code> with
     <code>YY_INPUT_STREAM</code> as an argument thus throws away the current input
     buffer and continues scanning the same input file.
+
+    <p><code>yy_restart</code> does <em>not</em> change the
+    <a href="#start-conditions">start state</a>.
 
 <li><p><code>FILE *YY_OUTPUT_STREAM</code>
     is the file to which <code>YY_ECHO</code> actions are done. It can be
@@ -4786,6 +4783,47 @@ run-time support library.  That has been removed as detailed below.
     feature request.  In the meantime, casting away the
     <code>const</code>ness will work (I can't stop you!), at the
     risk of aforementioned bugs and incompatibilities.
+
+<li><p>In <code>flex-2.5.4</code>, actions could sometimes change input sources
+    simply by reassigning <code>YY_INPUT_STREAM</code>
+    (which was called <code>yyin</code> in that version).  That is
+    no longer allowed; you must call
+    <a href="#yy_restart"><code>yy_restart</code></a>.
+
+    <p>Rationale: First, assigning <code>yyin</code> did not work in all
+    situations.  For example, it did work inside <code>yywrap</code> and
+    <code>&lt;&lt;EOF&gt;&gt;</code> actions, but not other actions.
+    There was a certain logic to where it worked and where it didn't,
+    but it wa an irregularity to contend with.
+
+    <p>Second, the internal logic for handing the three cases of
+    <code>yyrestart</code>, <code>yy_switch_to_buffer</code>, and assigning <code>yyin</code>
+    was complicated and occasionally buggy (details in an HTML
+    comment here).
+
+    <!-- Extra detail on the "buggy" claim:
+
+      'input()' contained this fragment:
+
+        case EOB_ACT_END_OF_FILE:
+                {
+                if ( yywrap() )
+                        return EOF;
+
+                if ( ! yy_did_buffer_switch_on_eof )
+                        YY_NEW_FILE;
+
+      The bug is that 'yy_did_buffer_switch_on_eof' is not reset before
+      calling 'yywrap()'.  Consequently, if you have a scanner that hits
+      EOF twice by using 'input()', and on the first time it uses
+      'yy_switch_to_buffer()', but the second time it does not, the
+      second time will omit 'YY_NEW_FILE'.
+
+    -->
+
+    <p>By requiring <code>yy_restart</code> in all cases, the API is simpler and
+    more likely to be forward-compatible, and the implementation is
+    also simpler.
 
 <li><p><code>YY_DECL</code>: In <code>flex-2.5.4</code>, you could
     <code>#define YY_DECL</code> to change the name and signature of the

@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 {
   yy_lexer_t lexer;
   yy_construct(&lexer);
-  lexer.yy_input_stream = (argc >= 2)? fopen(argv[1], "r") : stdin;
+  yy_restart(&lexer, (argc >= 2)? fopen(argv[1], "r") : stdin);
   yy_lex(&lexer);
   yy_destroy(&lexer);
   return 0;

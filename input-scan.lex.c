@@ -3003,8 +3003,6 @@ case YY_STATE_EOF(LINEDIR):
         else {
           switch (yy_get_next_buffer(yy_lexer)) {
             case EOB_ACT_END_OF_FILE: {
-              yy_lexer->yy_did_buffer_switch_on_eof = 0;
-
               if (yy_lexer->yy_wrap_function(yy_lexer)) {
                 /* Note: because we've taken care in
                  * yy_get_next_buffer() to have set up
@@ -3022,9 +3020,8 @@ case YY_STATE_EOF(LINEDIR):
               }
 
               else {
-                if (!yy_lexer->yy_did_buffer_switch_on_eof) {
-                  input_scan_restart(yy_lexer, yy_lexer->yy_input_stream);
-                }
+                /* The 'yy_wrap_function' should have switched buffers
+                 * or called 'input_scan_restart' to activate a new input file. */
               }
               break;
             }
@@ -3087,7 +3084,6 @@ void input_scan_construct(input_scan_lexer_t *yy_lexer)
   yy_lexer->yy_buf_cur_pos = NULL;
   yy_lexer->yy_init = 1;
   YY_SET_START_STATE(INITIAL);
-  yy_lexer->yy_did_buffer_switch_on_eof = 0;
 
   yy_lexer->yy_last_accepting_state = 0; /* This can be a pointer. */
   yy_lexer->yy_last_accepting_cpos = NULL;
@@ -3431,9 +3427,8 @@ int input_scan_read_character(input_scan_lexer_t *yy_lexer)
             return EOF;
           }
 
-          if (!yy_lexer->yy_did_buffer_switch_on_eof) {
-            input_scan_restart(yy_lexer, yy_lexer->yy_input_stream);
-          }
+          /* It is the responsibility of 'yy_wrap_function' to
+           * have switched buffers or called 'input_scan_restart'. */
 
           return input_scan_read_character(yy_lexer);
         }
@@ -3505,13 +3500,6 @@ void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer
 
   /* Load the duplicate fields. */
   yy_load_current_buffer_state(yy_lexer);
-
-  /* We don't actually know whether we did this switch during
-   * EOF (yy_wrap()) processing, but the only time this flag
-   * is looked at is after yy_wrap() is called, so it's safe
-   * to go ahead and always set it.
-   */
-  yy_lexer->yy_did_buffer_switch_on_eof = 1;
 }
 
 

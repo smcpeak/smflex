@@ -16,7 +16,7 @@ int main()
   yy_lexer_t lexer;
   yy_construct(&lexer);
 
-  lexer.yy_input_stream = stdin;
+  yy_restart(&lexer, stdin);
   yy_set_interactive(&lexer, 1);
   while (yy_lex(&lexer))
     {}

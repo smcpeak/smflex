@@ -17,13 +17,14 @@ static int readSecondFile = 0;
 int yywrap(yy_lexer_t *yy_lexer)
 {
   if (!readSecondFile) {
-    readSecondFile = 1;
-
-    yy_lexer->yy_input_stream = fopen("username-yywrap.input2", "r");
-    if (!yy_lexer->yy_input_stream) {
+    FILE *fp = fopen("username-yywrap.input2", "r");
+    if (!fp) {
       perror("fopen(username-yywrap.input2)");
       exit(2);
     }
+
+    yy_restart(yy_lexer, fp);
+    readSecondFile = 1;
 
     /* Not done, keep going. */
     return 0;
