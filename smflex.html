@@ -1153,7 +1153,7 @@ parameter.
 
 <p>TODO: Rename this section to "The C API".
 
-<p id="yy_lex">The output of <code>smflex</code> is the file <code>lex.yy.c</code>,
+<p>The output of <code>smflex</code> is the file <code>lex.yy.c</code>,
 which contains the scanning routine <code>yy_lex()</code>, a number of
 tables used by it for matching tokens, and a number of auxiliary routines
 and macros. By default, <code>yy_lex()</code> is defined as follows:
@@ -1212,10 +1212,11 @@ than files: <code>yy_scan_string()</code>, <code>yy_scan_bytes()</code>,
 and <code>yy_scan_buffer()</code>. See the discussion of them in
 the section <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
 
-<p>The scanner writes its <code>YY_ECHO</code> output to the
-<code>YY_OUTPUT_STREAM</code> global (default, stdout), which may be redefined by
-the user simply by assigning it to some other <code>FILE</code> pointer.
-
+<p id="YY_OUTPUT_STREAM-macro">The scanner writes its <code>YY_ECHO</code> output to
+<code>YY_OUTPUT_STREAM</code>, which by default is <code>stdout</code>.
+To change it, simply assign it to some other <code>FILE</code> pointer.
+(When using the C++ API, it has type <code>std::ostream</code>;
+see <a href="#yy_output_stream"><code>yy_output_stream</code></a>.
 
 <h2 id="naming-conventions">Naming Conventions</h2>
 
@@ -1356,9 +1357,15 @@ following public members:
 <dt id="yy_output_stream"><code>yy_output_stream_t *yy_output_stream;</code>
 
     <dd><p>
-    Similar to the preceding, this is normally an object capable of
+    Similar to
+    <a href="#yy_input_stream"><code>yy_input_stream</code></a>,
+    this is normally an object capable of
     receiving output, but precisely what it is is determined by the
     <code>yy_write_output_function</code>.
+
+    <p>When using the C API, the type <code>yy_output_stream_t</code> is
+    a typedef for <code>FILE</code>, and when using the C++ API, it is
+    a typedef for <code>std::ostream</code>.
 
     <p>When using the C API, this is initialized to <code>stdout</code>.
 
@@ -1526,9 +1533,14 @@ permissible to directly change them:
     Usually, this is a pointer to some object that acts as an input
     source for the scanner.  However, exactly what it is, and whether it
     is even used, are determined by <code>yy_read_input_function</code>,
-    and hence ultimately up to the client.  Consequently, the type
-    <code>yy_input_stream_t</code> is more of a default or a suggestion
-    than a requirement.
+    and hence ultimately up to the client.
+
+    <p id="yy_input_stream_t">The type of this field is
+    <code>yy_input_stream_t</code>.  When using the C API, this is a
+    typedef for <code>FILE</code>, and when using the C++ API it is
+    a typedef for <code>std::istream</code>.  However, in both cases,
+    the type is more of a default or a suggestion than a requirement
+    since it is only ever used by <code>yy_read_input_function</code>.
 
     <p>When using the C API, this is initialized to <code>stdin</code>,
     which has type <code>FILE*</code>.
@@ -1569,6 +1581,55 @@ to associated fields without the need for an explicit object:
     <span id="YY_LENG-macro">#define YY_LENG           (yy_lexer-&gt;yy_leng)</span>
     #define YY_CURRENT_BUFFER (yy_lexer-&gt;yy_current_buffer)
 </code></pre>
+
+<p>These functions form the core API for scanning:
+
+<dl>
+
+<dt id="yy_construct"><code>void yy_construct(yy_lexer_t *yy_lexer);</code>
+
+    <dd><p>
+    Initialize <code>yy_lexer</code>.  This begins the lifecycle of a lexer
+    object.
+
+<dt id="yy_destroy"><code>void yy_destroy(yy_lexer_t *yy_lexer);</code>
+
+    <dd><p>
+    Destroy the contents of <code>yy_lexer</code>.  This deallocates any
+    dynamically-allocated memory acquired by the scanner engine.  The
+    object itself is not deallocated; that is the client's
+    responsibility.
+
+    <p>
+    If the lexer has a current buffer, the current buffer is deallocated
+    by calling <a href="#yy_delete_buffer"><code>yy_delete_buffer</code></a>.
+
+<dt id="yy_lex"><code>int yy_lex(yy_lexer_t *yy_lexer);</code>
+
+    <dd><p>
+    Given a lexer object initialized with <code>yy_construct</code>, and
+    possibly with its input specified with <code>yy_restart</code>,
+    begin scanning it.  If this returns 0, it means the end of the input
+    was reached.  Otherwise, it returns an integer whose meaning is
+    determined by the scanner rules, but typically indicates the kind of
+    token that was found (e.g., identifier, number, string, etc.).
+
+<dt id="yy_restart"><code>void yy_restart(yy_lexer_t *yy_lexer, yy_input_stream_t *input_file);</code>
+
+    <dd><p>
+    Abandon whatever input (if any) <code>yy_lexer</code> was scanning,
+    and start scanning <code>input_file</code>.  This is how to choose
+    what to scan; otherwise, the scanner reads standard input.
+
+    <p>
+    If there was no current buffer, a new buffer is allocated.
+    Otherwise, the current buffer is repurposed to read from
+    <code>input_file</code>, flushing that buffer in the process.
+
+    <p><code>yy_restart</code> does <em>not</em> change the
+    <a href="#start-conditions">start state</a>.
+
+</dl>
 
 <p>These functions are available for inspecting and manipulating the
 text matched by a rule:
@@ -2038,28 +2099,28 @@ scanning a statement such as an "include" which requires switching the
 input source.
 
 <p>To negotiate these sorts of problems, <code>smflex</code> provides a
-mechanism for creating and switching between multiple input buffers. An
-input buffer is created by using:
+mechanism for creating and switching between multiple input buffers.
+An input buffer is created by using:
 
 <pre><code id="yy_create_buffer">
-    yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer, FILE *file, int size)
+    yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer, yy_input_stream_t *file, int size)
 </code></pre>
 
-<p>which takes a <code>FILE</code> pointer
-(TODO: It really accepts <code>yy_input_stream_t *</code>)
+<p>which takes a
+<a href="#yy_input_stream_t"><code>yy_input_stream_t</code></a> pointer
 and a size and creates a buffer
 associated with the given file and large enough to hold <code>size</code>
 characters; a <code>size</code> of 0 means to use a reasonable default size. It
 returns a <code>yy_buffer_state_t*</code>, pointer which may then be
 passed to other routines (see below).
 
-<p>The <code>FILE</code>
+<p>The <code>yy_input_stream_t</code>
 pointer in the call to <code>yy_create_buffer</code> is used to set
 the value of <code>yy_input_stream</code> while that buffer is the active
 input source.  Within the generated code,
 <code>yy_input_stream</code> is only used by <code>yy_read_input_function</code>; if you
 redefine <code>yy_read_input_function</code> so it no longer uses <code>yy_input_stream</code>,
-then you can safely pass <code>NULL</code> as the <code>FILE</code> pointer.
+then you can safely pass <code>NULL</code> as the <code>yy_input_stream_t</code> pointer.
 However, you may want to use
 <code>yy_input_stream</code> yourself, for example (as shown in the example
 below) to close the file.
@@ -2072,20 +2133,26 @@ You select a particular buffer to be the active input source with:
 </code></pre>
 
 <p>This switches the scanner's input buffer so subsequent tokens will come
-from <code>new_buffer</code>.  <code>yy_switch_to_buffer()</code>
+from <code>new_buffer</code> (which must not be <code>NULL</code>).
+<code>yy_switch_to_buffer()</code>
 may be used by <code>yy_wrap_function()</code> to set things up for continued scanning instead
 of opening a new file and
 calling <a href="#yy_restart"><code>yy_restart</code></a>.
 Calling this function does <em>not</em> change the start condition.
 
-<p>When finished scanning from a buffer, call:
+<p id="yy_delete_buffer">When finished scanning from a buffer, call:
 
 <pre><code>
     void yy_delete_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *buffer)
 </code></pre>
 
 <p>to reclaim the storage associated with it.  If <code>buffer</code> is
-<code>NULL</code>, this function does nothing.
+<code>NULL</code>, this function does nothing.  If it is the current
+buffer of <code>yy_lexer</code>, then the current buffer gets reset
+to <code>NULL</code>.  In that state, scanning cannot happen until a
+new buffer made current with
+<a href="#yy_restart"><code>yy_restart</code></a> or
+<code>yy_switch_to_buffer</code>.
 
 <p id="yy_flush_buffer">To discard data that has already been read and buffered from a
 particular source, call:
@@ -2100,6 +2167,28 @@ the buffer anew using <code>yy_read_input_function</code>.
 
 <p>Finally, the <code>YY_CURRENT_BUFFER</code> macro returns a
 <code>yy_buffer_state_t*</code> pointer to the current buffer.
+
+<p>This diagram summarizes the state transitions related to buffer
+management:
+
+<pre><code>
+                               |
+                               | construct
+                               V
+     State 1: No current buffer, need init
+                               |
+                               | lex, restart, switch
+                               V
+     State 2: Has current buffer
+                             ^ |
+             restart, switch | | delete(current)
+                             | V
+     State 3: No current buffer, no need init
+                               |
+                               | lex
+                               V
+                    undefined, likely crash!
+</code></pre>
 
 <p>Here is an <a href="test/input-buffers.lex">example</a>
 of using these features for writing a scanner which
@@ -2401,16 +2490,6 @@ the rule actions.
 <li><p><code>FILE *YY_INPUT_STREAM</code>
     is the file which by default <code>smflex</code> reads from.
     To change this value, call <code>yy_restart</code>.
-
-<li><p id="yy_restart"><code>void yy_restart(yy_lexer_t *yy_lexer, FILE *new_file)</code>
-    may be called to point <code>YY_INPUT_STREAM</code> at the new input file. The
-    switch-over to the new file is immediate (any previously buffered-up
-    input is lost). Note that calling <code>yy_restart()</code> with
-    <code>YY_INPUT_STREAM</code> as an argument thus throws away the current input
-    buffer and continues scanning the same input file.
-
-    <p><code>yy_restart</code> does <em>not</em> change the
-    <a href="#start-conditions">start state</a>.
 
 <li><p><code>FILE *YY_OUTPUT_STREAM</code>
     is the file to which <code>YY_ECHO</code> actions are done. It can be
@@ -4272,7 +4351,7 @@ by the scanner engine to read input and write output:
     <dd><p>This works like
     <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
 
-<dt><code>virtual int yym_write_output(void const *dest, int size);</code>
+<dt id="yym_write_output"><code>virtual int yym_write_output(void const *dest, int size);</code>
 
     <dd><p>Like
     <a href="#yy_write_output_function"><code>yy_write_output_function</code></a>.
