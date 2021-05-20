@@ -1351,16 +1351,18 @@ void yy_restart(yy_lexer_t *yy_lexer, yy_input_stream_t *input_file)
 {
   if (!yy_lexer->yy_current_buffer) {
     yy_lexer->yy_current_buffer =
-      yy_create_buffer(yy_lexer, yy_lexer->yy_input_stream, YY_DEFAULT_BUF_ALLOC_SIZE);
+      yy_create_buffer(yy_lexer, input_file, YY_DEFAULT_BUF_ALLOC_SIZE);
     if (!yy_lexer->yy_current_buffer) {
       return;     /* Error already reported, try to recover. */
     }
+
+    /* Copy the cur_pos, data_len, and input_stream from current_buffer. */
+    yy_load_current_buffer_state(yy_lexer);
   }
-
-  yy_init_buffer(yy_lexer, yy_lexer->yy_current_buffer, input_file);
-
-  /* Copy the cur_pos, data_len, and input_stream from current_buffer. */
-  yy_load_current_buffer_state(yy_lexer);
+  else {
+    /* This will call 'yy_load_current_buffer_state'. */
+    yy_init_buffer(yy_lexer, yy_lexer->yy_current_buffer, input_file);
+  }
 }
 
 %if cpp_interface
@@ -1502,10 +1504,12 @@ void yyFlexLexer::yym_delete_buffer(yy_buffer_state_t *b)
 static void yy_init_buffer(yy_lexer_t *yy_lexer,
                            yy_buffer_state_t *b, yy_input_stream_t *file)
 {
-  yy_flush_buffer(yy_lexer, b);
-
   b->yy_input_stream = file;
   b->yy_fill_buffer = 1;
+
+  /* Flush *after* setting the input stream of 'b', because 'flush'
+   * calls 'load' which copies the input stream into 'yy_lexer'. */
+  yy_flush_buffer(yy_lexer, b);
 
 %if interactive
   b->yy_is_interactive = 1;

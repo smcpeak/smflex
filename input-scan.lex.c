@@ -3472,16 +3472,18 @@ void input_scan_restart(input_scan_lexer_t *yy_lexer, input_scan_input_stream_t 
 {
   if (!yy_lexer->yy_current_buffer) {
     yy_lexer->yy_current_buffer =
-      input_scan_create_buffer(yy_lexer, yy_lexer->yy_input_stream, YY_DEFAULT_BUF_ALLOC_SIZE);
+      input_scan_create_buffer(yy_lexer, input_file, YY_DEFAULT_BUF_ALLOC_SIZE);
     if (!yy_lexer->yy_current_buffer) {
       return;     /* Error already reported, try to recover. */
     }
+
+    /* Copy the cur_pos, data_len, and input_stream from current_buffer. */
+    yy_load_current_buffer_state(yy_lexer);
   }
-
-  input_scan_init_buffer(yy_lexer, yy_lexer->yy_current_buffer, input_file);
-
-  /* Copy the cur_pos, data_len, and input_stream from current_buffer. */
-  yy_load_current_buffer_state(yy_lexer);
+  else {
+    /* This will call 'yy_load_current_buffer_state'. */
+    input_scan_init_buffer(yy_lexer, yy_lexer->yy_current_buffer, input_file);
+  }
 }
 
 
@@ -3598,10 +3600,12 @@ void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_st
 static void input_scan_init_buffer(input_scan_lexer_t *yy_lexer,
                            input_scan_buffer_state_t *b, input_scan_input_stream_t *file)
 {
-  input_scan_flush_buffer(yy_lexer, b);
-
   b->yy_input_stream = file;
   b->yy_fill_buffer = 1;
+
+  /* Flush *after* setting the input stream of 'b', because 'flush'
+   * calls 'load' which copies the input stream into 'yy_lexer'. */
+  input_scan_flush_buffer(yy_lexer, b);
 
   b->yy_is_interactive = 0;
   YY_DEBUG_LOG_CALL("default behavior, so yy_is_interactive is", b->yy_is_interactive);
