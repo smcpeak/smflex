@@ -2325,14 +2325,6 @@ total number of rules (including the default rule, even if you use
 <p>See <a href="test/count-actions.lex"><code>test/count-actions.lex</code></a>
 for a complete example.
 
-<dt><code>YY_USER_INIT</code>
-
-<dd>
-<p>The macro <code>YY_USER_INIT</code> may be defined to provide an
-action which is always executed before the first scan (and before the
-scanner's internal initializations are done). For example, it could be
-used to call a routine to read in a data table or open a logging file.
-
 <dt><code>yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive)</code>
 
 <dd>
@@ -4911,6 +4903,23 @@ run-time support library.  That has been removed as detailed below.
     <p>Replacement: Make a copy of <code>YY_TEXT</code> before calling
     <code>YY_UNREAD_CHARACTER</code> (which was also the advice given
     in the <code>flex-2.5.4</code> manual).
+
+<li><p><code>flex-2.5.4</code> allowed the user to set the macro
+    <code>YY_USER_INIT</code> to code to be executed the first time
+    <code>yy_lex</code> was called.  <code>smflex</code> does not allow that.
+
+    <p>Rationale: First, I do not see why this feature is needed at all.
+    The user has plenty of opportunity to initialize before calling
+    <code>yy_lex</code>.  My guess is it was meant for cases where
+    the user declared a <code>static</code> local variable inside
+    <code>yy_lex</code> and needed to initialize that, but that would
+    violate the re-entrancy goals of <code>smflex</code>.  Second, the
+    mechansim interacts with the sequencing of <code>smflex</code>
+    initializing itself, and I do not want the burden of tolerating
+    arbitrary user-added code mixed in with that initialization.
+
+    <p>Replacement: Perform needed initialization before calling
+    <code>yy_lex</code>.
 
 <li><p><code>flex-2.5.4</code> would scan the text of rule actions,
     looking for uses of

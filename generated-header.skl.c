@@ -291,7 +291,7 @@ const char *header_skl_contents[] = {
   "   * on a subsequent invocation of 'yy_lex()'.  I am very skeptical",
   "   * that that is a good idea, but I do not have a pressing need to",
   "   * remove that feature or this field, so for now they stay. */",
-  "  int yy_init;",
+  "  int yy_need_init;",
   "",
   "  /* Current start state number.  This is a \"start\" state in the sense",
   "   * that it indicates the state in which the recognizer begins when",
