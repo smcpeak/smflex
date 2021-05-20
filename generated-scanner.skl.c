@@ -1394,6 +1394,8 @@ const char *scanner_skl_contents[] = {
   "",
   "void yy_switch_to_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *new_buffer)",
   "{",
+  "  YY_API_PRECONDITION(new_buffer != NULL);",
+  "",
   "  if (yy_lexer->yy_current_buffer == new_buffer) {",
   "    return;",
   "  }",

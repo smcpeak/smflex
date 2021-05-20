@@ -1389,6 +1389,8 @@ void yyFlexLexer::yym_restart(yy_input_stream_t *input_file)
 
 void yy_switch_to_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *new_buffer)
 {
+  YY_API_PRECONDITION(new_buffer != NULL);
+
   if (yy_lexer->yy_current_buffer == new_buffer) {
     return;
   }

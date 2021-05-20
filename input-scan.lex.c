@@ -3494,6 +3494,8 @@ void input_scan_restart(input_scan_lexer_t *yy_lexer, input_scan_input_stream_t 
 
 void input_scan_switch_to_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *new_buffer)
 {
+  YY_API_PRECONDITION(new_buffer != NULL);
+
   if (yy_lexer->yy_current_buffer == new_buffer) {
     return;
   }
