@@ -146,6 +146,14 @@
      ((cond)? 1 : (YY_ERROR(yy_err_api_misuse, #cond), 0))
 #endif
 
+%if cpp_interface
+/* Make all C API functions static. */
+#define STATIC_IF_CPP static
+%else
+/* C API functions are not static. */
+#define STATIC_IF_CPP /*nothing*/
+%endif
+
 #define EOB_ACT_CONTINUE_SCAN 0
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
@@ -327,9 +335,28 @@ public:      /* methods */
 %endif
 
 
+/* Forward static declarations. */
 static void yy_load_current_buffer_state(yy_lexer_t *yy_lexer);
 static void yy_init_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *b,
                            yy_input_stream_t *file);
+%# The C API functions only need forwards if we are emitting the C++
+%# API since otherwise the header already declared them.
+%if cpp_interface
+STATIC_IF_CPP yy_buffer_state_t *yy_create_buffer(
+  yy_lexer_t *yy_lexer, yy_input_stream_t *file, int size);
+STATIC_IF_CPP void yy_delete_buffer(
+  yy_lexer_t *yy_lexer, yy_buffer_state_t *b);
+STATIC_IF_CPP void yy_restart(yy_lexer_t *yy_lexer, yy_input_stream_t *input_file);
+STATIC_IF_CPP void yy_flush_buffer(
+  yy_lexer_t *yy_lexer, yy_buffer_state_t *b);
+%if option_yy_read_character
+STATIC_IF_CPP int yy_read_character(yy_lexer_t *yy_lexer);
+%endif
+%if option_yy_unread_character
+STATIC_IF_CPP void yy_unread_character(yy_lexer_t *yy_lexer, int c);
+%endif
+%endif
+
 
 /* If 'yy_lexer' does not have a current buffer, create one.
  * Return false if allocation failed.*/
@@ -346,7 +373,7 @@ static int yy_create_buffer_if_needed(yy_lexer_t *yy_lexer)
 }
 
 
-void yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive)
+STATIC_IF_CPP void yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive)
 {
   if (!yy_create_buffer_if_needed(yy_lexer)) {
     return;
@@ -363,7 +390,7 @@ void yyFlexLexer::yym_set_interactive(int is_interactive)
 %endif
 
 
-int yy_get_bol(yy_lexer_t const *yy_lexer)
+STATIC_IF_CPP int yy_get_bol(yy_lexer_t const *yy_lexer)
 {
   if (!yy_lexer->yy_current_buffer) {
     /* When we start reading, BOL will be true. */
@@ -383,7 +410,7 @@ bool yyFlexLexer::yym_get_bol() const
 
 
 
-void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol)
+STATIC_IF_CPP void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol)
 {
   if (!yy_create_buffer_if_needed(yy_lexer)) {
     return;
@@ -846,7 +873,7 @@ do_action:      /* This label is used only to access EOF actions. */
 } /* end of yy_lex */
 
 
-void yy_construct(yy_lexer_t *yy_lexer)
+STATIC_IF_CPP void yy_construct(yy_lexer_t *yy_lexer)
 {
   /* Note: We do not perform any memory allocation here.  Instead,
    * allocation is deferred to 'yy_lex()' when 'yy_need_init==1'.
@@ -866,6 +893,13 @@ void yy_construct(yy_lexer_t *yy_lexer)
   yy_lexer->yy_input_stream = (yy_input_stream_t*)stdin;
   yy_lexer->yy_output_stream = (yy_output_stream_t*)stdout;
 
+%if cpp_interface
+  /* yyFlexLexer constructor will set these. */
+  yy_lexer->yy_read_input_function   = NULL;
+  yy_lexer->yy_write_output_function = NULL;
+  yy_lexer->yy_wrap_function         = NULL;
+  yy_lexer->yy_error_function        = NULL;
+%else
 %if use_read
   yy_lexer->yy_read_input_function   = &yy_read_input_with_read;
 %else
@@ -874,6 +908,7 @@ void yy_construct(yy_lexer_t *yy_lexer)
   yy_lexer->yy_write_output_function = &yy_write_output_with_fwrite;
   yy_lexer->yy_wrap_function         = &yy_wrap_return_1;
   yy_lexer->yy_error_function        = &yy_error_print_and_exit;
+%endif
 
 %if option_yylineno
   yy_lexer->yy_lineno = 1;
@@ -943,7 +978,7 @@ yyFlexLexer::yyFlexLexer(yy_input_stream_t *arg_yyin, yy_output_stream_t *arg_yy
 }
 %endif
 
-void yy_destroy(yy_lexer_t *yy_lexer)
+STATIC_IF_CPP void yy_destroy(yy_lexer_t *yy_lexer)
 {
   /* We set freed pointers to NULL for a bit of extra safety. */
 
@@ -1215,7 +1250,7 @@ static yy_state_type_t yy_try_NUL_trans(yy_lexer_t *yy_lexer, yy_state_type_t yy
 
 
 %if option_yy_unread_character
-void yy_unread_character(yy_lexer_t *yy_lexer, int c)
+STATIC_IF_CPP void yy_unread_character(yy_lexer_t *yy_lexer, int c)
 {
   char *yy_bp = YY_TEXT_NONCONST;
   char *yy_cp = yy_lexer->yy_buf_cur_pos;
@@ -1274,7 +1309,7 @@ void yyFlexLexer::yym_unread_character(int c)
 
 %if option_yy_read_character
 /* Read one character from the current input source of 'yy_lexer'. */
-int yy_read_character(yy_lexer_t *yy_lexer)
+STATIC_IF_CPP int yy_read_character(yy_lexer_t *yy_lexer)
 {
   int c;
 
@@ -1364,7 +1399,7 @@ int yyFlexLexer::yym_read_character()
 %endif # option_yy_read_character
 
 
-void yy_restart(yy_lexer_t *yy_lexer, yy_input_stream_t *input_file)
+STATIC_IF_CPP void yy_restart(yy_lexer_t *yy_lexer, yy_input_stream_t *input_file)
 {
   if (!yy_lexer->yy_current_buffer) {
     yy_lexer->yy_current_buffer =
@@ -1390,7 +1425,7 @@ void yyFlexLexer::yym_restart(yy_input_stream_t *input_file)
 %endif
 
 
-void yy_switch_to_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *new_buffer)
+STATIC_IF_CPP void yy_switch_to_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *new_buffer)
 {
   YY_API_PRECONDITION(new_buffer != NULL);
 
@@ -1441,8 +1476,8 @@ static void yy_load_current_buffer_state(yy_lexer_t *yy_lexer)
 }
 
 
-yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer,
-                                    yy_input_stream_t *file, int size)
+STATIC_IF_CPP yy_buffer_state_t *yy_create_buffer(
+  yy_lexer_t *yy_lexer, yy_input_stream_t *file, int size)
 {
   yy_buffer_state_t *b;
 
@@ -1487,7 +1522,8 @@ yy_buffer_state_t *yyFlexLexer::yym_create_buffer(yy_input_stream_t *file,
 %endif
 
 
-void yy_delete_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *b)
+STATIC_IF_CPP void yy_delete_buffer(
+  yy_lexer_t *yy_lexer, yy_buffer_state_t *b)
 {
   if (!b) {
     return;
@@ -1533,7 +1569,8 @@ static void yy_init_buffer(yy_lexer_t *yy_lexer,
 }
 
 
-void yy_flush_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *b)
+STATIC_IF_CPP void yy_flush_buffer(
+  yy_lexer_t *yy_lexer, yy_buffer_state_t *b)
 {
   if (!b) {
     return;
@@ -1568,8 +1605,8 @@ void yyFlexLexer::yym_flush_buffer(yy_buffer_state_t *b)
 
 %# yy_scan_string and yy_scan_bytes require yy_scan_buffer
 %if option_yy_scan_buffer || option_yy_scan_bytes || option_yy_scan_string
-yy_buffer_state_t *yy_scan_buffer(yy_lexer_t *yy_lexer,
-                                  char *base, int size)
+STATIC_IF_CPP yy_buffer_state_t *yy_scan_buffer(
+  yy_lexer_t *yy_lexer, char *base, int size)
 {
   yy_buffer_state_t *b;
 
@@ -1608,8 +1645,8 @@ yy_buffer_state_t *yy_scan_buffer(yy_lexer_t *yy_lexer,
 
 %# yy_scan_string requires yy_scan_bytes
 %if option_yy_scan_bytes || option_yy_scan_string
-yy_buffer_state_t *yy_scan_bytes(yy_lexer_t *yy_lexer,
-                                 const char *bytes, int len)
+STATIC_IF_CPP yy_buffer_state_t *yy_scan_bytes(
+  yy_lexer_t *yy_lexer, const char *bytes, int len)
 {
   yy_buffer_state_t *b;
   char *buf;
@@ -1661,7 +1698,8 @@ yy_buffer_state_t *yy_scan_bytes(yy_lexer_t *yy_lexer,
 %endif
 
 %if option_yy_scan_string
-yy_buffer_state_t *yy_scan_string(yy_lexer_t *yy_lexer, const char *yy_str)
+STATIC_IF_CPP yy_buffer_state_t *yy_scan_string(
+  yy_lexer_t *yy_lexer, const char *yy_str)
 {
   return yy_scan_bytes(yy_lexer, yy_str, strlen(yy_str));
 }
@@ -1693,7 +1731,7 @@ yy_buffer_state_t *yyFlexLexer::yym_scan_buffer(char *base, int size)
 
 
 %if option_stack
-void yy_push_start_condition(yy_lexer_t *yy_lexer, int new_cond)
+STATIC_IF_CPP void yy_push_start_condition(yy_lexer_t *yy_lexer, int new_cond)
 {
   YY_ASSERT(0 <= yy_lexer->yy_start_stack_cur_size &&
                  yy_lexer->yy_start_stack_cur_size <= yy_lexer->yy_start_stack_alloc_size);
@@ -1747,7 +1785,7 @@ void yyFlexLexer::yym_push_start_condition(int new_cond)
 %endif
 
 
-void yy_pop_start_condition(yy_lexer_t *yy_lexer)
+STATIC_IF_CPP void yy_pop_start_condition(yy_lexer_t *yy_lexer)
 {
   if (yy_lexer->yy_start_stack_cur_size <= 0) {
     YY_ERROR(yy_err_api_misuse, "yy_pop_start_condition: start stack is empty");
@@ -1767,7 +1805,7 @@ void yyFlexLexer::yym_pop_start_condition()
 
 
 %if option_yy_top_start_condition
-int yy_top_start_condition(yy_lexer_t const *yy_lexer)
+STATIC_IF_CPP int yy_top_start_condition(yy_lexer_t const *yy_lexer)
 {
   if (yy_lexer->yy_start_stack_cur_size <= 0) {
     YY_ERROR(yy_err_api_misuse, "yy_top_start_condition: state stack is empty");
@@ -1787,7 +1825,7 @@ int yyFlexLexer::yym_top_start_condition() const
 %endif # option_stack
 
 
-yy_error_code_t yy_get_error(yy_lexer_t const *yy_lexer)
+STATIC_IF_CPP yy_error_code_t yy_get_error(yy_lexer_t const *yy_lexer)
 {
   return yy_lexer->yy_error_code;
 }
@@ -1819,7 +1857,7 @@ static char const * const yy_error_string_table[] = {
 };
 
 
-char const *yy_error_string(yy_error_code_t code)
+STATIC_IF_CPP char const *yy_error_string(yy_error_code_t code)
 {
   /* Make sure the table is kept in sync with the enumeration. */
   YY_STATIC_ASSERT(sizeof(yy_error_string_table) /
@@ -1844,7 +1882,8 @@ char const *yy_error_string(yy_error_code_t code)
 %endif
 
 
-void yy_error_print_and_exit(yy_lexer_t const *yy_lexer,
+%if !cpp_interface
+STATIC_IF_CPP void yy_error_print_and_exit(yy_lexer_t const *yy_lexer,
   yy_error_code_t code, char const *detail)
 {
   if (detail) {
@@ -1875,6 +1914,7 @@ void yy_error_print_and_exit(yy_lexer_t const *yy_lexer,
     exit(2);
   }
 }
+%endif
 
 
 %if cpp_interface
@@ -1961,7 +2001,8 @@ void yyFlexLexer::yym_error(yy_error_code_t code, char const *detail) const
 %endif
 
 
-void yy_less_text(yy_lexer_t *yy_lexer, int new_yy_leng)
+%if !cpp_interface
+STATIC_IF_CPP void yy_less_text(yy_lexer_t *yy_lexer, int new_yy_leng)
 {
   if (!YY_API_PRECONDITION(0 <= new_yy_leng &&
                                 new_yy_leng <= yy_lexer->yy_leng)) {
@@ -1979,6 +2020,7 @@ void yy_less_text(yy_lexer_t *yy_lexer, int new_yy_leng)
   yy_lexer->yy_hold_char = *(yy_lexer->yy_buf_cur_pos);
   *(yy_lexer->yy_buf_cur_pos) = '\0';
 }
+%endif
 
 
 /* When this symbol is defined, enable mechanisms to inject failures
@@ -2019,7 +2061,7 @@ static void yy_flex_free(void *ptr)
 }
 
 
-void yy_check_for_memory_leaks()
+STATIC_IF_CPP void yy_check_for_memory_leaks()
 {
   if (yy_num_allocated_objects != 0) {
     fprintf(stderr, "yy_check_for_memory_leaks: leaked %ld objects\n",
@@ -2036,7 +2078,7 @@ void yy_check_for_memory_leaks()
 %endif
 
 
-void yy_set_start_condition(yy_lexer_t *yy_lexer, int state)
+STATIC_IF_CPP void yy_set_start_condition(yy_lexer_t *yy_lexer, int state)
 {
   YY_SET_START_CONDITION(state);
 }
@@ -2049,7 +2091,7 @@ void yyFlexLexer::yym_set_start_condition(int state)
 %endif
 
 
-int yy_get_start_condition(yy_lexer_t const *yy_lexer)
+STATIC_IF_CPP int yy_get_start_condition(yy_lexer_t const *yy_lexer)
 {
   return YY_GET_START_CONDITION();
 }
@@ -2062,6 +2104,7 @@ int yyFlexLexer::yym_get_start_condition() const
 %endif
 
 
+%if !cpp_interface
 int yy_read_input_with_fread(yy_lexer_t *yy_lexer,
   void *dest, int size)
 {
@@ -2109,6 +2152,7 @@ int yy_wrap_return_1(yy_lexer_t *yy_lexer)
 {
   return 1;      /* No more files. */
 }
+%endif # !cpp_interface
 
 
 %if option_main

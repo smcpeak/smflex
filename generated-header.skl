@@ -20,32 +20,24 @@
 #include <stdio.h>                     /* FILE */
 %endif
 
-%# If we are not generating the C++ interface, but using a C++ compiler,
-%# make sure all of the functions have C linkage so they can be used
-%# from modules compiled with a C compiler.  However, if we *are*
-%# generating a C++ interface, then a C++ compiler must be used to
-%# parse this file, and hence the functions are not callable from C
-%# code, so we keep the C++ linkage.
-%if !cpp_interface
-#ifdef __cplusplus
-extern "C" {
-#endif
-%endif
-
 /* Opaque types defined in the generated scanner code. */
 typedef struct yy_buffer_state_struct yy_buffer_state_t;
+%if option_flex_compat
+typedef yy_buffer_state_t *YY_BUFFER_STATE;  /* For flex compatibility. */
+%endif
 %if jacobson
 typedef struct yy_trans_info_struct yy_trans_info_t;
 %endif
 
-%# TODO: Arrange to use these definitions depending on options.
-%# typedef struct yy_input_stream_generic  yy_input_stream_t;
-%# typedef struct yy_output_stream_generic yy_output_stream_t;
-%#
 /* Types of input and output streams.  The scanner core treats these
+%if cpp_interface
+ * as opaque; only 'yym_read_input' and 'yym_write_output' use them in a
+ * non-opaque way, and those can be overridden by the client.
+%else
  * as opaque; only 'yy_read_input_function' and
  * 'yy_write_output_function' use them in a non-opaque way, and those
  * can be replaced by the client.
+%endif
  *
  * Thus, the actual types used here are effectively default
  * suggestions, not requirements. */
@@ -58,7 +50,11 @@ typedef std::ostream yy_output_stream_t;
 %endif
 
 
+%if cpp_interface
+/* Error codes that can be reported to 'yym_error'. */
+%else
 /* Error codes that can be reported to 'yy_error_function'. */
+%endif
 typedef enum yy_error_code_enum {
   /* No error has occurred.  This will not be reported as an error code,
    * rather it is used simply to indicate the absence of an error. */
@@ -121,9 +117,6 @@ typedef yy_trans_info_t const *yy_state_type_t;
 typedef int yy_state_type_t;
 %endif
 
-%if cpp_interface
-class yyFlexLexer;           /* Defined below. */
-%endif
 
 /* This structure encapsulates the scanner state.
  *
@@ -349,6 +342,15 @@ struct yy_lexer_struct {
 typedef struct yy_lexer_struct yy_lexer_t;
 
 
+%# ---------------------------- C API ------------------------------
+%# We only emit the C API when not using the C++ API.  That is because
+%# when the C++ API is in use, there is no 'yy_lex', so the rest of the
+%# C API would be useless.
+%if !cpp_interface
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* -------- Essentials -------- */
 /* Initialize 'yy_lexer'.  This begins the lifecycle of a lexer
  * object. */
@@ -363,11 +365,6 @@ void yy_construct(yy_lexer_t *yy_lexer);
  * by calling 'yy_delete_buffer'. */
 void yy_destroy(yy_lexer_t *yy_lexer);
 
-%if cpp_interface
-/* This scanner is meant to be using the C++ wrapper class below.
- * Consequently, there is no 'yy_lex' global function.  Instead,
- * the there is a 'yym_lex' method on yyFlexLexer. */
-%else
 /* Given a lexer object initialized with 'yy_construct', and possibly
  * with its input specified with 'yy_restart', begin scanning it.
  * If this returns 0, it means the end of the input was reached.
@@ -375,7 +372,6 @@ void yy_destroy(yy_lexer_t *yy_lexer);
  * the scanner rules, but typically indicates the kind of token that
  * was found (e.g., identifier, number, string, etc.). */
 int yy_lex(yy_lexer_t *yy_lexer);
-%endif
 
 /* Abandon whatever input (if any) 'yy_lexer' was scanning, and start
  * scanning 'input_file'.  This is how to choose what to scan;
@@ -396,11 +392,6 @@ void yy_restart(yy_lexer_t *yy_lexer, yy_input_stream_t *input_file);
 void yy_less_text(yy_lexer_t *yy_lexer, int new_yy_leng);
 
 /* -------- Scanning multiple sources (e.g., #includes) -------- */
-%if option_flex_compat
-/* Provided for flex compatibility. */
-typedef yy_buffer_state_t *YY_BUFFER_STATE;
-
-%endif
 /* Create a new buffer for use with 'yy_lexer' that reads from 'file'.
  * The 'size' is the size of the read buffer; a size of 0 means to use
  * the default size smflex uses for its own buffers.
@@ -501,7 +492,7 @@ void yy_unread_character(yy_lexer_t *yy_lexer, int c);
 
 %endif
 /* Set the 'interactive' flag on the given 'yy_lexer'.  An interactive
- * yy_lexer reads its input one character at a time. */
+ * lexer reads its input one character at a time. */
 void yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive);
 
 /* Get whether 'yy_lexer' will regard itself as being at the beginning
@@ -552,15 +543,14 @@ char const *yy_error_string(yy_error_code_t code);
  * after destroying all instances to check for memory leaks. */
 void yy_check_for_memory_leaks(void);
 
-%if !cpp_interface
 #ifdef __cplusplus
 }
 #endif
-%endif
+%endif # !cpp_interface
 
 
+%# --------------------------- C++ API -----------------------------
 %if cpp_interface
-/* ---------------------- C++ interface ----------------------- */
 /* Indicate that the C++ interface class is available. */
 #define yyFlexLexer_CLASS_DEFINED
 
@@ -676,49 +666,144 @@ public:      /* methods */
     { yym_lexer_state.yy_flex_debug = flag; }
 %endif
 
-  /* The following "yym_" methods are all counterparts for the
-   * corresponding "yy_" global functions that comprise the C interface.
-   * See comments on their declarations, above, for details on what they
-   * do (and also the descriptions in the manual).  The only difference
-   * here is that the 'yy_lexer_t*' parameter is omitted, as it is
-   * implicitly carried by the object the method is invoked upon. */
-  void yym_restart(yy_input_stream_t *s);
+  /* Abandon whatever input (if any) we were scanning, and start
+   * scanning 'input_file'.  This is how to choose what to scan;
+   * otherwise, the scanner reads standard input.
+   *
+   * If there was no current buffer, a new buffer is allocated.
+   * Otherwise, the current buffer is repurposed to read from
+   * 'input_file', flushing that buffer in the process. */
+  void yym_restart(yy_input_stream_t *input_file);
+
+  /* TODO: Need yym_less_text. */
+
+  /* -------- Scanning multiple sources (e.g., #includes) -------- */
+  /* Create a new buffer that reads from 'file'.  The 'size' is the size
+   * of the read buffer; a size of 0 means to use the default size
+   * smflex uses for its own buffers.
+   *
+   * If out of memory, returns NULL after calling 'yym_error'. */
   yy_buffer_state_t *yym_create_buffer(yy_input_stream_t *file, int size=0);
+
+  /* Make 'new_buffer' the active input source.  The old buffer is not
+   * remembered by the lexer in any way; it is up to the client to do
+   * so.  (The old buffer is also not freed.)
+   *
+   * This does nothing if 'new_buffer' is already the current buffer. */
   void yym_switch_to_buffer(yy_buffer_state_t *new_buffer);
+
+  /* Deallocate 'b' and release any resources associated with it.  This
+   * does nothing if 'b' is NULL.
+   *
+   * If 'b' is the current buffer, then afterward the current buffer is
+   * NULL. */
   void yym_delete_buffer(yy_buffer_state_t *b);
+
+  /* Discard any already-read data from the input source associated with
+   * 'b'.  Future attempts to read will start by reading new data from
+   * that source. */
   void yym_flush_buffer(yy_buffer_state_t *b);
+
+%if option_yy_scan_string || option_yy_scan_bytes || option_yy_scan_buffer
+  /* -------- Scanning in-memory data -------- */
 %if option_yy_scan_string
+  /* Allocate a new buffer (which must be deallocated with
+   * 'yym_delete_buffer') to scan the contents of NUL-terminated
+   * 'yy_str'.  Switch to that buffer.
+   *
+   * If out of memory, returns NULL after calling 'yym_error'. */
   yy_buffer_state_t *yym_scan_string(const char *yy_str);
+
 %endif
 %if option_yy_scan_bytes
+  /* Allocate a new buffer (which must be deallocated with
+   * 'yym_delete_buffer') to scan 'len' bytes at 'bytes'.
+   * Switch to that buffer.
+   *
+   * If out of memory, returns NULL after calling 'yym_error'. */
   yy_buffer_state_t *yym_scan_bytes(const char *bytes, int len);
+
 %endif
 %if option_yy_scan_buffer
+  /* Allocate a new buffer (which must be deallocated with
+   * 'yym_delete_buffer') to scan 'size' bytes at 'base'.
+   * Switch to that buffer.
+   *
+   * The new buffer does not make a copy of 'base'; instead it uses it
+   * in-place and destructively modifies it.  The last two bytes (at
+   * [size-2] and [size-1]) *must* be 0, but are not treated as part of
+   * the input to scan.  See the description in the manual.
+   *
+   * If out of memory, returns NULL after calling 'yym_error'. */
   yy_buffer_state_t *yym_scan_buffer(char *base, int size);
+
 %endif
+%endif
+  /* -------- Manipulating the start condition -------- */
+  /* Set the start condition to 'cond'. */
   void yym_set_start_condition(int cond);
+
+  /* Get the current start condition. */
   int yym_get_start_condition() const;
+
 %if option_stack
+  /* Set the start condition to 'new_cond', pushing the current start
+   * condition onto the state stack. */
   void yym_push_start_condition(int new_cond);
+
+  /* Set the start condition to the element at the top of the stack and
+   * remove that element.  The stack must not be empty. */
   void yym_pop_start_condition();
+
 %if option_yy_top_start_condition
+  /* Get the element at the top of the stack without changing it.  The
+   * stack must not be empty, but there is no way to query whether it is;
+   * you just have to know from context. */
   int yym_top_start_condition() const;
+
 %endif
 %endif
+  /* -------- Interacting with an input stream -------- */
 %if option_yy_read_character
+  /* Read a single character from the current input buffer.
+   * Returns EOF (-1) on end of file. */
   int yym_read_character();
+
 %endif
 %if option_yy_unread_character
+  /* Push a single character back into the current input buffer,
+   * such that it will be the next one read. */
   void yym_unread_character(int c);
+
 %endif
+  /* Set the 'interactive' flag.  An interactive
+   * lexer reads its input one character at a time. */
   void yym_set_interactive(int is_interactive);
+
+  /* Get whether 'yy_lexer' will regard itself as being at the beginning
+   * of a line (BOL), which is where "^" patterns can match. */
   bool yym_get_bol() const;
+
+  /* Set the BOL condition. */
   void yym_set_bol(bool at_bol);
+
+  /* -------- Diagnostics -------- */
+  /* Return the code of the error the scanner encountered, or
+   * 'yy_err_no_error' if none has been.  This can be used in situations
+   * where 'yym_error' returns in order to signal to the client
+   * code that it must stop calling scanner functions. */
   yy_error_code_t yym_get_error() const;
 
+  /* Return an English string describing the given error 'code' as a
+   * pointer to statically-allocated memory. */
   static char const *yym_error_string(yy_error_code_t code);
+
+  /* Fail an assertion if there are any objects allocated, across all
+   * scanner instances, that have not been freed.  This can be called
+   * after destroying all instances to check for memory leaks. */
   static void yym_check_for_memory_leaks();
 
+  /* -------- Overrideable virtual methods -------- */
   /* Read up to 'size' bytes into 'dest', returning the number of bytes
    * read, 0 for EOF, and -1 for error.
    *

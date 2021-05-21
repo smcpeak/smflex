@@ -10,10 +10,6 @@
 
 #include <stdio.h>                     /* FILE */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Opaque types defined in the generated scanner code. */
 typedef struct input_scan_buffer_state_struct input_scan_buffer_state_t;
 
@@ -254,6 +250,10 @@ struct input_scan_lexer_struct {
 typedef struct input_scan_lexer_struct input_scan_lexer_t;
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* -------- Essentials -------- */
 /* Initialize 'yy_lexer'.  This begins the lifecycle of a lexer
  * object. */
@@ -347,7 +347,7 @@ int input_scan_read_character(input_scan_lexer_t *yy_lexer);
 void input_scan_unread_character(input_scan_lexer_t *yy_lexer, int c);
 
 /* Set the 'interactive' flag on the given 'yy_lexer'.  An interactive
- * yy_lexer reads its input one character at a time. */
+ * lexer reads its input one character at a time. */
 void input_scan_set_interactive(input_scan_lexer_t *yy_lexer, int is_interactive);
 
 /* Get whether 'yy_lexer' will regard itself as being at the beginning
