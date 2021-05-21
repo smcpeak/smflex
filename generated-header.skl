@@ -297,13 +297,13 @@ struct yy_lexer_struct {
   int yy_start_state;
 
 %if num_backing_up > 0 && !option_reject
-  /* These are related to backing up when REJECT is *not* used. */
+  /* These are related to backing up when YY_REJECT is *not* used. */
   yy_state_type_t yy_last_accepting_state;
   char *yy_last_accepting_cpos;
 
 %endif
 %if option_reject
-  /* These are related to REJECT. */
+  /* These are related to YY_REJECT. */
   yy_state_type_t *yy_state_buf;
   yy_state_type_t *yy_state_ptr;
   char *yy_full_match;

@@ -14,7 +14,7 @@
 %%
 
 username      std::cout << "USERNAME";
-reject        REJECT;  /* Use REJECT to make buffer unexpandable. */
+reject        YY_REJECT;  /* Use YY_REJECT to make buffer unexpandable. */
 x+            std::cout << "saw " << YY_LENG << " xs\n";
 
 unread        {
@@ -151,7 +151,7 @@ static void provoke_error(yy_error_code_t expect_code)
         std::cout << "error: " << e.what() << "\n";
         assert(e.yym_code == expect_code);
         assert(lexer.yym_get_error() == expect_code);
-        assert(strstr(e.yym_detail, "REJECT"));
+        assert(strstr(e.yym_detail, "YY_REJECT"));
       }
       break;
     }

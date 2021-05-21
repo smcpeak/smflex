@@ -944,7 +944,7 @@ an action:
     See also
     <a href="#yy_get_start_state"><code>yy_get_start_state</code></a>.
 
-<li id="REJECT-macro"><p><code>REJECT</code>
+<li id="YY_REJECT-macro"><p><code>YY_REJECT</code>
     directs the scanner to proceed on to the "second best" rule which
     matched the input (or a prefix of the input). The rule is chosen as
     described above in
@@ -961,13 +961,13 @@ an action:
                 int word_count = 0;
         %%
 
-        frob        special(); REJECT;
+        frob        special(); YY_REJECT;
         [^ \t\n]+   ++word_count;
     </code><!-- END example --></pre>
 
-    <p>Without the <code>REJECT</code>, any "frob"'s in the input would not
+    <p>Without the <code>YY_REJECT</code>, any "frob"'s in the input would not
     be counted as words, since the scanner normally executes only one action
-    per token. Multiple <code>REJECT</code>s are allowed, each one finding
+    per token. Multiple <code>YY_REJECT</code>s are allowed, each one finding
     the next best choice to the currently active rule. For example, when
     the <a href="test/reject-abcd.lex">following scanner</a> scans the
     token "abcd", it will write "abcdabcaba"
@@ -978,20 +978,20 @@ an action:
         a        |
         ab       |
         abc      |
-        abcd     YY_ECHO; REJECT;
+        abcd     YY_ECHO; YY_REJECT;
         .|\n     /* eat up any unmatched character */
     </code><!-- END example --></pre>
 
     <p>(The first three rules share the fourth's action since they use the
-    special '|' action.)  Any use of <code>REJECT</code> imposes
+    special '|' action.)  Any use of <code>YY_REJECT</code> imposes
     restrictions on scanner performance; see
     <a href="#performance-considerations">Performance Considerations</a>.
 
-    <p>Be aware that, unlike the other special actions, <code>REJECT</code>
+    <p>Be aware that, unlike the other special actions, <code>YY_REJECT</code>
     is a <em>branch</em>; code immediately following it in the action will
     <em>not</em> be executed.
 
-    <p>Use of <code>REJECT</code> requires
+    <p>Use of <code>YY_REJECT</code> requires
     <a href="#option-reject"><code>%option reject</code></a>.
 
 <li id="YY_MORE_TEXT-macro"><p><code>YY_MORE_TEXT()</code>
@@ -2982,7 +2982,7 @@ number are equivalent to <code>smflex</code> flags or their negation:
 
 <dd><p>
     Enable support for
-    <a href="#REJECT-macro"><code>REJECT</code></a>.
+    <a href="#YY_REJECT-macro"><code>YY_REJECT</code></a>.
 
 <dt id="option-stack"><code>stack</code>
 
@@ -3790,7 +3790,7 @@ number of options/actions which degrade performance. These are, from
 most expensive to least:
 
 <pre><code>
-    REJECT
+    YY_REJECT
     %option yylineno
     arbitrary trailing context
 
@@ -3806,21 +3806,21 @@ as a routine call that potentially does quite a bit of work, while
 <code>yyless()</code> is a quite-cheap macro; so if just putting back
 some excess text you scanned, use <code>yyless()</code>.
 
-<p><code>REJECT</code> should be avoided at all costs when performance
+<p><code>YY_REJECT</code> should be avoided at all costs when performance
 is important. It is a particularly expensive option.
 
 
-<h2>Investigation of REJECT</h2>
+<h2>Investigation of YY_REJECT</h2>
 
 <p>
-The previous section claims that <code>REJECT</code> is very expensive,
+The previous section claims that <code>YY_REJECT</code> is very expensive,
 so I built a performance test for it.  In the <code>smflex</code>
 source tree, run:
 
 <pre><code>
   $ cd test
   $ make perftest LEXER_NAME=noreject-frob    # baseline
-  $ make perftest LEXER_NAME=reject-frob      # with REJECT
+  $ make perftest LEXER_NAME=reject-frob      # with YY_REJECT
 </code></pre>
 
 <p>
@@ -3830,7 +3830,7 @@ On my Windows/MinGW machine, I get (100 iterations, median of 5):
   <tr>
     <th>Configuration
     <th>Baseline time (ms)
-    <th>REJECT time (ms)
+    <th>YY_REJECT time (ms)
 
   <tr>
     <td>batch (<code>-B</code>)
@@ -3860,7 +3860,7 @@ On my Windows/MinGW machine, I get (100 iterations, median of 5):
 </table>
 
 <p>
-From this we can see that <code>REJECT</code> itself is not very
+From this we can see that <code>YY_REJECT</code> itself is not very
 expensive, only adding a few percent to the run time.  However,
 the fact that it is incompatible with <code>-Cf</code> and
 <code>-CJ</code> <em>is</em> impactful, as either is about double
@@ -3998,7 +3998,7 @@ backing up. Leaving just one means you gain nothing.
 
 <p><em>Variable</em> trailing context (where both the leading and trailing
 parts do not have a fixed length) entails almost the same performance loss
-as <code>REJECT</code> (i.e., substantial). So when possible a rule like:
+as <code>YY_REJECT</code> (i.e., substantial). So when possible a rule like:
 
 <pre><code>
     %%
@@ -5015,7 +5015,8 @@ run-time support library.  That has been removed as detailed below.
 
 <li><p><code>flex-2.5.4</code> would scan the text of rule actions,
     looking for uses of
-    <a href="#REJECT-macro"><code>REJECT</code></a> in
+    <a href="#YY_REJECT-macro"><code>YY_REJECT</code></a>
+    (which that version called <code>REJECT</code>) in
     order to automatically enable it.  That has been removed.
 
     <p>Rationale: Similar to the preceding, I prefer explicit
@@ -5088,6 +5089,10 @@ table.  Some have aliases that can be enabled with
   <tr>
     <td><code>yymore</code>
     <td><a href="#YY_MORE_TEXT-macro"><code>YY_MORE_TEXT</code></a>
+    <td>Old name available with <code>%option flex-compat</code>.
+  <tr>
+    <td><code>REJECT</code>
+    <td><a href="#YY_REJECT-macro"><code>YY_REJECT</code></a>
     <td>Old name available with <code>%option flex-compat</code>.
   <tr>
     <td><code>BEGIN</code>
@@ -5672,7 +5677,7 @@ be matched because it comes after an identifier "catch-all" rule:
     foo       got_foo();
 </code></pre>
 
-Using <code>REJECT</code> in a scanner suppresses this warning.
+Using <code>YY_REJECT</code> in a scanner suppresses this warning.
 
 <dt><p><code>warning, -s option given but default rule can be matched</code>
 
@@ -5703,10 +5708,10 @@ generated scanner:
 
 <dl>
 
-<dt><p><code>reject_used_but_not_option_reject_not_specified</code> or
+<dt><p><code>YY_REJECT_used_but_not_option_reject_not_specified</code> or
     <code>YY_MORE_TEXT_used_but_option_yymore_not_specified undefined</code>
 
-<dd>These indicate that the scanner uses <code>REJECT</code>
+<dd>These indicate that the scanner uses <code>YY_REJECT</code>
 or <code>YY_MORE_TEXT()</code> but the appropriate option
 (<code>%option reject</code> or <code>%option yymore</code>)
 was not set.
@@ -5746,7 +5751,7 @@ while the generated scanner is running:
     <dd><p>
     The scanner was working on matching an extremely large token and
     needed to expand the input buffer. This doesn't work with scanners
-    that use <code>REJECT</code>.
+    that use <code>YY_REJECT</code>.
 
 <dt id="yy_err_input_buffer_at_max_size"><code>yy_err_input_buffer_at_max_size</code>:
 
@@ -5830,10 +5835,10 @@ work. Call <code>input()</code> instead.
 <p>The total table entries listed by the <code>-v</code> flag excludes
 the number of table entries needed to determine what rule has been
 matched. The number of entries is equal to the number of DFA states if
-the scanner does not use <code>REJECT</code>, and somewhat greater than
+the scanner does not use <code>YY_REJECT</code>, and somewhat greater than
 the number of states if it does.
 
-<p><code>REJECT</code> cannot be used with the <code>-Cf</code> or
+<p><code>YY_REJECT</code> cannot be used with the <code>-Cf</code> or
 <code>-CJ</code> options.
 
 <p>The <code>smflex</code> internal algorithms need documentation.

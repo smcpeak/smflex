@@ -1215,8 +1215,8 @@ static const short int yy_chk[2634] =
 
 
 /* The intent behind this definition is that it'll catch
- * any uses of REJECT which smflex missed. */
-#define REJECT reject_used_but_option_reject_not_specified
+ * any uses of YY_REJECT which smflex missed. */
+#define YY_REJECT YY_REJECT_used_but_option_reject_not_specified
 
 #define YY_MORE_TEXT() YY_MORE_TEXT_used_but_option_yymore_not_specified
 #define YY_MORE_LEN 0

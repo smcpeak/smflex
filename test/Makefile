@@ -538,7 +538,7 @@ PERF_CONFIGS += Jaco_align_equiv
 FILTER_OUT_SUBSTR = $(foreach element,$(2),$(if $(findstring $(1),$(element)),,$(element)))
 
 ifneq ($(filter reject-frob yylineno trailing-context,$(LEXER_NAME)),)
-  # REJECT, yylineno, and trailing context cannot be used with -Cf or -CJ.
+  # YY_REJECT, yylineno, and trailing context cannot be used with -Cf or -CJ.
   PERF_CONFIGS := $(call FILTER_OUT_SUBSTR,Jaco,$(PERF_CONFIGS))
   PERF_CONFIGS := $(call FILTER_OUT_SUBSTR,full,$(PERF_CONFIGS))
 endif

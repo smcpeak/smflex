@@ -1,5 +1,5 @@
 /* noreject-frob.lex */
-/* Like reject-frob.lex, but without REJECT. */
+/* Like reject-frob.lex, but without YY_REJECT. */
 
 %{
 

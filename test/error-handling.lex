@@ -14,7 +14,7 @@
 %%
 
 username      printf("USERNAME");
-reject        REJECT;  /* Use REJECT to make buffer unexpandable. */
+reject        YY_REJECT;  /* Use YY_REJECT to make buffer unexpandable. */
 x+            printf("saw %d xs\n", YY_LENG);
 
 unread        {
@@ -146,7 +146,7 @@ static void provoke_error(yy_error_code_t expect_code)
 
       assert(0==strcmp(yy_error_string(ecode),
         "token is too large and input buffer cannot be expanded"));
-      assert(strstr(edetail, "REJECT"));
+      assert(strstr(edetail, "YY_REJECT"));
       break;
     }
 

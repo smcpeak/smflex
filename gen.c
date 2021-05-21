@@ -288,7 +288,7 @@ void gen_find_action()
     indent_puts("yy_lexer->yy_lp = yy_accept[yy_current_state];");
 
     /* One way this is unused is '%option yylineno', which claims
-     * to use REJECT (presumably because it needs similar table
+     * to use YY_REJECT (presumably because it needs similar table
      * maintenance) but actually does not. */
     outn("YY_POSSIBLY_UNUSED_LABEL(find_rule) /* we branch to this label when backing up */");
 
@@ -321,7 +321,7 @@ void gen_find_action()
 
       if (real_reject) {
         /* Remember matched text in case we back up
-         * due to REJECT.
+         * due to YY_REJECT.
          */
         indent_puts("yy_lexer->yy_full_match = yy_cp;");
         indent_puts("yy_lexer->yy_full_state = yy_lexer->yy_state_ptr;");
@@ -344,7 +344,7 @@ void gen_find_action()
 
     else {
       /* Remember matched text in case we back up due to
-       * trailing context plus REJECT.
+       * trailing context plus YY_REJECT.
        */
       indent_lbrace();
       indent_puts("yy_lexer->yy_full_match = yy_cp;");

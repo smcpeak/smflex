@@ -456,7 +456,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 %% dfa_tables: data tables for the DFA
 
 %if option_reject
-#define REJECT do { \
+#define YY_REJECT do { \
   *yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */ \
   yy_cp = yy_lexer->yy_full_match; /* restore poss. backed-over text */ \
 %if variable_trailing_context_rules \
@@ -469,8 +469,8 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 } while (0)
 %else
 /* The intent behind this definition is that it'll catch
- * any uses of REJECT which smflex missed. */
-#define REJECT reject_used_but_option_reject_not_specified
+ * any uses of YY_REJECT which smflex missed. */
+#define YY_REJECT YY_REJECT_used_but_option_reject_not_specified
 %endif
 
 %if option_yymore
@@ -594,6 +594,9 @@ int yyFlexLexer::yym_lex()
 #     define yyless(n) YY_LESS_TEXT(n)
 %if option_yymore
 #     define yymore() YY_MORE_TEXT()
+%endif
+%if option_reject
+#     define REJECT YY_REJECT
 %endif
 #     define BEGIN(s) YY_SET_START_STATE(s)
 #     define YY_START YY_GET_START_STATE()
@@ -1088,9 +1091,9 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
 
     while (num_to_read <= 0) {  /* Not enough room in the buffer - grow it. */
 %if option_reject
-      /* Cannot enlarge because of REJECT. */
+      /* Cannot enlarge because of YY_REJECT. */
       YY_ERROR(yy_err_input_buffer_cannot_expand,
-        "can't enlarge buffer because scanner uses REJECT");
+        "can't enlarge buffer because scanner uses YY_REJECT");
       return EOB_ACT_END_OF_FILE;
 %else
       /* just a shorter name for the current buffer */
@@ -2145,6 +2148,9 @@ int main()
 #undef yyless
 %if option_yymore
 #undef yymore
+%endif
+%if option_reject
+#undef REJECT
 %endif
 #undef BEGIN
 #undef YY_START

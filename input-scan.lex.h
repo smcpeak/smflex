@@ -239,7 +239,7 @@ struct input_scan_lexer_struct {
    * 'input_scan_get_start_state' use (they differ by some arithmetic).*/
   int yy_start_state;
 
-  /* These are related to backing up when REJECT is *not* used. */
+  /* These are related to backing up when YY_REJECT is *not* used. */
   input_scan_state_type_t yy_last_accepting_state;
   char *yy_last_accepting_cpos;
 

@@ -1,5 +1,5 @@
 /* reject-frob.lex */
-/* First example in REJECT section of the manual. */
+/* First example in YY_REJECT section of the manual. */
 
 %option reject
 
@@ -15,7 +15,7 @@ static void special(void);
         int word_count = 0;
 %%
 
-frob        special(); REJECT;
+frob        special(); YY_REJECT;
 [^ \t\n]+   ++word_count;
         /* END: example fragment */
 

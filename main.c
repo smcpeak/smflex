@@ -786,7 +786,7 @@ void readin()
     }
 
     if (option_reject)
-      fprintf(stderr, _("REJECT entails a large performance penalty (maybe; see manual)\n"));
+      fprintf(stderr, _("YY_REJECT entails a large performance penalty (maybe; see manual)\n"));
 
     if (variable_trailing_context_rules)
       fprintf(stderr, _("Variable trailing context rules entail a large performance penalty\n"));
@@ -800,7 +800,7 @@ void readin()
 
   if ((fulltbl || jacobson) && option_reject) {
     if (real_reject)
-      flexerror(_("REJECT cannot be used with -Cf or -CJ"));
+      flexerror(_("YY_REJECT cannot be used with -Cf or -CJ"));
     else if (option_yylineno)
       flexerror(_("%option yylineno cannot be used with -Cf or -CJ"));
     else

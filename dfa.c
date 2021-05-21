@@ -806,7 +806,7 @@ int snstods(int sns[], int numstates, int accset[], int nacc,
       dfaacc[newds].dfaacc_set[i] = accset[i];
 
       if (accset[i] <= num_rules)
-        /* Who knows, perhaps a REJECT can yield
+        /* Who knows, perhaps a YY_REJECT can yield
          * this rule.
          */
         rule_useful[accset[i]] = true;

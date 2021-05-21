@@ -52,8 +52,8 @@ void usage(void);
  * csize - size of character set for the scanner we're generating;
  *   128 for 7-bit chars and 256 for 8-bit
  * option_yymore - if true, YY_MORE_TEXT() is enabled
- * option_reject - if true, generate back-up tables for REJECT macro
- * real_reject - if true, scanner really uses REJECT (as opposed to just
+ * option_reject - if true, generate back-up tables for YY_REJECT macro
+ * real_reject - if true, scanner really uses YY_REJECT (as opposed to just
  *   having "reject" set for variable trailing context)
  * continued_action - true if this rule's action is to "fall through" to
  *   the next rule's action (i.e., the '|' action)
@@ -285,7 +285,7 @@ extern char **scname;
  * firstfree - first empty entry in "nxt/chk" table
  * dss - nfa state set for each dfa
  * dfasiz - size of nfa state set for each dfa
- * dfaacc - accepting set for each dfa state (if using REJECT), or accepting
+ * dfaacc - accepting set for each dfa state (if using YY_REJECT), or accepting
  *      number, if not
  * accsiz - size of accepting set for each dfa state
  * dhash - dfa state hash value
