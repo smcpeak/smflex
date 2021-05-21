@@ -338,9 +338,11 @@ void yy_push_start_condition(input_scan_lexer_t *yy_lexer, int new_cond);
 void yy_pop_start_condition(input_scan_lexer_t *yy_lexer);
 
 /* Get the element at the top of the stack without changing it.  The
- * stack must not be empty, but there is no way to query whether it is;
- * you just have to know from context. */
+ * stack must not be empty. */
 int yy_top_start_condition(input_scan_lexer_t const *yy_lexer);
+
+/* Return true if the start condition stack is empty. */
+int yy_condition_stack_is_empty(input_scan_lexer_t const *yy_lexer);
 
 /* -------- Interacting with an input stream -------- */
 /* Read a single character from the current input buffer of 'yy_lexer'.

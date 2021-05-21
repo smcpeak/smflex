@@ -42,18 +42,22 @@ int main()
 
   yy_construct(&lexer);
   assert(yy_get_start_condition(&lexer) == 0);
+  assert(yy_condition_stack_is_empty(&lexer));
 
   for (i=1; i < iters; i++) {
     yy_push_start_condition(&lexer, i);
     assert(yy_get_start_condition(&lexer) == i);
+    assert(!yy_condition_stack_is_empty(&lexer));
   }
 
   for (i = iters-1; i >= 1; i--) {
+    assert(!yy_condition_stack_is_empty(&lexer));
     assert(yy_get_start_condition(&lexer) == i);
     assert(yy_top_start_condition(&lexer) == i-1);
     yy_pop_start_condition(&lexer);
   }
 
+  assert(yy_condition_stack_is_empty(&lexer));
   assert(yy_get_start_condition(&lexer) == 0);
 
   /* Deliberately cause an "API misuse" error. */

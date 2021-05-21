@@ -3688,6 +3688,13 @@ STATIC_IF_CPP int yy_top_start_condition(input_scan_lexer_t const *yy_lexer)
 
 
 
+STATIC_IF_CPP int yy_condition_stack_is_empty(input_scan_lexer_t const *yy_lexer)
+{
+  return yy_lexer->yy_start_stack_cur_size <= 0;
+}
+
+
+
 STATIC_IF_CPP input_scan_error_code_t input_scan_get_error(input_scan_lexer_t const *yy_lexer)
 {
   return yy_lexer->yy_error_code;

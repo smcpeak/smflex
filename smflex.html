@@ -2049,7 +2049,7 @@ is a complete example demonstrating start condition scopes.
 there is a stack of start
 conditions that allows the scanner to enter a new condition while remembering
 where it came from.  This is useful when there is one language embedded
-inside another and they require different lexing rules.  Three routines
+inside another and they require different lexing rules.  These routines
 are available for manipulating the stack of start conditions:
 
 <dl>
@@ -2070,7 +2070,9 @@ are available for manipulating the stack of start conditions:
 
     <dd><p>Return the top of the stack without altering the stack's contents.
 
-    <p>Use of this function requires <code>%option yy_top_start_condition</code>.
+<dt id="yy_condition_stack_is_empty"><code>int yy_condition_stack_is_empty(yy_lexer_t const *yy_lexer);</code>
+
+    <dd><p>Return true if the stack is empty.
 
 </dl>
 
@@ -3060,7 +3062,6 @@ corresponding option is set.  These are:
     yy_scan_string
     yy_scan_bytes
     yy_scan_buffer
-    <span id="option-yy_top_start_condition">yy_top_start_condition           # Only has effect with %option stack.</span>
     yy_unread_character
 </code></pre>
 
@@ -4280,8 +4281,9 @@ running the scanner over input:
 <dt><code>yym_set_start_condition()</code>,
     <code>yym_get_start_condition()</code>,
     <code>yym_push_start_condition()</code>,
-    <code>yym_pop_start_condition()</code>, and
-    <code>yym_top_start_condition()</code>
+    <code>yym_pop_start_condition()</code>,
+    <code>yym_top_start_condition()</code>, and
+    <code>yym_condition_stack_is_empty()</code>
 
 <dd><p>Same as the C interface.
     (<a href="test/discard-ml-comments-cpp.lexpp">Example.</a>)
