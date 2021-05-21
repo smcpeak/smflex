@@ -2151,6 +2151,8 @@ may be used by <code>yy_wrap_function()</code> to set things up for continued sc
 of opening a new file and
 calling <a href="#yy_restart"><code>yy_restart</code></a>.
 Calling this function does <em>not</em> change the start condition.
+It also does not deallocate nor remember the old current buffer; the
+client must do both.
 
 <p id="yy_delete_buffer">When finished scanning from a buffer, call:
 
@@ -2161,10 +2163,15 @@ Calling this function does <em>not</em> change the start condition.
 <p>to reclaim the storage associated with it.  If <code>buffer</code> is
 <code>NULL</code>, this function does nothing.  If it is the current
 buffer of <code>yy_lexer</code>, then the current buffer gets reset
-to <code>NULL</code>.  In that state, scanning cannot happen until a
+to <code>NULL</code>, at which point scanning cannot happen until a
 new buffer made current with
 <a href="#yy_restart"><code>yy_restart</code></a> or
 <code>yy_switch_to_buffer</code>.
+
+<p>Note: <a href="#yy_destroy"><code>yy_destroy</code></a>
+destroys the current buffer (if any), so it is not necessary to
+explicitly do that when cleaning up.  However, every other buffer
+must be deleted before calling <code>yy_destroy</code>.
 
 <p id="yy_flush_buffer">To discard data that has already been read and buffered from a
 particular source, call:
@@ -2180,26 +2187,35 @@ the buffer anew using <code>yy_read_input_function</code>.
 <p>Finally, the <code>YY_CURRENT_BUFFER</code> macro returns a
 <code>yy_buffer_state_t*</code> pointer to the current buffer.
 
-<p>This diagram summarizes the state transitions related to buffer
-management:
+<p id="buffer-state-diagram">This diagram summarizes the state
+transitions related to buffer management:
 
 <pre><code>
-                               |
-                               | construct
-                               V
-     State 1: No current buffer, need init
-                               |
-                               | lex, restart, switch
-                               V
-     State 2: Has current buffer
-                             ^ |
-             restart, switch | | delete(current)
-                             | V
-     State 3: No current buffer, no need init
-                               |
-                               | lex
-                               V
-                    undefined, likely crash!
+                           |
+                           | construct
+                           V
+    +------------------------------------------+
+    | State 1: No current buffer, need init    |
+    +------------------------------------------+
+                           |
+                           | lex (will use stdin)
+                           | restart, switch
+                           V
+    +------------------------------------------+ --\ lex
+    | State 2: Has current buffer              |   | restart
+    +------------------------------------------+ &lt;-/ switch
+                         ^ |
+         restart, switch | | delete(current)
+                         | V
+    +------------------------------------------+
+    | State 3: No current buffer, no need init |
+    +------------------------------------------+
+                           |
+                           | lex
+                           V
+              +--------------------------+
+              | undefined, likely crash! |
+              +--------------------------+
 </code></pre>
 
 <p>Here is an <a href="test/input-buffers.lex">example</a>
@@ -2287,10 +2303,16 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
 <p>Three routines are available for setting up input buffers for
 scanning in-memory strings instead of files. All of them create a
 new input buffer for scanning the string, and return a corresponding
-<code>yy_buffer_state_t*</code> pointer (which you should delete with
-<code>yy_delete_buffer()</code> when done with it). They also switch
-to the new buffer using <code>yy_switch_to_buffer()</code>, so the next
-call to <code>yy_lex()</code> will start scanning the string.
+<code>yy_buffer_state_t*</code> pointer (which you must delete with
+<code>yy_delete_buffer()</code> when done with it, unless it is the
+current buffer when <code>yy_destroy()</code> is called).
+
+<p>They also switch to the new buffer using
+<code>yy_switch_to_buffer()</code>, so the next call to
+<code>yy_lex()</code> will start scanning the string.  But that also
+means that if the lexer already had a current buffer (see the <a
+href="#buffer-state-diagram">state diagram</a>), then you have to either
+delete it first or else save it and delete it later.
 
 <dl>
 
@@ -2323,11 +2345,6 @@ copy by using:
     <code>YY_END_OF_BUFFER_CHAR</code> (ASCII NUL). These last two bytes
     are not scanned; thus, scanning consists of <code>base[0]</code> through
     <code>base[size-2]</code>, inclusive.
-
-<p>If you fail to set up <code>base</code> in this manner (i.e.,
-forget the final two <code>YY_END_OF_BUFFER_CHAR</code> bytes), then
-<code>yy_scan_buffer()</code> returns a <code>NULL</code> pointer instead of creating
-a new input buffer.
 
     <p>Use of this function requires <code>%option yy_scan_buffer</code>.
 
