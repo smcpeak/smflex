@@ -1290,11 +1290,21 @@ the "yy" prefix is replaced with the specified string.
 
 <li><p>The generated header has a multiple <code>#include</code> guard
     symbol whose name depends on the name of the header.  No "YY_"
-    prefix is added to it.
+    prefix is added to it because the usual convention is for that
+    symbol to correspond precisely to its file name.
 
 <li><p>When using <code>option c++</code>, the macro
     <code>YY_NOEXCEPT</code> is defined.  Its prefix is not affected
-    by the <code>-P</code> option.
+    by the <code>-P</code> option because its definition is always the
+    same and the way it is used at the ends of declarations would
+    make a long name irritating.
+
+<li><p>The macro <code>INITIAL</code>, which refers to the initial
+    <a href="#start-conditions">start condition</a> does not have a
+    "YY_" prefix.  This is partly for compatibility with older
+    <code>flex</code> and partly because it is used as part of the
+    pattern syntax (in angle brackets) where the prefix would be
+    unnecessary and perhaps cluttersome.
 
 </ul>
 
@@ -1309,7 +1319,8 @@ The rationale for these naming rules is:
     from using the "yy" or "YY" prefix on their names.
 
 <li><p>The exclusive use of uppercase for macros makes the presence of
-    macros apparent.  This helps reinforce that there is an underlying
+    macros apparent.  This helps reinforce that there is an underlying,
+    re-entrant,
     general API (the functions with lowercase names) and a parallel set
     of convenience macros (with uppercase names) that can be used from
     section 2 rule actions, but not elsewhere.  Without a clear naming
