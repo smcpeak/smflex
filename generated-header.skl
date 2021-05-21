@@ -836,9 +836,11 @@ public:      /* methods */
 
 protected:   /* data */
   /* Underlying lexer state, around which this class is a wrapper.
-   * According to the principles of this API, this member should be
-   * private.  I am making it protected only as a hedge in case I have
-   * omitted some required functionality. */
+   *
+   * This is protected (rather than private) for one reason: when using
+   * %option yyclass, the generated yym_lex() method needs to be able
+   * to access it.  It is not meant to be otherwise accessed by base
+   * classes. */
   yy_lexer_t yym_lexer_state;
 };
 %endif
