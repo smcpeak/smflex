@@ -1,0 +1,19 @@
+/* yy-lex-params-cpp.lex */
+/* Exercise %option yy_lex_parameters and %option c++. */
+
+%option c++
+%option yy_lex_parameters="int x, int y"
+
+%%
+
+username    printf("USERNAME [x=%d,y=%d]", x, y);
+
+%%
+
+int main()
+{
+  yyFlexLexer lexer;
+  while (lexer.yym_lex(3, 4))
+    {}
+  return 0;
+}

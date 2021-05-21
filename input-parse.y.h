@@ -58,18 +58,19 @@ extern int yydebug;
     OPT_PREFIX = 268,
     OPT_YYCLASS = 269,
     OPT_YY_LEX_NAME = 270,
-    CCE_ALNUM = 271,
-    CCE_ALPHA = 272,
-    CCE_BLANK = 273,
-    CCE_CNTRL = 274,
-    CCE_DIGIT = 275,
-    CCE_GRAPH = 276,
-    CCE_LOWER = 277,
-    CCE_PRINT = 278,
-    CCE_PUNCT = 279,
-    CCE_SPACE = 280,
-    CCE_UPPER = 281,
-    CCE_XDIGIT = 282
+    OPT_YY_LEX_PARAMETERS = 271,
+    CCE_ALNUM = 272,
+    CCE_ALPHA = 273,
+    CCE_BLANK = 274,
+    CCE_CNTRL = 275,
+    CCE_DIGIT = 276,
+    CCE_GRAPH = 277,
+    CCE_LOWER = 278,
+    CCE_PRINT = 279,
+    CCE_PUNCT = 280,
+    CCE_SPACE = 281,
+    CCE_UPPER = 282,
+    CCE_XDIGIT = 283
   };
 #endif
 

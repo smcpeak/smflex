@@ -298,10 +298,11 @@ LEXOPT          [aceknopr]
         yy_scan_buffer         option_yy_scan_buffer         = option_sense;
         yy_unread_character    option_yy_unread_character    = option_sense;
 
-        outfile         return OPT_OUTFILE;
-        prefix          return OPT_PREFIX;
-        yyclass         return OPT_YYCLASS;
-        yy_lex_name     return OPT_YY_LEX_NAME;
+        outfile                return OPT_OUTFILE;
+        prefix                 return OPT_PREFIX;
+        yyclass                return OPT_YYCLASS;
+        yy_lex_name            return OPT_YY_LEX_NAME;
+        yy_lex_parameters      return OPT_YY_LEX_PARAMETERS;
 
         \"[^"\n]*\"     {
                           strcpy(nmstr, YY_TEXT + 1);

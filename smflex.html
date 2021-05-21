@@ -3049,6 +3049,26 @@ number are equivalent to <code>smflex</code> flags or their negation:
     <p>When combined with <code>%option prefix</code>, this option
     takes precedence.
 
+<dt id="option-yy-lex-parameters"><code>%option yy_lex_parameters="PARAMS"</code>
+
+    <dd><p>Add <code>PARAMS</code> to the list of parameters accepted
+    by the lexer function <code>yy_lex</code> (C API)
+    or method <code>yym_lex</code> (C++ API).  For
+    <a href="test/yy-lex-params.lex">example</a>, if
+    <code>PARAMS</code> is "<code>int x, int y</code>", then the
+    lexer will accept two integer parameters called <code>x</code> and
+    <code>y</code>.  These can be accessed from within rule actions.
+
+    <p>
+    So long as the new parameter names do not begin with "yy" or
+    "YY", they should not conflict with any of the names used by
+    the <code>smflex</code> scanner engine.
+
+    <p>
+    <code>PARAMS</code> must not begin with a comma;
+    <code>smflex</code> will insert the comma separating the
+    existing parameter (if any) from the new ones where needed.
+
 <dt id="option-yyclass"><code>%option yyclass="foo"</code>
 
     <dd><p>
@@ -4959,7 +4979,8 @@ run-time support library.  That has been removed as detailed below.
 
 <li><p><code>YY_DECL</code>: In <code>flex-2.5.4</code>, you could
     <code>#define YY_DECL</code> to change the name and signature of the
-    generated lexer function.  This is no longer possible.
+    generated lexer function.  <code>smflex</code> does not
+    respond to <code>YY_DECL</code>.
 
     <p>Rationale: For re-entrancy, this had to break at least a little,
     because the lexer must accept a <code>yy_lexer_t*</code> parameter.
@@ -4967,11 +4988,17 @@ run-time support library.  That has been removed as detailed below.
     work when <code>smflex</code> also wants to generate a header file
     with the scanner's API.
 
-    <p>Replacement: To rename the lexer function, use the
-    <code>-P</code> (prefix) option.  To make additional data
-    available within actions (which previously would have been done
-    by adding parameters), set the <code>yy_client_data</code> field
-    of the <code>yy_lexer_t</code> object.
+    <p>Replacement: To rename the lexer function, use
+    <a href="#option-yy-lex-name"><code>%option yy_lex_name</code></a>.
+
+    <p>
+    To add parameters to it, use
+    <a href="#option-yy-lex-parameters"><code>%option yy_lex_parameters</code></a>.
+
+    Alternatively,
+    in the C API you can set <code>yy_client_data</code>, and
+    in the C++ API you can use <code>%option yyclass</code> and
+    then add fields to the derived class.
 
 <li><p><code>yy_new_buffer</code>: <code>flex-2.5.4</code> defined
     <code>yy_new_buffer</code> as an alias for

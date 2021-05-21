@@ -116,6 +116,7 @@ int action_size;
 int defs1_offset, prolog_offset, action_offset, action_index;
 
 char const *option_yy_lex_name = NULL;
+char const *option_yy_lex_parameters = NULL;
 
 FILE *scanner_c_file = NULL;
 

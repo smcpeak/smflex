@@ -3,6 +3,7 @@
 %token CHAR NUMBER SECTEND SCDECL XSCDECL NAME PREVCCL EOF_OP
 %token OPTION_OP OPT_OUTFILE OPT_PREFIX OPT_YYCLASS
 %token OPT_YY_LEX_NAME
+%token OPT_YY_LEX_PARAMETERS
 
 %token CCE_ALNUM CCE_ALPHA CCE_BLANK CCE_CNTRL CCE_DIGIT CCE_GRAPH
 %token CCE_LOWER CCE_PRINT CCE_PUNCT CCE_SPACE CCE_UPPER CCE_XDIGIT
@@ -169,6 +170,8 @@ option          :  OPT_OUTFILE '=' NAME
                         { option_yyclass = copy_string(nmstr); }
                 |  OPT_YY_LEX_NAME '=' NAME
                         { option_yy_lex_name = copy_string(nmstr); }
+                |  OPT_YY_LEX_PARAMETERS '=' NAME
+                        { option_yy_lex_parameters = copy_string(nmstr); }
                 ;
 
 sect2           :  sect2 scon initforrule flexrule '\n'

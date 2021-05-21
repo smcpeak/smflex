@@ -1292,12 +1292,11 @@ static char const *lower_prefix_names[] = {
 
 /* Look up 'id[0,len-1]' as a skeleton identifier.  If a substitution
  * is found, return a pointer to statically-allocated storage containing
- * the replacement.  Otherwise return NULL. */
+ * the replacement.  Otherwise return NULL, which means the original
+ * string is retained unchanged in the output. */
 static char const *look_up_skel_identifier(char const *id, int len)
 {
   int i;
-
-  /* For now, use inefficient linear search. */
 
   if (option_yy_lex_name) {
     if (str_eq_substr("yy_lex", id, len) ||
@@ -1306,6 +1305,27 @@ static char const *look_up_skel_identifier(char const *id, int len)
     }
   }
 
+  if (str_eq_substr("YY_LEX_PARAMETERS_COMMA", id, len)) {
+    /* A comma if '%option yy_lex_parameters' is set. */
+    if (option_yy_lex_parameters) {
+      return ",";
+    }
+    else {
+      return "";
+    }
+  }
+
+  if (str_eq_substr("yy_lex_parameters", id, len)) {
+    /* The value if '%option yy_lex_parameters' is set. */
+    if (option_yy_lex_parameters) {
+      return option_yy_lex_parameters;
+    }
+    else {
+      return "";
+    }
+  }
+
+  /* For now, use inefficient linear search. */
   for (i=0; i < TABLESIZE(all_caps_prefix_names); i++) {
     if (str_eq_substr(all_caps_prefix_names[i], id, len)) {
       sprintf(lookup_result, "%s%.*s", all_caps_prefix, len-2, id+2);

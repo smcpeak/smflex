@@ -274,7 +274,7 @@ void input_scan_destroy(input_scan_lexer_t *yy_lexer);
  * Otherwise, it returns an integer whose meaning is determined by
  * the scanner rules, but typically indicates the kind of token that
  * was found (e.g., identifier, number, string, etc.). */
-int input_scan_lex(input_scan_lexer_t *yy_lexer);
+int input_scan_lex(input_scan_lexer_t *yy_lexer  );
 
 /* Abandon whatever input (if any) 'yy_lexer' was scanning, and start
  * scanning 'input_file'.  This is how to choose what to scan;

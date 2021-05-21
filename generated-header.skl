@@ -371,7 +371,7 @@ void yy_destroy(yy_lexer_t *yy_lexer);
  * Otherwise, it returns an integer whose meaning is determined by
  * the scanner rules, but typically indicates the kind of token that
  * was found (e.g., identifier, number, string, etc.). */
-int yy_lex(yy_lexer_t *yy_lexer);
+int yy_lex(yy_lexer_t *yy_lexer YY_LEX_PARAMETERS_COMMA yy_lex_parameters);
 
 /* Abandon whatever input (if any) 'yy_lexer' was scanning, and start
  * scanning 'input_file'.  This is how to choose what to scan;
@@ -623,7 +623,7 @@ public:      /* methods */
    * 'smflex' must declare it in their derived class, option_yyclass_name. */
 %else
   /* Get the next token.  Return 0 on EOF. */
-  int yym_lex();
+  int yym_lex(yy_lex_parameters);
 %endif
 
   /* Note: 'yym_lexer_state.yy_client_data' is *not* exposed.  That is

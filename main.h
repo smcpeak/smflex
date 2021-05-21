@@ -130,6 +130,9 @@ extern int defs1_offset, prolog_offset, action_offset, action_index;
  * 'yy_lex' function or 'yym_lex' method. */
 extern char const *option_yy_lex_name;
 
+/* If not NULL, the parameters to add to 'yy_lex' or 'yym_lex'. */
+extern char const *option_yy_lex_parameters;
+
 /* This contains the skeleton of the scanner implementation to
  * generate.  It is defined in generated-scanner.skl.c. */
 extern const char *scanner_skl_contents[];
