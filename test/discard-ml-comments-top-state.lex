@@ -5,7 +5,6 @@
 %option main
 %option stack
 %option flex-compat
-%option yy_top_start_condition
 %x comment foo
 
 %%

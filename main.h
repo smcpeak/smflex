@@ -80,7 +80,6 @@ extern int option_yy_read_character;
 extern int option_yy_scan_string;
 extern int option_yy_scan_bytes;
 extern int option_yy_scan_buffer;
-extern int option_yy_top_start_condition; /* Only effective if 'option_stack'. */
 extern int option_yy_unread_character;
 
 /* Initially false, set to true with "%option flex-compat".  This

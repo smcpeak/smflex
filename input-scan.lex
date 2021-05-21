@@ -296,7 +296,6 @@ LEXOPT          [aceknopr]
         yy_scan_string         option_yy_scan_string         = option_sense;
         yy_scan_bytes          option_yy_scan_bytes          = option_sense;
         yy_scan_buffer         option_yy_scan_buffer         = option_sense;
-        yy_top_start_condition option_yy_top_start_condition = option_sense;
         yy_unread_character    option_yy_unread_character    = option_sense;
 
         outfile         return OPT_OUTFILE;

@@ -9,7 +9,6 @@
 %}
 
 %option stack
-%option yy_top_start_condition
 
 %%
 

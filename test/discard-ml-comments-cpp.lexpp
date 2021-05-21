@@ -4,7 +4,6 @@
 %option c++
 %option main
 %option stack
-%option yy_top_start_condition
 %x comment foo
 
 %%
