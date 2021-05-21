@@ -1,6 +1,8 @@
 /* reject-frob.lex */
 /* First example in REJECT section of the manual. */
 
+%option reject
+
 %{
 
 #include "perftest.h"                  /* runPerftest */

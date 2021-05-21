@@ -944,10 +944,11 @@ an action:
     See also
     <a href="#yy_get_start_state"><code>yy_get_start_state</code></a>.
 
-<li><p><code>REJECT</code>
+<li id="REJECT-macro"><p><code>REJECT</code>
     directs the scanner to proceed on to the "second best" rule which
     matched the input (or a prefix of the input). The rule is chosen as
-    described above in "How the Input is Matched", and
+    described above in
+    <a href="#rule-semantics">Rule Semantics</a>, and
     <code>YY_TEXT</code> and <code>YY_LENG</code> set up appropriately. It
     may either be one which matched as much text as the originally
     chosen rule but came later in the <code>smflex</code> input file, or
@@ -989,6 +990,9 @@ an action:
     <p>Be aware that, unlike the other special actions, <code>REJECT</code>
     is a <em>branch</em>; code immediately following it in the action will
     <em>not</em> be executed.
+
+    <p>Use of <code>REJECT</code> requires
+    <a href="#option-reject"><code>%option reject</code></a>.
 
 <li id="YY_MORE_TEXT-macro"><p><code>YY_MORE_TEXT()</code>
     tells the scanner that the next time it matches a rule, the
@@ -2974,13 +2978,11 @@ number are equivalent to <code>smflex</code> flags or their negation:
       }
     </code></pre>
 
-<dt><code>reject</code>
+<dt id="option-reject"><code>reject</code>
 
 <dd><p>
-    Enable support for <code>REJECT</code> even if <code>smflex</code>
-    does not see any uses of it among the actions.  Conversely,
-    <code>noreject</code> disables <code>REJECT</code> even when it
-    seems to be used.
+    Enable support for
+    <a href="#REJECT-macro"><code>REJECT</code></a>.
 
 <dt id="option-stack"><code>stack</code>
 
@@ -5010,6 +5012,16 @@ run-time support library.  That has been removed as detailed below.
     prefer explicit indication of which optional features to enable.
 
     <p>Replacement: Add <code>%option yymore</code>.
+
+<li><p><code>flex-2.5.4</code> would scan the text of rule actions,
+    looking for uses of
+    <a href="#REJECT-macro"><code>REJECT</code></a> in
+    order to automatically enable it.  That has been removed.
+
+    <p>Rationale: Similar to the preceding, I prefer explicit
+    enablement.
+
+    <p>Replacement: Add <code>%option reject</code>.
 
 </ul>
 

@@ -58,7 +58,6 @@ void usage(void);
  * continued_action - true if this rule's action is to "fall through" to
  *   the next rule's action (i.e., the '|' action)
  * in_rule - true if we're inside an individual rule, false if not.
- * reject_really_used - same for REJECT
  */
 
 extern int printstats, syntaxerror, eofseen, option_debug, trace, nowarn;
@@ -69,7 +68,6 @@ extern int gen_line_dirs, performance_report, backing_up_report;
 extern int cpp_interface, long_align, use_read;
 extern int csize;
 extern int option_yymore, option_reject, real_reject, continued_action, in_rule;
-extern int reject_really_used;
 
 /* Initially false, set to true by "%option stack".  This controls
  * whether we emit the functions for manipulating the state stack. */

@@ -7,6 +7,7 @@
 %}
 
 %option nodefault
+%option reject
 %option yy_scan_string
 %option yy_unread_character
 

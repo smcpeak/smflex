@@ -68,10 +68,6 @@
   for (i = strlen(str) - 1; i >= start; --i) \
     YY_UNREAD_CHARACTER((str)[i])
 
-#define CHECK_REJECT(str) \
-  if (all_upper(str)) \
-    option_reject = true;
-
 %}
 
 %option caseless nodefault outfile="input-scan.lex.c" stack
@@ -289,7 +285,7 @@ LEXOPT          [aceknopr]
         meta-ecs        usemecs = option_sense;
         perf-report     performance_report += option_sense ? 1 : -1;
         read            use_read = option_sense;
-        reject          reject_really_used = option_sense;
+        reject          option_reject = option_sense;
         stack           option_stack = option_sense;
         verbose         printstats = option_sense;
         warn            nowarn = ! option_sense;
@@ -607,13 +603,6 @@ LEXOPT          [aceknopr]
 
         <ACTION>"/*"            ACTION_ECHO; yy_push_state(yy_lexer, COMMENT);
 
-        <CODEBLOCK,ACTION>{
-                "reject"        {
-                          ACTION_ECHO;
-                          CHECK_REJECT(YY_TEXT);
-                        }
-        }
-
         {NAME}|{NOT_NAME}|.     ACTION_ECHO;
         {NL}            {
                           ++ linenum;
@@ -638,7 +627,6 @@ LEXOPT          [aceknopr]
          * action is found, we return to the SECT2 state, at which
          * point we'll resume informing the parser of what we find. */
 
-        /* Reject and YYmore() are checked for above, in PERCENT_BRACE_ACTION */
 <ACTION>{
         "{"             ACTION_ECHO; ++bracelevel;
         "}"             ACTION_ECHO; --bracelevel;
