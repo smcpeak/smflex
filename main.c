@@ -84,7 +84,7 @@ int option_suppress_default_rule;
 int interactive, caseins, option_yylineno, useecs, fulltbl, usemecs;
 int jacobson, gen_line_dirs, performance_report, backing_up_report;
 int cpp_interface, long_align, use_read, csize;
-int option_yymore, reject_used, real_reject, continued_action, in_rule;
+int option_yymore, option_reject, real_reject, continued_action, in_rule;
 int reject_really_used;
 
 int option_stack;
@@ -194,7 +194,7 @@ int main(int argc, char **argv)
     if (!rule_useful[i] && i != default_rule)
       line_warning(_("rule cannot be matched"), rule_linenum[i]);
 
-  if (option_suppress_default_rule && !reject_used && rule_useful[default_rule])
+  if (option_suppress_default_rule && !option_reject && rule_useful[default_rule])
     line_warning(_("-s option given but default rule can be matched"),
                  rule_linenum[default_rule]);
 
@@ -489,7 +489,7 @@ void flexinit(int argc, char **argv)
   caseins = false;
   cpp_interface = backing_up_report = option_debug = fulltbl = false;
   jacobson = long_align = nowarn = option_yymore = continued_action = false;
-  option_yylineno = in_rule = reject_used = false;
+  option_yylineno = in_rule = option_reject = false;
   reject_really_used = unspecified;
   option_stack = false;
   csize = unspecified;
@@ -773,9 +773,9 @@ void readin()
     backing_up_file = NULL;
 
   if (reject_really_used == true)
-    reject_used = true;
+    option_reject = true;
   else if (reject_really_used == false)
-    reject_used = false;
+    option_reject = false;
 
   if (performance_report > 0) {
     if (interactive)
@@ -792,20 +792,20 @@ void readin()
         fprintf(stderr, _("YY_MORE_TEXT() entails a minor performance penalty\n"));
     }
 
-    if (reject_used)
+    if (option_reject)
       fprintf(stderr, _("REJECT entails a large performance penalty (maybe; see manual)\n"));
 
     if (variable_trailing_context_rules)
       fprintf(stderr, _("Variable trailing context rules entail a large performance penalty\n"));
   }
 
-  if (reject_used)
+  if (option_reject)
     real_reject = true;
 
   if (variable_trailing_context_rules)
-    reject_used = true;
+    option_reject = true;
 
-  if ((fulltbl || jacobson) && reject_used) {
+  if ((fulltbl || jacobson) && option_reject) {
     if (real_reject)
       flexerror(_("REJECT cannot be used with -Cf or -CJ"));
     else if (option_yylineno)

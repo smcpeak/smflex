@@ -57,8 +57,8 @@
  */
 void check_for_backing_up(int ds, int state[])
 {
-  if ((reject_used && !dfaacc[ds].dfaacc_set) ||
-      (!reject_used && !dfaacc[ds].dfaacc_state)) {
+  if ((option_reject && !dfaacc[ds].dfaacc_set) ||
+      (!option_reject && !dfaacc[ds].dfaacc_state)) {
     /* state is non-accepting */
     ++num_backing_up;
 
@@ -782,7 +782,7 @@ int snstods(int sns[], int numstates, int accset[], int nacc,
   dhash[newds] = hashval;
 
   if (nacc == 0) {
-    if (reject_used)
+    if (option_reject)
       dfaacc[newds].dfaacc_set = (int *) 0;
     else
       dfaacc[newds].dfaacc_state = 0;
@@ -790,7 +790,7 @@ int snstods(int sns[], int numstates, int accset[], int nacc,
     accsiz[newds] = 0;
   }
 
-  else if (reject_used) {
+  else if (option_reject) {
     /* We sort the accepting set in increasing order so the
      * disambiguating rule that the first rule listed is considered
      * match in the event of ties will work.  We use a bubble

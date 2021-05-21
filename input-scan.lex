@@ -70,7 +70,7 @@
 
 #define CHECK_REJECT(str) \
   if (all_upper(str)) \
-    reject_used = true;
+    option_reject = true;
 
 %}
 

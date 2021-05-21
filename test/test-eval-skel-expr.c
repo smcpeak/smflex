@@ -142,7 +142,7 @@ int main()
     test_expr("2147483647", 2147483647);
   }
 
-  /* Cases for "num_backing_up > 0 && !reject_used". */
+  /* Cases for "num_backing_up > 0 && !option_reject". */
   test_expr("zero > 0 && !zero", 0);
   test_expr("one > 0  && !zero", 1);
   test_expr("two > 0  && !zero", 1);

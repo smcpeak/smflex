@@ -455,7 +455,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 
 %% dfa_tables: data tables for the DFA
 
-%if reject_used
+%if option_reject
 #define REJECT do { \
   *yy_cp = yy_lexer->yy_hold_char; /* undo effects of setting up yy_text */ \
   yy_cp = yy_lexer->yy_full_match; /* restore poss. backed-over text */ \
@@ -470,7 +470,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 %else
 /* The intent behind this definition is that it'll catch
  * any uses of REJECT which smflex missed. */
-#define REJECT reject_used_but_not_detected
+#define REJECT reject_used_but_option_reject_not_specified
 %endif
 
 %if option_yymore
@@ -629,7 +629,7 @@ int yyFlexLexer::yym_lex()
 
     yy_load_current_buffer_state(yy_lexer);
 
-%if reject_used
+%if option_reject
     YY_ASSERT(yy_lexer->yy_state_buf == NULL);
     yy_lexer->yy_state_buf =
       (yy_state_type_t*)yy_flex_alloc(sizeof(yy_state_type_t) * (YY_DEFAULT_BUF_ALLOC_SIZE+2));
@@ -891,19 +891,19 @@ void yy_construct(yy_lexer_t *yy_lexer)
   yy_lexer->yy_need_init = 1;
   YY_SET_START_STATE(INITIAL);
 
-%if num_backing_up > 0 && !reject_used
+%if num_backing_up > 0 && !option_reject
   yy_lexer->yy_last_accepting_state = 0; /* This can be a pointer. */
   yy_lexer->yy_last_accepting_cpos = NULL;
 
 %endif
-%if reject_used
+%if option_reject
   yy_lexer->yy_state_buf = NULL;
   yy_lexer->yy_state_ptr = NULL;
   yy_lexer->yy_full_match = NULL;
   yy_lexer->yy_lp = 0;
 
 %endif
-%if reject_used && variable_trailing_context_rules
+%if option_reject && variable_trailing_context_rules
   yy_lexer->yy_looking_for_trail_begin = 0;
   yy_lexer->yy_full_lp = 0;
   yy_lexer->yy_full_state = NULL;
@@ -946,7 +946,7 @@ void yy_destroy(yy_lexer_t *yy_lexer)
 
   yy_delete_buffer(yy_lexer, yy_lexer->yy_current_buffer);
   yy_lexer->yy_current_buffer = NULL;
-%if reject_used
+%if option_reject
 
   yy_flex_free(yy_lexer->yy_state_buf);
   yy_lexer->yy_state_buf = NULL;
@@ -1087,7 +1087,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer)
     int num_to_read = yy_lexer->yy_current_buffer->yy_buf_alloc_size - number_to_move - 1;
 
     while (num_to_read <= 0) {  /* Not enough room in the buffer - grow it. */
-%if reject_used
+%if option_reject
       /* Cannot enlarge because of REJECT. */
       YY_ERROR(yy_err_input_buffer_cannot_expand,
         "can't enlarge buffer because scanner uses REJECT");
