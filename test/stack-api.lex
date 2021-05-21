@@ -9,7 +9,7 @@
 %}
 
 %option stack
-%option yy_top_state
+%option yy_top_start_condition
 
 %%
 
@@ -45,14 +45,14 @@ int main()
   assert(yy_get_start_condition(&lexer) == 0);
 
   for (i=1; i < iters; i++) {
-    yy_push_state(&lexer, i);
+    yy_push_start_condition(&lexer, i);
     assert(yy_get_start_condition(&lexer) == i);
   }
 
   for (i = iters-1; i >= 1; i--) {
     assert(yy_get_start_condition(&lexer) == i);
-    assert(yy_top_state(&lexer) == i-1);
-    yy_pop_state(&lexer);
+    assert(yy_top_start_condition(&lexer) == i-1);
+    yy_pop_start_condition(&lexer);
   }
 
   assert(yy_get_start_condition(&lexer) == 0);
@@ -60,12 +60,12 @@ int main()
   /* Deliberately cause an "API misuse" error. */
   assert(yy_get_error(&lexer) == yy_err_no_error);
   lexer.yy_error_function = &record_error;
-  yy_pop_state(&lexer);
+  yy_pop_start_condition(&lexer);
 
   /* Validate the error reporting. */
   assert(ecode == yy_err_api_misuse);
   assert(0==strcmp(yy_error_string(ecode), "API misused"));
-  assert(0==strcmp(edetail, "yy_pop_state: start stack is empty"));
+  assert(0==strcmp(edetail, "yy_pop_start_condition: start stack is empty"));
   assert(yy_get_error(&lexer) == ecode);
 
   yy_destroy(&lexer);

@@ -1,9 +1,9 @@
-[state 0] some text
-[state 0] then [top state 0] more text
-[state 0] nested [top state 1] handle
-[state 0] beginfoo
-[state 2] quick open  and close
-[state 2] endfoo
-[state 0] comment with  lots of stars
-[state 0] comment with paren  in it
-(yy_top_[state 0]) here should be ignored
+[cond 0] some text
+[cond 0] then  more text
+[cond 0] nested  handle
+[cond 0] beginfoo
+[cond 2] quick open  and close
+[cond 2] endfoo
+[cond 0] comment with  lots of stars
+[cond 0] comment with paren  in it
+(yy_top_[cond 0]) here should be ignored

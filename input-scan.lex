@@ -111,8 +111,8 @@ LEXOPT          [aceknopr]
 
 <INITIAL>{
         ^{WS}           indented_code = true; YY_SET_START_CONDITION(CODEBLOCK);
-        ^"/*"           ACTION_ECHO; yy_push_state(yy_lexer, COMMENT);
-        ^#{OPTWS}line{WS}       yy_push_state(yy_lexer, LINEDIR);
+        ^"/*"           ACTION_ECHO; yy_push_start_condition(yy_lexer, COMMENT);
+        ^#{OPTWS}line{WS}       yy_push_start_condition(yy_lexer, LINEDIR);
         ^"%s"{NAME}?    {
                           /* About to emit SC #defines, which must be
                            * in output file context. */
@@ -181,14 +181,14 @@ LEXOPT          [aceknopr]
 
 
 <COMMENT>{
-        "*/"            ACTION_ECHO; yy_pop_state(yy_lexer);
+        "*/"            ACTION_ECHO; yy_pop_start_condition(yy_lexer);
         "*"             ACTION_ECHO;
         [^*\n]+         ACTION_ECHO;
         [^*\n]*{NL}     ++linenum; ACTION_ECHO;
 }
 
 <LINEDIR>{
-        \n              yy_pop_state(yy_lexer);
+        \n              yy_pop_start_condition(yy_lexer);
         [[:digit:]]+    linenum = myctoi( YY_TEXT );
 
         \"[^"\n]*\"     {
@@ -292,12 +292,12 @@ LEXOPT          [aceknopr]
         yylineno        option_yylineno = option_sense;
         yymore          option_yymore = option_sense;
 
-        yy_read_character     option_yy_read_character   = option_sense;
-        yy_scan_string        option_yy_scan_string      = option_sense;
-        yy_scan_bytes         option_yy_scan_bytes       = option_sense;
-        yy_scan_buffer        option_yy_scan_buffer      = option_sense;
-        yy_top_state          option_yy_top_state        = option_sense;
-        yy_unread_character   option_yy_unread_character = option_sense;
+        yy_read_character      option_yy_read_character      = option_sense;
+        yy_scan_string         option_yy_scan_string         = option_sense;
+        yy_scan_bytes          option_yy_scan_bytes          = option_sense;
+        yy_scan_buffer         option_yy_scan_buffer         = option_sense;
+        yy_top_start_condition option_yy_top_start_condition = option_sense;
+        yy_unread_character    option_yy_unread_character    = option_sense;
 
         outfile         return OPT_OUTFILE;
         prefix          return OPT_PREFIX;
@@ -601,7 +601,7 @@ LEXOPT          [aceknopr]
 <PERCENT_BRACE_ACTION>{
         {OPTWS}"%}".*           bracelevel = 0;
 
-        <ACTION>"/*"            ACTION_ECHO; yy_push_state(yy_lexer, COMMENT);
+        <ACTION>"/*"            ACTION_ECHO; yy_push_start_condition(yy_lexer, COMMENT);
 
         {NAME}|{NOT_NAME}|.     ACTION_ECHO;
         {NL}            {

@@ -7,12 +7,12 @@
 %option stack
 %x comment foo
 %%
-<*>"(*"                 yy_push_state(yy_lexer, comment);
+<*>"(*"                 yy_push_start_condition(yy_lexer, comment);
 <comment>{
   [^*(]+                /* eat anything that's not a '*' or '(' */
   "*"+/[^)]             /* eat '*'s not followed by ')' */
   "("/[^*]              /* eat '(' not followed by '*' */
-  "*"+")"               yy_pop_state(yy_lexer);
+  "*"+")"               yy_pop_start_condition(yy_lexer);
 }
   /* END: example fragment */
 

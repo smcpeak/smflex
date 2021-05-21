@@ -331,11 +331,11 @@ int input_scan_get_start_condition(input_scan_lexer_t const *yy_lexer);
 
 /* Set the start condition to 'new_cond', pushing the current start
  * condition onto the state stack. */
-void yy_push_state(input_scan_lexer_t *yy_lexer, int new_cond);
+void yy_push_start_condition(input_scan_lexer_t *yy_lexer, int new_cond);
 
 /* Set the start condition to the element at the top of the stack and
  * remove that element.  The stack must not be empty. */
-void yy_pop_state(input_scan_lexer_t *yy_lexer);
+void yy_pop_start_condition(input_scan_lexer_t *yy_lexer);
 
 /* -------- Interacting with an input stream -------- */
 /* Read a single character from the current input buffer of 'yy_lexer'.

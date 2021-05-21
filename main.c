@@ -93,7 +93,7 @@ int option_yy_read_character = false;
 int option_yy_scan_string = false;
 int option_yy_scan_bytes = false;
 int option_yy_scan_buffer = false;
-int option_yy_top_state = false;
+int option_yy_top_start_condition = false;
 int option_yy_unread_character = false;
 
 int option_flex_compat = false;
