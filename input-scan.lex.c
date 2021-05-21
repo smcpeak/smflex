@@ -3790,6 +3790,7 @@ STATIC_IF_CPP void input_scan_less_text(input_scan_lexer_t *yy_lexer, int new_yy
 }
 
 
+
 /* When this symbol is defined, enable mechanisms to inject failures
  * into the allocator routines. */
 #ifdef YY_ALLOCATOR_FAILURE_INJECTION

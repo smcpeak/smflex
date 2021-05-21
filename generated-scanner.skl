@@ -2001,7 +2001,6 @@ void yyFlexLexer::yym_error(yy_error_code_t code, char const *detail) const
 %endif
 
 
-%if !cpp_interface
 STATIC_IF_CPP void yy_less_text(yy_lexer_t *yy_lexer, int new_yy_leng)
 {
   if (!YY_API_PRECONDITION(0 <= new_yy_leng &&
@@ -2019,6 +2018,12 @@ STATIC_IF_CPP void yy_less_text(yy_lexer_t *yy_lexer, int new_yy_leng)
   /* Re-insert the temporary NUL terminator. */
   yy_lexer->yy_hold_char = *(yy_lexer->yy_buf_cur_pos);
   *(yy_lexer->yy_buf_cur_pos) = '\0';
+}
+
+%if cpp_interface
+void yyFlexLexer::yym_less_text(int new_yy_leng)
+{
+  yy_less_text(&yym_lexer_state, new_yy_leng);
 }
 %endif
 

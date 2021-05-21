@@ -1,0 +1,28 @@
+/* yymore-yyless-cpp.lexpp */
+/* Test 'YY_MORE_TEXT()' followed by 'yym_less_text()'. */
+
+%option c++
+%option main
+%option yymore
+
+%{
+int lessArg = 6;
+%}
+
+%%
+
+abc      {
+           printf("[\"%s\", %d]\n", YY_TEXT, YY_LENG);
+           printf("[YY_MORE_TEXT]\n");
+           YY_MORE_TEXT();
+         }
+
+def      {
+           printf("[\"%s\", %d]\n", YY_TEXT, YY_LENG);
+           if (lessArg >= 0) {
+             printf("[yym_less_text(%d)]\n", lessArg);
+             yym_less_text(lessArg);
+             lessArg--;
+             printf("[\"%s\", %d]\n", YY_TEXT, YY_LENG);
+           }
+         }
