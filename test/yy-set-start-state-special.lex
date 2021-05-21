@@ -1,5 +1,5 @@
 /* yy-set-start-state-special.lex */
-/* Illustrate calling YY_SET_START_STATE on entry to yy_lex(). */
+/* Illustrate calling YY_SET_START_CONDITION on entry to yy_lex(). */
 
                 /* BEGIN: example fragment */
                 int enter_special;
@@ -7,7 +7,7 @@
 %x SPECIAL
 %%
                 if (enter_special) {
-                  YY_SET_START_STATE(SPECIAL);
+                  YY_SET_START_CONDITION(SPECIAL);
                 }
 
 <SPECIAL>token  {      /* ... etc. ... */
@@ -35,7 +35,7 @@ int main()
 
     /* Start each time in INITIAL, so that 'enter_special' can either
      * change it or not. */
-    yy_set_start_state(&lexer, INITIAL);
+    yy_set_start_condition(&lexer, INITIAL);
   }
 
   yy_destroy(&lexer);

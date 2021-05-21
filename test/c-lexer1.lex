@@ -183,7 +183,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
   /* intial */
 "L"?{QUOTE}   {
   collector_append(YY_TEXT, YY_LENG);
-  YY_SET_START_STATE(ST_STRING);
+  YY_SET_START_CONDITION(ST_STRING);
 }
 
   /* continuation */
@@ -195,7 +195,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
 <ST_STRING>{QUOTE} {
   collector_append(YY_TEXT, YY_LENG);
   lexer_emit(L1_STRING_LITERAL, COLLECTOR);
-  YY_SET_START_STATE(INITIAL);
+  YY_SET_START_CONDITION(INITIAL);
 }
 
   /* dsw: user-defined qualifier; example: $tainted */
@@ -216,7 +216,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
   }
 
   lexer_emit(L1_STRING_LITERAL, COLLECTOR);
-  YY_SET_START_STATE(INITIAL);
+  YY_SET_START_CONDITION(INITIAL);
 
   if (YY_TEXT[0] != '\n') {
     YY_TERMINATE();     	  /* flex man page says to do this for <<EOF>> */
@@ -264,7 +264,7 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
   /* initial */
 "/""*"     {
   collector_append(YY_TEXT, YY_LENG);
-  YY_SET_START_STATE(ST_C_COMMENT);
+  YY_SET_START_CONDITION(ST_C_COMMENT);
 }
 
   /* continuation */
@@ -276,13 +276,13 @@ PPCHAR        ([^\\\n]|{BACKSL}{NOTNL})
 <ST_C_COMMENT>"*/"     {
   collector_append(YY_TEXT, YY_LENG);
   lexer_emit(L1_COMMENT, COLLECTOR);
-  YY_SET_START_STATE(INITIAL);
+  YY_SET_START_CONDITION(INITIAL);
 }
 
   /* final, error */
 <ST_C_COMMENT><<EOF>>     {
   lexer_emit(L1_COMMENT, COLLECTOR);
-  YY_SET_START_STATE(INITIAL);
+  YY_SET_START_CONDITION(INITIAL);
 }
 
   /* illegal */

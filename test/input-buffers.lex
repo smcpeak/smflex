@@ -24,7 +24,7 @@ int file_list_index = 0;
 %}
 
 %%
-include[ ]+         YY_SET_START_STATE(incl);
+include[ ]+         YY_SET_START_CONDITION(incl);
 
 [a-z]+              YY_ECHO;
 [^a-z\n]*\n?        YY_ECHO;
@@ -48,7 +48,7 @@ include[ ]+         YY_SET_START_STATE(incl);
           yy_switch_to_buffer(yy_lexer, newbuf);
 
           /* Start condition for processing the new file. */
-          YY_SET_START_STATE(INITIAL);
+          YY_SET_START_CONDITION(INITIAL);
         }
 
 <<EOF>> {

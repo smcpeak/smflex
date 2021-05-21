@@ -17,10 +17,10 @@
   /* END: example fragment */
 
   /* A way to get into and out of 'foo'. */
-beginfoo                YY_SET_START_STATE(foo); YY_ECHO;
-<foo>endfoo             YY_SET_START_STATE(INITIAL); YY_ECHO;
+beginfoo                YY_SET_START_CONDITION(foo); YY_ECHO;
+<foo>endfoo             YY_SET_START_CONDITION(INITIAL); YY_ECHO;
 
-  /* This rule lets me query current start state. */
+  /* This rule lets me query current start condition. */
 <INITIAL,foo>state      {
-                          printf("[state %d]", YY_GET_START_STATE());
+                          printf("[state %d]", YY_GET_START_CONDITION());
                         }

@@ -44,7 +44,7 @@ int main()
 
     /* Start each time in INITIAL, so that 'enter_special' can either
      * change it or not. */
-    yy_set_start_state(&lexer, INITIAL);
+    yy_set_start_condition(&lexer, INITIAL);
   }
 
   yy_destroy(&lexer);

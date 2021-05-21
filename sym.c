@@ -193,7 +193,7 @@ void scinstal(char str[], int xcluflg)
   char *copy_string();
 
   /* Generate start condition definition, for use in
-   * 'YY_SET_START_STATE', etc. */
+   * 'YY_SET_START_CONDITION', etc. */
   action_define(str, lastsc);
 
   if (++lastsc >= current_max_scs)

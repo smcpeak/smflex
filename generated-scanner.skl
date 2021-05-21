@@ -55,14 +55,14 @@
 #define YY_SC_TO_UI(c) ((unsigned int) (unsigned char) c)
 
 /* Enter a start condition. */
-#define YY_SET_START_STATE(s) (yy_lexer->yy_start_state = 1 + 2 * (s))
+#define YY_SET_START_CONDITION(s) (yy_lexer->yy_start_state = 1 + 2 * (s))
 
 /* Translate the current start state into a value that can be later handed
- * to YY_SET_START_STATE to return to the state. */
-#define YY_GET_START_STATE() ((yy_lexer->yy_start_state - 1) / 2)
+ * to YY_SET_START_CONDITION to return to the state. */
+#define YY_GET_START_CONDITION() ((yy_lexer->yy_start_state - 1) / 2)
 
-/* Action number for EOF rule of a given start state. */
-#define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
+/* Action number for EOF rule of a given start condition. */
+#define YY_STATE_EOF(cond) (YY_END_OF_BUFFER + (cond) + 1)
 
 /* Two copies of this character are placed into the read buffer,
  * right after the data that was read from the input.  This is used
@@ -598,8 +598,8 @@ int yyFlexLexer::yym_lex()
 %if option_reject
 #     define REJECT YY_REJECT
 %endif
-#     define BEGIN(s) YY_SET_START_STATE(s)
-#     define YY_START YY_GET_START_STATE()
+#     define BEGIN(s) YY_SET_START_CONDITION(s)
+#     define YY_START YY_GET_START_CONDITION()
 #     define YY_AT_BOL() YY_GET_BOL()
 #     define yyterminate() YY_TERMINATE()
 #     define yytext YY_TEXT
@@ -697,7 +697,7 @@ do_action:      /* This label is used only to access EOF actions. */
       else if (yy_act == YY_NUM_RULES+1)
         fprintf(stderr, "--(end of buffer or a NUL)\n");
       else
-        fprintf(stderr, "--EOF (start condition %d)\n", YY_GET_START_STATE());
+        fprintf(stderr, "--EOF (start condition %d)\n", YY_GET_START_CONDITION());
 %else
       if (yy_act == 0)
         std::cerr << "--scanner backing up\n";
@@ -709,7 +709,7 @@ do_action:      /* This label is used only to access EOF actions. */
       else if (yy_act == YY_NUM_RULES+1)
         std::cerr << "--(end of buffer or a NUL)\n";
       else
-        std::cerr << "--EOF (start condition " << YY_GET_START_STATE() << ")\n";
+        std::cerr << "--EOF (start condition " << YY_GET_START_CONDITION() << ")\n";
 %endif
     }
 %endif
@@ -802,7 +802,7 @@ do_action:      /* This label is used only to access EOF actions. */
                  */
                 yy_lexer->yy_buf_cur_pos = YY_TEXT_NONCONST + YY_MORE_LEN;
 
-                yy_act = YY_STATE_EOF(YY_GET_START_STATE());
+                yy_act = YY_STATE_EOF(YY_GET_START_CONDITION());
                 goto do_action;
               }
 
@@ -892,7 +892,7 @@ void yy_construct(yy_lexer_t *yy_lexer)
 
   yy_lexer->yy_buf_cur_pos = NULL;
   yy_lexer->yy_need_init = 1;
-  YY_SET_START_STATE(INITIAL);
+  YY_SET_START_CONDITION(INITIAL);
 
 %if num_backing_up > 0 && !option_reject
   yy_lexer->yy_last_accepting_state = 0; /* This can be a pointer. */
@@ -1705,7 +1705,7 @@ void yy_push_state(yy_lexer_t *yy_lexer, int new_state)
     /* Check for overflow. */
     if (yy_lexer->yy_start_stack_alloc_size >
           (INT_MAX/(int)sizeof(int) - YY_START_STACK_INCR) / 2) {
-      YY_ERROR(yy_err_state_stack_overflow, NULL /*detail*/);
+      YY_ERROR(yy_err_condition_stack_overflow, NULL /*detail*/);
       return;
     }
     new_alloc_size =
@@ -1734,9 +1734,9 @@ void yy_push_state(yy_lexer_t *yy_lexer, int new_state)
   }
 
   yy_lexer->yy_start_stack_array[yy_lexer->yy_start_stack_cur_size++] =
-    YY_GET_START_STATE();
+    YY_GET_START_CONDITION();
 
-  YY_SET_START_STATE(new_state);
+  YY_SET_START_CONDITION(new_state);
 }
 
 %if cpp_interface
@@ -1755,7 +1755,7 @@ void yy_pop_state(yy_lexer_t *yy_lexer)
   }
 
   --(yy_lexer->yy_start_stack_cur_size);
-  YY_SET_START_STATE(yy_lexer->yy_start_stack_array[yy_lexer->yy_start_stack_cur_size]);
+  YY_SET_START_CONDITION(yy_lexer->yy_start_stack_array[yy_lexer->yy_start_stack_cur_size]);
 }
 
 %if cpp_interface
@@ -1814,7 +1814,7 @@ static char const * const yy_error_string_table[] = {
   "no space in buffer to unread a character",
 %endif
 %if option_stack
-  "cannot push a state because the start-state stack is at its maximum size",
+  "cannot push a state because the start condition stack is at its maximum size",
 %endif
 };
 
@@ -2036,28 +2036,28 @@ void yy_check_for_memory_leaks()
 %endif
 
 
-void yy_set_start_state(yy_lexer_t *yy_lexer, int state)
+void yy_set_start_condition(yy_lexer_t *yy_lexer, int state)
 {
-  YY_SET_START_STATE(state);
+  YY_SET_START_CONDITION(state);
 }
 
 %if cpp_interface
-void yyFlexLexer::yym_set_start_state(int state)
+void yyFlexLexer::yym_set_start_condition(int state)
 {
-  yy_set_start_state(&yym_lexer_state, state);
+  yy_set_start_condition(&yym_lexer_state, state);
 }
 %endif
 
 
-int yy_get_start_state(yy_lexer_t const *yy_lexer)
+int yy_get_start_condition(yy_lexer_t const *yy_lexer)
 {
-  return YY_GET_START_STATE();
+  return YY_GET_START_CONDITION();
 }
 
 %if cpp_interface
-int yyFlexLexer::yym_get_start_state() const
+int yyFlexLexer::yym_get_start_condition() const
 {
-  return yy_get_start_state(&yym_lexer_state);
+  return yy_get_start_condition(&yym_lexer_state);
 }
 %endif
 
@@ -2179,8 +2179,8 @@ int main()
 
 /* Remove documented YY_XXX macros, as they cannot be used in section 3.
  * Most of them have yy_XXX alternatives that accept 'yy_lexer_t*'. */
-#undef YY_SET_START_STATE
-#undef YY_GET_START_STATE
+#undef YY_SET_START_CONDITION
+#undef YY_GET_START_CONDITION
 #undef YY_LESS_TEXT
 #undef YY_CURRENT_BUFFER
 #undef YY_FLUSH_CURRENT_BUFFER

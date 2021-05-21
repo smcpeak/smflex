@@ -930,19 +930,19 @@ an action:
     to the scanner's output
     (<a href="#yy_output_stream"><code>yy_output_stream</code></a>).
 
-<li id="YY_SET_START_STATE-macro"><p><code>YY_SET_START_STATE(s)</code>
+<li id="YY_SET_START_CONDITION-macro"><p><code>YY_SET_START_CONDITION(s)</code>
     places the scanner in
     <a href="#start-conditions">start condition</a>
     <code>s</code>.
 
     See also
-    <a href="#yy_set_start_state"><code>yy_set_start_state</code></a>.
+    <a href="#yy_set_start_condition"><code>yy_set_start_condition</code></a>.
 
-<li id="YY_GET_START_STATE-macro"><p><code>YY_GET_START_STATE</code>
-    returns the current start state.
+<li id="YY_GET_START_CONDITION-macro"><p><code>YY_GET_START_CONDITION</code>
+    returns the current start condition.
 
     See also
-    <a href="#yy_get_start_state"><code>yy_get_start_state</code></a>.
+    <a href="#yy_get_start_condition"><code>yy_get_start_condition</code></a>.
 
 <li id="YY_REJECT-macro"><p><code>YY_REJECT</code>
     directs the scanner to proceed on to the "second best" rule which
@@ -1038,7 +1038,7 @@ an action:
 
     <p>An argument of 0 to <code>YY_LESS_TEXT</code> will cause the entire current
     input string to be scanned again. Unless you've changed how the scanner
-    will subsequently process its input (using <code>YY_SET_START_STATE</code>, for
+    will subsequently process its input (using <code>YY_SET_START_CONDITION</code>, for
     example), this will result in an endless loop.
 
     <p>Outside of rule actions, the <code>YY_LESS_TEXT</code>
@@ -1631,7 +1631,7 @@ to associated fields without the need for an explicit object:
     <code>input_file</code>, flushing that buffer in the process.
 
     <p><code>yy_restart</code> does <em>not</em> change the
-    <a href="#start-conditions">start state</a>.
+    <a href="#start-conditions">start condition</a>.
 
 </dl>
 
@@ -1653,20 +1653,20 @@ text matched by a rule:
 
 </dl>
 
-<p id="start-state-functions">These functions are available for manipulating the current
-<a href="#start-conditions">start state</a>:
+<p id="start-condition-functions">These functions are available for manipulating the current
+<a href="#start-conditions">start condition</a>:
 
 <dl>
 
-<dt id="yy_set_start_state"><code>void yy_set_start_state(yy_lexer_t *yy_lexer, int state);</code>
+<dt id="yy_set_start_condition"><code>void yy_set_start_condition(yy_lexer_t *yy_lexer, int cond);</code>
 
     <dd><p>
-    Set the start state of <code>yy_lexer</code> to <code>state</code>.
+    Set the start condition of <code>yy_lexer</code> to <code>cond</code>.
 
-<dt id="yy_get_start_state"><code>int yy_get_start_state(yy_lexer_t const *yy_lexer);</code>
+<dt id="yy_get_start_condition"><code>int yy_get_start_condition(yy_lexer_t const *yy_lexer);</code>
 
     <dd><p>
-    Get the current start state.
+    Get the current start condition.
 
 </dl>
 
@@ -1674,7 +1674,7 @@ text matched by a rule:
 <a href="#yy_push_state"><code>yy_push_state</code></a>,
 <a href="#yy_pop_state"><code>yy_pop_state</code></a>, and
 <a href="#yy_top_state"><code>yy_top_state</code></a> are
-available to manipulate the stack of start states, as  documented under
+available to manipulate the stack of start conditions, as  documented under
 <a href="#start-conditions">Start Conditions</a>.
 
 <p>These functions are the pre-defined handlers for the function
@@ -1730,9 +1730,6 @@ pointers in <code>yy_lexer_t</code>:
 <!-- ======================================================= -->
 <h1 id="start-conditions">START CONDITIONS</h1>
 
-<p>TODO: This section should be called "Start States", not "conditions".
-There is nothing conditional about them.
-
 <p><code>smflex</code> provides a mechanism for conditionally activating
 rules. Any rule whose pattern is prefixed with "&lt;sc&gt;" will only be
 active when the scanner is in the start condition named "sc". For example,
@@ -1760,8 +1757,8 @@ the input using unindented lines beginning with either <code>%s</code>
 or <code>%x</code> followed by a list of names. The former declares
 <em>inclusive</em> start conditions, the latter <em>exclusive</em> start
 conditions. A start condition is activated using the
-<a href="#YY_SET_START_STATE-macro"><code>YY_SET_START_STATE</code></a>
-action. Until the next <code>YY_SET_START_STATE</code> action is executed, rules
+<a href="#YY_SET_START_CONDITION-macro"><code>YY_SET_START_CONDITION</code></a>
+action. Until the next <code>YY_SET_START_CONDITION</code> action is executed, rules
 with the given start condition will be active and rules with other start
 conditions will be inactive. If the start condition is <em>inclusive</em>,
 then rules with no start conditions at all will also be active. If
@@ -1826,12 +1823,12 @@ remains active in start conditions. It is equivalent to:
     &lt;*&gt;.|\n     YY_ECHO;
 </code></pre>
 
-<p><code>YY_SET_START_STATE(0)</code> returns to the original state where only the
+<p><code>YY_SET_START_CONDITION(0)</code> returns to the original state where only the
 rules with no start conditions are active. This state can also be referred
-to as the start-condition "INITIAL", so <code>YY_SET_START_STATE(INITIAL)</code> is
-equivalent to <code>YY_SET_START_STATE(0)</code>.
+to as the start condition "INITIAL", so <code>YY_SET_START_CONDITION(INITIAL)</code> is
+equivalent to <code>YY_SET_START_CONDITION(0)</code>.
 
-<p><code>YY_SET_START_STATE</code> actions can also be given as indented code
+<p><code>YY_SET_START_CONDITION</code> actions can also be given as indented code
 at the beginning of the rules section. For example, the
 <a href="test/begin-special.lex">following</a>
 will cause the scanner to enter the "SPECIAL" start condition
@@ -1844,7 +1841,7 @@ whenever <code>yy_lex()</code> is called and the global variable
     %x SPECIAL
     %%
                     if (enter_special) {
-                      YY_SET_START_STATE(SPECIAL);
+                      YY_SET_START_CONDITION(SPECIAL);
                     }
 
     &lt;SPECIAL&gt;token  {      /* ... etc. ... */
@@ -1866,7 +1863,7 @@ the floating-point number 123.456:
     %s expect
 
     %%
-    expect-floats       YY_SET_START_STATE(expect);
+    expect-floats       YY_SET_START_CONDITION(expect);
 
     &lt;expect&gt;[0-9]+"."[0-9]+  {
                           printf("found a float: %f\n", atof(YY_TEXT));
@@ -1875,7 +1872,7 @@ the floating-point number 123.456:
                           /* That's the end of the line, so we need another
                            * "expect-floats" before we'll recognize any more
                            * floats. */
-                          YY_SET_START_STATE(INITIAL);
+                          YY_SET_START_CONDITION(INITIAL);
                         }
 
     [0-9]+              {
@@ -1893,11 +1890,11 @@ maintaining a count of the current input line.
     %x comment
                             int line_num = 1;
     %%
-    "/*"                    YY_SET_START_STATE(comment);
+    "/*"                    YY_SET_START_CONDITION(comment);
     &lt;comment&gt;[^*\n]*        /* eat anything that's not a '*' */
     &lt;comment&gt;"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
     &lt;comment&gt;\n             ++line_num;
-    &lt;comment&gt;"*"+"/"        YY_SET_START_STATE(INITIAL);
+    &lt;comment&gt;"*"+"/"        YY_SET_START_CONDITION(INITIAL);
 </code><!-- END example --></pre>
 
 <p>This scanner goes to a bit of trouble to match as much text as possible
@@ -1916,26 +1913,26 @@ fashion:
     %%
     "/*"                    {
                               comment_caller = INITIAL;
-                              YY_SET_START_STATE(comment);
+                              YY_SET_START_CONDITION(comment);
                             }
 
     &lt;foo&gt;"/*"               {
                               comment_caller = foo;
-                              YY_SET_START_STATE(comment);
+                              YY_SET_START_CONDITION(comment);
                             }
 
     &lt;comment&gt;[^*\n]*        /* eat anything that's not a '*' */
     &lt;comment&gt;"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
     &lt;comment&gt;\n             ++line_num;
-    &lt;comment&gt;"*"+"/"        YY_SET_START_STATE(comment_caller);
+    &lt;comment&gt;"*"+"/"        YY_SET_START_CONDITION(comment_caller);
 </code><!-- END example --></pre>
 
 <p>Furthermore, you can access the current start condition using the
-integer-valued <code>YY_GET_START_STATE()</code> macro. For example, the above
+integer-valued <code>YY_GET_START_CONDITION()</code> macro. For example, the above
 assignments to <code>comment_caller</code> could instead be written
 
 <pre><code>
-    comment_caller = YY_GET_START_STATE();
+    comment_caller = YY_GET_START_CONDITION();
 </code></pre>
 
 <p>Beware that start conditions do not have their own name-space;
@@ -1952,10 +1949,10 @@ using exclusive start conditions, including expanded escape sequences
             char string_buf[MAX_STR_LITERAL_LEN];
             char *string_buf_ptr;
     %%
-    \"      string_buf_ptr = string_buf; YY_SET_START_STATE(str);
+    \"      string_buf_ptr = string_buf; YY_SET_START_CONDITION(str);
 
     &lt;str&gt;\"        { /* saw closing quote - all done */
-              YY_SET_START_STATE(INITIAL);
+              YY_SET_START_CONDITION(INITIAL);
               *string_buf_ptr = '\0';
 
               /* Inform caller that we saw and interpreted a string literal.
@@ -1965,7 +1962,7 @@ using exclusive start conditions, including expanded escape sequences
 
     &lt;str&gt;\n        {
               printf("unterminated string literal\n");
-              YY_SET_START_STATE(INITIAL);     /* Recover from the error. */
+              YY_SET_START_CONDITION(INITIAL);     /* Recover from the error. */
             }
 
     &lt;str&gt;\\[0-7]{1,3} {
@@ -2035,28 +2032,28 @@ is a complete example demonstrating start condition scopes.
 <p>Start condition scopes may be nested.
 
 
-<h2 id="start-state-stack">Start State Stack</h2>
+<h2 id="start-condition-stack">Start Condition Stack</h2>
 
 <p>If <a href="#option-stack"><code>%option stack</code></a> is set,
 there is a stack of start
-states that allows the scanner to enter a new state while remembering
+conditions that allows the scanner to enter a new condition while remembering
 where it came from.  This is useful when there is one language embedded
 inside another and they require different lexing rules.  Three routines
 are available for manipulating the stack of start conditions:
 
 <dl>
 
-<dt id="yy_push_state"><code>void yy_push_state(yy_lexer_t *yy_lexer, int new_state);</code>
+<dt id="yy_push_state"><code>void yy_push_state(yy_lexer_t *yy_lexer, int new_cond);</code>
 
     <dd><p>Push the current start condition onto the top of the start
-    condition stack and switch to <code>new_state</code> as though you had
+    condition stack and switch to <code>new_cond</code> as though you had
     used
-    <a href="#yy_set_start_state"><code>yy_set_start_state(yy_lexer, new_state)</code></a>.
+    <a href="#yy_set_start_condition"><code>yy_set_start_condition(yy_lexer, new_cond)</code></a>.
 
 <dt id="yy_pop_state"><code>void yy_pop_state(yy_lexer_t *yy_lexer);</code>
 
     <dd><p>Pop the top of the stack and switch to it via
-    <code>yy_set_start_state</code>.
+    <code>yy_set_start_condition</code>.
 
 <dt id="yy_top_state"><code>int yy_top_state(yy_lexer_t const *yy_lexer);</code>
 
@@ -2216,7 +2213,7 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
     %}
 
     %%
-    include[ ]+         YY_SET_START_STATE(incl);
+    include[ ]+         YY_SET_START_CONDITION(incl);
 
     [a-z]+              YY_ECHO;
     [^a-z\n]*\n?        YY_ECHO;
@@ -2240,7 +2237,7 @@ explained in <a href="#end-of-file-rules">End-of-File Rules</a>):
               yy_switch_to_buffer(yy_lexer, newbuf);
 
               /* Start condition for processing the new file. */
-              YY_SET_START_STATE(INITIAL);
+              YY_SET_START_CONDITION(INITIAL);
             }
 
     &lt;&lt;EOF&gt;&gt; {
@@ -2503,10 +2500,10 @@ the rule actions.
     returns a <code>yy_buffer_state_t*</code> pointer to the current
     buffer.
 
-<li><p><code>YY_GET_START_STATE()</code>
+<li><p><code>YY_GET_START_CONDITION()</code>
     returns an integer value corresponding to the current start
     condition. You can subsequently use this value with
-    <code>YY_SET_START_STATE</code> to return to that start condition.
+    <code>YY_SET_START_CONDITION</code> to return to that start condition.
 
 </ul>
 
@@ -4045,12 +4042,12 @@ for the action. Recall the scanner for C comments:
     %%
             int line_num = 1;
 
-    "/*"         YY_SET_START_STATE(comment);
+    "/*"         YY_SET_START_CONDITION(comment);
 
     &lt;comment&gt;[^*\n]*
     &lt;comment&gt;"*"+[^*/\n]*
     &lt;comment&gt;\n             ++line_num;
-    &lt;comment&gt;"*"+"/"        YY_SET_START_STATE(INITIAL);
+    &lt;comment&gt;"*"+"/"        YY_SET_START_CONDITION(INITIAL);
 </code></pre>
 
 <p>This could be sped up by writing it as:
@@ -4060,13 +4057,13 @@ for the action. Recall the scanner for C comments:
     %%
             int line_num = 1;
 
-    "/*"         YY_SET_START_STATE(comment);
+    "/*"         YY_SET_START_CONDITION(comment);
 
     &lt;comment&gt;[^*\n]*
     &lt;comment&gt;[^*\n]*\n      ++line_num;
     &lt;comment&gt;"*"+[^*/\n]*
     &lt;comment&gt;"*"+[^*/\n]*\n ++line_num;
-    &lt;comment&gt;"*"+"/"        YY_SET_START_STATE(INITIAL);
+    &lt;comment&gt;"*"+"/"        YY_SET_START_CONDITION(INITIAL);
 </code></pre>
 
 <p>Now instead of each newline requiring the processing of another action,
@@ -4252,8 +4249,8 @@ running the scanner over input:
 <dd><p>These also work like their C-interface counterparts.
     (<a href="test/yym-read-character.lexpp">Example.</a>)
 
-<dt><code>yym_set_start_state()</code>,
-    <code>yym_get_start_state()</code>,
+<dt><code>yym_set_start_condition()</code>,
+    <code>yym_get_start_condition()</code>,
     <code>yym_push_state()</code>,
     <code>yym_pop_state()</code>, and
     <code>yym_top_state()</code>
@@ -4929,14 +4926,14 @@ run-time support library.  That has been removed as detailed below.
     <p>Replacement: Use <code>yy_create_buffer</code>.
 
 <li><p><code>YYSTATE</code>: <code>flex-2.5.4</code> accepted
-    <code>YYSTATE</code> as an alias for <code>YY_GET_START_STATE</code>.
+    <code>YYSTATE</code> as an alias for <code>YY_GET_START_CONDITION</code>.
     That alias has been removed.
 
     <p>Rationale: The reason given for <code>YYSTATE</code> was
     compatibility with AT&amp;T <code>lex</code>, which I do not
     care about.
 
-    <p>Replacement: Use <code>YY_GET_START_STATE</code>.
+    <p>Replacement: Use <code>YY_GET_START_CONDITION</code>.
 
 <li><p><code>struct yy_buffer_state</code>: The <code>flex-2.5.4</code>
     manual advertised that if you want to declare a pointer to a buffer
@@ -5096,7 +5093,7 @@ table.  Some have aliases that can be enabled with
     <td>Old name available with <code>%option flex-compat</code>.
   <tr>
     <td><code>BEGIN</code>
-    <td><a href="#YY_SET_START_STATE-macro"><code>YY_SET_START_STATE</code></a>
+    <td><a href="#YY_SET_START_CONDITION-macro"><code>YY_SET_START_CONDITION</code></a>
     <td>Old name available with <code>%option flex-compat</code>.
   <tr>
     <td><code>YY_BUFFER_STATE</code>
@@ -5171,7 +5168,7 @@ is explained below:
     macro names, I added "_TEXT" to clarify what we are getting less of.
 
 <li><p>The <code>BEGIN</code> macro has been renamed to
-    <a href="#YY_SET_START_STATE-macro"><code>YY_SET_START_STATE</code></a>.
+    <a href="#YY_SET_START_CONDITION-macro"><code>YY_SET_START_CONDITION</code></a>.
     Additionally, it now requires a parenthesized argument, whereas in
     <code>flex</code> it is legal to write "<code>BEGIN s;</code>" to
     change to start condition <code>s</code>
@@ -5183,14 +5180,14 @@ is explained below:
     "leave" counterpart.
 
 <li><p>The <code>YY_START</code> macro has been replaced by
-    <a href="#YY_GET_START_STATE-macro"><code>YY_GET_START_STATE()</code></a>.
+    <a href="#YY_GET_START_CONDITION-macro"><code>YY_GET_START_CONDITION()</code></a>.
     Note that the old macro was used without parentheses, while the new
     one requires them.
 
     <p>Rationale: The old name was a bit terse, and I wanted something
-    parallel with the new <code>YY_SET_START_STATE</code>.  The old
+    parallel with the new <code>YY_SET_START_CONDITION</code>.  The old
     lack of parentheses clashes with my intended parallel use of
-    <a href="#yy_get_start_state"><code>yy_get_start_state</code></a>.
+    <a href="#yy_get_start_condition"><code>yy_get_start_condition</code></a>.
 
 <li><p>The <code>YY_INPUT</code> macro has been replaced by
     <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
@@ -5614,14 +5611,14 @@ I have also found and fixed a few pre-existing bugs:
 
 <li><p>
     In <code>flex-2.5.4</code>, creating a very deep stack of start
-    states with <code>yy_push_state</code> caused quadratic run time
+    conditions with <code>yy_push_state</code> caused quadratic run time
     due to inefficient allocation size growth.  The fix is to allocate
     using exponentially growing sizes.  Commit <code>0b2a7c04a6</code>
     contains the fix.
 
 <li><p>
     In <code>flex-2.5.4</code>, when using <code>%option stack</code>, a
-    scanner that pushes anything onto the state stack would experience a
+    scanner that pushes anything onto the condition stack would experience a
     memory leak because the stack was never freed.  However, this
     arguably only affected the C++ API because, in that version, the C
     API only allowed one scanner instance.  Commit
@@ -5783,11 +5780,11 @@ while the generated scanner is running:
     scanner should dynamically resize the buffer in this case, but at
     present it does not.
 
-<dt id="yy_err_state_stack_overflow"><code>yy_err_state_stack_overflow</code>:
+<dt id="yy_err_condition_stack_overflow"><code>yy_err_condition_stack_overflow</code>:
 
     <dd><p>
     When using <a href="#yy_push_state"><code>yy_push_state</code></a>,
-    the start-state stack has hit its maximum size.  The exact size
+    the start condition stack has hit its maximum size.  The exact size
     depends on configuration parameters, but is usually at least one
     billion <code>(INT_MAX/2)</code>.
 

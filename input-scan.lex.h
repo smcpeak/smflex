@@ -68,10 +68,10 @@ typedef enum input_scan_error_code_enum {
    * the buffer is not large enough to hold it and the current token. */
   input_scan_err_unread_overflow,
 
-  /* The start-state stack has hit its maximum size.  The exact size
+  /* The start condition stack has hit its maximum size.  The exact size
    * depends on configuration parameters, but is usually at least one
    * billion (INT_MAX/2). */
-  input_scan_err_state_stack_overflow,
+  input_scan_err_condition_stack_overflow,
 
   /* The number of error codes, starting with 0. */
   input_scan_err_num_error_codes
@@ -234,9 +234,11 @@ struct input_scan_lexer_struct {
   /* Current start state number.  This is a "start" state in the sense
    * that it indicates the state in which the recognizer begins when
    * 'input_scan_lex()' is called; the recognizer then transitions from there
-   * depending on what characters are seen.  Beware that the value of
-   * this field is different from what 'input_scan_set_start_state' and
-   * 'input_scan_get_start_state' use (they differ by some arithmetic).*/
+   * depending on what characters are seen.
+   *
+   * Beware that this is distinct from the "start condition", which is
+   * the number exposed to the user in the API (they differ by some
+   * arithmetic).*/
   int yy_start_state;
 
   /* These are related to backing up when YY_REJECT is *not* used. */
@@ -320,18 +322,18 @@ void input_scan_delete_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_st
  * that source. */
 void input_scan_flush_buffer(input_scan_lexer_t *yy_lexer, input_scan_buffer_state_t *b);
 
-/* -------- Manipulating the start state -------- */
-/* Set the start state of 'yy_lexer' to 'state'. */
-void input_scan_set_start_state(input_scan_lexer_t *yy_lexer, int state);
+/* -------- Manipulating the start condition -------- */
+/* Set the start condition of 'yy_lexer' to 'cond'. */
+void input_scan_set_start_condition(input_scan_lexer_t *yy_lexer, int cond);
 
-/* Get the current start state. */
-int input_scan_get_start_state(input_scan_lexer_t const *yy_lexer);
+/* Get the current start condition. */
+int input_scan_get_start_condition(input_scan_lexer_t const *yy_lexer);
 
-/* Set the start state to 'new_state', pushing the current start state
- * onto the state stack. */
-void yy_push_state(input_scan_lexer_t *yy_lexer, int new_state);
+/* Set the start condition to 'new_cond', pushing the current start
+ * condition onto the state stack. */
+void yy_push_state(input_scan_lexer_t *yy_lexer, int new_cond);
 
-/* Set the start state to the element at the top of the stack and
+/* Set the start condition to the element at the top of the stack and
  * remove that element.  The stack must not be empty. */
 void yy_pop_state(input_scan_lexer_t *yy_lexer);
 

@@ -11,7 +11,7 @@
 %s expect
 
 %%
-expect-floats       YY_SET_START_STATE(expect);
+expect-floats       YY_SET_START_CONDITION(expect);
 
 <expect>[0-9]+"."[0-9]+  {
                       printf("found a float: %f\n", atof(YY_TEXT));
@@ -20,7 +20,7 @@ expect-floats       YY_SET_START_STATE(expect);
                       /* That's the end of the line, so we need another
                        * "expect-floats" before we'll recognize any more
                        * floats. */
-                      YY_SET_START_STATE(INITIAL);
+                      YY_SET_START_CONDITION(INITIAL);
                     }
 
 [0-9]+              {
