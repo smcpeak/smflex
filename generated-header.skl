@@ -778,7 +778,7 @@ public:      /* methods */
 %endif
   /* Set the 'interactive' flag.  An interactive
    * lexer reads its input one character at a time. */
-  void yym_set_interactive(int is_interactive);
+  void yym_set_interactive(bool is_interactive);
 
   /* Get whether 'yy_lexer' will regard itself as being at the beginning
    * of a line (BOL), which is where "^" patterns can match. */

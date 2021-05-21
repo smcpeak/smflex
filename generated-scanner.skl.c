@@ -388,7 +388,7 @@ const char *scanner_skl_contents[] = {
   "}",
   "",
   "%if cpp_interface",
-  "void yyFlexLexer::yym_set_interactive(int is_interactive)",
+  "void yyFlexLexer::yym_set_interactive(bool is_interactive)",
   "{",
   "  yy_set_interactive(&yym_lexer_state, is_interactive);",
   "}",
