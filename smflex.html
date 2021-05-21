@@ -2988,7 +2988,7 @@ number are equivalent to <code>smflex</code> flags or their negation:
 
 <dt id="option-main"><code>main</code>
 
-<dd><p>Provide a default <code>main()</code> program for the
+    <dd><p>Provide a default <code>main()</code> program for the
     scanner.  Its definition is:
 
     <pre><code>
@@ -3007,52 +3007,61 @@ number are equivalent to <code>smflex</code> flags or their negation:
 
 <dt id="option-reject"><code>reject</code>
 
-<dd><p>
+    <dd><p>
     Enable support for
     <a href="#YY_REJECT-macro"><code>YY_REJECT</code></a>.
 
 <dt id="option-stack"><code>stack</code>
 
-<dd><p>Enable the use of start condition stacks
+    <dd><p>Enable the use of start condition stacks
     (see <a href="#start-conditions">Start Conditions</a>).
 
 <dt><code>yylineno</code>
 
-<dd><p>Generate a scanner that has
+    <dd><p>Generate a scanner that has
     <a href="#yy_lineno"><code>yy_lineno</code></a>.
 
 <dt id="option-yymore"><code>yymore</code>
 
-<dd><p>Enable <a href="#YY_MORE_TEXT-macro"><code>YY_MORE_TEXT()</code></a>.
+    <dd><p>Enable <a href="#YY_MORE_TEXT-macro"><code>YY_MORE_TEXT()</code></a>.
 
 </dl>
 
-<p>Three options take string-delimited values, offset with '=':
+<p>These options take string-delimited values, offset with '=':
 
-<pre><code>
-    %option outfile="ABC"
-</code></pre>
+<dl>
 
-<p>is equivalent to <code>-oABC</code>, and
+<dt id="option-outfile"><code>%option outfile="ABC"</code>
 
-<pre><code>
-    %option prefix="XYZ"
-</code></pre>
+    <dd><p>Sets the name of the output files; equivalent to <code>-oABC</code>.
 
-<p>is equivalent to <code>-PXYZ</code>. Finally,
+<dt id="option-prefix"><code>%option prefix="XYZ"</code>
 
-<pre><code>
-    %option yyclass="foo"
-</code></pre>
+    <dd><p>Sets the prefix; equivalent to <code>-PXYZ</code>.
 
-<p>only applies when generating a C++-interface scanner (<code>-+</code>
-option). It informs <code>smflex</code> that you have derived
-<code>foo</code> as a subclass of <code>yyFlexLexer</code>, so
-<code>smflex</code> will place your actions in the member function
-<code>foo::yym_lex()</code> instead of <code>yyFlexLexer::yym_lex()</code>.
-See
-<a href="#cpp-api">C++ API</a>
-for additional information.
+<dt id="option-yy-lex-name"><code>%option yy_lex_name="foo"</code>
+
+    <dd><p>Instead of emitting the lexer
+    function with name <code>yy_lex</code> when using the C API
+    (or method <code>yym_lex</code> when using the C++ API),
+    emit it with name specified (e.g., <code>foo</code>).
+
+    <p>When combined with <code>%option prefix</code>, this option
+    takes precedence.
+
+<dt id="option-yyclass"><code>%option yyclass="foo"</code>
+
+    <dd><p>
+    <p>When generating a C++-interface scanner (<code>-+</code>
+    option), this informs <code>smflex</code> that you have derived
+    <code>foo</code> as a subclass of <code>yyFlexLexer</code>, so
+    <code>smflex</code> will place your actions in the member function
+    <code>foo::yym_lex()</code> instead of <code>yyFlexLexer::yym_lex()</code>.
+
+    See <a href="#cpp-api">C++ API</a>
+    for additional information.
+
+</dl>
 
 <p>Certain <code>smflex</code> functions are only generated if their
 corresponding option is set.  These are:

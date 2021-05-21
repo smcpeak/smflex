@@ -1299,6 +1299,13 @@ static char const *look_up_skel_identifier(char const *id, int len)
 
   /* For now, use inefficient linear search. */
 
+  if (option_yy_lex_name) {
+    if (str_eq_substr("yy_lex", id, len) ||
+        str_eq_substr("yym_lex", id, len)) {
+      return option_yy_lex_name;
+    }
+  }
+
   for (i=0; i < TABLESIZE(all_caps_prefix_names); i++) {
     if (str_eq_substr(all_caps_prefix_names[i], id, len)) {
       sprintf(lookup_result, "%s%.*s", all_caps_prefix, len-2, id+2);

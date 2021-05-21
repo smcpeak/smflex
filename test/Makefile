@@ -283,6 +283,9 @@ all-df: out/username-yywrap.ok
 all-df: out/username.ok
 all-df: out/vert-bar-action.ok
 all-df: out/yy-input-redefined.ok
+all-df: out/yy-lex-name.ok
+all-df: out/yy-lex-name-prefix.ok
+all-df: out/yy-lex-name-prefix-cpp.ok
 all-df: out/yy-set-start-state-special.ok
 all-df: out/yy-wrap-function.ok
 all-df: out/yyinput-c-comments.ok

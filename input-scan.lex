@@ -301,6 +301,7 @@ LEXOPT          [aceknopr]
         outfile         return OPT_OUTFILE;
         prefix          return OPT_PREFIX;
         yyclass         return OPT_YYCLASS;
+        yy_lex_name     return OPT_YY_LEX_NAME;
 
         \"[^"\n]*\"     {
                           strcpy(nmstr, YY_TEXT + 1);

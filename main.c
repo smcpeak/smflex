@@ -115,6 +115,8 @@ char *action_array;
 int action_size;
 int defs1_offset, prolog_offset, action_offset, action_index;
 
+char const *option_yy_lex_name = NULL;
+
 FILE *scanner_c_file = NULL;
 
 int write_native_line_endings;

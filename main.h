@@ -126,6 +126,9 @@ extern char *action_array;
 extern int action_size;
 extern int defs1_offset, prolog_offset, action_offset, action_index;
 
+/* If not NULL, this is a malloc'd pointer to the name of the
+ * 'yy_lex' function or 'yym_lex' method. */
+extern char const *option_yy_lex_name;
 
 /* This contains the skeleton of the scanner implementation to
  * generate.  It is defined in generated-scanner.skl.c. */
