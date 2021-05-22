@@ -4867,6 +4867,26 @@ to be of continued value.
 
     <p>Replacement: None.
 
+<li><p>In section 1, <code>flex-2.5.4</code> accepts and ignores
+    directives of the forms:
+
+    <pre><code>
+        %{LETTER}{NUMBER}
+        %{LETTER}
+    </code></pre>
+
+    where <code>{LETTER}</code> is one of "<code>aceknopr</code>".
+    <code>smflex</code> does not accept them.
+
+    <p>Rationale: <code>flex</code> accepted these for compatibility
+    with
+    <a href="https://pubs.opengroup.org/onlinepubs/9699919799/utilities/lex.html">POSIX <code>lex</code></a>,
+    for which they specify the sizes of various internal tables.  I
+    do not care about <code>lex</code> compatibility and I want the
+    <code>smflex</code> input format to be as clean as possible.
+
+    <p>Replacement: Remove these options; they had no effect anyway.
+
 </ul>
 
 

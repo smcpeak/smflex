@@ -96,8 +96,6 @@ FIRST_CCL_CHAR  ([^\\\n]|{ESCSEQ})
 CCL_CHAR        ([^\\\n\]]|{ESCSEQ})
 CCL_EXPR        ("[:"[[:alpha:]]+":]")
 
-LEXOPT          [aceknopr]
-
 %%
   static int bracelevel, didadef, indented_code;
   static int doing_rule_action = false;
@@ -152,10 +150,10 @@ LEXOPT          [aceknopr]
                           return OPTION_OP;
                         }
 
-        ^"%"{LEXOPT}{OPTWS}[[:digit:]]*{OPTWS}{NL}    ++linenum; ADD_ACTION_NL(); /* ignore */
-        ^"%"{LEXOPT}{WS}.*{NL}                        ++linenum; ADD_ACTION_NL(); /* ignore */
-
-        ^"%"[^sxaceknopr{}].*   synerr( _( "unrecognized '%' directive" ) );
+        ^"%"            {
+                          synerr( _( "unrecognized '%' directive" ) );
+                          YY_SET_START_CONDITION(RECOVER);
+                        }
 
         ^{NAME}         {
                           strcpy(nmstr, YY_TEXT);
@@ -311,6 +309,7 @@ LEXOPT          [aceknopr]
                         }
 
         (([a-mo-z]|n[a-np-z])[[:alpha:]\-+]*)|. {
+                          /* TODO: This is kind of busted. */
                           format_synerr(_("unrecognized %%option: %s"), YY_TEXT);
                           YY_SET_START_CONDITION(RECOVER);
                         }
