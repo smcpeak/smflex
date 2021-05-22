@@ -106,9 +106,6 @@ char const *prefix;
 char const *all_caps_prefix;
 char *option_yyclass;
 
-/* Make sure program_name is initialized so we don't crash if writing
- * out an error message before getting the program name from argv[0].
- */
 char *program_name = "smflex";
 
 char *action_array;
@@ -512,7 +509,9 @@ void flexinit(int argc, char **argv)
   defs1_offset = prolog_offset = action_offset = action_index = 0;
   action_array[0] = '\0';
 
-  program_name = argv[0];
+  /* Previously we set 'program_name' to 'argv[0]' here, but that
+   * causes error messages to print the full path in a lot of
+   * situations, which is annoying. */
 
   /* Iterate over all program arguments. */
   for (--argc, ++argv; argc; --argc, ++argv) {
