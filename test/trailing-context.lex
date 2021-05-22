@@ -2,6 +2,7 @@
 /* Example with trailing context, mainly for performance testing. */
 /* See ../COPYING for license terms. */
 
+%smflex 100
 %{
 
 #include "perftest.h"                  /* runPerftest */

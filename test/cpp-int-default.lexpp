@@ -1,6 +1,7 @@
 /* cpp-int-default.lexpp */
 /* Default interactivity for a C++-interface scanner. */
 
+%smflex 100
 %option main
 %option c++
 

@@ -1,6 +1,7 @@
 /* stack-api.lex */
 /* Exercise the "%option stack" API. */
 
+%smflex 100
 %{
 #include <assert.h>                    /* assert */
 #include <stdio.h>                     /* printf */

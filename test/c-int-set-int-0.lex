@@ -1,6 +1,7 @@
 /* c-int-set-int-0.lex */
 /* C-interface scanner that calls 'yy_set_interactive(0)'. */
 
+%smflex 100
 %{
 #include <stdlib.h>        /* exit */
 %}

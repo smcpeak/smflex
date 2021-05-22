@@ -1,6 +1,7 @@
 /* yyless-foobar-s3.lex */
 /* Demonstrate yyless() from section 3. */
 
+%smflex 100
 %option flex-compat
 
 %%

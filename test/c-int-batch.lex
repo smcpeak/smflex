@@ -1,6 +1,7 @@
 /* c-int-batch.lex */
 /* Exercise %option batch. */
 
+%smflex 100
 %option batch
 %option main
 

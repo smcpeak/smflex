@@ -1,6 +1,7 @@
 /* username-read.lex */
 /* Exercise "%option read". */
 
+%smflex 100
 %option read
 %option main
 

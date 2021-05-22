@@ -1,6 +1,7 @@
 /* read-unread-character.lex */
 /* Exercise 'yy_read_character' and 'yy_unread_character'. */
 
+%smflex 100
 %option yy_read_character
 %option yy_unread_character
 

@@ -1,6 +1,7 @@
 /* cppscan-yywrap.lexpp */
 /* Scanner using C++ and overridng yym_wrap(). */
 
+%smflex 100
 %option c++
 
 %{

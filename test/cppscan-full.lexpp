@@ -1,6 +1,7 @@
 /* cppscan-full.lexpp */
 /* Scanner using C++ and %option full. */
 
+%smflex 100
 %option c++
 %option full
 %option main

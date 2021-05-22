@@ -3,6 +3,7 @@
 /* Written by Scott McPeak and placed into the public domain. */
 
 
+%smflex 100
 %{
 #include <assert.h>                    /* assert */
 #include <errno.h>                     /* errno */

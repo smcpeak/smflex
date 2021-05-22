@@ -2,6 +2,7 @@
 /* Illustrate use of start conditions to gather and interpret a C
  * string literal. */
 
+%smflex 100
 %{
 #include <assert.h>          /* assert */
 #include <stdlib.h>          /* strtol */

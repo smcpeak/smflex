@@ -1,6 +1,7 @@
 /* yy-input-redefined.lex */
 /* Demonstrate an alterative definition of yy_read_input_function. */
 
+%smflex 100
 %{
 #include <ctype.h>                     /* tolower */
 %}

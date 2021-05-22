@@ -1,6 +1,7 @@
 /* cppscan-jacobson.lexpp */
 /* Scanner using C++ and %option jacobson. */
 
+%smflex 100
 %option c++
 %option jacobson
 %option main

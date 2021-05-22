@@ -1,6 +1,7 @@
 /* error-handling-cpp.lexpp */
 /* Exercise handling of errors in C++ with exceptions. */
 
+%smflex 100
 %{
 #include <string.h>                    /* strcmp, strstr */
 %}

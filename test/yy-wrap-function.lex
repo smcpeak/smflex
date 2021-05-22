@@ -1,6 +1,7 @@
 /* yy-wrap-function.lex */
 /* Demonstrate setting 'yy_wrap_function'. */
 
+%smflex 100
 %{
 #include <stdio.h>                     /* fopen, perror */
 #include <stdlib.h>                    /* exit */

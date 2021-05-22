@@ -2,6 +2,7 @@
 /* Discard ML comments, which can nest.  Demonstrates use of the
  * start condition stack. */
 
+%smflex 100
 %option main
   /* BEGIN: example fragment */
 %option stack

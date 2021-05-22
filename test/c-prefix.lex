@@ -1,6 +1,7 @@
 /* c-prefix.lex */
 /* Exercise "%option prefix" for the C interface. */
 
+%smflex 100
 %option prefix="my_prefix"
 %option main
 

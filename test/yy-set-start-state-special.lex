@@ -4,6 +4,7 @@
                 /* BEGIN: example fragment */
                 int enter_special;
 
+%smflex 100
 %x SPECIAL
 %%
                 if (enter_special) {

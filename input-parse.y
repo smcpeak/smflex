@@ -753,6 +753,15 @@ void synerr(char str[])
 }
 
 
+/* Report a syntax error where 'fmt' has two integer placeholders. */
+void synerr_ii(char const *fmt, int n1, int n2)
+{
+  char errmsg[MAXLINE];
+  sprintf(errmsg, fmt, n1, n2);
+  synerr(errmsg);
+}
+
+
 /* format_warn - write out formatted warning */
 void format_warn(char msg[], char arg[])
 {

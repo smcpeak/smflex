@@ -2,6 +2,7 @@
 /* BEGIN: example fragment */
 /* scanner for a toy Pascal-like language */
 
+%smflex 100
 %{
 #include <math.h>            /* atof */
 #include <stdlib.h>          /* atoi */

@@ -1,6 +1,7 @@
 /* input-c-comments.lex */
 /* Demonstrate use of yyinput(). */
 
+%smflex 100
 %option main
 %option flex-compat
 %option yy_read_character

@@ -1,6 +1,7 @@
 /* scan-string-etc.lex */
 /* Exercise 'yy_scan_string' and friends. */
 
+%smflex 100
 %{
 #include <assert.h>          /* assert */
 #include <stdio.h>           /* fread */

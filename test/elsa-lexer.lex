@@ -43,6 +43,7 @@
 
 
 /* ----------------------- C definitions ---------------------- */
+%smflex 100
 %{
 
 #include "perftest.h"                  /* runPerftest */

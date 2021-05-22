@@ -342,6 +342,16 @@ void flexerror(const char msg[])
 }
 
 
+/* Error with a single integer argument. */
+void flexerror_i(char const *fmt, int n)
+{
+  fprintf(stderr, "%s: ", program_name);
+  fprintf(stderr, fmt, n);
+  fprintf(stderr, "\n");
+  flexend(1);
+}
+
+
 /* Print error using a format string, which must have one "%s" in it,
  * but no newline, and one string to substitute. */
 void flexerror_s(char const *fmt, char const *s)

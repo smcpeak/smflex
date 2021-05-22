@@ -1,6 +1,7 @@
 /* cpp-prefix.lexpp */
 /* C++ scanner using %option prefix. */
 
+%smflex 100
 %option c++
 %option main
 %option prefix="MyLexer"

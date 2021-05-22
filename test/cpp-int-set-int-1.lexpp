@@ -1,6 +1,7 @@
 /* cpp-int-set-int-1.lexpp */
 /* C++-interface scanner that calls 'yym_set_interactive(1)'. */
 
+%smflex 100
 %option c++
 
 %%

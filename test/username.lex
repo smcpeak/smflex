@@ -10,6 +10,7 @@
   }
 
   /* BEGIN: example fragment */
+%smflex 100
 %%
 username    printf("%s", getlogin());
   /* END: example fragment */

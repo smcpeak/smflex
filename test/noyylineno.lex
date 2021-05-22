@@ -1,6 +1,7 @@
 /* noyylineno.lex */
 /* Baseline for performance comparison with yylineno.lex. */
 
+%smflex 100
 %{
 
 #include "perftest.h"                /* runPerftest */

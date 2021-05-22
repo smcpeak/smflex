@@ -1,6 +1,7 @@
 /* yymore-yyless.lex */
 /* Test 'yymore()' followed by 'YY_LESS_TEXT()'. */
 
+%smflex 100
 %option main
 %option yymore
 

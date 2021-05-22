@@ -1,6 +1,7 @@
 /* discard-c-comments2.lex */
 /* Keep track of state before 'comment'. */
 
+%smflex 100
 %option main
 
 /* BEGIN: example fragment */

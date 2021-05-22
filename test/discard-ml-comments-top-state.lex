@@ -2,6 +2,7 @@
 /* Exercise 'yy_top_start_condition'. */
 /* Also exercise flex-compat YY_START. */
 
+%smflex 100
 %option main
 %option stack
 %option flex-compat

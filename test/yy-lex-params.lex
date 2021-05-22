@@ -1,6 +1,7 @@
 /* yy-lex-params.lex */
 /* Exercise %option yy_lex_parameters. */
 
+%smflex 100
 %option yy_lex_parameters="int x, int y"
 
 %%

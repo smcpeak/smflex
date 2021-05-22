@@ -1,6 +1,7 @@
 /* yymore-mega-kludge.lex */
 /* Demonstrate yymore(). */
 
+%smflex 100
 %option main
 
 /* BEGIN: example fragment */

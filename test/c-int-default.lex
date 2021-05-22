@@ -1,6 +1,7 @@
 /* c-int-default.lex */
 /* Default interactivity for a C-interface scanner. */
 
+%smflex 100
 %option main
 
 %{

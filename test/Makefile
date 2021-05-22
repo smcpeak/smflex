@@ -334,17 +334,42 @@ out/c-prefix-validated.ok: out/c-prefix.ok
 
 # Run $(SMFLEX) on an input that should provoke a syntax error.
 .PRECIOUS: out/%.bad
-out/%.bad: %.lex $(SMFLEX)
+out/%.bad: %.lex %.expect $(SMFLEX)
 	@mkdir -p out
-	if $(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -oout/$*.lex.c $<; then \
+	if $(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -oout/$*.lex.c $< >out/$*.actual 2>&1; then \
 	  echo "That should have failed!"; \
 	  exit 2; \
 	fi
+	@echo diff -b -u $*.expect out/$*.actual
+ifeq ($(UPDATE_EXPECT),1)
+	@if diff -b -u $*.expect out/$*.actual; then true; else \
+	  echo ""; \
+	  echo "The actual output is different from the expected output."; \
+	  echo "Fixing it automatically due to UPDATE_EXPECT=1."; \
+	  echo "./update-expect.sh $*"; \
+	  ./update-expect.sh $*; \
+	fi
+else
+	@if diff -b -u $*.expect out/$*.actual; then true; else \
+	  echo ""; \
+	  echo "The actual output is different from the expected output."; \
+	  echo "If the actual is correct, update expected by running:"; \
+	  echo "  $ ./update-expect.sh $*"; \
+	  echo "Or, re-run tests with UPDATE_EXPECT=1 to update them all."; \
+	  exit 2; \
+	fi
+endif
 	touch $@
 
 # List of tests of syntax errors.
-all: out/invalid-option-name.bad
-all: out/invalid-pct-a.bad
+all-invalid: out/invalid-option-name.bad
+all-invalid: out/invalid-pct-a.bad
+all-invalid: out/invalid-smflex-repeated.bad
+all-invalid: out/invalid-smflex-too-large.bad
+all-invalid: out/invalid-smflex-too-small.bad
+
+.PHONY: all-invalid
+all: all-invalid
 
 # Unit test program.
 out/test-eval-skel-expr.exe: test-eval-skel-expr.c ../eval-skel-expr.h ../eval-skel-expr.c

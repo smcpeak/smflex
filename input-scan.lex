@@ -70,6 +70,7 @@
 
 %}
 
+%smflex 100
 %option caseless nodefault outfile="input-scan.lex.c" stack
 %option prefix="input_scan"
 %option yy_read_character
@@ -148,6 +149,12 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           add_action(yy_output_file_line_directive);
                           YY_SET_START_CONDITION(OPTION);
                           return OPTION_OP;
+                        }
+
+        ^"%smflex"{WS}.*{NL}     {
+                          parse_smflex_version(YY_TEXT+8);
+                          ++linenum;
+                          add_action("\n");
                         }
 
         ^"%"            {

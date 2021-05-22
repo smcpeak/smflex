@@ -1,6 +1,7 @@
 /* cpp-int-batch.lexpp */
 /* %option batch for a C++-interface scanner. */
 
+%smflex 100
 %option main
 %option c++
 %option batch

@@ -1,6 +1,7 @@
 /* yym-scan-string-etc.lexpp */
 /* Exercise 'yym_scan_string' and friends. */
 
+%smflex 100
 %option c++
 %option yy_scan_string
 %option yy_scan_bytes

@@ -1,6 +1,7 @@
 /* discard-ml-comments-cpp.lex */
 /* Exercise state stack manipylation in C++. */
 
+%smflex 100
 %option c++
 %option main
 %option stack

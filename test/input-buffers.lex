@@ -1,6 +1,7 @@
 /* input-buffers.lex */
 /* Demonstrate use of multiple input buffers. */
 
+%smflex 100
 %{
 #include <assert.h>          /* assert */
 #include <stdio.h>           /* fprintf, fopen, etc. */

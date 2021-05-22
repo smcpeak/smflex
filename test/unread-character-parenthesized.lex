@@ -1,6 +1,7 @@
 /* unread-character-parenthesized.lex */
 /* Demonstrate use of 'YY_UNREAD_CHARACTER()'. */
 
+%smflex 100
 %option main
 
 %{

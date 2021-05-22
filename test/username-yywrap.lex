@@ -1,6 +1,7 @@
 /* username-yywrap.lex */
 /* Like username.lex, but use 'yywrap()'. */
 
+%smflex 100
 %{
 #include <stdio.h>                     /* fopen */
 #include <stdlib.h>                    /* exit, perror */

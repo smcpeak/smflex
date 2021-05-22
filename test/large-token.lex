@@ -1,6 +1,7 @@
 /* large-token.lex */
 /* Exercise scanning a token so large it requires buffer reallocation. */
 
+%smflex 100
 %{
 #include <string.h>                    /* memset */
 %}

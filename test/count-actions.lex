@@ -1,6 +1,7 @@
 /* count-actions.lex */
 /* Demonstrate using YY_USER_ACTION to count action invocations. */
 
+%smflex 100
 %{
 #include <assert.h>          /* assert */
 

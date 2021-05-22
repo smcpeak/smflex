@@ -1,6 +1,7 @@
 /* yy-lex-name-prefix-cpp.lex */
 /* Exercise %option yy_lex_name and %option prefix and %option c++. */
 
+%smflex 100
 %option c++
 %option yy_lex_name="my_custom_lexer_name"
 %option prefix="my_custom_prefix"

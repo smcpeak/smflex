@@ -37,6 +37,7 @@ void cshell(Char v[], int n, int special_case_0);
 void dataend(void);
 void dataflush(void);
 void flexerror(const char msg[]);
+void flexerror_i(char const *fmt, int n);
 void flexerror_s(char const *fmt, char const *s);
 void flexerror_ss(char const *fmt, char const *s1, char const *s2);
 void flexfatal(const char msg[]);

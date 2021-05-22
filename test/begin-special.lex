@@ -5,6 +5,7 @@
 #include <assert.h>                    /* assert */
 %}
 
+%smflex 100
 %option flex-compat
 
                 int enter_special;

@@ -1,6 +1,7 @@
 /* input-buffers-with-read.lex */
 /* Multiple input buffers but exclusively using 'yy_read_character'. */
 
+%smflex 100
 %{
 #include <assert.h>          /* assert */
 #include <stdio.h>           /* fprintf, fopen, etc. */

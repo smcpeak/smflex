@@ -1,6 +1,7 @@
 /* yyless-foobar.lex */
 /* Demonstrate yyless(). */
 
+%smflex 100
 %option main
 
 /* BEGIN: example fragment */

@@ -1,6 +1,7 @@
 /* yyinput-c-comments.lexpp */
 /* Demonstrate flex-compat and yyinput() with C++. */
 
+%smflex 100
 %option main
 %option c++
 %option flex-compat

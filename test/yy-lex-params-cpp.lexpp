@@ -1,6 +1,7 @@
 /* yy-lex-params-cpp.lex */
 /* Exercise %option yy_lex_parameters and %option c++. */
 
+%smflex 100
 %option c++
 %option yy_lex_parameters="int x, int y"
 

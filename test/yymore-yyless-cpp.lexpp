@@ -1,6 +1,7 @@
 /* yymore-yyless-cpp.lexpp */
 /* Test 'YY_MORE_TEXT()' followed by 'yym_less_text()'. */
 
+%smflex 100
 %option c++
 %option main
 %option yymore

@@ -3,6 +3,7 @@
 
 /* Have smflex provide a main(). */
 %option main
+%smflex 100
 
 %%
 username           printf("USERNAME");

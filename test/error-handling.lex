@@ -1,6 +1,7 @@
 /* error-handling.lex */
 /* Exercise handling of errors. */
 
+%smflex 100
 %{
 #include <stdio.h>                     /* printf */
 #include <string.h>                    /* strcmp, strstr */

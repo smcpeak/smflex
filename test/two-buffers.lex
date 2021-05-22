@@ -1,6 +1,7 @@
 /* two-buffers.lex */
 /* Make two buffers and interleave their input. */
 
+%smflex 100
 %{
 #include <assert.h>                    /* assert */
 

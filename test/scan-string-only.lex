@@ -1,6 +1,7 @@
 /* scan-string-only.lex */
 /* Use 'yy_scan_string' without the others. */
 
+%smflex 100
 %option yy_scan_string
 
 %%

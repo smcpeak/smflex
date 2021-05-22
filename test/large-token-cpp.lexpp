@@ -2,6 +2,7 @@
 /* Exercise scanning a token so large it requires buffer reallocation. */
 /* With C++ API. */
 
+%smflex 100
 %option c++
 %option yy_scan_string
 

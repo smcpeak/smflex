@@ -2,6 +2,7 @@
 /* C-interface scanner that calls 'yy_set_interactive()' based on
  * what 'isatty()' says. */
 
+%smflex 100
 %{
 #include <stdlib.h>        /* exit */
 #include <unistd.h>        /* isatty */

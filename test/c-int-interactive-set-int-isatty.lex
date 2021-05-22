@@ -7,6 +7,7 @@
  * used non-interactively.  The tables are configured for
  * interactive use but the input method is determined at run time. */
 
+%smflex 100
 %option interactive
 
 %{

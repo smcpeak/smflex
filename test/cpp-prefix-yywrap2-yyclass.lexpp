@@ -2,6 +2,7 @@
 /* C++ scanner using %option prefix and %option yyclass, and
  * overriding yym_wrap() but without %option yywrap. */
 
+%smflex 100
 %option c++
 %option main
 %option prefix="MyLexer"

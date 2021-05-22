@@ -1,6 +1,7 @@
 /* yym-wrap.lexpp */
 /* Demonstrate overriding 'yym_wrap()'. */
 
+%smflex 100
 %{
 #include <fstream>                     /* std::ifstream */
 #include <stdio.h>                     /* perror */

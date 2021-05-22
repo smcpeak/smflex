@@ -1,6 +1,7 @@
 /* cpp-prefix-yywrap.lexpp */
 /* C++ scanner using %option prefix and overriding yym_wrap(). */
 
+%smflex 100
 %option c++
 %option prefix="MyLexer"
 

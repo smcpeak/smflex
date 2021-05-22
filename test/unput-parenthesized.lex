@@ -1,6 +1,7 @@
 /* unput-parenthesized.lex */
 /* Demonstrate use of unput(). */
 
+%smflex 100
 %option main
 %option flex-compat
 %option yy_unread_character

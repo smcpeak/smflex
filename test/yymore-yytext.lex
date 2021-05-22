@@ -1,6 +1,7 @@
 /* yymore-yytext.lex */
 /* Explore interaction of yymore and YY_TEXT. */
 
+%smflex 100
 %option main
 %option yy_read_character
 %option yymore

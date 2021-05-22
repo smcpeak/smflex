@@ -1,6 +1,7 @@
 /* noreject-frob.lex */
 /* Like reject-frob.lex, but without YY_REJECT. */
 
+%smflex 100
 %{
 
 #include "perftest.h"                  /* runPerftest */

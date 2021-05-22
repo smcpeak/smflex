@@ -1,6 +1,7 @@
 /* option-debug-cpp.lex */
 /* Exercise "%option debug" and "%option c++". */
 
+%smflex 100
 %option main
 %option debug
 %option c++

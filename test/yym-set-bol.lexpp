@@ -1,6 +1,7 @@
 /* yym-set-bol.lex */
 /* Exercise 'yym_set_bol' and 'YY_GET_BOL' with "%option c++". */
 
+%smflex 100
 %option c++
 %option main
 

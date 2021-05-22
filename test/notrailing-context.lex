@@ -3,6 +3,7 @@
  * trailing-context.lex. */
 /* See ../COPYING for license terms. */
 
+%smflex 100
 %{
 
 #include "perftest.h"                  /* runPerftest */

@@ -1,6 +1,7 @@
 /* yy-lex-name-prefix.lex */
 /* Exercise %option yy_lex_name and %option prefix. */
 
+%smflex 100
 %option yy_lex_name="my_custom_lexer_name"
 %option prefix="my_custom_prefix"
 

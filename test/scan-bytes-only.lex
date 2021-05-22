@@ -1,6 +1,7 @@
 /* scan-bytes-only.lex */
 /* Use 'yy_scan_bytes' without the others. */
 
+%smflex 100
 %option yy_scan_bytes
 
 %{

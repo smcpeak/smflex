@@ -15,6 +15,7 @@
 void check_options(void);
 void flexend(int exit_status);
 void flexinit(int argc, char **argv);
+void parse_smflex_version(char const *text);
 void readin(void);
 void set_prefix(char const *new_prefix);
 void set_up_initial_allocations(void);
@@ -132,6 +133,9 @@ extern char const *option_yy_lex_name;
 
 /* If not NULL, the parameters to add to 'yy_lex' or 'yym_lex'. */
 extern char const *option_yy_lex_parameters;
+
+/* Specified input format version number, or 0 if none was specified. */
+extern int smflex_input_version;
 
 /* This contains the skeleton of the scanner implementation to
  * generate.  It is defined in generated-scanner.skl.c. */

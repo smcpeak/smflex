@@ -1,6 +1,7 @@
 /* gather-c-string2.lex */
 /* Illustrate use of start condition scopes. */
 
+%smflex 100
 %{
 #include <assert.h>          /* assert */
 #include <stdlib.h>          /* strtol */

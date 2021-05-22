@@ -1,6 +1,7 @@
 /* reject-frob.lex */
 /* First example in YY_REJECT section of the manual. */
 
+%smflex 100
 %option reject
 
 %{

@@ -1,6 +1,7 @@
 /* expect-floats.lex */
 /* Illustrate use of start conditions. */
 
+%smflex 100
 %option main
 
 /* BEGIN: example fragment */

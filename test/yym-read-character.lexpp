@@ -1,6 +1,7 @@
 /* yym-read-character.lexpp */
 /* Exercise 'yym_read_character' and 'yym_unread_character'. */
 
+%smflex 100
 %option c++
 %option prefix="Example"
 %option yy_read_character

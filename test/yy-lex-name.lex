@@ -1,6 +1,7 @@
 /* yy-lex-name.lex */
 /* Exercise %option yy_lex_name. */
 
+%smflex 100
 %option yy_lex_name="my_custom_lexer_name"
 
 %%

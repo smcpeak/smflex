@@ -1,6 +1,7 @@
 /* yym-set-start-state.lexpp */
 /* Illustrate calling yym_set_start_condition(). */
 
+%smflex 100
 %option c++
 
 %{

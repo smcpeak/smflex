@@ -359,9 +359,16 @@ scanner which whenever it encounters the string "username" will replace
 it with the user's login name:
 
 <pre><!-- BEGIN example: "username.lex" fragment=true indent=4 --><code>
+    %smflex 100
     %%
     username    printf("%s", getlogin());
 </code><!-- END example --></pre>
+
+<p>The line <code>%smflex 100</code> specifies the input format and its
+version number.  It can appear, on a line by itself, anywhere before the
+first <code>%%</code> line.
+See <a href="#smflex-directive"><code>%smflex</code> directive</a> for
+more details.
 
 <p>By default, any text not matched by a <code>smflex</code> scanner is
 copied to the output, so the net effect of this scanner is to copy its
@@ -375,6 +382,7 @@ of the rules.
 <pre><!-- BEGIN example: "count-lines-chars.lex" fragment=true indent=4 --><code>
             int num_lines = 0, num_chars = 0;
 
+    %smflex 100
     %%
     \n      ++num_lines; ++num_chars;
     .       ++num_chars;
@@ -406,6 +414,7 @@ other than a newline (indicated by the "." regular expression).
 <pre><!-- BEGIN example: "toy-pascal.lex" fragment=true indent=4 --><code>
     /* scanner for a toy Pascal-like language */
 
+    %smflex 100
     %{
     #include &lt;math.h&gt;            /* atof */
     #include &lt;stdlib.h&gt;          /* atoi */
@@ -1849,6 +1858,7 @@ whenever <code>yy_lex()</code> is called and the global variable
 <pre><!-- BEGIN example: "yy-set-start-state-special.lex" fragment=true indent=4 --><code>
                     int enter_special;
 
+    %smflex 100
     %x SPECIAL
     %%
                     if (enter_special) {
@@ -3093,6 +3103,25 @@ corresponding option is set.  These are:
     yy_scan_buffer
     yy_unread_character
 </code></pre>
+
+
+<h2 id="smflex-directive">The %smflex directive</h2>
+
+<p>Every <code>smflex</code> input file must have a line in section 1
+like:
+
+<pre><code>
+  %smflex 100
+</code></pre>
+
+<p>
+This specifies the version number of the <em>input</em> language.
+Generally, <code>smflex-X.Y.Z</code> knows how to read input
+version X*100+Y and some earlier than that.
+
+<p>
+Rationale: By making the input version explicit, we can more easily
+ensure backward compatibility as the tool evolves.
 
 
 <!-- ======================================================= -->
@@ -4430,6 +4459,7 @@ of a simple C++ scanner:
 <pre><!-- BEGIN example: "cpp-manual-example.lexpp" indent=4 --><code>
         // An example of using the smflex C++ scanner class.
 
+    %smflex 100
     %option c++
     %option prefix="Example"
     %option yy_read_character

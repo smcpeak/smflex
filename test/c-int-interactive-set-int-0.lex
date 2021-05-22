@@ -4,6 +4,7 @@
 
 /* This covers the case of interactive tables but fast reads. */
 
+%smflex 100
 %option interactive
 
 %{

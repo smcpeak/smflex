@@ -1,6 +1,7 @@
 /* cppscan-main.lexpp */
 /* Scanner using C++ where I provide 'main()'. */
 
+%smflex 100
 %option c++
 
 %%

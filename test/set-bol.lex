@@ -1,6 +1,8 @@
 /* set-bol.lex */
 /* Exercise 'yy_set_bol' and 'YY_AT_BOL'. */
 
+%smflex 100
+
 /* Activate YY_AT_BOL, yytext and yyleng. */
 %option flex-compat
 

@@ -1,6 +1,7 @@
 /* discard-c-comments.lex */
 /* Another illustration of start conditions. */
 
+%smflex 100
 %option main
 
 /* BEGIN: example fragment */

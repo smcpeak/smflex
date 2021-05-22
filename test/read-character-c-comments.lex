@@ -1,6 +1,7 @@
 /* read-character-c-comments.lex */
 /* Demonstrate use of 'YY_READ_CHARACTER'. */
 
+%smflex 100
 %option main
 %option yy_read_character
 

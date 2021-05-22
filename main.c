@@ -43,10 +43,10 @@ char copyright[] =
 #include "sym.h"                       /* scinstal */
 #include "version.h"                   /* SMFLEX_VERSION */
 
-#include <ctype.h>                     /* toupper */
+#include <ctype.h>                     /* toupper, isspace, isdigit */
 #include <stdio.h>                     /* remove */
 #include <string.h>                    /* strcpy, etc. */
-#include <stdlib.h>                    /* exit */
+#include <stdlib.h>                    /* exit, strtol */
 
 
 /* Size of input alphabet - should be size of ASCII set. */
@@ -117,6 +117,7 @@ int defs1_offset, prolog_offset, action_offset, action_index;
 
 char const *option_yy_lex_name = NULL;
 char const *option_yy_lex_parameters = NULL;
+int smflex_input_version = 0;
 
 FILE *scanner_c_file = NULL;
 
@@ -727,6 +728,49 @@ void flexinit(int argc, char **argv)
 }
 
 
+/* Parse the "%smflex" version directive. */
+void parse_smflex_version(char const *text)
+{
+  long vnum;
+  char *afterDigits;
+
+  while (isspace(*text)) {
+    text++;
+  }
+
+  if (!isdigit(*text)) {
+    synerr(_("%smflex must be followed by an integer"));
+    return;
+  }
+  vnum = strtol(text, &afterDigits, 10 /*base*/);
+  if (vnum < MINIMUM_SMFLEX_INPUT_VERSION) {
+    synerr_ii(_("%%smflex input version %d is smaller than minimum recognized version %d"),
+      vnum, MINIMUM_SMFLEX_INPUT_VERSION);
+    return;
+  }
+  if (vnum > MAXIMUM_SMFLEX_INPUT_VERSION) {
+    synerr_ii(_("%%smflex input version %d is larger than maximum recognized version %d"),
+      vnum, MAXIMUM_SMFLEX_INPUT_VERSION);
+    return;
+  }
+  if (smflex_input_version) {
+    synerr(_("%%smflex directive already specified"));
+    return;
+  }
+
+  smflex_input_version = (int)vnum;
+
+  /* What remains should be only whitespace. */
+  while (isspace(*afterDigits)) {
+    afterDigits++;
+  }
+  if (*afterDigits) {
+    synerr(_("%smflex version number was followed by extra text"));
+    return;
+  }
+}
+
+
 /* Construct the name of the header file from the output file name
  * by replacing the extension with "h".  Put it in 'header_file_name'. */
 static void compute_header_file_name()
@@ -755,6 +799,8 @@ void readin()
    * directive is put in 'action_array' for the moment. */
   line_directive_out_src();
 
+  /* Parse the input file through section 2.  After this, only section 3
+   * remains to be copied, which happens at the end of 'make_tables()'. */
   if (yyparse()) {
     pinpoint_message(_("fatal parse error"));
     flexend(1);
@@ -807,6 +853,11 @@ void readin()
       flexerror(_("%option yylineno cannot be used with -Cf or -CJ"));
     else
       flexerror(_("variable trailing context rules cannot be used with -Cf or -CJ"));
+  }
+
+  if (smflex_input_version == 0) {
+    flexerror_i(_("Input file is missing the required \"%%smflex %d\" directive."),
+                MAXIMUM_SMFLEX_INPUT_VERSION);
   }
 
   /* Begin writing the primary output file. */
