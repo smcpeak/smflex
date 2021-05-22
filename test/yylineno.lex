@@ -1,11 +1,12 @@
 /* yylineno.lex */
 /* Exercise %option yylineno. */
 
+%smflex 100
+
 /* This file will exercise the compatibility 'yylineno'.
  * html-link-valiator.lex exercises the smflex 'YY_LINENO'. */
 %option flex-compat
 
-%smflex 100
 %option yylineno
 
 %{

@@ -1,12 +1,12 @@
 /* begin-special.lex */
 /* Illustrate calling BEGIN on entry to yy_lex(). */
 
+%smflex 100
+%option flex-compat
+
 %{
 #include <assert.h>                    /* assert */
 %}
-
-%smflex 100
-%option flex-compat
 
                 int enter_special;
 

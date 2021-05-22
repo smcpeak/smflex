@@ -13,6 +13,7 @@
 extern void build_eof_action(void);
 extern void format_synerr(char const *msg, char const *arg);
 extern void synerr(char str[]);
+extern void synerr_i(char const *fmt, int n);
 extern void synerr_ii(char const *fmt, int n1, int n2);
 extern void format_warn(char msg[], char arg[]);
 extern void warn(char str[]);

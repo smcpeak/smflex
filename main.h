@@ -13,6 +13,7 @@
 
 /* See definitions for documentation. */
 void check_options(void);
+void check_smflex_version_specified(void);
 void flexend(int exit_status);
 void flexinit(int argc, char **argv);
 void parse_smflex_version(char const *text);

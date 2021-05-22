@@ -1,5 +1,7 @@
 /* input-scan.lex - scanner for smflex input */
 
+%smflex 100
+
 %{
 /*-
  * Copyright (c) 1990 The Regents of the University of California.
@@ -70,7 +72,6 @@
 
 %}
 
-%smflex 100
 %option caseless nodefault outfile="input-scan.lex.c" stack
 %option prefix="input_scan"
 %option yy_read_character
@@ -115,16 +116,19 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
         ^"%s"{NAME}?    {
                           /* About to emit SC #defines, which must be
                            * in output file context. */
+                          check_smflex_version_specified();
                           add_action(yy_output_file_line_directive);
                           doing_start_conditions = true;
                           return SCDECL;
                         }
         ^"%x"{NAME}?    {
+                          check_smflex_version_specified();
                           add_action(yy_output_file_line_directive);
                           doing_start_conditions = true;
                           return XSCDECL;
                         }
         ^"%{".*{NL}     {
+                          check_smflex_version_specified();
                           ++ linenum;
                           line_directive_out_src();
                           indented_code = false;
@@ -134,6 +138,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
         {WS}            /* discard */
 
         ^"%%".*         {
+                          check_smflex_version_specified();
                           sectnum = 2;
                           bracelevel = 0;
                           mark_defs1();
@@ -143,6 +148,8 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                         }
 
         ^"%option"      {
+                          check_smflex_version_specified();
+
                           /* We could emit lots or nothing while
                            * processing options.  It has to be treated
                            * as non-source. */
@@ -163,6 +170,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                         }
 
         ^{NAME}         {
+                          check_smflex_version_specified();
                           strcpy(nmstr, YY_TEXT);
                           didadef = false;
                           YY_SET_START_CONDITION(PICKUPDEF);

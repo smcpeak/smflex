@@ -369,8 +369,8 @@ it with the user's login name:
 </code><!-- END example --></pre>
 
 <p>The line <code>%smflex 100</code> specifies the input format and its
-version number.  It can appear, on a line by itself, anywhere before the
-first <code>%%</code> line.
+version number.  It must appear, on a line by itself, before any other
+<code>%</code> directive.
 See <a href="#smflex-directive"><code>%smflex</code> directive</a> for
 more details.
 
@@ -3126,6 +3126,13 @@ version X*100+Y and some earlier than that.
 <p>
 Rationale: By making the input version explicit, we can more easily
 ensure backward compatibility as the tool evolves.
+
+<p>
+This directive must come before any other "%" directive.
+
+<p>
+Rationale: How other directives is interpreted might depend on the
+input file version.
 
 
 <!-- ======================================================= -->

@@ -728,11 +728,19 @@ void flexinit(int argc, char **argv)
 }
 
 
+/* True once we have report an error with %smflex. */
+static int reported_smflex_error = 0;
+
 /* Parse the "%smflex" version directive. */
 void parse_smflex_version(char const *text)
 {
   long vnum;
   char *afterDigits;
+
+  /* Assume we will get into one of the error cases.  And even if we
+   * don't, it does not matter because we will not want to report
+   * anything since the number will be set. */
+  reported_smflex_error = 1;
 
   while (isspace(*text)) {
     text++;
@@ -767,6 +775,19 @@ void parse_smflex_version(char const *text)
   if (*afterDigits) {
     synerr(_("%smflex version number was followed by extra text"));
     return;
+  }
+}
+
+
+/* We are parsing some other "%" directive.  Check that %smflex has been
+ * specified. */
+void check_smflex_version_specified()
+{
+  if (smflex_input_version == 0 && !reported_smflex_error) {
+    synerr_i(_("The \"%%smflex %d\" directive is required and must "
+               "come before any other \"%%\" directive."),
+             MAXIMUM_SMFLEX_INPUT_VERSION);
+    reported_smflex_error = 1;
   }
 }
 
@@ -853,11 +874,6 @@ void readin()
       flexerror(_("%option yylineno cannot be used with -Cf or -CJ"));
     else
       flexerror(_("variable trailing context rules cannot be used with -Cf or -CJ"));
-  }
-
-  if (smflex_input_version == 0) {
-    flexerror_i(_("Input file is missing the required \"%%smflex %d\" directive."),
-                MAXIMUM_SMFLEX_INPUT_VERSION);
   }
 
   /* Begin writing the primary output file. */

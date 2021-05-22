@@ -362,6 +362,7 @@ endif
 	touch $@
 
 # List of tests of syntax errors.
+all-invalid: out/invalid-missing-smflex.bad
 all-invalid: out/invalid-option-name.bad
 all-invalid: out/invalid-pct-a.bad
 all-invalid: out/invalid-smflex-repeated.bad
