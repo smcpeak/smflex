@@ -337,16 +337,20 @@ and reference sections:
 <!-- ======================================================= -->
 <h1 id="description">DESCRIPTION</h1>
 
-<p><code>smflex</code> is a tool for generating <em>scanners</em>: programs
-which recognized lexical patterns in text. <code>smflex</code> reads the
-given input files, or its standard input if no file names are given, for
-a description of a scanner to generate. The description is in the form
-of pairs of regular expressions and C code, called <em>rules</em>.  <code>smflex</code>
-generates as output a C source file, <code>lex.yy.c</code>, which
-defines a routine <code>yy_lex()</code>. This file is compiled and linked
-with the <code>-lfl</code> library to produce an executable. When the
-executable is run, it analyzes its input for occurrences of the regular
-expressions. Whenever it finds one, it executes the corresponding C code.
+<p><code>smflex</code> is a tool for generating <em>scanners</em>:
+programs which recognize lexical patterns in text. <code>smflex</code>
+reads the given input files for a description of a scanner to generate.
+The description is in the form of pairs of regular expressions and C
+code, called <em>rules</em>.  <code>smflex</code> generates as output
+two source files, named (by default) <code>lex.yy.h</code> and
+<code>lex.yy.c</code>.  The former declares the API for the scanner, of
+which <code>yy_lex()</code> is the most important, and the latter
+implements that API.
+
+<p>These files are compiled and linked, possibly along with others, to
+produce an executable. When the executable is run, it analyzes its input
+for occurrences of the regular expressions. Whenever it finds one, it
+executes the corresponding C code.
 
 
 <!-- ======================================================= -->
