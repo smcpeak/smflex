@@ -428,7 +428,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           return '\n';
                         }
 
-        ^{WS}"/*"       {
+        ^{OPTWS}"/*"    {
                           YY_LESS_TEXT(YY_LENG - 2); /* put back '/', '*' */
                           bracelevel = 0;
                           continued_action = false;
