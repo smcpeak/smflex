@@ -333,14 +333,18 @@ out/c-prefix-validated.ok: out/c-prefix.ok
 	touch $@
 
 # Run $(SMFLEX) on an input that should provoke a syntax error.
-all: out/invalid-pct-a.bad
-out/invalid-pct-a.bad: invalid-pct-a.lex $(SMFLEX)
+.PRECIOUS: out/%.bad
+out/%.bad: %.lex $(SMFLEX)
 	@mkdir -p out
-	if $(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -oout/invalid-pct-a.lex.c $<; then \
+	if $(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -oout/$*.lex.c $<; then \
 	  echo "That should have failed!"; \
 	  exit 2; \
 	fi
 	touch $@
+
+# List of tests of syntax errors.
+all: out/invalid-option-name.bad
+all: out/invalid-pct-a.bad
 
 # Unit test program.
 out/test-eval-skel-expr.exe: test-eval-skel-expr.c ../eval-skel-expr.h ../eval-skel-expr.c

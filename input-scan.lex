@@ -308,8 +308,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           return NAME;
                         }
 
-        (([a-mo-z]|n[a-np-z])[[:alpha:]\-+]*)|. {
-                          /* TODO: This is kind of busted. */
+        (([a-mo-z]|n[a-np-z])[[:alpha:]\-+_]*)|. {
                           format_synerr(_("unrecognized %%option: %s"), YY_TEXT);
                           YY_SET_START_CONDITION(RECOVER);
                         }
