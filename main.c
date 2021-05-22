@@ -785,7 +785,8 @@ void check_smflex_version_specified()
 {
   if (smflex_input_version == 0 && !reported_smflex_error) {
     synerr_i(_("The \"%%smflex %d\" directive is required and must "
-               "come before any other \"%%\" directive."),
+               "come before anything other than blank lines or "
+               "un-indented comments."),
              MAXIMUM_SMFLEX_INPUT_VERSION);
     reported_smflex_error = 1;
   }

@@ -80,6 +80,9 @@
       border-left: 2px solid #e6e6e6;
       color: #606060;
     }
+    .indented {
+      padding-left: 2em;
+    }
     code {
       font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
       font-size: 85%;
@@ -358,35 +361,49 @@ executes the corresponding C code.
 
 <p>Let's start with some simple examples to get the flavor of how one uses
 <code>smflex</code>. The following <code>smflex</code>
-<a href="test/username.lex">input</a> specifies a
-scanner which whenever it encounters the string "username" will replace
-it with the user's login name:
+<a href="test/username-getenv.lex">input</a> specifies a
+scanner which replaces every occurrence of the string "username"
+with the user's login name:
 
-<pre><!-- BEGIN example: "username.lex" fragment=true indent=4 --><code>
+<pre><!-- BEGIN example: "username-getenv.lex" indent=4 --><code>
+    /* username-getenv.lex */
+    /* First example. */
+
     %smflex 100
+    %option main
     %%
-    username    printf("%s", getlogin());
+    username    printf("%s", getenv("USER"));
 </code><!-- END example --></pre>
 
 <p>The line <code>%smflex 100</code> specifies the input format and its
-version number.  It must appear, on a line by itself, before any other
-<code>%</code> directive.
+version number.  It must appear, on a line by itself, before anything
+else, other than blank lines or comments.
 See <a href="#smflex-directive"><code>%smflex</code> directive</a> for
 more details.
 
+<p>The line <code>%option main</code> specifies that <code>smflex</code>
+should automatically provide a <code>main()</code> function that runs
+the lexer until it hits the end of its input file, which is standard
+input by default.
+
+<p>The line <code>%%</code> separates section 1, which has directives
+and declarations, from section 2, which has rules.
+
+<p>The line <code>username    printf("%s", getenv("USER"));</code> is
+a rule whose pattern is the literal string "<code>username</code>" and
+whose action is the <code>printf</code> expression.  Wherever
+"username" appears in the input, the <code>printf</code> will run and
+print the user's name to the output.
+
 <p>By default, any text not matched by a <code>smflex</code> scanner is
 copied to the output, so the net effect of this scanner is to copy its
-input file to its output with each occurrence of "username" expanded. In
-this input, there is just one rule. "username" is the <em>pattern</em>
-and the "printf" is the <em>action</em>. The "%%" marks the beginning
-of the rules.
+input file to its output with each occurrence of "username" expanded.
 
 <p>Here's another simple <a href="test/count-lines-chars.lex">example</a>:
 
 <pre><!-- BEGIN example: "count-lines-chars.lex" fragment=true indent=4 --><code>
-            int num_lines = 0, num_chars = 0;
-
     %smflex 100
+            int num_lines = 0, num_chars = 0;
     %%
     \n      ++num_lines; ++num_chars;
     .       ++num_chars;
@@ -1860,9 +1877,9 @@ whenever <code>yy_lex()</code> is called and the global variable
 <code>enter_special</code> is true:
 
 <pre><!-- BEGIN example: "yy-set-start-state-special.lex" fragment=true indent=4 --><code>
+    %smflex 100
                     int enter_special;
 
-    %smflex 100
     %x SPECIAL
     %%
                     if (enter_special) {
@@ -3123,15 +3140,16 @@ This specifies the version number of the <em>input</em> language.
 Generally, <code>smflex-X.Y.Z</code> knows how to read input
 version X*100+Y and some earlier than that.
 
-<p>
+<p class="indented">
 Rationale: By making the input version explicit, we can more easily
 ensure backward compatibility as the tool evolves.
 
 <p>
-This directive must come before any other "%" directive.
+This directive must come before anything other than blank lines or
+comments.
 
-<p>
-Rationale: How other directives is interpreted might depend on the
+<p class="indented">
+Rationale: How other syntax elements are interpreted might depend on the
 input file version.
 
 
@@ -4468,7 +4486,7 @@ by the scanner engine to read input and write output:
 of a simple C++ scanner:
 
 <pre><!-- BEGIN example: "cpp-manual-example.lexpp" indent=4 --><code>
-        // An example of using the smflex C++ scanner class.
+    // An example of using the smflex C++ scanner class.
 
     %smflex 100
     %option c++

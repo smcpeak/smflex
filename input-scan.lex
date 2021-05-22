@@ -110,9 +110,30 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
 
 
 <INITIAL>{
-        ^{WS}           indented_code = true; YY_SET_START_CONDITION(CODEBLOCK);
-        ^"/*"           ACTION_ECHO; yy_push_start_condition(yy_lexer, COMMENT);
-        ^#{OPTWS}line{WS}       yy_push_start_condition(yy_lexer, LINEDIR);
+        ^{WS}           {
+                          check_smflex_version_specified();
+                          indented_code = true;
+                          YY_SET_START_CONDITION(CODEBLOCK);
+                        }
+        ^{WS}{NL}       {
+                          /* This is allowed before %smflex. */
+                          ++linenum;
+                          add_action("\n");
+                        }
+        ^{OPTWS}"//".*{NL}   {
+                          /* This is allowed before %smflex. */
+                          ++linenum;
+                          ACTION_ECHO;
+                        }
+        ^{OPTWS}"/*"    {
+                          /* This is allowed before %smflex. */
+                          ACTION_ECHO;
+                          yy_push_start_condition(yy_lexer, COMMENT);
+                        }
+        ^#{OPTWS}line{WS}  {
+                          /* This is allowed before %smflex. */
+                          yy_push_start_condition(yy_lexer, LINEDIR);
+                        }
         ^"%s"{NAME}?    {
                           /* About to emit SC #defines, which must be
                            * in output file context. */

@@ -188,6 +188,13 @@ else
 endif
 	touch $@
 
+# Special rule for the test that calls getenv so it does not actually
+# depend on the environment.
+out/username-getenv.ok: out/username-getenv.exe username-getenv.input username-getenv.expect
+	env USER=USERNAME out/username-getenv.exe < username-getenv.input > out/username-getenv.actual
+	echo diff -b -u username-getenv.expect out/username-getenv.actual
+	touch $@
+
 # Check that what is in the manual matches what is in the tests.
 all: out/matching-examples.ok
 out/matching-examples.ok: ../smflex.html check-doc-examples.py
@@ -268,12 +275,14 @@ all-df: out/scan-bytes-only.ok
 all-df: out/scan-string-etc.ok
 all-df: out/scan-string-only.ok
 all-df: out/set-bol.ok
+all-df: out/smflex-after-ws-line.ok
 all-df: out/stack-api.ok
 all-d : out/trailing-context.ok
 all-df: out/two-buffers.ok
 all-df: out/two-buffers-cpp.ok
 all-df: out/unput-parenthesized.ok
 all-d : out/username-full.ok
+all-df: out/username-getenv.ok
 all-d : out/username-jacobson.ok
 all-d : out/username-jacobson-prefix.ok
 all-df: out/username-main.c_as_cc.ok
@@ -365,6 +374,7 @@ endif
 all-invalid: out/invalid-missing-smflex.bad
 all-invalid: out/invalid-option-name.bad
 all-invalid: out/invalid-pct-a.bad
+all-invalid: out/invalid-smflex-after-indented.bad
 all-invalid: out/invalid-smflex-repeated.bad
 all-invalid: out/invalid-smflex-too-large.bad
 all-invalid: out/invalid-smflex-too-small.bad

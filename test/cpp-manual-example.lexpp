@@ -1,4 +1,4 @@
-    // An example of using the smflex C++ scanner class.
+// An example of using the smflex C++ scanner class.
 
 %smflex 100
 %option c++

@@ -2,9 +2,9 @@
 /* Illustrate calling YY_SET_START_CONDITION on entry to yy_lex(). */
 
                 /* BEGIN: example fragment */
+%smflex 100
                 int enter_special;
 
-%smflex 100
 %x SPECIAL
 %%
                 if (enter_special) {
