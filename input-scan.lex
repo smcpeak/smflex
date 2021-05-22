@@ -125,7 +125,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           ++linenum;
                           ACTION_ECHO;
                         }
-        ^{OPTWS}"/*"    {
+        {OPTWS}"/*"     {
                           /* This is allowed before %smflex. */
                           ACTION_ECHO;
                           yy_push_start_condition(yy_lexer, COMMENT);

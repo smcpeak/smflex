@@ -241,6 +241,7 @@ all-df: out/cppscan-jacobson.ok
 all-df: out/cppscan-main.ok
 all-df: out/cppscan-yywrap.ok
 all-df: out/cppscan.ok
+all-df: out/comments.ok
 all-df: out/count-lines-chars.ok
 all-df: out/discard-c-comments.ok
 all-df: out/discard-c-comments2.ok
