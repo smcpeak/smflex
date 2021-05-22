@@ -1,1 +1,1 @@
-"invalid-option-name.lex", line 5: unrecognized %option: something_nonexistent
+invalid-option-name.lex:5: unrecognized %option: something_nonexistent

@@ -1,1 +1,1 @@
-"invalid-smflex-too-large.lex", line 4: %smflex input version 200 is larger than maximum recognized version 100
+invalid-smflex-too-large.lex:4: %smflex input version 200 is larger than maximum recognized version 100

@@ -1,1 +1,1 @@
-"invalid-smflex-too-small.lex", line 4: %smflex input version 99 is smaller than minimum recognized version 100
+invalid-smflex-too-small.lex:4: %smflex input version 99 is smaller than minimum recognized version 100

@@ -1,1 +1,1 @@
-"invalid-pct-a.lex", line 5: unrecognized '%' directive
+invalid-pct-a.lex:5: unrecognized '%' directive

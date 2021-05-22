@@ -2531,7 +2531,7 @@ void line_warning(char str[], int line)
 /* line_pinpoint - write out a message, pinpointing it at the given line */
 void line_pinpoint(char str[], int line)
 {
-  fprintf(stderr, "\"%s\", line %d: %s\n", infilename, line, str);
+  fprintf(stderr, "%s:%d: %s\n", infilename, line, str);
 }
 
 
