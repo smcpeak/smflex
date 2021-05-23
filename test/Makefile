@@ -188,6 +188,11 @@ else
 endif
 	touch $@
 
+# If 'make' thinks it needs an expect file, just make an empty one so
+# the test can proceed and then complain.
+%.expect:
+	touch $@
+
 # Special rule for the test that calls getenv so it does not actually
 # depend on the environment.
 out/username-getenv.ok: out/username-getenv.exe username-getenv.input username-getenv.expect
