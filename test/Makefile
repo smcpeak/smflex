@@ -387,6 +387,7 @@ all-invalid: out/invalid-sect1-text-after-pct-lbrace.bad
 all-invalid: out/invalid-sect1-text-after-pct-rbrace.bad
 all-invalid: out/invalid-sect1-unclosed-pct-lbrace.bad
 all-invalid: out/invalid-sect1-unmatched-pct-rbrace.bad
+all-invalid: out/invalid-sect2-pct-brace.bad
 all-invalid: out/invalid-sect2p-repeated-pct-lbrace.bad
 all-invalid: out/invalid-sect2p-text-after-pct-lbrace.bad
 all-invalid: out/invalid-sect2p-text-after-pct-rbrace.bad

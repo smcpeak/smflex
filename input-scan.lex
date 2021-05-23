@@ -78,7 +78,7 @@
 %option yy_unread_character
 
 %x SECT2 SECT2PROLOG SECT3 CODEBLOCK PICKUPDEF SC CARETISBOL NUM QUOTE
-%x FIRSTCCL CCL ACTION RECOVER COMMENT ACTION_STRING PERCENT_BRACE_ACTION
+%x FIRSTCCL CCL ACTION RECOVER COMMENT ACTION_STRING
 %x OPTION LINEDIR
 
 WS              [[:blank:]]+
@@ -104,7 +104,6 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
   static int option_sense;
   static int doing_start_conditions = false;
 
-  int doing_codeblock = false;
   int i;
   Char nmdef[MAXLINE], myesc();
 
@@ -432,10 +431,8 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                         }
 
         ^{OPTWS}"%{"    {
-                          indented_code = false;
-                          doing_codeblock = true;
-                          bracelevel = 1;
-                          YY_SET_START_CONDITION(PERCENT_BRACE_ACTION);
+                          synerr(_("In section 2, after the prolog, %{...%} code "
+                                   "outside any action is not allowed."));
                         }
 
         ^{OPTWS}"<"     YY_SET_START_CONDITION(SC); return '<';
@@ -668,45 +665,6 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           ++linenum;
                           ADD_ACTION_NL();
                           return '}';
-                        }
-}
-
-
-  /* This is for when the action of a rule is bounded by %{...%}. */
-<PERCENT_BRACE_ACTION>{
-        /* TODO: This should enforce that the "%}" is on its own line. */
-        "%}".*          {
-                          bracelevel = 0;
-                          if (!all_whitespace(YY_TEXT+2)) {
-                            synerr(_("\"%}\" must not be followed by any text."));
-                          }
-                        }
-
-        "/*"            ACTION_ECHO; yy_push_start_condition(yy_lexer, COMMENT);
-
-        /* Ordinary code in the action.  This is matched one character
-         * at a time so the patterns above take precedence.  This could
-         * be optimized. */
-        .               ACTION_ECHO;
-
-        {NL}            {
-                          ++ linenum;
-                          ACTION_ECHO;
-                          if (bracelevel == 0 ||
-                              (doing_codeblock && indented_code)) {
-                            if (doing_rule_action) {
-                              add_action(yy_output_file_line_directive);
-                              add_action("  YY_BREAK\n");
-                            }
-
-                            doing_rule_action = doing_codeblock = false;
-                            YY_SET_START_CONDITION(SECT2);
-                          }
-                        }
-
-        <<EOF>>         {
-                          synerr(_("Action started with \"%{\" lacks terminating \"%}\"."));
-                          YY_TERMINATE();
                         }
 }
 
