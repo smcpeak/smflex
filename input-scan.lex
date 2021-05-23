@@ -375,8 +375,11 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
    * of a #line directive that refers to the source file, so we have
    * to emit as many newlines as we scan. */
 <SECT2PROLOG>{
-        ^"%{"{OPTWS}{NL}      {
-                          if (bracelevel != 0) {
+        ^"%{".*{NL}     {
+                          if (!all_whitespace(YY_TEXT+2)) {
+                            synerr(_("\"%{\" must appear on a line by itself."));
+                          }
+                          else if (bracelevel != 0) {
                             synerr(_("Found \"%{\" inside another \"%{\"."));
                           }
                           bracelevel = 1;
@@ -384,22 +387,15 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           ADD_ACTION_NL();
                         }
 
-        ^"%}"{OPTWS}{NL}      {
-                          if (bracelevel != 1) {
+        ^"%}".*{NL}     {
+                          if (!all_whitespace(YY_TEXT+2)) {
+                            synerr(_("\"%}\" must appear on a line by itself."));
+                          }
+                          else if (bracelevel != 1) {
                             synerr(_("Found \"%}\" without \"%{\"."));
                           }
                           bracelevel = 0;
                           ADD_ACTION_NL();
-                        }
-
-        ^"%{".*         {
-                          synerr(_("\"%{\" must be on its own line."));
-                          bracelevel = 1;   /* Error recovery. */
-                        }
-
-        ^"%}".*         {
-                          synerr(_("\"%}\" must be on its own line."));
-                          bracelevel = 0;   /* Error recovery. */
                         }
 
         ^{WS}.*         ACTION_ECHO;  /* indented code in prolog */

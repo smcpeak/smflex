@@ -1,1 +1,1 @@
-invalid-sect2-text-after-pct-rbrace.lex:9: "%}" must be on its own line.
+invalid-sect2-text-after-pct-rbrace.lex:9: "%}" must appear on a line by itself.
