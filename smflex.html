@@ -933,19 +933,6 @@ a single blank, and throws away whitespace found at the end of a line:
 knows about C strings and comments and won't be fooled by braces found
 within them.
 
-<p>Actions can also begin with <code>%{</code> and
-will consider the action to be all the text up to the next <code>%}</code>,
-regardless of ordinary braces inside the action, but ignoring comments.
-The opening <code>%{</code> must not have any text after it, and the
-closing <code>%}</code> must be on its own line.
-For <a href="test/action-pct-brace.lex">example</a>:
-
-<pre><!-- BEGIN example: "action-pct-brace.lex" fragment=true indent=4 --><code>
-    username    %{
-                  printf("USERNAME");
-                %}
-</code><!-- END example --></pre>
-
 <p>An action consisting solely of a vertical bar ('|') means "same as
 the action for the next rule." See below for an illustration.
 
@@ -5199,6 +5186,18 @@ run-time support library.  That has been removed as detailed below.
     enablement.
 
     <p>Replacement: Add <code>%option reject</code>.
+
+<li><p><code>flex-2.5.4</code> allowed rule actions to be enclosed
+    in <code>%{...%}</code> in addition to the usual <code>{...}</code>.
+    <code>smflex</code> does not.
+
+    <p>Rationale: That feature was rarely used, poorly specified, and
+    somewhat buggy.  I would rather remove it entirely and add it back
+    if/when it is deemed necessary than try to carry the baggage.
+
+    <p>Replacement: Use <code>{...}</code> instead.  If there is a
+    problem with <code>smflex</code> properly detecting the end of the
+    action, report that as a bug.
 
 </ul>
 

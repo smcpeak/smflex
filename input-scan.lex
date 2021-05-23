@@ -444,20 +444,10 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
         "{"/[[:digit:]] YY_SET_START_CONDITION(NUM); return '{';
         "$"/([[:blank:]]|{NL})  return '$';
 
-        /* This is for an action enclosed by %{...%}.
-         *
-         * TODO: This should enforce that no text comes after "%{" on
-         * the same line. */
         {WS}"%{"        {
-                          bracelevel = 1;
-                          YY_SET_START_CONDITION(PERCENT_BRACE_ACTION);
-
-                          if (in_rule) {
-                            doing_rule_action = true;
-                            in_rule = false;
-                            return '\n';
-                          }
+                          synerr(_("Actions enclosed by %{...%} are not allowed in smflex."));
                         }
+
         {WS}"|".*{NL}   {
                           /* There is a problem with #line numbers and
                            * continued actions, at least when the

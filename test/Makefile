@@ -378,8 +378,7 @@ endif
 	touch $@
 
 # List of tests of syntax errors.
-all-invalid: out/invalid-action-pct-brace-unterminated.bad
-all-invalid: out/invalid-action-pct-brace-trailing-text.bad
+all-invalid: out/invalid-action-pct-brace.bad
 all-invalid: out/invalid-missing-smflex.bad
 all-invalid: out/invalid-option-name.bad
 all-invalid: out/invalid-pct-a.bad
