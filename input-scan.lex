@@ -241,8 +241,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           YY_SET_START_CONDITION(INITIAL);
                         }
 
-        /* TODO: This rule should be simplified. */
-        {NAME}|{NOT_NAME}|.     ACTION_ECHO;
+        .*              ACTION_ECHO;
 
         {NL}            {
                           ++linenum;
