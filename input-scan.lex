@@ -118,7 +118,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
         ^{WS}{NL}       {
                           /* This is allowed before %smflex. */
                           ++linenum;
-                          add_action("\n");
+                          ADD_ACTION_NL();
                         }
         ^{OPTWS}"//".*{NL}   {
                           /* This is allowed before %smflex. */
@@ -182,7 +182,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
         ^"%smflex"{WS}.*{NL}     {
                           parse_smflex_version(YY_TEXT+8);
                           ++linenum;
-                          add_action("\n");
+                          ADD_ACTION_NL();
                         }
 
         ^"%"            {
@@ -233,6 +233,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
         .               /* ignore spurious characters */
 }
 
+  /* CODEBLOCK handles %{...%} or indented code in section 1. */
 <CODEBLOCK>{
         ^"%}".*{NL}     {
                           ++linenum;
@@ -240,6 +241,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           YY_SET_START_CONDITION(INITIAL);
                         }
 
+        /* TODO: This rule should be simplified. */
         {NAME}|{NOT_NAME}|.     ACTION_ECHO;
 
         {NL}            {
