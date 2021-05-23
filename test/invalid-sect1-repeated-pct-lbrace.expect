@@ -1,0 +1,1 @@
+invalid-sect1-repeated-pct-lbrace.lex:8: "%{" found after "%{".

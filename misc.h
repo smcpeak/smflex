@@ -27,6 +27,7 @@ void add_action(char const *new_text);
 void *allocate_array(int size, size_t element_size);
 int all_lower(char const *str);
 int all_upper(char const *str);
+int all_whitespace(char const *str);
 char *basename(char *fname);
 void bubble(int v[], int n);
 void check_char(int c);

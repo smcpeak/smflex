@@ -108,7 +108,6 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
   int i;
   Char nmdef[MAXLINE], myesc();
 
-
 <INITIAL>{
         ^{WS}           {
                           check_smflex_version_specified();
@@ -149,6 +148,9 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           return XSCDECL;
                         }
         ^"%{".*{NL}     {
+                          if (!all_whitespace(YY_TEXT+2)) {
+                            synerr(_("\"%{\" must appear on a line by itself."));
+                          }
                           check_smflex_version_specified();
                           ++ linenum;
                           line_directive_out_src();
@@ -183,6 +185,11 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           parse_smflex_version(YY_TEXT+8);
                           ++linenum;
                           ADD_ACTION_NL();
+                        }
+
+        ^"%}"           {
+                          synerr(_("Found \"%}\" outside any code block."));
+                          YY_SET_START_CONDITION(RECOVER);
                         }
 
         ^"%"            {
@@ -236,10 +243,15 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
   /* CODEBLOCK handles %{...%} or indented code in section 1. */
 <CODEBLOCK>{
         ^"%}".*{NL}     {
+                          if (!all_whitespace(YY_TEXT+2)) {
+                            synerr(_("\"%}\" must appear on a line by itself."));
+                          }
                           ++linenum;
                           ADD_ACTION_NL();
                           YY_SET_START_CONDITION(INITIAL);
                         }
+
+        ^"%{".*         synerr(_("\"%{\" found after \"%{\"."));
 
         .*              ACTION_ECHO;
 
@@ -248,6 +260,11 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           ACTION_ECHO;
                           if (indented_code)
                             YY_SET_START_CONDITION(INITIAL);
+                        }
+
+        <<EOF>>         {
+                          synerr(_("Unclosed \"%{\" block."));
+                          YY_TERMINATE();
                         }
 }
 

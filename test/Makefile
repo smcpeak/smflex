@@ -380,6 +380,11 @@ endif
 all-invalid: out/invalid-missing-smflex.bad
 all-invalid: out/invalid-option-name.bad
 all-invalid: out/invalid-pct-a.bad
+all-invalid: out/invalid-sect1-repeated-pct-lbrace.bad
+all-invalid: out/invalid-sect1-text-after-pct-lbrace.bad
+all-invalid: out/invalid-sect1-text-after-pct-rbrace.bad
+all-invalid: out/invalid-sect1-unclosed-pct-lbrace.bad
+all-invalid: out/invalid-sect1-unmatched-pct-rbrace.bad
 all-invalid: out/invalid-sect2-repeated-pct-lbrace.bad
 all-invalid: out/invalid-sect2-text-after-pct-lbrace.bad
 all-invalid: out/invalid-sect2-text-after-pct-rbrace.bad

@@ -140,6 +140,18 @@ int all_upper(char const *str)
 }
 
 
+/* Return true if all characters in 'str' are whitespace. */
+int all_whitespace(char const *str)
+{
+  for (; *str; str++) {
+    if (!isspace(*str)) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+
 /* Given a file name, return its "base name", i.e., the name without
  * any path components.  Return 'fname' itself if there are no path
  * separators.  Either way, the return value points into 'fname'. */

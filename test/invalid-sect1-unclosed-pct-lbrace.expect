@@ -1,0 +1,2 @@
+invalid-sect1-unclosed-pct-lbrace.lex:12: Unclosed "%{" block.
+invalid-sect1-unclosed-pct-lbrace.lex:12: premature EOF
