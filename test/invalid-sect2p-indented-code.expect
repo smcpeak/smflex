@@ -1,0 +1,1 @@
+invalid-sect2p-indented-code.lex:7: Indented text in the section 2 prolog is not allowed.  Use %{...%} for code, or remove the indentation to specify the first rule.

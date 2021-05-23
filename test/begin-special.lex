@@ -12,6 +12,9 @@
 
 %x SPECIAL
 %%
+
+%{
+                /* Code inserted at the top of yy_lex(). */
                 if (enter_special) {
                   BEGIN(SPECIAL);
 
@@ -19,9 +22,9 @@
                   assert(YY_INPUT_STREAM == yyin);
                   assert(YY_OUTPUT_STREAM == yyout);
                 }
+%}
 
 <SPECIAL>token  {      /* ... etc. ... */
-                  /* END: example fragment */
                   printf("saw 'token' in SPECIAL state\n");
                   return 1;
                 }

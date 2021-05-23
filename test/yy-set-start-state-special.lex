@@ -7,9 +7,13 @@
 
 %x SPECIAL
 %%
+
+%{
+                /* Inserted at top of yy_lex(). */
                 if (enter_special) {
                   YY_SET_START_CONDITION(SPECIAL);
                 }
+%}
 
 <SPECIAL>token  {      /* ... etc. ... */
                   /* END: example fragment */

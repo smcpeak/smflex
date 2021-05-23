@@ -1,3 +1,2 @@
 invalid-sect2-pct-brace.lex:9: In section 2, after the prolog, %{...%} code outside any action is not allowed.
-invalid-sect2-pct-brace.lex:11: unrecognized rule
-invalid-sect2-pct-brace.lex:11: unrecognized rule
+invalid-sect2-pct-brace.lex:11: In section 2, after the prolog, %{...%} code outside any action is not allowed.

@@ -1,1 +1,1 @@
-invalid-sect2p-unclosed-pct-lbrace.lex:13: Unterminated "%{"..."%}" section.
+invalid-sect2p-unclosed-pct-lbrace.lex:13: Unclosed "%{" block.

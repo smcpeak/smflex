@@ -1,1 +1,2 @@
-invalid-sect2p-unmatched-pct-rbrace.lex:8: Found "%}" without "%{".
+invalid-sect2p-unmatched-pct-rbrace.lex:7: Indented text in the section 2 prolog is not allowed.  Use %{...%} for code, or remove the indentation to specify the first rule.
+invalid-sect2p-unmatched-pct-rbrace.lex:8: In section 2, after the prolog, %{...%} code outside any action is not allowed.

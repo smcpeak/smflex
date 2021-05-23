@@ -563,33 +563,43 @@ the same line.
 <a href="#rule-semantics">Rule Semantics</a>, and
 <a href="#actions">Actions</a>.
 
-<p>Finally, the user code section is simply copied to
+
+<h2 id="verbatim-code">Verbatim Code</h2>
+
+<p>In the definitions section (section 1), any <em>indented</em> text or
+text enclosed in <code>%{</code> and <code>%}</code> is copied verbatim
+to the output (with the <code>%{}</code> delimiters removed). The
+<code>%{}</code> delimiters must appear unindented on lines by themselves.
+
+  <p class="indented">Recommendation: Indented verbatim code in section
+  1 is accepted because its use is widespread, but <code>%{}</code> is
+  preferred for clarity and consistency.
+
+<p>In the rules section (section 2), any <code>%{}</code> text appearing
+before the first rule may be used to declare variables which are local
+to the scanning routine and specify code to execute whenever the
+scanning routine is entered.  (This region is known as the
+<em>section 2 prologue</em>.)
+
+<p>In section 2, an action is verbatim code that follows the pattern
+after separating whitespace, and is either (1) terminated by the end of
+the line, or (2) enclosed in ordinary <code>{}</code> braces after
+the rule.
+
+<p>The user code section (section 3) is simply copied to
 <code>lex.yy.c</code> verbatim. It is used for companion routines
 which call or are called by the scanner. The presence of this section
 is optional; if it is missing, the second <code>%%</code> in the input
 file may be skipped, too.
 
-<p>In the definitions and rules sections, any <em>indented</em> text or
-text enclosed in <code>%{</code> and <code>%}</code> is copied verbatim
-to the output (with the <code>%{}</code> delimiters removed). The
-<code>%{}</code> delimiters must appear unindented on lines by themselves.
 
-<p>In the rules section, comments can be placed between rules in
-<code>/* the usual C notation */</code>, but must be
-<strong>indented</strong>.
+<h2 id="comments">Comments</h2>
 
-<p>In the rules section, any indented or <code>%{}</code> text appearing
-before the first rule may be used to declare variables which are local
-to the scanning routine and specify code to execute whenever the
-scanning routine is entered.
+<p>In the definitions section, comments are written in
+<code>/* the usual C notation */</code>.
 
-<p>Indented or <code>%{}</code> text appearing in the rule section after
-the first rule is also copied to the output, but its meaning is not
-defined.
-
-<p>In the definitions section (but not in the rules section), an
-unindented comment (i.e., a line beginning with "<code>/*"</code>) is
-also copied verbatim to the output up to the next "<code>*/</code>".
+<p>In the rules section, comments use the same notation, but when they
+appear outside an action must be <strong>indented</strong>.
 
 
 <!-- ======================================================= -->
@@ -1869,7 +1879,7 @@ equivalent to <code>YY_SET_START_CONDITION(0)</code>.
 
 <p><code>YY_SET_START_CONDITION</code> actions can also be given as indented code
 at the beginning of the rules section. For example, the
-<a href="test/begin-special.lex">following</a>
+<a href="test/yy-set-start-state-special.lex">following</a>
 will cause the scanner to enter the "SPECIAL" start condition
 whenever <code>yy_lex()</code> is called and the global variable
 <code>enter_special</code> is true:
@@ -1880,9 +1890,13 @@ whenever <code>yy_lex()</code> is called and the global variable
 
     %x SPECIAL
     %%
+
+    %{
+                    /* Inserted at top of yy_lex(). */
                     if (enter_special) {
                       YY_SET_START_CONDITION(SPECIAL);
                     }
+    %}
 
     &lt;SPECIAL&gt;token  {      /* ... etc. ... */
 </code><!-- END example --></pre>
@@ -2451,9 +2465,8 @@ strings.  For example:
 
 <dd>
 <p>The macro <code>YY_USER_ACTION</code> can be defined to provide an
-action which is always executed prior to the matched rule's action. For
-example, it could be <code>#define</code>d to call a routine to convert <code>YY_TEXT</code> to
-lower-case. When <code>YY_USER_ACTION</code> is invoked, the variable
+action which is always executed prior to the matched rule's action.
+When <code>YY_USER_ACTION</code> is invoked, the variable
 <code>yy_act</code> gives the number of the matched rule; rules are numbered
 starting with 1. Suppose you want to profile how often each of your
 rules is matched. The following would do the trick:
@@ -4998,6 +5011,37 @@ run-time support library.  That has been removed as detailed below.
 
 <ul>
 
+<li><p><code>flex-2.5.4</code> allowed verbatim code to be specified
+    using indentation alone in the section 2 prologue, i.e., before the
+    first rule.  <code>smflex</code> does not.
+
+    <p>Rationale: The indentation rule was inconsistent and surprising,
+    since indented text <em>after</em> the first rule was simply
+    treated as another rule (as it is in <code>smflex</code>).
+
+    <p>Replacement: Surround section 2 prologue code with
+    <code>%{...%}</code> delimiters (which is clearer and works with
+    <code>flex</code> too).
+
+    <p>Note that indented verbatim code is still allowed in section 1
+    (due to that being widespread practice),
+    although using <code>%{...%}</code> is recommended there too for
+    clarity and consistency.
+
+<li><p><code>flex-2.5.4</code> allowed verbatim code to be specified
+    using <code>%{...%}</code> in section 2 after the prologue.
+    <code>smflex</code> does not.
+
+    <p>Rationale: Although <code>flex</code> tolerated such code, the
+    manual explained that "its meaning is not well-defined", and the
+    feature was present only for POSIX compliance.  In practice, the
+    code would be inserted between the <code>case</code> statements
+    delimiting actions, leading to nonsensical behavior.  In short, it
+    performed no useful function.
+
+    <p>Replacement: Remove such code.  Or, add it to an action if you
+    want it to mean something.
+
 <li><p>In <code>flex-2.5.4</code>, it was allowed for user actions to
     modify <code>yy_text</code> (and perhaps <code>yy_leng</code>; the
     documentation was unclear).  In <code>smflex</code> both fields are
@@ -5075,7 +5119,9 @@ run-time support library.  That has been removed as detailed below.
     Alternatively,
     in the C API you can set <code>yy_client_data</code>, and
     in the C++ API you can use <code>%option yyclass</code> and
-    then add fields to the derived class.
+    then add fields to the derived class.  Both of these methods let
+    you make additional data available to the actions without adding
+    parameters to <code>yy_lex</code> itself.
 
 <li><p><code>yy_new_buffer</code>: <code>flex-2.5.4</code> defined
     <code>yy_new_buffer</code> as an alias for
@@ -5359,7 +5405,7 @@ is explained below:
     <code>YY_LESS_TEXT</code> and <code>YY_MORE_TEXT</code>.
 
     <p>Rationale: In addition to adding "YY_" to and capitalizing all
-    macro names, I added "_TEXT" to clarify what we are getting less of.
+    macro names, I added "_TEXT" to clarify what we are getting more or less of.
 
 <li><p>The <code>BEGIN</code> macro has been renamed to
     <a href="#YY_SET_START_CONDITION-macro"><code>YY_SET_START_CONDITION</code></a>.
@@ -5437,12 +5483,6 @@ is explained below:
 
     <p>Rationale: Everywhere else I use "GET", so "AT" is irregular.
 
-<li><p><code>yyterminate</code> has been renamed to
-    <code>YY_TERMINATE</code>.
-
-<li><p><code>yylineno</code> has been renamed to
-    <code>YY_LINENO</code>.
-
 </ul>
 
 
@@ -5484,7 +5524,12 @@ only for completeness:
 
 <h2 id="changes-to-the-cpp-interface">Changes to the C++ Interface</h2>
 
-<p>There are several changes to the C++ interface
+<p>The C++ interface has been rewritten from the ground up as a wrapper
+around the re-entrant C API, using names and semantics that mirror
+those in the C API.  It's probably best to forget the old C++ API and
+just read this manual and/or the comments in the generated header file.
+
+<p>But, I have nevertheless attempted to maintain a complete list of differences
 compared to <code>flex-2.5.4</code>:
 
 <ul>

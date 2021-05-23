@@ -58,6 +58,10 @@
 
 #define MARK_END_OF_PROLOG mark_prolog();
 
+/* This sets the semantic value that the bison parser sees to be the
+ * ASCII code of the first character in YY_TEXT, and returns the token
+ * code 'CHAR', meaning an ordinary character (as opposed to a regular
+ * expression metacharacter). */
 #define RETURNCHAR \
   yylval = (unsigned char) YY_TEXT[0]; \
   return CHAR;
@@ -99,6 +103,9 @@ CCL_CHAR        ([^\\\n\]]|{ESCSEQ})
 CCL_EXPR        ("[:"[[:alpha:]]+":]")
 
 %%
+
+%{
+  /* Local variable declarations for yy_lex(). */
   static int bracelevel, didadef, indented_code;
   static int doing_rule_action = false;
   static int option_sense;
@@ -106,12 +113,13 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
 
   int i;
   Char nmdef[MAXLINE], myesc();
+%}
 
 <INITIAL>{
         ^{WS}           {
                           check_smflex_version_specified();
                           indented_code = true;
-                          YY_SET_START_CONDITION(CODEBLOCK);
+                          yy_push_start_condition(yy_lexer, CODEBLOCK);
                         }
         ^{WS}{NL}       {
                           /* This is allowed before %smflex. */
@@ -154,7 +162,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           ++ linenum;
                           line_directive_out_src();
                           indented_code = false;
-                          YY_SET_START_CONDITION(CODEBLOCK);
+                          yy_push_start_condition(yy_lexer, CODEBLOCK);
                         }
 
         {WS}            /* discard */
@@ -188,12 +196,12 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
 
         ^"%}"           {
                           synerr(_("Found \"%}\" outside any code block."));
-                          YY_SET_START_CONDITION(RECOVER);
+                          yy_push_start_condition(yy_lexer, RECOVER);
                         }
 
         ^"%"            {
                           synerr( _( "unrecognized '%' directive" ) );
-                          YY_SET_START_CONDITION(RECOVER);
+                          yy_push_start_condition(yy_lexer, RECOVER);
                         }
 
         ^{NAME}         {
@@ -239,7 +247,8 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
         .               /* ignore spurious characters */
 }
 
-  /* CODEBLOCK handles %{...%} or indented code in section 1. */
+  /* CODEBLOCK handles %{...%} or indented code in section 1,
+   * or %{...%} code in the section 2 prolog. */
 <CODEBLOCK>{
         ^"%}".*{NL}     {
                           if (!all_whitespace(YY_TEXT+2)) {
@@ -247,7 +256,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           }
                           ++linenum;
                           ADD_ACTION_NL();
-                          YY_SET_START_CONDITION(INITIAL);
+                          yy_pop_start_condition(yy_lexer);
                         }
 
         ^"%{".*         synerr(_("\"%{\" found after \"%{\"."));
@@ -257,8 +266,9 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
         {NL}            {
                           ++linenum;
                           ACTION_ECHO;
-                          if (indented_code)
-                            YY_SET_START_CONDITION(INITIAL);
+                          if (indented_code) {
+                            yy_pop_start_condition(yy_lexer);
+                          }
                         }
 
         <<EOF>>         {
@@ -363,11 +373,15 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
 
         (([a-mo-z]|n[a-np-z])[[:alpha:]\-+_]*)|. {
                           format_synerr(_("unrecognized %%option: %s"), YY_TEXT);
-                          YY_SET_START_CONDITION(RECOVER);
+                          yy_push_start_condition(yy_lexer, RECOVER);
                         }
 }
 
-<RECOVER>.*{NL}         ++linenum; ADD_ACTION_NL(); YY_SET_START_CONDITION(INITIAL);
+<RECOVER>.*{NL}         {
+                          ++linenum;
+                          ADD_ACTION_NL();
+                          yy_pop_start_condition(yy_lexer);
+                        }
 
   /* The "prolog" of section 2 is the text after the "%%" but before
    * the first rule.  Within this section, we are emitting to the scope
@@ -378,41 +392,38 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           if (!all_whitespace(YY_TEXT+2)) {
                             synerr(_("\"%{\" must appear on a line by itself."));
                           }
-                          else if (bracelevel != 0) {
-                            synerr(_("Found \"%{\" inside another \"%{\"."));
-                          }
-                          bracelevel = 1;
-                          ++linenum;
-                          ADD_ACTION_NL();
+                          ++ linenum;
+                          line_directive_out_src();
+                          indented_code = false;
+                          yy_push_start_condition(yy_lexer, CODEBLOCK);
                         }
 
-        ^"%}".*{NL}     {
-                          if (!all_whitespace(YY_TEXT+2)) {
-                            synerr(_("\"%}\" must appear on a line by itself."));
-                          }
-                          else if (bracelevel != 1) {
-                            synerr(_("Found \"%}\" without \"%{\"."));
-                          }
-                          bracelevel = 0;
-                          ADD_ACTION_NL();
+        {OPTWS}{NL}     ++linenum; ACTION_ECHO;
+
+        {OPTWS}"/*"     {
+                          ACTION_ECHO;
+                          yy_push_start_condition(yy_lexer, COMMENT);
                         }
 
-        ^{WS}.*         ACTION_ECHO;  /* indented code in prolog */
-
-        ^{NOT_WS}.*     {       /* non-indented text */
-                          if (bracelevel == 0) {   /* not in %{ ... %} */
-                            /* Start of the first rule. */
-                            YY_LESS_TEXT(0);       /* Put all text back. */
-                            input_scan_set_bol(yy_lexer, 1);
-                            mark_prolog();
-                            YY_SET_START_CONDITION(SECT2);
-                          }
-                          else {
-                            ACTION_ECHO;
-                          }
+        ^{NOT_WS}       {
+                          /* Non-indented; start of the first rule. */
+                          YY_LESS_TEXT(0);       /* Put all text back. */
+                          input_scan_set_bol(yy_lexer, 1);
+                          mark_prolog();
+                          YY_SET_START_CONDITION(SECT2);
                         }
 
-        {NL}            ++linenum; ACTION_ECHO;
+        ^{WS}           {
+                          synerr(_("Indented text in the section 2 prolog is not "
+                                   "allowed.  Use %{...%} for code, or remove the "
+                                   "indentation to specify the first rule."));
+                          yy_push_start_condition(yy_lexer, RECOVER);
+                        }
+
+        .               {
+                          synerr(_("Extra text after comment."));
+                          yy_push_start_condition(yy_lexer, RECOVER);
+                        }
 
         <<EOF>>         {
                           if (bracelevel == 1) {
@@ -430,9 +441,10 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           ADD_ACTION_NL();
                         }
 
-        ^{OPTWS}"%{"    {
+        ^{OPTWS}"%"[{}] {
                           synerr(_("In section 2, after the prolog, %{...%} code "
                                    "outside any action is not allowed."));
+                          yy_push_start_condition(yy_lexer, RECOVER);
                         }
 
         ^{OPTWS}"<"     YY_SET_START_CONDITION(SC); return '<';
@@ -574,7 +586,14 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           }
                         }
 
+        /* Each of these characters is special to the bison grammar.
+         * Their semantic value ('yylval') will not be used, only
+         * their token code, which is just the ASCII character value. */
         [/|*+?.(){}]    return (unsigned char) YY_TEXT[0];
+
+        /* Other characters are treated as single-character regular
+         * expressions, for which we need both the token code (CHAR)
+         * and the semantic value (the ASCII code). */
         .               RETURNCHAR;
 }
 

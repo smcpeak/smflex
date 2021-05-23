@@ -12,8 +12,10 @@
 
 %%
 
+%{
   int x = 5;
   int y = 15;     /* Still "user decls". */
+%}
 /* Comments ok. */ /* Comments ok. */
 
 username    printf("%s", "USERNAME");

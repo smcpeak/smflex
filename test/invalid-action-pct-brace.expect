@@ -1,3 +1,2 @@
 invalid-action-pct-brace.lex:8: Actions enclosed by %{...%} are not allowed in smflex.
-invalid-action-pct-brace.lex:10: unrecognized rule
-invalid-action-pct-brace.lex:10: unrecognized rule
+invalid-action-pct-brace.lex:10: In section 2, after the prolog, %{...%} code outside any action is not allowed.
