@@ -444,6 +444,10 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
         "{"/[[:digit:]] YY_SET_START_CONDITION(NUM); return '{';
         "$"/([[:blank:]]|{NL})  return '$';
 
+        /* This is for an action enclosed by %{...%}.
+         *
+         * TODO: This should enforce that no text comes after "%{" on
+         * the same line. */
         {WS}"%{"        {
                           bracelevel = 1;
                           YY_SET_START_CONDITION(PERCENT_BRACE_ACTION);
@@ -678,12 +682,23 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
 }
 
 
+  /* This is for when the action of a rule is bounded by %{...%}. */
 <PERCENT_BRACE_ACTION>{
-        {OPTWS}"%}".*           bracelevel = 0;
+        /* TODO: This should enforce that the "%}" is on its own line. */
+        "%}".*          {
+                          bracelevel = 0;
+                          if (!all_whitespace(YY_TEXT+2)) {
+                            synerr(_("\"%}\" must not be followed by any text."));
+                          }
+                        }
 
-        <ACTION>"/*"            ACTION_ECHO; yy_push_start_condition(yy_lexer, COMMENT);
+        "/*"            ACTION_ECHO; yy_push_start_condition(yy_lexer, COMMENT);
 
-        {NAME}|{NOT_NAME}|.     ACTION_ECHO;
+        /* Ordinary code in the action.  This is matched one character
+         * at a time so the patterns above take precedence.  This could
+         * be optimized. */
+        .               ACTION_ECHO;
+
         {NL}            {
                           ++ linenum;
                           ACTION_ECHO;
@@ -698,6 +713,11 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                             YY_SET_START_CONDITION(SECT2);
                           }
                         }
+
+        <<EOF>>         {
+                          synerr(_("Action started with \"%{\" lacks terminating \"%}\"."));
+                          YY_TERMINATE();
+                        }
 }
 
 
@@ -708,6 +728,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
          * point we'll resume informing the parser of what we find. */
 
 <ACTION>{
+        "/*"            ACTION_ECHO; yy_push_start_condition(yy_lexer, COMMENT);
         "{"             ACTION_ECHO; ++bracelevel;
         "}"             ACTION_ECHO; --bracelevel;
         [^[:alpha:]_{}"'/\n]+   ACTION_ECHO;

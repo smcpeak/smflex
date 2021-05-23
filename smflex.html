@@ -931,9 +931,20 @@ a single blank, and throws away whitespace found at the end of a line:
 <p>If the action contains a '{', then the action spans till the balancing
 '}' is found, and the action may cross multiple lines. <code>smflex</code>
 knows about C strings and comments and won't be fooled by braces found
-within them, but also allows actions to begin with <code>%{</code> and
-will consider the action to be all the text up to the next <code>%}</code>
-(regardless of ordinary braces inside the action).
+within them.
+
+<p>Actions can also begin with <code>%{</code> and
+will consider the action to be all the text up to the next <code>%}</code>,
+regardless of ordinary braces inside the action, but ignoring comments.
+The opening <code>%{</code> must not have any text after it, and the
+closing <code>%}</code> must be on its own line.
+For <a href="test/action-pct-brace.lex">example</a>:
+
+<pre><!-- BEGIN example: "action-pct-brace.lex" fragment=true indent=4 --><code>
+    username    %{
+                  printf("USERNAME");
+                %}
+</code><!-- END example --></pre>
 
 <p>An action consisting solely of a vertical bar ('|') means "same as
 the action for the next rule." See below for an illustration.
