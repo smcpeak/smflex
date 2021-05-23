@@ -1,0 +1,1 @@
+invalid-sect2-unmatched-pct-rbrace.lex:8: Found "%}" without "%{".

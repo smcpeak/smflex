@@ -354,28 +354,59 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
 
 <RECOVER>.*{NL}         ++linenum; ADD_ACTION_NL(); YY_SET_START_CONDITION(INITIAL);
 
-
+  /* The "prolog" of section 2 is the text after the "%%" but before
+   * the first rule.  Within this section, we are emitting to the scope
+   * of a #line directive that refers to the source file, so we have
+   * to emit as many newlines as we scan. */
 <SECT2PROLOG>{
-        ^"%{".* ++bracelevel; YY_LESS_TEXT( 2 );      /* eat only %{ */
-        ^"%}".* --bracelevel; YY_LESS_TEXT( 2 );      /* eat only %} */
+        ^"%{"{OPTWS}{NL}      {
+                          if (bracelevel != 0) {
+                            synerr(_("Found \"%{\" inside another \"%{\"."));
+                          }
+                          bracelevel = 1;
+                          ++linenum;
+                          ADD_ACTION_NL();
+                        }
 
-        ^{WS}.* ACTION_ECHO;    /* indented code in prolog */
+        ^"%}"{OPTWS}{NL}      {
+                          if (bracelevel != 1) {
+                            synerr(_("Found \"%}\" without \"%{\"."));
+                          }
+                          bracelevel = 0;
+                          ADD_ACTION_NL();
+                        }
 
-        ^{NOT_WS}.*     {       /* non-indented code */
-                          if (bracelevel <= 0) {   /* not in %{ ... %} */
-                            YY_LESS_TEXT(0);       /* put it all back */
+        ^"%{".*         {
+                          synerr(_("\"%{\" must be on its own line."));
+                          bracelevel = 1;   /* Error recovery. */
+                        }
+
+        ^"%}".*         {
+                          synerr(_("\"%}\" must be on its own line."));
+                          bracelevel = 0;   /* Error recovery. */
+                        }
+
+        ^{WS}.*         ACTION_ECHO;  /* indented code in prolog */
+
+        ^{NOT_WS}.*     {       /* non-indented text */
+                          if (bracelevel == 0) {   /* not in %{ ... %} */
+                            /* Start of the first rule. */
+                            YY_LESS_TEXT(0);       /* Put all text back. */
                             input_scan_set_bol(yy_lexer, 1);
                             mark_prolog();
                             YY_SET_START_CONDITION(SECT2);
                           }
-                          else
+                          else {
                             ACTION_ECHO;
+                          }
                         }
 
-        .*              ACTION_ECHO;
         {NL}            ++linenum; ACTION_ECHO;
 
         <<EOF>>         {
+                          if (bracelevel == 1) {
+                            synerr(_("Unterminated \"%{\"...\"%}\" section."));
+                          }
                           mark_prolog();
                           sectnum = 0;
                           YY_TERMINATE(); /* to stop the parser */
