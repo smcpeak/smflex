@@ -1,4 +1,4 @@
-/* invalid-sect2-text-after-pct-lbrace.lex */
+/* invalid-sect2p-text-after-pct-lbrace.lex */
 /* Text after "%{". */
 
 %smflex 100

@@ -1,4 +1,4 @@
-/* invalid-sect2-repeated-pct-lbrace.lex */
+/* invalid-sect2p-repeated-pct-lbrace.lex */
 /* "%{" then "%{". */
 
 %smflex 100

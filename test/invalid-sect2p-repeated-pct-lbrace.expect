@@ -1,0 +1,1 @@
+invalid-sect2p-repeated-pct-lbrace.lex:9: Found "%{" inside another "%{".
