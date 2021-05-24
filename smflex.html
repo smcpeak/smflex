@@ -4424,6 +4424,25 @@ can be used to inspect the token:
 
 </dl>
 
+<p>A few methods are available as analogues for directly setting
+members of <code>yy_lexer_t</code>:
+
+<dl>
+
+<dt><code>void yym_set_output_stream(yy_output_stream_t *new_out)</code>
+
+    <dd><p>Like setting
+    <a href="#yy_output_stream"><code>yy_output_stream</code></a>.
+
+<dt><code>void yym_set_lineno(int new_lineno)</code>
+
+    <dd><p>Like setting
+    <a href="#yy_lineno"><code>yy_lineno</code></a>.
+    See <a href="test/input-buffers-lineno-cpp.lexpp"><code>test/input-buffers-lineno-cpp.lexpp</code></a>
+    for an example.
+
+</dl>
+
 <p>These methods and class support error reporting and recovery:
 
 <dl>
