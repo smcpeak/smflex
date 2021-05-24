@@ -1,6 +1,6 @@
 [cond 0] some text
-[cond 0] then  more text
-[cond 0] nested  handle
+[cond 0] then [top cond 0] more text
+[cond 0] nested [top cond 1] handle
 [cond 0] beginfoo
 [cond 2] quick open  and close
 [cond 2] endfoo

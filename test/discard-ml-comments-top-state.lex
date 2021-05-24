@@ -8,6 +8,10 @@
 %option flex-compat
 %x comment foo
 
+%{
+#include <assert.h>                    /* assert */
+%}
+
 %%
 
 <*>"(*"                 yy_push_start_condition(yy_lexer, comment);
@@ -30,7 +34,8 @@ beginfoo                YY_SET_START_CONDITION(foo); YY_ECHO;
   /* This lets me query 'yy_top_start_condition'.  It requires that the stack not
    * be empty, so is only active inside comments. */
 <comment>"(yy_top_start_condition)"   {
-                          printf("[top cond %d]", yy_top_start_condition(yy_lexer));
+                          assert(!YY_CONDITION_STACK_IS_EMPTY());
+                          printf("[top cond %d]", YY_TOP_START_CONDITION());
                         }
 
   /* EOF */

@@ -2122,6 +2122,16 @@ are available for manipulating the stack of start conditions:
 
 </dl>
 
+<p>These functions have convenience aliases for which the lexer object
+is implicit, for use in actions in section 2:
+
+<pre><code>
+    #define YY_PUSH_START_CONDITION(cond) yy_push_start_condition(yy_lexer, cond)
+    #define YY_POP_START_CONDITION()      yy_pop_start_condition(yy_lexer)
+    #define YY_TOP_START_CONDITION()      yy_top_start_condition(yy_lexer)
+    #define YY_CONDITION_STACK_IS_EMPTY() yy_condition_stack_is_empty(yy_lexer)
+</code></pre>
+
 <p>The start condition stack grows dynamically and so has no built-in
 size limitation. If memory is exhausted,
 <a href="#yy_error_function"><code>yy_error_function</code></a> is called.
@@ -2134,12 +2144,12 @@ scopes, by using them to keep track of nested comments in ML:
     %option stack
     %x comment foo
     %%
-    &lt;*&gt;"(*"                 yy_push_start_condition(yy_lexer, comment);
+    &lt;*&gt;"(*"                 YY_PUSH_START_CONDITION(comment);
     &lt;comment&gt;{
       [^*(]+                /* eat anything that's not a '*' or '(' */
       "*"+/[^)]             /* eat '*'s not followed by ')' */
       "("/[^*]              /* eat '(' not followed by '*' */
-      "*"+")"               yy_pop_start_condition(yy_lexer);
+      "*"+")"               YY_POP_START_CONDITION();
     }
 </code><!-- END example --></pre>
 
