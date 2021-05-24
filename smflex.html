@@ -4820,7 +4820,7 @@ to be of continued value.
     <code>%option yywrap</code> (with default value true),
     meaning the user must define <code>yywrap()</code>, and
     <code>%option noyywrap</code> to not require that definition.
-    These option
+    These options
     have been removed in favor of the <code>yy_wrap_function()</code>
     function pointer member.
 
@@ -4913,7 +4913,7 @@ to be of continued value.
     by default.
 
     <p>Rationale: Changing the default to false follows the same
-    principles as the previous bullet.  Renaming the option follows
+    principles as earlier bullets.  Renaming the option follows
     renaming of the macros, which is explained below.
 
     <p>Replacement: If you have <code>%option noinput</code> (which
@@ -4945,9 +4945,9 @@ to be of continued value.
     scanner's definition from using another scanner's exported API.
 
     <p>Replacement: In a scanner definition using a prefix, always
-    use the prefixed name for externally visible symbols.  (TODO: How
-    do users easily tell which names are external?  Can I make it so
-    external names are all lowercase, and non-external are uppercase?)
+    use the prefixed name for externally visible symbols, which
+    (per the <a href="#naming-conventions">Naming Conventions</a>)
+    are those spelled with lowercase letters.
 
     <p>Discussion: I believe the reason for their original inclusion
     (aside from being a side effect of the implementation technique) is
@@ -5006,7 +5006,7 @@ run-time support library.  That has been removed as detailed below.
 <li><p>In <code>flex-2.5.4</code>, the <code>main()</code>
     function generated with
     <a href="#option-main"><code>%option main</code></a>
-    called <code>yy_lex()</code> (then called <code>yylex()</code>
+    called <code>yy_lex()</code> (which was named <code>yylex()</code>)
     just once.  Now it calls
     <code>yy_lex()</code> in a loop until it returns 0.
 
@@ -5016,7 +5016,8 @@ run-time support library.  That has been removed as detailed below.
     matches what the old <code>libfl.a</code> contained, allowing me to
     eliminate <code>libfl.a</code> without losing functionality.
 
-    <p>Replacement: Remove <code>%option main</code> and provide an
+    <p>Replacement: If you need a <code>main()</code> that only calls
+    <code>yy_lex()</code> once, remove <code>%option main</code> and provide an
     explicit definition: <code>int main() { yy_lex(); return 0; }</code>.
 
 <li><p><code>flex-2.5.4</code> provided <code>libfl.a</code>, which
@@ -5102,7 +5103,7 @@ run-time support library.  That has been removed as detailed below.
     situations.  For example, it did work inside <code>yywrap</code> and
     <code>&lt;&lt;EOF&gt;&gt;</code> actions, but not other actions.
     There was a certain logic to where it worked and where it didn't,
-    but it wa an irregularity to contend with.
+    but it was an irregularity to contend with.
 
     <p>Second, the internal logic for handing the three cases of
     <code>yyrestart</code>, <code>yy_switch_to_buffer</code>, and assigning <code>yyin</code>
