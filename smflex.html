@@ -2200,6 +2200,9 @@ Calling this function does <em>not</em> change the start condition.
 It also does not deallocate nor remember the old current buffer; the
 client must do both.
 
+<p><code>yy_switch_to_buffer()</code> invalidates <code>YY_TEXT</code> and
+<code>YY_LENG</code>.
+
 <p id="yy_delete_buffer">When finished scanning from a buffer, call:
 
 <pre><code>
