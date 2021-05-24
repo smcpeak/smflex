@@ -231,21 +231,22 @@
     -T               Enable debug tracing of the table building process.
     -V, --version    Print version number and exit.
 
-  Options that influence the interface (API) of the generated scanner:
+  Options that affect the interface (API) of the generated scanner:
 
-    -+               Generate a scanner with a C++ interface.
+    -+               Generate a scanner with a C++ (instead of C) API.
     -Pprefix         Specify symbol name prefix in generated scanner ["yy"].
 
-  Options that influence the behavior of the generated scanner:
+  Options that affect the behavior of the generated scanner:
 
     -7               Generate a 7-bit scanner [if -Cf or -CJ but not -Cfe or -CJe].
     -8               Generate an 8-bit scanner [opposite of -7].
     -d               Generate a debug mode scanner.
     -i               Generate a case-insensitive scanner.
     -s               Suppress the default "echo" rule.
+    -C[aefFm]*       Generate scanner with various table compression modes [-Cem].
     -B               Generate a batch (non-interactive) scanner [true].
-    -C[aefFmr]*      Generate scanner with various table compression modes [-Cem].
     -I               Generate an interactive scanner.
+    --use-read       Use 'read' rather than 'fread' with the C API.
 </code></pre>
 
 <p>
@@ -2732,6 +2733,25 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     <p>This option is not compatible with the <code>-Cf</code> or
     <code>-CJ</code> options.
 
+<dt><code>--use-read</code>
+
+    <dd><p>Cause the generated scanner to <em>bypass</em>
+    use of the standard I/O library (stdio) for input. Instead of calling
+    the C library function <code>fread()</code>, the scanner will use the
+    underlying <code>read()</code> system call.  See
+    <a href="#input-read-method">Input Read Method</a> for a discussion
+    of the performance effect.  Using
+    <code>--use-read</code> can cause strange behavior if, for example, you read from
+    <code>yy_input_stream</code> using stdio prior to calling the scanner (because the
+    scanner will miss whatever text your previous reads left in the stdio
+    input buffer).
+
+    <code>--use-read</code> has no effect if you change
+    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
+
+    Using <code>--use-read</code> introduces a compile-time dependency on
+    <code>unistd.h</code> and a link-time dependency on <code>read</code>.
+
 <dt><code>-L</code>
 
 <dd><p>Do not generate <code>#line</code>
@@ -2808,7 +2828,7 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 <dd><p>Generate a scanner with a C++ rather than C interface. See
     <a href="#cpp-api">C++ API</a> for details.
 
-<dt><code>-C[aefFmr]*</code>
+<dt><code>-C[aefFm]*</code>
 
 <dd><p>Specify the kind of table compression to use.
     <code>-C</code> can be followed by a string of the following letters:
@@ -2883,25 +2903,6 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     when using compressed tables, but they have a moderate performance impact
     (one or two "if" tests and one array look-up per character scanned).
 
-
-    <dt><code>-Cr</code> ("read")
-
-    <dd><p>Cause the generated scanner to <em>bypass</em>
-    use of the standard I/O library (stdio) for input. Instead of calling
-    the C library function <code>fread()</code>, the scanner will use the
-    underlying <code>read()</code> system call.  See
-    <a href="#input-read-method">Input Read Method</a> for a discussion
-    of the performance effect.  Using
-    <code>-Cr</code> can cause strange behavior if, for example, you read from
-    <code>yy_input_stream</code> using stdio prior to calling the scanner (because the
-    scanner will miss whatever text your previous reads left in the stdio
-    input buffer).
-
-    <code>-Cr</code> has no effect if you change
-    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
-
-    Using <code>-Cr</code> introduces a compile-time dependency on
-    <code>unistd.h</code> and a link-time dependency on <code>read</code>.
 
     </dl>
 
@@ -3034,7 +3035,7 @@ number are equivalent to <code>smflex</code> flags or their negation:
     jacobson                       -CJ option
     meta-ecs                       -Cm option
     perf-report                    -p option
-    read                           -Cr option
+    read                           --use-read option
     verbose                        -v option
     warn                           opposite of -w option
                                    (use "%option nowarn" for -w)
@@ -4648,15 +4649,15 @@ to be of continued value.
     <code>%option jacobson</code> instead.
 
 <li><p><code>flex-2.5.4</code> accepts <code>-f</code> and
-    <code>-F</code> options as aliases for <code>-Cfr</code> and
-    <code>-CJr</code>, respectively.  <code>smflex</code> does not
+    <code>-F</code> options as aliases for <code>-Cf --use-read</code> and
+    <code>-CJ --use-read</code>, respectively.  <code>smflex</code> does not
     accept them.
 
     <p>Rationale: The aliases are confusing and unnecessary, and
     interfere with being able to further untangle and clarify the
     options.
 
-    <p>Replacement: Use <code>-Cfr</code> or <code>-CJr</code>.
+    <p>Replacement: Use <code>-Cf --use-read</code> or <code>-CJ --use-read</code>.
 
 <li><p>In <code>flex-2.5.4</code>, both <code>%option full</code>
     and <code>%option fast</code> (now called
@@ -4727,6 +4728,17 @@ to be of continued value.
     default is necessary.
 
     <p>Replacement: Use <code>-I</code> explicitly if desired.
+
+<li><p><code>flex-2.5.4</code> accepts <code>-Cr</code> to mean to
+    use the <code>read</code> function.  In <code>smflex</code>, that
+    option has been renamed to <code>--use-read</code>.
+
+    <p>Rationale: The way input is read has nothing to do with how the
+    tables are organized or compressed, so this option should never have
+    been controlled by <code>-C</code> in the first place.  This change
+    separates these orthogonal concerns in the options interface.
+
+    <p>Replacement: Use <code>--use-read</code>.
 
 <li><p><code>flex-2.5.4</code> accepts <code>%option array</code>,
     which tells it to declare <code>YY_TEXT</code> as a static array

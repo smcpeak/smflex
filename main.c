@@ -385,8 +385,10 @@ void flexend(int exit_status)
       putc('e', stderr);
     if (usemecs)
       putc('m', stderr);
-    if (use_read)
-      putc('r', stderr);
+
+    if (use_read) {
+      fprintf(stderr, " --use-read");
+    }
 
     if (did_outfilename)
       fprintf(stderr, " -o%s", outfilename);
@@ -526,11 +528,20 @@ void flexinit(int argc, char **argv)
         continue;
       }
 
-      else if (str_eq(arg, "--help"))
-        arg = "-h";
+      else if (str_eq(arg, "--use-read")) {
+        use_read = true;
+        continue;
+      }
 
-      else if (str_eq(arg, "--version"))
+      else if (str_eq(arg, "--help")) {
+        arg = "-h";
+        /* Keep going so the switch statement below processes 'arg'. */
+      }
+
+      else if (str_eq(arg, "--version")) {
         arg = "-V";
+        /* Keep going so the switch statement below processes 'arg'. */
+      }
 
       else if (str_eq(arg, "--")) {    /* end of options */
         --argc;
@@ -596,7 +607,7 @@ void flexinit(int argc, char **argv)
                 break;
 
               case 'r':
-                use_read = true;
+                flexerror(_("-Cr has been renamed to --use-read."));
                 break;
 
               default:
@@ -611,11 +622,11 @@ void flexinit(int argc, char **argv)
           break;
 
         case 'f':
-          flexerror(_("The -f flag has been removed.  Use -Cfr instead."));
+          flexerror(_("The -f flag has been removed.  Use -Cf --use-read instead."));
           break;
 
         case 'F':
-          flexerror(_("The -F flag has been removed.  Use -CJr instead."));
+          flexerror(_("The -F flag has been removed.  Use -CJ --use-read instead."));
           break;
 
         case '?':
@@ -1021,21 +1032,22 @@ static const char *usage_text[] = {
   "  -T               Enable debug tracing of the table building process.",
   "  -V, --version    Print version number and exit.",
   "",
-  "Options that influence the interface (API) of the generated scanner:",
+  "Options that affect the interface (API) of the generated scanner:",
   "",
-  "  -+               Generate a scanner with a C++ interface.",
+  "  -+               Generate a scanner with a C++ (instead of C) API.",
   "  -Pprefix         Specify symbol name prefix in generated scanner [\"yy\"].",
   "",
-  "Options that influence the behavior of the generated scanner:",
+  "Options that affect the behavior of the generated scanner:",
   "",
   "  -7               Generate a 7-bit scanner [if -Cf or -CJ but not -Cfe or -CJe].",
   "  -8               Generate an 8-bit scanner [opposite of -7].",
   "  -d               Generate a debug mode scanner.",
   "  -i               Generate a case-insensitive scanner.",
   "  -s               Suppress the default \"echo\" rule.",
+  "  -C[aefFm]*       Generate scanner with various table compression modes [-Cem].",
   "  -B               Generate a batch (non-interactive) scanner [true].",
-  "  -C[aefFmr]*      Generate scanner with various table compression modes [-Cem].",
   "  -I               Generate an interactive scanner.",
+  "  --use-read       Use 'read' rather than 'fread' with the C API.",
   0
 };
 
