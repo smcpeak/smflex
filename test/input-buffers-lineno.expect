@@ -1,0 +1,26 @@
+blah [getloc: <stdin>:1] blah
+[getloc: <stdin>:2]
+[getloc: input-buffers.input2:1] in input-buffers.input2
+in input-buffers.input3
+[getloc: input-buffers.input3:2]
+
+[getloc: input-buffers.input2:3] back in 2
+in input-buffers.input4
+[getloc: input-buffers.input4:2]
+
+[getloc: input-buffers.input2:5] back in 2 again
+
+[getloc: <stdin>:4]
+[getloc: input-buffers.input2:1] in input-buffers.input2
+in input-buffers.input3
+[getloc: input-buffers.input3:2]
+
+[getloc: input-buffers.input2:3] back in 2
+in input-buffers.input4
+[getloc: input-buffers.input4:2]
+
+[getloc: input-buffers.input2:5] back in 2 again
+in input-buffers.input3
+[getloc: input-buffers.input3:2]
+in input-buffers.input4
+[getloc: input-buffers.input4:2]

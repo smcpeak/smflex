@@ -1547,7 +1547,9 @@ following public members:
     <a href="#yy_wrap_function"><code>yy_wrap_function</code></a> activity,
     etc.  If you want line numbers tracked across multiple input
     sources, you have to save and restore this value yourself at
-    appropriate times.  The engine only knows to increment it when
+    appropriate times, as demonstrated in
+    <a href="test/input-buffers-lineno.lex"><code>test/input-buffers-lineno.lex</code></a>.
+    The engine only knows to increment it when
     newline characters are matched.
 
 <dt id="yy_flex_debug"><code>int yy_flex_debug;</code>
