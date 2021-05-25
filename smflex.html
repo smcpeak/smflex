@@ -2181,8 +2181,9 @@ An input buffer is created by using:
 <a href="#yy_input_stream_t"><code>yy_input_stream_t</code></a> pointer
 and a size and creates a buffer
 associated with the given file and large enough to hold <code>size</code>
-characters; a <code>size</code> of 0 means to use a reasonable default size. It
-returns a <code>yy_buffer_state_t*</code>, pointer which may then be
+characters; a <code>size</code> of 0 means to use
+<a href="#YY_DEFAULT_BUF_ALLOC_SIZE"><code>YY_DEFAULT_BUF_ALLOC_SIZE</code></a>.
+It returns a <code>yy_buffer_state_t*</code>, pointer which may then be
 passed to other routines (see below).
 
 <p>The <code>yy_input_stream_t</code>
@@ -2476,6 +2477,13 @@ strings.  For example:
 <!-- ======================================================= -->
 <h1 id="miscellaneous-macros">MISCELLANEOUS MACROS</h1>
 
+<p>TODO: The material in this section should be distributed to more
+sensible locations.  Not everything here is a macro.
+
+<p>The macros in this section can be <code>#define</code>d in
+section 1, and will thereby override the default definitions provided
+in the generated scanner.
+
 <dl>
 
 <dt><code>YY_USER_ACTION</code>
@@ -2559,6 +2567,34 @@ for an example with <code>yy_set_bol</code> and <code>YY_GET_BOL</code>.
 switch statement, with each case terminated with the
 <code>YY_BREAK</code> macro, which expands to "<code>break;</code>" by
 default.  This may be redefined.
+
+<dt id="YY_MAX_READ_SIZE"><code>YY_MAX_READ_SIZE</code>
+
+    <dd><p>The maximum number of bytes that the scanner will pass as the
+    <code>size</code> argument to
+    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
+    On some platforms, the speed of reading can be improved by using
+    "round" numbers.
+
+    <p>The default value is 8192.
+
+<dt id="YY_DEFAULT_BUF_ALLOC_SIZE"><code>YY_DEFAULT_BUF_ALLOC_SIZE</code>
+
+    <dd><p>The default size of the read buffer, i.e., the size used
+    when the scanner creates its own buffer (which it usually does)
+    or <a href="#yy_create_buffer"><code>yy_create_buffer</code></a>
+    is passed a 0 <code>size</code> argument.
+
+    <p>This should be larger than <code>YY_MAX_READ_SIZE</code> for the
+    latter to have an effect because, when reading more data, there is
+    usually already some portion of a token in the buffer, and we will
+    not read more data than is available in the buffer.
+
+    <p>The default value is 16384.
+
+    <p>See <a href="test/large-read-buffer.lex"><code>test/large-read-buffer.lex</code></a>
+    for an example of overriding this value along with
+    <code>YY_MAX_READ_SIZE</code>.
 
 </dl>
 
@@ -3215,18 +3251,19 @@ to read the input is efficient.  In particular:
     Toward that end, explicitly open all input files rather than
     reading from standard input so you can set the read mode.
 
-<li><p>Some systems can be sensitive to the size of the
-    read buffer.  The default value of <code>YY_READ_BUF_SIZE</code>,
+<li><p>Some systems can be sensitive to the size passed to
+    <code>fread</code>.  The default value of
+    <a href="#YY_MAX_READ_SIZE"><code>YY_MAX_READ_SIZE</code></a>
     0x2000 (8 KiB), works reasonably well on all systems tested.  But consider this anecdote:
     on MinGW using <code>fread</code>, any size that is not a multiple of
     0x800 entails a 10-20% performance loss.
 
-<li><p>Meanwhile, substantially increasing the buffer size can lead to
-    significant gains.  For example, a size of 0x10000 (64 KiB) gains
-    about 20% over the default (with returns diminishing rapidly after
-    that).  To use that size, add
-    <code>#define YY_READ_BUF_SIZE 0x10000</code> to the top of the
-    <code>smflex</code> input file.
+<li><p>Meanwhile, substantially increasing the read buffer size,
+    <a href="#YY_DEFAULT_BUF_ALLOC_SIZE"><code>YY_DEFAULT_BUF_ALLOC_SIZE</code></a>,
+    and maximum read size (<code>YY_MAX_READ_SIZE</code>) can lead to
+    significant gains.  For example, a read size of 0x10000 (64 KiB)
+    gains about 20% over the default (with returns diminishing rapidly
+    after that).
 
 <li><p>There are three methods <code>smflex</code> can use to read the
     input: <code>fread</code>, <code>read</code>, and <code>iostream</code>.
@@ -5210,22 +5247,6 @@ run-time support library.  That has been removed as detailed below.
     themselves (which also would have needed to have been conjured when
     using <code>flex-2.5.4</code>).
 
-<li><p><code>YY_BUF_SIZE</code>: <code>flex-2.5.4</code> exposes a
-    macro called <code>YY_BUF_SIZE</code> with value 16384 to user code in
-    sections 2 and 3.  This macro has been removed.
-
-    <p>Rationale: It is an internal implementation detail that scanners
-    should not use.  The reason it was previously documented was that
-    <a href="#yy_create_buffer"><code>yy_create_buffer</code></a> and
-    <a href="#yym_create_buffer"><code>yym_create_buffer</code></a>
-    accept a <code>size</code> parameter, and there was a need to
-    give the client a default value.  In <code>smflex</code>, the
-    client can pass 0 to get the same effect.
-
-    <p>Replacement: Either pass 0 as the <code>size</code> or pass an
-    explicit non-zero size.  If this value was being used for some
-    other purpose, replace it with 16384.
-
 <li><p>In <code>flex-2.5.4</code>, it was permissible to access
     <code>YY_TEXT</code> after calling
     <a href="#YY_UNREAD_CHARACTER-macro"><code>YY_UNREAD_CHARACTER</code></a>.
@@ -5411,6 +5432,14 @@ table.  Some have aliases that can be enabled with
     <td><code>yylineno</code>
     <td><code>YY_LINENO</code>
     <td>Old name available with <code>%option flex-compat</code>.
+  <tr>
+    <td><code>YY_READ_BUF_SIZE</code>
+    <td><code>YY_MAX_READ_SIZE</code>
+    <td>No alias.
+  <tr>
+    <td><code>YY_BUF_SIZE</code>
+    <td><code>YY_DEFAULT_BUF_ALLOC_SIZE</code>
+    <td>No alias.
 </table>
 
 <p>Most of the renaming is motivated
@@ -5530,6 +5559,16 @@ is explained below:
 <li><p><code>YY_AT_BOL</code> has been renamed to <code>YY_GET_BOL</code>.
 
     <p>Rationale: Everywhere else I use "GET", so "AT" is irregular.
+
+<li><p><code>YY_READ_BUF_SIZE</code> and <code>YY_BUF_SIZE</code> have
+    been renamed to <code>YY_MAX_READ_SIZE</code> and
+    <code>YY_DEFAULT_BUF_ALLOC_SIZE</code>, respectively.
+
+    <p>Rationale: The old names were misleadingly similar.  The new
+    names make their purpose clear.
+
+    <p>There are no compatibility aliases for these because the old
+    names are just too confusing, and changing them is rare anyway.
 
 </ul>
 

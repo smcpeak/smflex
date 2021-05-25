@@ -82,9 +82,10 @@ CFLAGS_FOR_c_int_interactive_set_int_isatty := -DYY_ENABLE_DEBUG_LOG_CALL
 CFLAGS_FOR_c_int_set_int_0                  := -DYY_ENABLE_DEBUG_LOG_CALL
 CFLAGS_FOR_c_int_set_int_1                  := -DYY_ENABLE_DEBUG_LOG_CALL
 CFLAGS_FOR_c_int_set_int_isatty             := -DYY_ENABLE_DEBUG_LOG_CALL
-CFLAGS_FOR_large_token      := $(MEM_TEST_FLAGS)
-CFLAGS_FOR_scan_string_only := $(MEM_TEST_FLAGS)
-CFLAGS_FOR_two_buffers      := $(MEM_TEST_FLAGS)
+CFLAGS_FOR_large_read_buffer := $(MEM_TEST_FLAGS)
+CFLAGS_FOR_large_token       := $(MEM_TEST_FLAGS)
+CFLAGS_FOR_scan_string_only  := $(MEM_TEST_FLAGS)
+CFLAGS_FOR_two_buffers       := $(MEM_TEST_FLAGS)
 
 CXXFLAGS_FOR_cpp_int_batch       := -DYY_ENABLE_DEBUG_LOG_CALL
 CXXFLAGS_FOR_cpp_int_default     := -DYY_ENABLE_DEBUG_LOG_CALL
@@ -266,6 +267,7 @@ all-df: out/input-buffers-lineno.ok
 all-df: out/input-buffers-lineno-cpp.ok
 all-df: out/input-buffers-with-read.ok
 all-df: out/input-c-comments.ok
+all-df: out/large-read-buffer.ok
 all-df: out/large-token.ok
 all-df: out/large-token-cpp.ok
 all-df: out/noreject-frob.ok
