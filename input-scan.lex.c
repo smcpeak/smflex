@@ -274,7 +274,7 @@ static int yy_create_buffer_if_needed(input_scan_lexer_t *yy_lexer)
 {
   if (!yy_lexer->yy_current_buffer) {
     yy_lexer->yy_current_buffer =
-      input_scan_create_buffer(yy_lexer, yy_lexer->yy_input_stream, YY_DEFAULT_BUF_ALLOC_SIZE);
+      input_scan_create_buffer(yy_lexer, yy_lexer->yy_input_stream, 0 /*size*/);
     if (!yy_lexer->yy_current_buffer) {
       return 0;
     }
@@ -1328,7 +1328,7 @@ int input_scan_lex(input_scan_lexer_t * const yy_lexer  )
 
     if (!yy_lexer->yy_current_buffer) {
       yy_lexer->yy_current_buffer =
-        input_scan_create_buffer(yy_lexer, yy_lexer->yy_input_stream, YY_DEFAULT_BUF_ALLOC_SIZE);
+        input_scan_create_buffer(yy_lexer, yy_lexer->yy_input_stream, 0 /*size*/);
       if (!yy_lexer->yy_current_buffer) {
         /* Error already reported, just try to get out. */
         return 0;
@@ -3395,7 +3395,7 @@ STATIC_IF_CPP void input_scan_restart(input_scan_lexer_t *yy_lexer, input_scan_i
 {
   if (!yy_lexer->yy_current_buffer) {
     yy_lexer->yy_current_buffer =
-      input_scan_create_buffer(yy_lexer, input_file, YY_DEFAULT_BUF_ALLOC_SIZE);
+      input_scan_create_buffer(yy_lexer, input_file, 0 /*size*/);
     if (!yy_lexer->yy_current_buffer) {
       return;     /* Error already reported, try to recover. */
     }
