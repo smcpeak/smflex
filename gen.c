@@ -517,8 +517,10 @@ void gen_next_state(int worry_about_NULs)
   if (jacobson || fulltbl)
     gen_backing_up();
 
-  if (option_reject)
+  if (option_reject) {
+    indent_puts("YY_CHECK_STATE_PTR_BOUNDS();");
     indent_puts("*(yy_lexer->yy_state_ptr)++ = yy_current_state;");
+  }
 }
 
 
@@ -577,9 +579,10 @@ void gen_NUL_trans()
        * the state stack and yy_buf_cur_pos get out of sync.
        */
       indent_puts("if ( ! yy_is_jam )");
-      indent_up();
+      indent_lbrace();
+      indent_puts("YY_CHECK_STATE_PTR_BOUNDS();");
       indent_puts("*(yy_lexer->yy_state_ptr)++ = yy_current_state;");
-      indent_down();
+      indent_rbrace();
     }
   }
 

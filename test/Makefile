@@ -281,6 +281,7 @@ all-d : out/reject-abcd.ok
 all-d : out/reject-frob.ok
 all-df: out/toy-pascal.ok
 all-df: out/scan-bytes-only.ok
+all-df: out/scan-large-string.ok
 all-df: out/scan-string-etc.ok
 all-df: out/scan-string-only.ok
 all-df: out/set-bol.ok

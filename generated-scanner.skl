@@ -488,6 +488,22 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 #define YY_GET_BOL_STATE_ADJUSTMENT() 0
 %endif
 
+%if option_reject
+/* Number of elements in 'yy_state_buf'.
+ *
+ * TODO: This is wrong!  It assumes the input buffer is a certain size,
+ * but that is not necessarily the case! */
+#define YY_STATE_BUF_ELEMENTS (YY_DEFAULT_BUF_ALLOC_SIZE+2)
+
+/* Check that 'yy_state_ptr' is safe to dereference. */
+#define YY_CHECK_STATE_PTR_BOUNDS()                            \
+{                                                              \
+  YY_ASSERT(yy_lexer->yy_state_buf <= yy_lexer->yy_state_ptr); \
+  YY_ASSERT(yy_lexer->yy_state_ptr <                           \
+            yy_lexer->yy_state_buf + YY_STATE_BUF_ELEMENTS);   \
+}
+%endif # option_reject
+
 /* Go to the start state for scanning a new token. */
 #define YY_GO_TO_START_STATE_FOR_NEW_TOKEN                       \
 %if jacobson                                                     \
@@ -500,6 +516,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 %if option_reject                                                \
     /* Set up for storing up states for YY_REJECT. */            \
     yy_lexer->yy_state_ptr = yy_lexer->yy_state_buf;             \
+    YY_CHECK_STATE_PTR_BOUNDS();                                 \
     *(yy_lexer->yy_state_ptr)++ = yy_current_state;              \
 %endif
 
@@ -513,6 +530,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 %if variable_trailing_context_rules \
   yy_lexer->yy_lp = yy_lexer->yy_full_lp; /* restore orig. accepting pos. */ \
   yy_lexer->yy_state_ptr = yy_lexer->yy_full_state; /* restore orig. state */ \
+  YY_CHECK_STATE_PTR_BOUNDS(); \
   yy_current_state = *(yy_lexer->yy_state_ptr); /* restore curr. state */ \
 %endif \
   ++(yy_lexer->yy_lp); \
@@ -690,7 +708,7 @@ int yyFlexLexer::yym_lex(yy_lex_parameters)
 %if option_reject
     YY_ASSERT(yy_lexer->yy_state_buf == NULL);
     yy_lexer->yy_state_buf =
-      (yy_state_type_t*)yy_flex_alloc(sizeof(yy_state_type_t) * (YY_DEFAULT_BUF_ALLOC_SIZE+2));
+      (yy_state_type_t*)yy_flex_alloc(sizeof(yy_state_type_t) * YY_STATE_BUF_ELEMENTS);
     if (!yy_lexer->yy_state_buf) {
       YY_ERROR(yy_err_out_of_memory, "allocating yy_state_buf");
       return 0;
@@ -732,7 +750,9 @@ yy_find_action:
     yy_act = yy_accept[yy_current_state];
 
 %elif option_reject
-    yy_current_state = *--(yy_lexer->yy_state_ptr);
+    --(yy_lexer->yy_state_ptr);
+    YY_CHECK_STATE_PTR_BOUNDS();
+    yy_current_state = *(yy_lexer->yy_state_ptr);
     yy_lexer->yy_lp = yy_accept[yy_current_state];
 
     /* One way this is unused is '%option yylineno', which claims
@@ -787,10 +807,12 @@ YY_POSSIBLY_UNUSED_LABEL(find_rule) /* we branch to this label when backing up *
 
       --yy_cp;
 
-      /* We could consolidate the following two lines with those at
+      /* We could consolidate the following lines with those at
        * the beginning, but at the cost of complaints that we're
        * branching inside a loop. */
-      yy_current_state = *--(yy_lexer->yy_state_ptr);
+      --(yy_lexer->yy_state_ptr);
+      YY_CHECK_STATE_PTR_BOUNDS();
+      yy_current_state = *(yy_lexer->yy_state_ptr);
       yy_lexer->yy_lp = yy_accept[yy_current_state];
     } /* while(1) */
 
