@@ -1414,12 +1414,12 @@ void emit_with_name_substitution(FILE *fp, char const *line)
 #define MAX_IF_NESTING 10
 
 
-/* Return true if all of 'vals[0,count-1]' are true. */
-static int all_true(int *vals, int count)
+/* Return true if all of 'vals[0,count-1]' are 1. */
+static int all_one(int *vals, int count)
 {
   int i;
   for (i=0; i < count; i++) {
-    if (vals[i] == 0) {
+    if (vals[i] != 1) {
       return 0;
     }
   }
@@ -1540,7 +1540,12 @@ int emit_skeleton_lines_upto(
 
   /* The entry at 'in_if' says if we are currently emitting the lines
    * we see.  Entries at lesser values indicate whether we are emitting
-   * those outer conditionals. */
+   * those outer conditionals.
+   *
+   * Each value is one of:
+   *   0: Not yet emitted an if/elif/else case.
+   *   1: Emitting this case.
+   *   2: Already emitted a case. */
   int emitting_if[MAX_IF_NESTING] = {1};
 
   /* Current skeleton line text. */
@@ -1579,7 +1584,18 @@ int emit_skeleton_lines_upto(
         if (!in_if) {
           SKEL_ERROR("%else when not in %if");
         }
-        emitting_if[in_if] = !emitting_if[in_if];
+        emitting_if[in_if] = (emitting_if[in_if] == 0)?
+          1 :     /* Emit this one. */
+          2 ;     /* Already emitted a case. */
+      }
+
+      else if (starts_with(line+1, "elif ")) {
+        if (!in_if) {
+          SKEL_ERROR("%elif when not in %if");
+        }
+        emitting_if[in_if] = (emitting_if[in_if] == 0)?
+          evaluate_skel_expr(&eval_ctx, line+6) :
+          2 ;     /* Already emitted a case. */
       }
 
       else if (starts_with(line+1, "endif")) {
@@ -1628,7 +1644,7 @@ int emit_skeleton_lines_upto(
       }
     }
     else {
-      if (all_true(emitting_if, in_if+1)) {
+      if (all_one(emitting_if, in_if+1)) {
         emit_with_name_substitution(dest, line);
       }
     }
