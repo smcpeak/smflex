@@ -2706,6 +2706,13 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
     of case. The matched text given in <code>YY_TEXT</code> will have the
     preserved case (i.e., it will not be folded).
 
+    <p>For this option, letter case applies only to the letters in the
+    US-ASCII encoding: 0x41 ('A') through 0x5A ('Z') are uppercase,
+    0x61 ('a') through 0x7A ('z') are lowercase, and case insensitivity
+    means they are pairwise equivalent (e.g., 'A'='a').  Neither
+    <code>smflex</code> nor the generated scanner is sensitive to
+    locale settings, nor to letters in encodings other than US-ASCII.
+
 <dt><code>-n</code>
 
 <dd><p>Write output files using platform native line endings.  The
