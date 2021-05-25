@@ -11,8 +11,7 @@
 
 %%
 
-/* TODO: This fails when SZ is 100000. */
-#define SZ 10000
+#define SZ 100000
 
 int main()
 {

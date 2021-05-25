@@ -1,0 +1,116 @@
+yy-state-buf-bug.txt
+====================
+
+This document describes two bugs involving 'yy_state_buf' that were in
+flex-2.5.4 and that I have fixed in smflex.
+
+
+Background
+----------
+
+'yy_state_buf' is an array of 'yy_state_type_t', which is a typedef for
+'int' in the configurations that use 'yy_state_buf'.  Specifically, any
+of the following cause 'yy_state_buf' to be included and maintained in
+the generated scanner:
+
+- REJECT
+- %option reject
+- %option yylineno
+- variable trailing context (e.g., a pattern like "abc/d*e")
+
+Elements of 'yy_state_buf' are states in the finite state automaton that
+recognizes tokens.  The first element is the overall start state, and
+subsequent elements record the state after each byte of input is seen.
+The purpose of this array is to allow a form of backtracking after
+REJECT is invoked or trailing context is matched.  (I do not know why
+%option yylineno activates 'yy_state_buf', but it does.)
+
+The maximum number of bytes that can be part of a single token is the
+size of the input read buffer, plus two for two NUL bytes that mark the
+end of the buffer.  Consequently, the maximum number of elements of
+'yy_state_buf' that can be used is the size of the read buffer plus
+*three* (since the start state is saved, as well as the state *after*
+every byte).
+
+In flex-2.5.4, the number of elements allocated for 'yy_state_buf' is
+'YY_BUF_SIZE + 2', where 'YY_BUF_SIZE' (16384) is the default size of
+the input read buffer.
+
+
+Bugs
+----
+
+Bug #1 is that the +2 should be a +3.
+
+Bug #2 is that the input read buffer does not have to use the default
+size.  If the user of the scanner calls any of:
+
+- yy_scan_string
+- yy_scan_bytes
+- yy_scan_buffer
+- yy_create_buffer
+
+then the read buffer can be larger than YY_BUF_SIZE, but 'yy_state_buf'
+is not reallocated to match.
+
+Both bugs cause 'yy_state_buf' to be overrun if a single token (plus any
+trailing context) exceeds YY_BUF_SIZE+1 bytes, corrupting the memory
+that is after it.
+
+Incidentally, although flex has a mechanism for expanding the size of
+its read buffer automatically when a large token is scanned, that
+mechanism is disabled when 'yy_state_buf' is active, so exercising bug
+#2 requires one of those four functions to be called.
+
+
+Reporting Status
+----------------
+
+As of this writing (2021-05-25), bug #2 has already been reported
+against westes/flex 2.6.4:
+
+  https://github.com/westes/flex/issues/469
+
+and there is a proposed fix:
+
+  https://github.com/westes/flex/pull/475
+
+but that proposal has some problems of its own.
+
+Furthermore, although the bug was reported in December 2020 and the fix
+proposed in January 2021, it is now May 2021 and there has been no
+comment on either from the flex maintainers.
+
+Bug #1 is, to my knowledge, unreported.
+
+
+Fix in smflex
+-------------
+
+First, in generated-header.skl, we keep track of the size of
+'yy_state_buffer' (which is the smflex name for 'yy_state_buf') in the
+new 'yy_state_buf_alloc_elts' member.
+
+Second, in generated-scanner.skl, every time 'yy_lex' (which is the
+smflex name for 'yylex') is called, we check that 'yy_state_buffer' is
+large enough.  If not, we reallocate it to the required size.
+
+There is no need here for exponential growth because allocations of
+'yy_state_buffer' happen no more often than allocations of the input
+read buffer.
+
+There would be an efficiency gain from checking the size only when the
+input read buffer size might change, but maintaining 'yy_state_buffer'
+is already quite an expensive operation for every byte scanned, so one
+extra check per token is not significant.
+
+In a previous commit, I added bounds check assertions to all
+dereferences of 'yy_state_ptr', the pointer through which we read and
+write 'yy_state_buffer'.  I regard those assertions as an important part
+of the fix as well.  Again, we already pay a steep price to maintain
+'yy_state_buffer', so the cost of the assertions is not high in
+comparison, and given the history of unsafety here, the extra assurance
+is welcome.
+
+
+EOF

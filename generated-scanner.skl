@@ -489,18 +489,19 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 %endif
 
 %if option_reject
-/* Number of elements in 'yy_state_buffer'.
- *
- * TODO: This is wrong!  It assumes the input buffer is a certain size,
- * but that is not necessarily the case! */
-#define YY_STATE_BUF_ELEMENTS (YY_DEFAULT_BUF_ALLOC_SIZE+2)
+/* We need this many more elements in 'yy_state_buffer' than in the
+ * input read buffer. */
+#define YY_STATE_BUF_EXTRA_ELTS 3
 
-/* Check that 'yy_state_ptr' is safe to dereference. */
+/* Check that 'yy_state_ptr' is safe to dereference.  Note that we do
+ * allow it to point at the one-past-the-end location, but it is not
+ * safe to dereference there. */
 #define YY_CHECK_STATE_PTR_BOUNDS()                               \
 {                                                                 \
   YY_ASSERT(yy_lexer->yy_state_buffer <= yy_lexer->yy_state_ptr); \
   YY_ASSERT(yy_lexer->yy_state_ptr <                              \
-            yy_lexer->yy_state_buffer + YY_STATE_BUF_ELEMENTS);   \
+            yy_lexer->yy_state_buffer +                           \
+              yy_lexer->yy_state_buf_alloc_elts);                 \
 }
 %endif # option_reject
 
@@ -704,17 +705,31 @@ int yyFlexLexer::yym_lex(yy_lex_parameters)
     }
 
     yy_load_current_buffer_state(yy_lexer);
+  }
 
 %if option_reject
-    YY_ASSERT(yy_lexer->yy_state_buffer == NULL);
-    yy_lexer->yy_state_buffer =
-      (yy_state_type_t*)yy_flex_alloc(sizeof(yy_state_type_t) * YY_STATE_BUF_ELEMENTS);
+  /* Check if 'yy_state_buffer' exists and is big enough.
+   *
+   * There is a slight loss of efficiency due to checking this on every
+   * token rather than only when the buffer changes, but
+   * 'yy_state_buffer' is already a very inefficient mechanism so it is
+   * not worth the extra complication. */
+  if (yy_lexer->yy_state_buf_alloc_elts <
+        yy_lexer->yy_current_buffer->yy_buf_alloc_size + YY_STATE_BUF_EXTRA_ELTS) {
+    /* Free the old buffer.  Its old contents are not needed. */
+    yy_flex_free(yy_lexer->yy_state_buffer);
+
+    /* Make a new one. */
+    yy_lexer->yy_state_buf_alloc_elts =
+      yy_lexer->yy_current_buffer->yy_buf_alloc_size + YY_STATE_BUF_EXTRA_ELTS;
+    yy_lexer->yy_state_buffer = (yy_state_type_t*)
+      yy_flex_alloc(sizeof(yy_state_type_t) * yy_lexer->yy_state_buf_alloc_elts);
     if (!yy_lexer->yy_state_buffer) {
       YY_ERROR(yy_err_out_of_memory, "allocating yy_state_buffer");
       return 0;
     }
-%endif
   }
+%endif
 
   /* Loop over all tokens in the input until end-of-file. */
   while (1) {
@@ -1073,6 +1088,7 @@ STATIC_IF_CPP void yy_construct(yy_lexer_t *yy_lexer)
 %endif
 %if option_reject
   yy_lexer->yy_state_buffer = NULL;
+  yy_lexer->yy_state_buf_alloc_elts = 0;
   yy_lexer->yy_state_ptr = NULL;
   yy_lexer->yy_full_match = NULL;
   yy_lexer->yy_lp = 0;
@@ -1125,6 +1141,7 @@ STATIC_IF_CPP void yy_destroy(yy_lexer_t *yy_lexer)
 
   yy_flex_free(yy_lexer->yy_state_buffer);
   yy_lexer->yy_state_buffer = NULL;
+  yy_lexer->yy_state_buf_alloc_elts = 0;
 %endif
 %if option_stack
 
@@ -2377,6 +2394,8 @@ int main()
 #undef YY_DEFAULT_BUF_ALLOC_SIZE
 #undef YY_GET_BOL_STATE_ADJUSTMENT
 #undef YY_GO_TO_START_STATE_FOR_NEW_TOKEN
+#undef YY_STATE_BUF_EXTRA_ELTS
+#undef YY_CHECK_STATE_PTR_BOUNDS
 
 /* Remove documented YY_XXX macros, as they cannot be used in section 3.
  * Most of them have yy_XXX alternatives that accept 'yy_lexer_t*'. */

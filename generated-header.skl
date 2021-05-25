@@ -303,15 +303,22 @@ struct yy_lexer_struct {
    * Thus, element 0 is the overall start state, element 1 is the state
    * after seeing the first byte, etc.
    *
+   * Since the maximum number of bytes to scan for one token is
+   * 'yy_current_buffer->yy_buf_alloc_size+2', and we save the state
+   * after every byte, as well as before the first, we need a minimum of
+   * 'yy_current_buffer->yy_buf_alloc_size+3' elements in order to
+   * accomodate a maximum-length token.
+   *
    * This is used to allow back-tracking after YY_REJECT, where we have
    * to find either a matching rule for the current token length that
    * appears later in the scanner definition than the one that rejected,
    * or if that isn't possible (or is also rejected), an accepting state
-   * for a smaller length.
-   *
-   * Its size must be at least 'yy_current_buffer->yy_buf_alloc_size+2'
-   * elements in order to accomodate a maximum-length token. */
+   * for a smaller length. */
   yy_state_type_t *yy_state_buffer;
+
+  /* Allocated size of 'yy_state_buffer', as the number of elements,
+   * or 0 if the buffer is NULL. */
+  int yy_state_buf_alloc_elts;
 
   /* This points to the next element of 'yy_state_buffer' to populate
    * with a saved 'yy_current_state' value. */

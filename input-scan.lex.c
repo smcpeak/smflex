@@ -1336,8 +1336,8 @@ int input_scan_lex(input_scan_lexer_t * const yy_lexer  )
     }
 
     yy_load_current_buffer_state(yy_lexer);
-
   }
+
 
   /* Loop over all tokens in the input until end-of-file. */
   while (1) {
@@ -3852,6 +3852,8 @@ int input_scan_wrap_return_1(input_scan_lexer_t *yy_lexer)
 #undef YY_DEFAULT_BUF_ALLOC_SIZE
 #undef YY_GET_BOL_STATE_ADJUSTMENT
 #undef YY_GO_TO_START_STATE_FOR_NEW_TOKEN
+#undef YY_STATE_BUF_EXTRA_ELTS
+#undef YY_CHECK_STATE_PTR_BOUNDS
 
 /* Remove documented YY_XXX macros, as they cannot be used in section 3.
  * Most of them have yy_XXX alternatives that accept 'input_scan_lexer_t*'. */
