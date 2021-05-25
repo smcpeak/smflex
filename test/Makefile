@@ -238,6 +238,7 @@ all-df: out/c-lexer1.ok
 all-df: out/c-lexer1-no-lines.ok
 all-df: out/c-prefix.ok
 all-df: out/c-prefix-validated.ok
+all-df: out/case-insensitive.ok
 all-df: out/continued-action2.ok
 all-df: out/count-actions.ok
 all-df: out/cpp-int-batch.ok
