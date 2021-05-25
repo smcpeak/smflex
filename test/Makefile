@@ -109,12 +109,12 @@ GET_CXXFLAGS = $(CXXFLAGS_FOR_$(subst -,_,$(subst .,_,$(1:.yy=))))
 #
 .PRECIOUS: out/%.o
 out/%.o: out/%.c
-	$(CC) -o$@ -c $(CFLAGS) $(call GET_CFLAGS,$*) $<
+	$(CC) -o$@ -c $(CFLAGS) $(CPPFLAGS) $(call GET_CFLAGS,$*) $<
 
 # Compile a C file in out/ as if it were C++.
 .PRECIOUS: out/%.c_as_cc.o
 out/%.c_as_cc.o: out/%.c
-	$(CXX) -o$@ -xc++ -c $(CXXFLAGS) $<
+	$(CXX) -o$@ -xc++ -c $(CXXFLAGS) $(CPPFLAGS) $<
 
 # Compile a C file in test/.
 out/%.o: %.c
@@ -131,7 +131,7 @@ out/%.yy.cc: %.lexpp $(SMFLEX)
 # Compile C++ file in out/.
 .PRECIOUS: out/%.oo
 out/%.oo: out/%.cc
-	$(CXX) -o$@ -c $(CXXFLAGS) $(call GET_CXXFLAGS,$*) $<
+	$(CXX) -o$@ -c $(CXXFLAGS) $(CPPFLAGS) $(call GET_CXXFLAGS,$*) $<
 
 # Link C object files in out/ to make an executable.
 .PRECIOUS: out/%.exe
