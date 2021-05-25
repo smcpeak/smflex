@@ -13,7 +13,6 @@ void gen_backing_up(void);
 void gen_bu_action(void);
 void genctbl(void);
 void genecs(void);
-void gen_find_action(void);
 void genftbl(void);
 void gen_next_compressed_state(char *char_map);
 void gen_next_match(void);

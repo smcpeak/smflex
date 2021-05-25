@@ -274,117 +274,6 @@ void genecs()
 }
 
 
-/* Generate the code to find the action number. */
-void gen_find_action()
-{
-  if (jacobson)
-    indent_puts("yy_act = yy_current_state[-1].yy_nxt;");
-
-  else if (fulltbl)
-    indent_puts("yy_act = yy_accept[yy_current_state];");
-
-  else if (option_reject) {
-    indent_puts("yy_current_state = *--(yy_lexer->yy_state_ptr);");
-    indent_puts("yy_lexer->yy_lp = yy_accept[yy_current_state];");
-
-    /* One way this is unused is '%option yylineno', which claims
-     * to use YY_REJECT (presumably because it needs similar table
-     * maintenance) but actually does not. */
-    outn("YY_POSSIBLY_UNUSED_LABEL(find_rule) /* we branch to this label when backing up */");
-
-    indent_puts("for ( ; ; ) /* until we find what rule we matched */");
-
-    indent_lbrace();
-
-    indent_puts("if ( yy_lexer->yy_lp && yy_lexer->yy_lp < yy_accept[yy_current_state + 1] )");
-    indent_lbrace();
-    indent_puts("yy_act = yy_acclist[yy_lexer->yy_lp];");
-
-    if (variable_trailing_context_rules) {
-      indent_puts("if ( yy_act & YY_TRAILING_HEAD_MASK ||");
-      indent_puts("     yy_lexer->yy_looking_for_trail_begin )");
-      indent_lbrace();
-
-      indent_puts("if ( yy_act == yy_lexer->yy_looking_for_trail_begin )");
-      indent_lbrace();
-      indent_puts("yy_lexer->yy_looking_for_trail_begin = 0;");
-      indent_puts("yy_act &= ~YY_TRAILING_HEAD_MASK;");
-      indent_puts("break;");
-      indent_rbrace();
-
-      indent_rbrace();
-
-      indent_puts("else if ( yy_act & YY_TRAILING_MASK )");
-      indent_lbrace();
-      indent_puts("yy_lexer->yy_looking_for_trail_begin = yy_act & ~YY_TRAILING_MASK;");
-      indent_puts("yy_lexer->yy_looking_for_trail_begin |= YY_TRAILING_HEAD_MASK;");
-
-      if (real_reject) {
-        /* Remember matched text in case we back up
-         * due to YY_REJECT.
-         */
-        indent_puts("yy_lexer->yy_full_match = yy_cp;");
-        indent_puts("yy_lexer->yy_full_state = yy_lexer->yy_state_ptr;");
-        indent_puts("yy_lexer->yy_full_lp = yy_lexer->yy_lp;");
-      }
-
-      indent_rbrace();
-
-      indent_puts("else");
-      indent_lbrace();
-      indent_puts("yy_lexer->yy_full_match = yy_cp;");
-      indent_puts("yy_lexer->yy_full_state = yy_lexer->yy_state_ptr;");
-      indent_puts("yy_lexer->yy_full_lp = yy_lexer->yy_lp;");
-      indent_puts("break;");
-      indent_rbrace();
-
-      indent_puts("++(yy_lexer->yy_lp);");
-      indent_puts("goto find_rule;");
-    }
-
-    else {
-      /* Remember matched text in case we back up due to
-       * trailing context plus YY_REJECT.
-       */
-      indent_lbrace();
-      indent_puts("yy_lexer->yy_full_match = yy_cp;");
-      indent_puts("break;");
-      indent_rbrace();
-    }
-
-    indent_rbrace();
-
-    indent_puts("--yy_cp;");
-
-    /* We could consolidate the following two lines with those at
-     * the beginning, but at the cost of complaints that we're
-     * branching inside a loop.
-     */
-    indent_puts("yy_current_state = *--(yy_lexer->yy_state_ptr);");
-    indent_puts("yy_lexer->yy_lp = yy_accept[yy_current_state];");
-
-    indent_rbrace();
-  }
-
-  else {                        /* compressed */
-    indent_puts("yy_act = yy_accept[yy_current_state];");
-
-    if (interactive && !option_reject) {
-      /* Do the guaranteed-needed backing up to figure out
-       * the match.
-       */
-      indent_puts("if ( yy_act == 0 )");
-      indent_up();
-      indent_puts("{ /* have to back up */");
-      indent_puts("yy_cp = yy_lexer->yy_last_accepting_cpos;");
-      indent_puts("yy_current_state = yy_lexer->yy_last_accepting_state;");
-      indent_puts("yy_act = yy_accept[yy_current_state];");
-      indent_rbrace();
-    }
-  }
-}
-
-
 /* genftbl - generate full transition table */
 void genftbl()
 {
@@ -1097,13 +986,9 @@ void make_tables()
   set_indent(2);
   gen_next_match();
 
-  skelout_upto("find_action_number");
-  set_indent(2);
-  gen_find_action();
-
   /* Copy actions to output file. */
   skelout_upto("user_actions");
-  indent_up();
+  set_indent(3);
   gen_bu_action();
 
   /* Emit all user actions associated with rules.  Up to this point,
@@ -1470,6 +1355,7 @@ static int eval_skel_identifier(void *extra_, char const *id, int len)
   COND_FLAG(bol_needed)
   COND_FLAG(cpp_interface)
   COND_FLAG(interactive)
+  COND_FLAG(fulltbl)
   COND_FLAG(jacobson)
   COND_FLAG(option_debug)
   COND_FLAG(option_flex_compat)
@@ -1484,6 +1370,7 @@ static int eval_skel_identifier(void *extra_, char const *id, int len)
   COND_FLAG(option_yyclass)
   COND_FLAG(option_yylineno)
   COND_FLAG(option_yymore)
+  COND_FLAG(real_reject)
   COND_FLAG(use_read)
   COND_FLAG(variable_trailing_context_rules)
 
