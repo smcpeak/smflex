@@ -191,7 +191,13 @@ endif
 
 # If 'make' thinks it needs an expect file, just make an empty one so
 # the test can proceed and then complain.
+.PRECIOUS: %.expect
 %.expect:
+	touch $@
+
+# Same for an input file.
+.PRECIOUS: %.input
+%.input:
 	touch $@
 
 # Special rule for the test that calls getenv so it does not actually
