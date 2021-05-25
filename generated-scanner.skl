@@ -480,6 +480,30 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
   *yy_cp = '\0';                                         \
   yy_lexer->yy_buf_cur_pos = yy_cp;
 
+%if bol_needed
+/* The amount by which to adjust the start state based on BOL status. */
+#define YY_GET_BOL_STATE_ADJUSTMENT() (yy_get_bol(yy_lexer))
+%else
+/* BOL is not needed, so there is no adjustment. */
+#define YY_GET_BOL_STATE_ADJUSTMENT() 0
+%endif
+
+/* Go to the start state for scanning a new token. */
+#define YY_GO_TO_START_STATE_FOR_NEW_TOKEN                       \
+%if jacobson                                                     \
+    yy_current_state = yy_start_state_list[                      \
+      yy_lexer->yy_start_state + YY_GET_BOL_STATE_ADJUSTMENT()]; \
+%else                                                            \
+    yy_current_state =                                           \
+      yy_lexer->yy_start_state + YY_GET_BOL_STATE_ADJUSTMENT();  \
+%endif                                                           \
+%if option_reject                                                \
+    /* Set up for storing up states for YY_REJECT. */            \
+    yy_lexer->yy_state_ptr = yy_lexer->yy_state_buf;             \
+    *(yy_lexer->yy_state_ptr)++ = yy_current_state;              \
+%endif
+
+
 %% dfa_tables: data tables for the DFA
 
 %if option_reject
@@ -693,6 +717,9 @@ int yyFlexLexer::yym_lex(yy_lex_parameters)
      * the current run.
      */
     yy_bp = yy_cp;
+
+    /* Go to the start state for scanning the next token. */
+    YY_GO_TO_START_STATE_FOR_NEW_TOKEN;
 
 %% find_next_match: code to set up and find next match goes here
 
@@ -1227,8 +1254,10 @@ static yy_state_type_t yy_get_previous_state(yy_lexer_t *yy_lexer)
   yy_state_type_t yy_current_state;
   char *yy_cp;
 
-%% prev_start_to_current: code to get the start state into yy_current_state goes here
+  /* Reset to the scanning start state. */
+  YY_GO_TO_START_STATE_FOR_NEW_TOKEN;
 
+  /* Rescan the text. */
   for (yy_cp = YY_TEXT_NONCONST + YY_MORE_LEN;
        yy_cp < yy_lexer->yy_buf_cur_pos;
        ++yy_cp) {
@@ -2240,6 +2269,8 @@ int main()
 #undef YY_WRAPPER_OBJECT
 #undef YY_TEXT_NONCONST
 #undef YY_DEFAULT_BUF_ALLOC_SIZE
+#undef YY_GET_BOL_STATE_ADJUSTMENT
+#undef YY_GO_TO_START_STATE_FOR_NEW_TOKEN
 
 /* Remove documented YY_XXX macros, as they cannot be used in section 3.
  * Most of them have yy_XXX alternatives that accept 'yy_lexer_t*'. */

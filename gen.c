@@ -708,33 +708,6 @@ void gen_NUL_trans()
 }
 
 
-/* Generate the code to find the start state. */
-void gen_start_state()
-{
-  if (jacobson) {
-    if (bol_needed) {
-      indent_puts
-        ("yy_current_state = yy_start_state_list[yy_lexer->yy_start_state + YY_GET_BOL()];");
-    }
-    else
-      indent_puts("yy_current_state = yy_start_state_list[yy_lexer->yy_start_state];");
-  }
-
-  else {
-    indent_puts("yy_current_state = yy_lexer->yy_start_state;");
-
-    if (bol_needed)
-      indent_puts("yy_current_state += YY_GET_BOL();");
-
-    if (option_reject) {
-      /* Set up for storing up states. */
-      indent_puts("yy_lexer->yy_state_ptr = yy_lexer->yy_state_buf;");
-      indent_puts("*(yy_lexer->yy_state_ptr)++ = yy_current_state;");
-    }
-  }
-}
-
-
 /* gentabs - generate data statements for the transition tables */
 void gentabs()
 {
@@ -1118,11 +1091,10 @@ void make_tables()
 
   skelout_upto("find_next_match");
 
-  set_indent(2);
-  gen_start_state();
-
-  /* Note, don't use any indentation. */
+  /* Don't use any indentation for this label. */
   outn("yy_match:");
+
+  set_indent(2);
   gen_next_match();
 
   skelout_upto("find_action_number");
@@ -1188,13 +1160,6 @@ void make_tables()
        */
       indent_puts("yy_cp = yy_lexer->yy_buf_cur_pos;");
   }
-
-
-  /* Generate code for yy_get_previous_state(). */
-  set_indent(1);
-  skelout_upto("prev_start_to_current");
-
-  gen_start_state();
 
   set_indent(2);
   skelout_upto("prev_find_next_state");

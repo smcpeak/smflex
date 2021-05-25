@@ -19,7 +19,6 @@ void gen_next_compressed_state(char *char_map);
 void gen_next_match(void);
 void gen_next_state(int worry_about_NULs);
 void gen_NUL_trans(void);
-void gen_start_state(void);
 void gentabs(void);
 void indent_put2s(char const *fmt, char const *arg);
 void indent_puts(char str[]);
