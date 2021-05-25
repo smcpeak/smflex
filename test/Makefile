@@ -416,6 +416,19 @@ all-invalid: out/invalid-smflex-too-small.bad
 .PHONY: all-invalid
 all: all-invalid
 
+# Command line error.
+all-cmderr: out/cmderr-outfile-ext.bad
+out/cmderr-outfile-ext.bad: cmderr-outfile-ext.expect $(SMFLEX)
+	if $(SMFLEX) -oout/cmderr-outfile-ext.h username.lex >out/cmderr-outfile-ext.actual 2>&1; then \
+	  echo "should have failed!"; \
+	  exit 2; \
+	fi
+	diff -b -u cmderr-outfile-ext.expect out/cmderr-outfile-ext.actual
+	touch $@
+
+.PHONY: all-cmderr
+all: all-cmderr
+
 # Unit test program.
 out/test-eval-skel-expr.exe: test-eval-skel-expr.c ../eval-skel-expr.h ../eval-skel-expr.c
 	$(CC) -o$@ $(CFLAGS) -I.. test-eval-skel-expr.c ../eval-skel-expr.c

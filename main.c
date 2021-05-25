@@ -816,6 +816,10 @@ static void compute_header_file_name()
     last_dot = strrchr(header_file_name, '\0');
     *last_dot = '.';
   }
+  else if (str_eq(last_dot, ".h")) {
+    lerrsf(_("output file name cannot end in \".h\": \"%s\""),
+           outfilename);
+  }
   strcpy(last_dot + 1, "h");
 }
 
