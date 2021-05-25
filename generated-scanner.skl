@@ -489,18 +489,18 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 %endif
 
 %if option_reject
-/* Number of elements in 'yy_state_buf'.
+/* Number of elements in 'yy_state_buffer'.
  *
  * TODO: This is wrong!  It assumes the input buffer is a certain size,
  * but that is not necessarily the case! */
 #define YY_STATE_BUF_ELEMENTS (YY_DEFAULT_BUF_ALLOC_SIZE+2)
 
 /* Check that 'yy_state_ptr' is safe to dereference. */
-#define YY_CHECK_STATE_PTR_BOUNDS()                            \
-{                                                              \
-  YY_ASSERT(yy_lexer->yy_state_buf <= yy_lexer->yy_state_ptr); \
-  YY_ASSERT(yy_lexer->yy_state_ptr <                           \
-            yy_lexer->yy_state_buf + YY_STATE_BUF_ELEMENTS);   \
+#define YY_CHECK_STATE_PTR_BOUNDS()                               \
+{                                                                 \
+  YY_ASSERT(yy_lexer->yy_state_buffer <= yy_lexer->yy_state_ptr); \
+  YY_ASSERT(yy_lexer->yy_state_ptr <                              \
+            yy_lexer->yy_state_buffer + YY_STATE_BUF_ELEMENTS);   \
 }
 %endif # option_reject
 
@@ -515,7 +515,7 @@ static int yy_get_next_buffer(yy_lexer_t *yy_lexer);
 %endif                                                           \
 %if option_reject                                                \
     /* Set up for storing up states for YY_REJECT. */            \
-    yy_lexer->yy_state_ptr = yy_lexer->yy_state_buf;             \
+    yy_lexer->yy_state_ptr = yy_lexer->yy_state_buffer;          \
     YY_CHECK_STATE_PTR_BOUNDS();                                 \
     *(yy_lexer->yy_state_ptr)++ = yy_current_state;              \
 %endif
@@ -706,11 +706,11 @@ int yyFlexLexer::yym_lex(yy_lex_parameters)
     yy_load_current_buffer_state(yy_lexer);
 
 %if option_reject
-    YY_ASSERT(yy_lexer->yy_state_buf == NULL);
-    yy_lexer->yy_state_buf =
+    YY_ASSERT(yy_lexer->yy_state_buffer == NULL);
+    yy_lexer->yy_state_buffer =
       (yy_state_type_t*)yy_flex_alloc(sizeof(yy_state_type_t) * YY_STATE_BUF_ELEMENTS);
-    if (!yy_lexer->yy_state_buf) {
-      YY_ERROR(yy_err_out_of_memory, "allocating yy_state_buf");
+    if (!yy_lexer->yy_state_buffer) {
+      YY_ERROR(yy_err_out_of_memory, "allocating yy_state_buffer");
       return 0;
     }
 %endif
@@ -1072,7 +1072,7 @@ STATIC_IF_CPP void yy_construct(yy_lexer_t *yy_lexer)
 
 %endif
 %if option_reject
-  yy_lexer->yy_state_buf = NULL;
+  yy_lexer->yy_state_buffer = NULL;
   yy_lexer->yy_state_ptr = NULL;
   yy_lexer->yy_full_match = NULL;
   yy_lexer->yy_lp = 0;
@@ -1123,8 +1123,8 @@ STATIC_IF_CPP void yy_destroy(yy_lexer_t *yy_lexer)
   yy_lexer->yy_current_buffer = NULL;
 %if option_reject
 
-  yy_flex_free(yy_lexer->yy_state_buf);
-  yy_lexer->yy_state_buf = NULL;
+  yy_flex_free(yy_lexer->yy_state_buffer);
+  yy_lexer->yy_state_buffer = NULL;
 %endif
 %if option_stack
 

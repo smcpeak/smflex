@@ -298,10 +298,31 @@ struct yy_lexer_struct {
 
 %endif
 %if option_reject
-  /* These are related to YY_REJECT. */
-  yy_state_type_t *yy_state_buf;
+  /* This is an array of states, one for each byte of the token being
+   * scanned, indicating the scanner's state before seeing that byte.
+   * Thus, element 0 is the overall start state, element 1 is the state
+   * after seeing the first byte, etc.
+   *
+   * This is used to allow back-tracking after YY_REJECT, where we have
+   * to find either a matching rule for the current token length that
+   * appears later in the scanner definition than the one that rejected,
+   * or if that isn't possible (or is also rejected), an accepting state
+   * for a smaller length.
+   *
+   * Its size must be at least 'yy_current_buffer->yy_buf_alloc_size+2'
+   * elements in order to accomodate a maximum-length token. */
+  yy_state_type_t *yy_state_buffer;
+
+  /* This points to the next element of 'yy_state_buffer' to populate
+   * with a saved 'yy_current_state' value. */
   yy_state_type_t *yy_state_ptr;
+
+  /* This points at the character after the last one in the matched
+   * token in certain conditions related to YY_REJECT that I still do
+   * not understand.  TODO: Figure this out. */
   char *yy_full_match;
+
+  /* TODO: What is this for? */
   int yy_lp;
 
 %endif
