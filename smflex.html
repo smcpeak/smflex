@@ -5890,9 +5890,11 @@ I have also found and fixed a few pre-existing bugs:
     In <code>flex-2.5.4</code>, using a C++-interface scanner, it might
     misclassify an input error reported by <code>YY_INPUT_STREAM->fail()</code> as
     EOF, thus silently swallowing the error.  Now, the error will be
-    reported like other input errors.  (Currently, that means exiting
-    with a fatal error message, which isn't great, but is better than
+    reported like other input errors.  (At the time, that meant exiting
+    with a fatal error message, which isn't great, but was better than
     silence.)  Commit <code>6908f0604c</code> has the fix.
+    Commit <code>824b08d76c</code> then provides much better error
+    handling so it is possible to recover from a read error.
 
 <li><p>
     In <code>flex-2.5.4</code>, using a C++-interface scanner with
