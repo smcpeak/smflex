@@ -5,7 +5,19 @@
 %option main
 
 %{
-#include <string.h>          /* strdup */
+#include <stdlib.h>          /* malloc */
+#include <string.h>          /* strlen */
+
+static char *my_strdup(char const *src)
+{
+  char *ret = (char*)malloc(strlen(src)+1);
+  strcpy(ret, src);
+  return ret;
+}
+
+/* Just for the benefit of the example in the manual, use the name
+ * familiar to most people. */
+#define strdup(s) my_strdup(s)
 %}
 
 %%
