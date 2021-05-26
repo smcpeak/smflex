@@ -861,7 +861,7 @@ void readin()
 
     if (option_yylineno) {
       fprintf(stderr,
-              _("%%option yylineno entails a large performance penalty (maybe; see manual)\n"));
+              _("%%option yylineno entails a performance penalty (see manual)\n"));
     }
 
     if (performance_report > 1) {
@@ -869,11 +869,14 @@ void readin()
         fprintf(stderr, _("YY_MORE_TEXT() entails a minor performance penalty\n"));
     }
 
-    if (option_reject)
-      fprintf(stderr, _("YY_REJECT entails a large performance penalty (maybe; see manual)\n"));
+    if (option_reject) {
+      /* BUG: This prints even when YY_REJECT is not used.  See for
+       * example test/yylineno.lex. */
+      fprintf(stderr, _("YY_REJECT entails a performance penalty (see manual)\n"));
+    }
 
     if (variable_trailing_context_rules)
-      fprintf(stderr, _("Variable trailing context rules entail a large performance penalty\n"));
+      fprintf(stderr, _("Variable trailing context rules entail a performance penalty (see manual)\n"));
   }
 
   if (option_reject)
