@@ -1,6 +1,14 @@
 # test/Makefile
 # Run tests in this directory.
 
+# These tests are safe to run with "make -jN" for N being about the
+# number of CPU cores.  However, on Windows, you have to redirect the
+# output to a file (or possibly use --output-sync; I have not tried
+# that) in that case since there is a bug in conhost.exe that will cause
+# it to hang when multiple processes write to the same terminal at the
+# same time.  This affects at least cygwin mintty.exe and xterm.exe
+# since both use conhost.exe.
+
 # Default target, runs all tests.
 all:
 
