@@ -6,22 +6,33 @@ This repository is `smflex`, Scott McPeak's fork of Vern Paxson's
 The goals for this project are:
 
 * Retain the basic capabilities of `flex-2.5.4`, namely to generate fast
-  lexical analyzers with either a C or C++ inteface.
-* Stay compatible with `flex-2.5.4` when doing so does not conflict with
-  another goal.
-* In C++ mode, emit scanners with a straightforward interface.
+  lexical analyzers with either a C or C++ interface (API).
+
+* Generate a scanner API that uses regular, consistent,
+  forward-compatible names.  (This has required renaming many things.)
+
+* Have the C++ API be a thin wrapper around the C API instead of
+  something completely separate.
+
 * Support standard C and C++.  C89 and C++98 (the first standardized
   versions) are the minimums.
+
 * Support for today's mainstream operating systems, principally Linux,
   Windows, and Mac OS.
+
 * Depend only on the standard C and C++ libraries.  In particular,
   neither `smflex` nor its generated scanners require POSIX-only
   functions.
+
 * Generated scanners are entirely self-contained.  In particular, they
   do not use `libfl.a` (the `flex` runtime library), nor
   `FlexLexer.h` (the `flex` C++ lexer class interface).
+
 * The process of building from a source distribution is simple and does
   depend on tools beyond a C compiler and linker.
+
+* Stay compatible with `flex-2.5.4` when doing so does not conflict with
+  another goal.
 
 Notable **non-goals** include:
 
@@ -29,13 +40,14 @@ Notable **non-goals** include:
   standard.  For example, I removed all support for C compilers that
   do not understand function prototypes in order
   to reduce the maintenance effort going forward.
+
 * Support for obsolete operating systems like MS-DOS.
+
 * Compatibility with AT&T or POSIX `lex`.
+
 * 100% compatibility with any version of `flex`.  See the section
   [Incompatibilities with Flex](smflex.html#incompatibilities-with-flex)
-  in the manual for guidance on what will need to be changed.  In
-  most cases, no changes to the `flex` input are required, but the
-  way you invoke the tool and consume the output may need adjustments.
+  in the manual for guidance on what will need to be changed.
 
 # Build and Install
 
@@ -78,9 +90,10 @@ $ gcc -o smflex *.c
 
 # Usage
 
-See the manual at [smflex.html](smflex.html).  It is based on the
-`flex-2.5.4` manual, but I have kept it up to date with my
-changes.
+See the manual at [smflex.html](smflex.html).  It contains all of the
+relevant material from the <code>flex-2.5.4</code> manual, but that
+material has been completely reorganized, and augmented by descriptions
+of new features in <code>smflex</code>.
 
 # Modifying smflex
 
@@ -137,18 +150,24 @@ meantime.  The main concerns I have with the current `flex` releases are:
   are not readily available on Windows.
 
 Moreover, I want to significantly improve the C++ support, particularly
-how it handles multiple scanners (generated from different `smflex` input files) in the same program.  That too will
+how it handles multiple scanners (generated from different `smflex` input
+files) in the same program.  That too will
 break backward compatibility.  By making my own fork and giving it a
 new name, that can be clearly communicated.
 
 # Change history
 
-See [NEWS](NEWS).  (I have not made any changes to that file yet.)
+The best summary of what has changed is in the
+[Incompatibilities with Flex](smflex.html#incompatibilities-with-flex)
+section of the manual.
+
+There is also the old [NEWS](NEWS) file, but I have not made any changes
+to that file so it only covers work leading up to
+`flex-2.5.4`.
 
 # License
 
 See [COPYING](COPYING), the license that accompanied `flex-2.5.4`.
 
-All of my contributions are under the same license terms, and I hereby
-assign copyright for them to The Regents of the University of
-California.
+All of my contributions are under the terms of the
+[2-Clause BSD License](https://opensource.org/licenses/BSD-2-Clause).
