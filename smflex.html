@@ -1312,6 +1312,11 @@ header file declares the Application Programming Interface (API)
 used to invoke the scanner, and also used within scanner
 <a href="#actions">Actions</a>.  The C file implements that API.
 
+<p>When using <a href="#option-cpp">%option c++</a>, the C API is
+replaced by the <a href="#cpp-api">C++ API</a>.  However, the latter is
+merely a thin wrapper around the C API, so its section only documents
+those aspects specific to the C++ API.  Therefore, even when using the
+C++ API, it is necessary to familiarlize yourself with the C API.
 
 <h2 id="yy_lex">3.1. yy_lex</h2>
 
@@ -1511,7 +1516,7 @@ state except for local variables inside the <code>yy_lex()</code>
 function.  All scanner operations require a <code>yy_lexer_t</code>;
 it is the central structure of the C API.
 
-<p>However, when using the <code>yyFlexLexer</code> C++ wrapper class,
+<p>However, when using the <a href="#cpp-api">C++ API</a>,
 this structure should not be directly accessed.  The descriptions below
 apply only to direct use of the C API.
 
@@ -1526,17 +1531,16 @@ following public members:
     <dd><p>
     This pointer is available for use by the client of the API to
     associate any additional data with the <code>yy_lexer_t</code>
-    object.  It is initially <code>NULL</code>.
+    object.  It is initially <code>NULL</code>, and the scanning
+    engine never reads or writes it.
 
 <dt id="yy_output_stream"><code>yy_output_stream_t *yy_output_stream;</code><br>
     <code id="YY_OUTPUT_STREAM-macro">#define YY_OUTPUT_STREAM (yy_lexer-&gt;yy_output_stream)</code>
 
     <dd><p>
-    Similar to
-    <a href="#yy_input_stream"><code>yy_input_stream</code></a>,
-    this is normally an object capable of
+    This is nominally an object capable of
     receiving output, but precisely what it is is determined by the
-    <code>yy_write_output_function</code>.
+    <a href="#yy_write_output_function"><code>yy_write_output_function</code></a>.
 
     <p>Since there is no buffering of output within <code>smflex</code>
     itself, this field can be freely reassigned at any time to change
@@ -1544,7 +1548,10 @@ following public members:
 
     <p>When using the C API, the type <code>yy_output_stream_t</code> is
     a typedef for <code>FILE</code>, and when using the C++ API, it is
-    a typedef for <code>std::ostream</code>.
+    a typedef for <code>std::ostream</code>.  But since the value is only
+    ever used by <code>yy_write_output_function</code>, which can be
+    changed by the client, its true type can be whatever the client
+    wants to use.
 
     <p>When using the C API, this is initialized to <code>stdout</code>.
 
@@ -1559,9 +1566,10 @@ following public members:
 
     <p>
     The initial value depends on the <code>smflex</code> options, but by
-    default, it uses <code>fread</code> to read from
-    <code>yy_input_stream</code>.  The user of the API can customize how
-    input is read by changing this function pointer.
+    default, it is
+    <a href="#yy_read_input_with_fread"><code>yy_read_input_with_fread</code></a>.
+    The user of the API can customize how input is read by changing this
+    function pointer.
 
     <p>
     An <a href="test/yy-input-redefined.lex">example</a> showing a
@@ -1610,8 +1618,8 @@ following public members:
     destination is <code>yy_output_stream</code>.  Return
     <code>size</code> for success or -1 for error.
 
-    <p>With default settings, the initial value is a function that
-    writes to <code>yy_output_stream</code> using <code>fwrite</code>.
+    <p>With default settings, the initial value is
+    <a href="#yy_write_output_with_fwrite"><code>yy_write_output_with_fwrite</code></a>.
 
     <p>The <a href="#yy_echo"><code>YY_ECHO</code></a> macro, which is
     implicitly used by the <a href="#default-rule">default rule</a>,
@@ -1624,7 +1632,10 @@ following public members:
     the scanner calls this to determine what to do
     next.  It can return true, meaning is no more input, and the scanner
     will terminate.  It can instead return false (0) after setting up a
-    new input source, meaning the scanner will continue scanning with
+    new input source with either
+    <a href="#yy_restart"><code>yy_restart</code></a> or
+    <a href="#yy_switch_to_buffer"><code>yy_switch_to_buffer</code></a>,
+    meaning the scanner will continue scanning with
     that new input.
 
     <p>
@@ -1639,8 +1650,9 @@ following public members:
     or the input source reports a read error, this function is called.
     If the function returns, the scanner tries to recover by returning
     control to the client, for example by pretending the end of the input
-    was reached.  The client should cease scanning activities and use
-    <code>yy_destroy</code> to release resources.
+    was reached.  The client should then cease scanning activities and use
+    <a href="#yy_destroy"><code>yy_destroy</code></a> to release the
+    resources associated with the lexer object that experienced the error.
 
     <p>
     <code>code</code> describes the error with sufficient precision to
@@ -1659,7 +1671,8 @@ following public members:
     <code id="YY_LINENO-macro">#define YY_LINENO (yy_lexer-&gt;yy_lineno)</code>
 
     <dd><p>
-    When <code>%option yylineno</code> is set, this field exists, has
+    When <a href="#option-yylineno"><code>%option yylineno</code></a> is
+    set, this field exists, has
     initial value 1, and is incremented once for every newline character
     in <code>yy_text</code> when a token is matched.  It is also
     incremented for every newline seen by <a
@@ -1682,7 +1695,8 @@ following public members:
 <dt id="yy_flex_debug"><code>int yy_flex_debug;</code>
 
     <dd><p>
-    When <code>%option debug</code> is set, this field exists with
+    When <a href="#option-debug"><code>%option debug</code></a> is set,
+    this field exists with
     initial falue true.  The client may change it at any time; the
     scanner does not.
 
@@ -1709,12 +1723,14 @@ permissible to directly change them:
 
 <dl>
 
-<dt id="yy_input_stream"><code>yy_input_stream_t *yy_input_stream;</code>
+<dt id="yy_input_stream"><code>yy_input_stream_t *yy_input_stream;</code><br>
+    <code id="YY_INPUT_STREAM-macro">#define YY_INPUT_STREAM (yy_lexer->yy_input_stream)</code>
 
     <dd><p>
     Usually, this is a pointer to some object that acts as an input
     source for the scanner.  However, exactly what it is, and whether it
-    is even used, are determined by <code>yy_read_input_function</code>,
+    is even used, are determined by
+    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>,
     and hence ultimately up to the client.
 
     <p id="yy_input_stream_t">The type of this field is
@@ -2013,7 +2029,7 @@ set of functions for creating and switching between multiple input buffers:
 
 <dl>
 
-<dt id="yy_create_buffer"><code>yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer, yy_input_stream_t *file, int size)</code>
+<dt id="yy_create_buffer"><code>yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer, yy_input_stream_t *file, int size);</code>
 
     <dd><p>
     Create an input buffer in front of a given
@@ -2035,8 +2051,7 @@ set of functions for creating and switching between multiple input buffers:
     <code>yy_input_stream</code> yourself, for example (as shown in the example
     below) to close the file.
 
-<dt id="yy_switch_to_buffer"><code>void yy_switch_to_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *new_buffer)</code>
-
+<dt id="yy_switch_to_buffer"><code>void yy_switch_to_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *new_buffer);</code>
 
     <dd><p>
     Select a particular buffer to be the active input source.
@@ -2053,7 +2068,7 @@ set of functions for creating and switching between multiple input buffers:
     <p><code>yy_switch_to_buffer()</code> invalidates <code>YY_TEXT</code> and
     <code>YY_LENG</code>.
 
-<dt id="yy_delete_buffer"><code>void yy_delete_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *buffer)</code>
+<dt id="yy_delete_buffer"><code>void yy_delete_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *buffer);</code>
 
     <dd><p>
     Deallocate a buffer.  If <code>buffer</code> is
@@ -2069,7 +2084,7 @@ set of functions for creating and switching between multiple input buffers:
     explicitly do that when cleaning up.  However, every other buffer
     must be deleted before calling <code>yy_destroy</code>.
 
-<dt id="yy_flush_buffer"><code>void yy_flush_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *buffer)</code>
+<dt id="yy_flush_buffer"><code>void yy_flush_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *buffer);</code>
 
     <dd><p>
     Discard data that has already been read and buffered from a
@@ -2220,15 +2235,15 @@ delete it first or else save it and delete it later.
 
 <dl>
 
-<dt><code>yy_scan_string(yy_lexer_t *yy_lexer, const char *str)</code>
+<dt><code>yy_scan_string(yy_lexer_t *yy_lexer, const char *str);</code>
 
-<dd><p>scans a NUL-terminated string.
+    <dd><p>scans a NUL-terminated string.
 
     <p>Use of this function requires <code>%option yy_scan_string</code>.
 
-<dt><code>yy_scan_bytes(yy_lexer_t *yy_lexer, const char *bytes, int len)</code>
+<dt><code>yy_scan_bytes(yy_lexer_t *yy_lexer, const char *bytes, int len);</code>
 
-<dd><p>scans <code>len</code> bytes (including possibly NUL's) starting at
+    <dd><p>scans <code>len</code> bytes (including possibly NUL's) starting at
     location <code>bytes</code>.
 
     <p>Use of this function requires <code>%option yy_scan_bytes</code>.
@@ -2242,9 +2257,9 @@ copy by using:
 
 <dl>
 
-<dt><code>yy_scan_buffer(yy_lexer_t *yy_lexer, char *base, int size)</code>
+<dt><code>yy_scan_buffer(yy_lexer_t *yy_lexer, char *base, int size);</code>
 
-<dd><p>scans in place the buffer starting at <code>base</code>, consisting
+    <dd><p>scans in place the buffer starting at <code>base</code>, consisting
     of <code>size</code> bytes, the last two bytes of which <em>must</em> be
     <code>YY_END_OF_BUFFER_CHAR</code> (ASCII NUL). These last two bytes
     are not scanned; thus, scanning consists of <code>base[0]</code> through
@@ -2339,12 +2354,52 @@ scopes, by using them to keep track of nested comments in ML:
 
 <h2 id="interacting-with-an-input-stream">3.10. Interacting With an Input Stream</h2>
 
-<p>These macros can be used within an action to manipulate the
+<p>These functions can be used within an action to manipulate the
 input stream:
 
 <dl>
 
-<dt id="YY_UNREAD_CHARACTER-macro"><p id="yy_unread_character"><code>YY_UNREAD_CHARACTER(c)</code>
+<dt id="yy_read_character"><code>int yy_read_character(yy_lexer_t *lexer);</code><br>
+    <code>#define YY_READ_CHARACTER() yy_read_character(yy_lexer)</code>
+
+    <dd><p>
+    Read the next character from the input.  Once a character is read in
+    this way, it is considered "consumed", and will not be subsequently
+    matched by scanner rules.  For example, the
+    <a href="test/read-character-c-comments.lex">following</a> is one way
+    to eat up C comments (this is not the best way to perform this task
+    in <code>smflex</code> &mdash; this is just to illustrate how
+    this particular function works):
+
+    <pre><!-- BEGIN example: "read-character-c-comments.lex" fragment=true indent=8 --><code>
+        %%
+        "/*"      {
+                    int c;
+                    for (;;) {
+                      while ( (c = YY_READ_CHARACTER()) != '*' &amp;&amp; c != EOF )
+                        {}    /* eat up text of comment */
+
+                      if (c == '*') {
+                        while ( (c = YY_READ_CHARACTER()) == '*' )
+                          {}
+                        if (c == '/') {
+                          break;    /* found the end */
+                        }
+                      }
+
+                      if (c == EOF) {
+                        error("EOF in comment");
+                        break;
+                      }
+                    }
+                  }
+    </code><!-- END example --></pre>
+
+    <p>Use of this macro requires
+    <code>%option yy_read_character</code>.
+
+<dt id="yy_unread_character"><code>void yy_unread_character(yy_lexer_t *lexer, int c);</code><br>
+    <code id="YY_UNREAD_CHARACTER-macro">#define YY_UNREAD_CHARACTER(c) yy_unread_character(yy_lexer, c)</code>
 
     <dd><p>
     Put the character <code>c</code> back onto the input stream. It
@@ -2385,50 +2440,7 @@ input stream:
     <p>Use of this macro requires
     <code>%option yy_unread_character</code>.
 
-    <p>Outside of rule actions, the <code>YY_UNREAD_CHARACTER</code>
-    macro is not available.  Instead, you can call the
-    <code>void yy_unread_character(yy_lexer_t *lexer, int c)</code> function.
-
-<dt id="yy_read_character"><code>YY_READ_CHARACTER()</code>
-
-    <dd><p>
-    Read the next character from the input.  Once a character is read in
-    this way, it is considered "consumed", and will not be subsequently
-    matched by scanner rules.  For example, the
-    <a href="test/read-character-c-comments.lex">following</a> is one way to eat up C comments:
-
-    <pre><!-- BEGIN example: "read-character-c-comments.lex" fragment=true indent=8 --><code>
-        %%
-        "/*"      {
-                    int c;
-                    for (;;) {
-                      while ( (c = YY_READ_CHARACTER()) != '*' &amp;&amp; c != EOF )
-                        {}    /* eat up text of comment */
-
-                      if (c == '*') {
-                        while ( (c = YY_READ_CHARACTER()) == '*' )
-                          {}
-                        if (c == '/') {
-                          break;    /* found the end */
-                        }
-                      }
-
-                      if (c == EOF) {
-                        error("EOF in comment");
-                        break;
-                      }
-                    }
-                  }
-    </code><!-- END example --></pre>
-
-    <p>Use of this macro requires
-    <code>%option yy_read_character</code>.
-
-    <p>Outside of rule actions, the <code>YY_READ_CHARACTER</code>
-    macro is not available.  Instead, you can call the
-    <code>int yy_read_character(yy_lexer_t *lexer)</code> function.
-
-<dt id="yy_set_interactive"><code>yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive)</code>
+<dt id="yy_set_interactive"><code>yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive);</code>
 
     <dd>
     <p>The function <code>yy_set_interactive</code>
@@ -2457,24 +2469,23 @@ input stream:
           {}
     </code><!-- END example --></pre>
 
-<dt><code>yy_set_bol(yy_lexer_t *yy_lexer, int at_bol)</code>
+<dt id="yy_get_bol"><code>int yy_get_bol(yy_lexer_t const *yy_lexer);</code><br>
+    <code id="YY_GET_BOL-macro">#define YY_GET_BOL() yy_get_bol(yy_lexer)</code>
 
-    <dd>
-    <p>The function <code>yy_set_bol</code> can be used to control
-    whether the current buffer's scanning context for the next token match
-    is done as though at the beginning of a line. A non-zero macro argument
-    makes rules anchored with
-    <code>^</code> active, while a zero argument makes <code>^</code> rules inactive.
-
-<dt id="YY_GET_BOL-macro"><code>YY_GET_BOL()</code>
-
-    <dd>
-    <p>The macro <code>YY_GET_BOL()</code> returns true if the next token
-    scanned from the current buffer will have <code>^</code> rules active, false
-    otherwise.
+    <dd><p>
+    Return true if the next token scanned from the current buffer will
+    have <code>^</code> rules active, false otherwise.
 
     <p>See <a href="test/set-bol.lex"><code>test/set-bol.lex</code></a>
     for an example with <code>yy_set_bol</code> and <code>YY_GET_BOL</code>.
+
+<dt id="yy_set_bol"><code>void yy_set_bol(yy_lexer_t *yy_lexer, int at_bol);</code>
+
+    <dd>
+    <p>Set whether the current buffer's scanning context for the next token match
+    is done as though at the beginning of a line. A non-zero macro argument
+    makes rules anchored with
+    <code>^</code> active, while a zero argument makes <code>^</code> rules inactive.
 
 </dl>
 
@@ -2482,9 +2493,35 @@ input stream:
 <h2 id="available-methods-for-function-pointers">3.11. Available Methods for Function Pointers</h2>
 
 <p>These functions are the pre-defined handlers for the function
-pointers in <code>yy_lexer_t</code>:
+pointers in <a href="#yy_lexer_t"><code>yy_lexer_t</code></a>:
 
 <dl>
+
+<dt id="yy_read_input_with_fread">
+    <code>int yy_read_input_with_fread(yy_lexer_t *yy_lexer, void *dest, int size);</code>
+
+    <dd><p>
+    Use Standard C <code>fread()</code>.
+    This assumes that <a href="#yy_input_stream"><code>yy_input_stream</code></a>
+    is a <code>FILE*</code>.
+
+<dt id="yy_read_input_with_read">
+    <code>int yy_read_input_with_read(yy_lexer_t *yy_lexer, void *dest, int size);</code>
+
+    <dd><p>
+    Use POSIX <code>read()</code>.  This assumes that <code>yy_input_stream</code> is a
+    <code>FILE*</code>.  It uses <code>fileno</code> to get the file descriptor.
+
+    <p>This function is only available when using
+    <a href="#option-read"><code>%option read</code></a>.
+
+<dt id="yy_write_output_with_fwrite">
+    <code>int yy_write_output_with_fwrite(yy_lexer_t *yy_lexer, void const *dest, int size);</code>
+
+    <dd><p>
+    Use Standard C <code>fwrite()</code>.
+    This assumes that <a href="#yy_output_stream"><code>yy_output_stream</code></a>
+    is a <code>FILE*</code>.
 
 <dt id="yy_wrap_return_1"><code>int yy_wrap_return_1(yy_lexer_t *yy_lexer);</code>
 
@@ -2495,7 +2532,7 @@ pointers in <code>yy_lexer_t</code>:
     <code>void yy_error_print_and_exit(yy_lexer_t const *yy_lexer, yy_error_code_t code, char const *detail);</code>
 
     <dd><p>
-    Prints a message to standard error and exits with a non-zero exit code.
+    Print a message to standard error and exit with a non-zero exit code.
 
 </dl>
 
@@ -3041,7 +3078,8 @@ default is indicated it means it defaults to off.
     last cycle out of their scanners need worry about this option. (See the
     section <a href="#performance-considerations">Performance Considerations</a>.)
 
-<dt><code>-d</code>
+<dt id="option-debug"><code>-d</code><br>
+    <code>%option debug</code>
 
 <dd><p>Generate a scanner with the
     <a href="#yy_flex_debug"><code>yy_flex_debug</code></a> field.
@@ -3140,7 +3178,8 @@ default is indicated it means it defaults to off.
     <p>This option is not compatible with the <code>-Cf</code> or
     <code>-CJ</code> options.
 
-<dt><code>--use-read</code>
+<dt id="option-read"><code>--use-read</code><br>
+    <code>%option read</code>
 
     <dd><p>Cause the generated scanner to <em>bypass</em>
     use of the standard I/O library (stdio) for input. Instead of calling
@@ -3230,12 +3269,13 @@ default is indicated it means it defaults to off.
     <p>See the discussion of <code>-7</code> above for <code>smflex</code>'s default behavior
     and the tradeoffs between 7-bit and 8-bit scanners.
 
-<dt><code>-+</code>
+<dt id="option-cpp"><code>-+</code><br>
+    <code>%option c++</code>
 
 <dd><p>Generate a scanner with a C++ rather than C interface. See
     <a href="#cpp-api">C++ API</a> for details.
 
-<dt><code>-C[aefFm]*</code>
+<dt id="option-compression"><code>-C[aefFm]*</code>
 
 <dd><p>Specify the kind of table compression to use.
     <code>-C</code> can be followed by a string of the following letters:
@@ -3481,10 +3521,13 @@ number are equivalent to <code>smflex</code> flags or their negation:
     <dd><p>Enable the use of start condition stacks
     (see <a href="#start-conditions">Start Conditions</a>).
 
-<dt><code>yylineno</code>
+<dt id="option-yylineno"><code>yylineno</code>
 
     <dd><p>Generate a scanner that has
     <a href="#yy_lineno"><code>yy_lineno</code></a>.
+
+    <p>This option is incompatible with
+    <a href="#option-compression"><code>-Cf</code> and <code>-CJ</code></a>.
 
 <dt id="option-yymore"><code>yymore</code>
 
