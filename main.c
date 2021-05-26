@@ -752,11 +752,11 @@ void parse_smflex_version(char const *text)
    * anything since the number will be set. */
   reported_smflex_error = 1;
 
-  while (isspace(*text)) {
+  while (isspace((unsigned char)*text)) {
     text++;
   }
 
-  if (!isdigit(*text)) {
+  if (!isdigit((unsigned char)*text)) {
     synerr(_("%smflex must be followed by an integer"));
     return;
   }
@@ -779,7 +779,7 @@ void parse_smflex_version(char const *text)
   smflex_input_version = (int)vnum;
 
   /* What remains should be only whitespace. */
-  while (isspace(*afterDigits)) {
+  while (isspace((unsigned char)*afterDigits)) {
     afterDigits++;
   }
   if (*afterDigits) {

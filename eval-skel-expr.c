@@ -48,11 +48,11 @@ static int eval_prim(eval_context_t *ctx, char const **expp)
 {
   skip_spaces(expp);
 
-  if (isdigit(**expp)) {
+  if (isdigit((unsigned char)**expp)) {
     char const *p = *expp;
     int res = *p - '0';
     p++;
-    while (isdigit(*p)) {
+    while (isdigit((unsigned char)*p)) {
       if (res > (INT_MAX - (*p - '0')) / 10) {
         ctx->fatal_error(ctx->extra, "integer too large to represent",
           *expp);

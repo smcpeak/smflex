@@ -118,7 +118,7 @@ void *allocate_array(int size, size_t element_size)
 int all_lower(char const *str)
 {
   while (*str) {
-    if (!smflex_isascii((Char) * str) || !islower(*str))
+    if (!smflex_isascii((Char) * str) || !islower((unsigned char)*str))
       return 0;
     ++str;
   }
@@ -131,7 +131,7 @@ int all_lower(char const *str)
 int all_upper(char const *str)
 {
   while (*str) {
-    if (!smflex_isascii((Char) * str) || !isupper(*str))
+    if (!smflex_isascii((Char) * str) || !isupper((unsigned char)*str))
       return 0;
     ++str;
   }
@@ -144,7 +144,7 @@ int all_upper(char const *str)
 int all_whitespace(char const *str)
 {
   for (; *str; str++) {
-    if (!isspace(*str)) {
+    if (!isspace((unsigned char)*str)) {
       return 0;
     }
   }
@@ -638,7 +638,7 @@ Char myesc(Char array[])
       {                         /* \x<hex> */
         int sptr = 2;
 
-        while (smflex_isascii(array[sptr]) && isxdigit((char) array[sptr]))
+        while (smflex_isascii(array[sptr]) && isxdigit((unsigned char) array[sptr]))
           /* Don't increment inside loop control
            * because if isdigit() is a macro it might
            * expand into multiple increments ...

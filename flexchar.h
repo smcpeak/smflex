@@ -8,9 +8,9 @@
 #define CSIZE 256
 #define Char unsigned char
 
-/* This is a POSIX function, not standard C. */
+/* 'isascii' is a POSIX function, not standard C, so we define our own. */
 #ifndef smflex_isascii
-#  define smflex_isascii(c) ((c) <= 0177)
+#  define smflex_isascii(c) (((unsigned char)(c)) <= 0177)
 #endif
 
 #endif /* FLEXCHAR_H */
