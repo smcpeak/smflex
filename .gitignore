@@ -1,3 +1,4 @@
+*.bak
 *.exe
 config.cache
 config.log
