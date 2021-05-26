@@ -2009,94 +2009,84 @@ scanning a statement such as an "include" which requires switching the
 input source.
 
 <p>To negotiate these sorts of problems, <code>smflex</code> provides a
-mechanism for creating and switching between multiple input buffers.
-An input buffer is created by using:
+set of functions for creating and switching between multiple input buffers:
 
-<pre><code id="yy_create_buffer">
-    yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer, yy_input_stream_t *file, int size)
-</code></pre>
+<dl>
 
-<p>which takes a
-<a href="#yy_input_stream_t"><code>yy_input_stream_t</code></a> pointer
-and a size and creates a buffer
-associated with the given file and large enough to hold <code>size</code>
-characters; a <code>size</code> of 0 means to use
-<a href="#YY_DEFAULT_BUF_ALLOC_SIZE"><code>YY_DEFAULT_BUF_ALLOC_SIZE</code></a>.
-It returns a <code>yy_buffer_state_t*</code>, pointer which may then be
-passed to other routines (see below).
+<dt id="yy_create_buffer"><code>yy_buffer_state_t *yy_create_buffer(yy_lexer_t *yy_lexer, yy_input_stream_t *file, int size)</code>
 
-<p>The <code>yy_input_stream_t</code>
-pointer in the call to <code>yy_create_buffer</code> is used to set
-the value of <code>yy_input_stream</code> while that buffer is the active
-input source.  Within the generated code,
-<code>yy_input_stream</code> is only used by <code>yy_read_input_function</code>; if you
-redefine <code>yy_read_input_function</code> so it no longer uses <code>yy_input_stream</code>,
-then you can safely pass <code>NULL</code> as the <code>yy_input_stream_t</code> pointer.
-However, you may want to use
-<code>yy_input_stream</code> yourself, for example (as shown in the example
-below) to close the file.
+    <dd><p>
+    Create an input buffer in front of a given
+    <a href="#yy_input_stream_t"><code>yy_input_stream_t</code></a>.
+    The buffer can hold <code>size</code> characters; a
+    <code>size</code> of 0 means to use
+    <a href="#YY_DEFAULT_BUF_ALLOC_SIZE"><code>YY_DEFAULT_BUF_ALLOC_SIZE</code></a>.
+    It returns a <code>yy_buffer_state_t*</code> pointer which may then
+    be passed to other routines.
 
-<p id="yy_switch_to_buffer">
-You select a particular buffer to be the active input source with:
+    <p>The <code>yy_input_stream_t</code>
+    pointer in the call to <code>yy_create_buffer</code> is used to set
+    the value of <code>yy_input_stream</code> while that buffer is the active
+    input source.  Within the generated code,
+    <code>yy_input_stream</code> is only used by <code>yy_read_input_function</code>; if you
+    redefine <code>yy_read_input_function</code> so it no longer uses <code>yy_input_stream</code>,
+    then you can safely pass <code>NULL</code> as the <code>yy_input_stream_t</code> pointer.
+    However, you may want to use
+    <code>yy_input_stream</code> yourself, for example (as shown in the example
+    below) to close the file.
 
-<pre><code>
-    void yy_switch_to_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *new_buffer)
-</code></pre>
+<dt id="yy_switch_to_buffer"><code>void yy_switch_to_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *new_buffer)</code>
 
-<p>This switches the scanner's input buffer so subsequent tokens will come
-from <code>new_buffer</code> (which must not be <code>NULL</code>).
-<code>yy_switch_to_buffer()</code>
-may be used by <code>yy_wrap_function()</code> to set things up for continued scanning instead
-of opening a new file and
-calling <a href="#yy_restart"><code>yy_restart</code></a>.
-Calling this function does <em>not</em> change the start condition.
-It also does not deallocate nor remember the old current buffer; the
-client must do both.
 
-<p><code>yy_switch_to_buffer()</code> invalidates <code>YY_TEXT</code> and
-<code>YY_LENG</code>.
+    <dd><p>
+    Select a particular buffer to be the active input source.
+    This switches the scanner's input buffer so subsequent tokens will come
+    from <code>new_buffer</code> (which must not be <code>NULL</code>).
+    <code>yy_switch_to_buffer()</code>
+    may be used by <code>yy_wrap_function()</code> to set things up for continued scanning instead
+    of opening a new file and
+    calling <a href="#yy_restart"><code>yy_restart</code></a>.
+    Calling this function does <em>not</em> change the start condition.
+    It also does not deallocate nor remember the old current buffer; the
+    client must do both.
 
-<p id="yy_delete_buffer">When finished scanning from a buffer, call:
+    <p><code>yy_switch_to_buffer()</code> invalidates <code>YY_TEXT</code> and
+    <code>YY_LENG</code>.
 
-<pre><code>
-    void yy_delete_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *buffer)
-</code></pre>
+<dt id="yy_delete_buffer"><code>void yy_delete_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *buffer)</code>
 
-<p>to reclaim the storage associated with it.  If <code>buffer</code> is
-<code>NULL</code>, this function does nothing.  If it is the current
-buffer of <code>yy_lexer</code>, then the current buffer gets reset
-to <code>NULL</code>, at which point scanning cannot happen until a
-new buffer made current with
-<a href="#yy_restart"><code>yy_restart</code></a> or
-<code>yy_switch_to_buffer</code>.
+    <dd><p>
+    Deallocate a buffer.  If <code>buffer</code> is
+    <code>NULL</code>, this function does nothing.  If it is the current
+    buffer of <code>yy_lexer</code>, then the current buffer gets reset
+    to <code>NULL</code>, at which point scanning cannot happen until a
+    new buffer made current with
+    <a href="#yy_restart"><code>yy_restart</code></a> or
+    <code>yy_switch_to_buffer</code>.
 
-<p>Note: <a href="#yy_destroy"><code>yy_destroy</code></a>
-destroys the current buffer (if any), so it is not necessary to
-explicitly do that when cleaning up.  However, every other buffer
-must be deleted before calling <code>yy_destroy</code>.
+    <p>Note: <a href="#yy_destroy"><code>yy_destroy</code></a>
+    destroys the current buffer (if any), so it is not necessary to
+    explicitly do that when cleaning up.  However, every other buffer
+    must be deleted before calling <code>yy_destroy</code>.
 
-<p id="yy_flush_buffer">To discard data that has already been read and buffered from a
-particular source, call:
+<dt id="yy_flush_buffer"><code>void yy_flush_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *buffer)</code>
 
-<pre><code>
-    void yy_flush_buffer(yy_lexer_t *yy_lexer, yy_buffer_state_t *buffer)
-</code></pre>
+    <dd><p>
+    Discard data that has already been read and buffered from a
+    particular source.  After calling this function, the next time the
+    scanner attempts to read data from the buffer, it will first fill
+    the buffer anew using <code>yy_read_input_function</code>.
 
-<p>After calling this function, the next time the
-scanner attempts to read data from the buffer, it will first fill
-the buffer anew using <code>yy_read_input_function</code>.
+<dt id="YY_FLUSH_CURRENT_BUFFER-macro"><code>YY_FLUSH_CURRENT_BUFFER</code>
 
-<p><code>YY_FLUSH_CURRENT_BUFFER</code>
-flushes the scanner's internal buffer so that the next time the
-scanner attempts to match a token, it will first refill the buffer
-using
-<a href="#yy_read_input_function"><code>yy_read_input_function</code></a>
-This action is a special case of the more general
-<code>yy_flush_buffer()</code> function, described in
-<a href="#multiple-input-buffers">Multiple Input Buffers</a>.
+    <dd><p>
+    Flush the scanner's internal buffer so that the next time the
+    scanner attempts to match a token, it will first refill the buffer
+    using
+    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>
+    This is a special case of <code>yy_flush_buffer()</code>.
 
-<p>Finally, the <code>YY_CURRENT_BUFFER</code> macro returns a
-<code>yy_buffer_state_t*</code> pointer to the current buffer.
+</dl>
 
 <p id="buffer-state-diagram">This diagram summarizes the state
 transitions related to buffer management:
