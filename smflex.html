@@ -3950,11 +3950,6 @@ points being a bit faster but also larger.
 <h2>Effect of Options Other Than Table Compression</h2>
 
 <p>
-<strong>Note</strong>: The information in this section is from the
-original <code>flex-2.5.4</code> manual, but is suspect.  See next
-section.
-
-<p>
 Aside from the effects on scanner speed of the
 table compression <code>-C</code> options outlined above, there are a
 number of options/actions which degrade performance. These are, from
@@ -3963,7 +3958,7 @@ most expensive to least:
 <pre><code>
     YY_REJECT
     %option yylineno
-    arbitrary trailing context
+    variable trailing context
 
     pattern sets that require backing up
 
@@ -3971,22 +3966,22 @@ most expensive to least:
     YY_MORE_TEXT()
 </code></pre>
 
-<p>with the first three all being quite expensive and the last two
-being quite cheap. Note also that <code>YY_UNREAD_CHARACTER()</code> is implemented
-as a routine call that potentially does quite a bit of work, while
-<code>yyless()</code> is a quite-cheap macro; so if just putting back
-some excess text you scanned, use <code>yyless()</code>.
+<p>However, what makes the first three expensive is not so much the
+mechanism itself, but rather the fact that they are incompatible
+with <code>-Cf</code> and <code>-CJ</code>, as shown in subsequent
+sections.
 
-<p><code>YY_REJECT</code> should be avoided at all costs when performance
-is important. It is a particularly expensive option.
+<p>Also, <code>YY_UNREAD_CHARACTER()</code> is implemented
+as a routine call that potentially does quite a bit of work, while
+<code>YY_LESS_TEXT()</code> is a quite-cheap macro; so if just putting back
+some excess text you scanned, use <code>YY_LESS_TEXT()</code>.
 
 
 <h2>Investigation of YY_REJECT</h2>
 
 <p>
-The previous section claims that <code>YY_REJECT</code> is very expensive,
-so I built a performance test for it.  In the <code>smflex</code>
-source tree, run:
+The <code>smflex</code> source tree has a pair of tests to measure the
+cost of <code>YY_REJECT</code>:
 
 <pre><code>
   $ cd test
