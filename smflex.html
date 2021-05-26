@@ -241,17 +241,17 @@
     <li><a class="toc" href="#lexer-lifecycle-functions">3.4. Lexer Lifecycle Functions</a>
     <li><a class="toc" href="#manipulating-matched-text">3.5. Manipulating Matched Text</a>
     <li><a class="toc" href="#control-flow-among-rules">3.6. Control Flow Among Rules</a>
-    <li><a class="toc" href="#pre-defined-event-handlers">3.7. Pre-defined Event Handlers</a>
-    <li><a class="toc" href="#error-handling">3.8. Error Handling</a>
-    <li><a class="toc" href="#convenience-macros">3.9. Convenience Macros</a>
-    <li><a class="toc" href="#manipulating-the-input-stream">3.10. Manipulating the Input Stream</a>
-    <li><a class="toc" href="#miscellaneous-macros">3.11. Miscellaneous Macros</a>
-    <li><a class="toc" href="#configurable-parameters">3.12. Configurable Parameters</a>
-    <li><a class="toc" href="#setting-the-start-condition">3.13. Setting the Start Condition</a>
-    <li><a class="toc" href="#start-condition-stack">3.14. Start Condition Stack</a>
-    <li><a class="toc" href="#multiple-input-buffers">3.15. Multiple Input Buffers</a>
-    <li><a class="toc" href="#yy_error_code_t">3.16. The yy_error_code_t Enumeration</a>
-    <li><a class="toc" href="#interfacing-with-yacc">3.17. Interfacing with YACC</a>
+    <li><a class="toc" href="#multiple-input-buffers">3.7. Multiple Input Buffers</a>
+    <li><a class="toc" href="#scanning-in-memory-data">3.8. Scanning In-memory Data</a>
+    <li><a class="toc" href="#start-condition-functions">3.9. Start Condition Functions</a>
+    <li><a class="toc" href="#interacting-with-an-input-stream">3.10. Interacting With an Input Stream</a>
+    <li><a class="toc" href="#available-methods-for-function-pointers">3.11. Available Methods for Function Pointers</a>
+    <li><a class="toc" href="#error-handling-and-diagnostics">3.12. Error Handling and Diagnostics</a>
+    <ul>
+      <li><a class="toc" href="#yy_error_code_t">3.12.1. The yy_error_code_t Enumeration</a>
+    </ul>
+    <li><a class="toc" href="#configurable-parameters">3.13. Configurable Parameters</a>
+    <li><a class="toc" href="#interfacing-with-yacc">3.14. Interfacing with YACC</a>
   </ul>
   <li><a class="toc" href="#cpp-api">4. C++ API</a>
   <li><a class="toc" href="#options">5. Options</a>
@@ -1353,7 +1353,7 @@ This parameter, which is accessible to user actions, is needed when calling
 most of the C API functions (e.g.,
 <a href="#yy_less_text"><code>yy_less_text</code></a>)
 although the more commonly-used among them have
-<a href="#convenience-macros">convenience macros</a> with
+convenience macros with
 the same name but spelled with all capital letters
 (e.g., <a href="#YY_LESS_TEXT-macro"><code>YY_LESS_TEXT</code></a>)
 that do not require
@@ -1528,7 +1528,8 @@ following public members:
     associate any additional data with the <code>yy_lexer_t</code>
     object.  It is initially <code>NULL</code>.
 
-<dt id="yy_output_stream"><code>yy_output_stream_t *yy_output_stream;</code>
+<dt id="yy_output_stream"><code>yy_output_stream_t *yy_output_stream;</code><br>
+    <code id="YY_OUTPUT_STREAM-macro">#define YY_OUTPUT_STREAM (yy_lexer-&gt;yy_output_stream)</code>
 
     <dd><p>
     Similar to
@@ -1654,7 +1655,8 @@ following public members:
     The initial value is
     <a href="#yy_error_print_and_exit"><code>yy_error_print_and_exit</code></a>.
 
-<dt id="yy_lineno"><code>int yy_lineno;</code>
+<dt id="yy_lineno"><code>int yy_lineno;</code><br>
+    <code id="YY_LINENO-macro">#define YY_LINENO (yy_lexer-&gt;yy_lineno)</code>
 
     <dd><p>
     When <code>%option yylineno</code> is set, this field exists, has
@@ -1728,7 +1730,8 @@ permissible to directly change them:
     <p>To change this value, call
     <a href="#yy_restart"><code>yy_restart</code></a>.
 
-<dt id="yy_text"><code>char const *yy_text;</code>
+<dt id="yy_text"><code>char const *yy_text;</code><br>
+    <code id="YY_TEXT-macro">#define YY_TEXT (yy_lexer-&gt;yy_text)</code>
 
     <dd><p>
     After a rule pattern has been matched, this points at the matched
@@ -1736,13 +1739,15 @@ permissible to directly change them:
     valid while an action is executing; you must make a copy of the
     data to use it for longer than that.
 
-<dt id="yy_leng"><code>int yy_leng;</code>
+<dt id="yy_leng"><code>int yy_leng;</code><br>
+    <code id="YY_LENG-macro">#define YY_LENG (yy_lexer-&gt;yy_leng)</code>
 
     <dd><p>
     When <code>yy_text</code> is valid, <code>yy_leng</code> gives the
     length of the matched text, in bytes.
 
-<dt id="yy_current_buffer"><code>yy_buffer_state_t *yy_current_buffer;</code>
+<dt id="yy_current_buffer"><code>yy_buffer_state_t *yy_current_buffer;</code><br>
+    <code id="YY_CURRENT_BUFFER-macro">#define YY_CURRENT_BUFFER (yy_lexer-&gt;yy_current_buffer)</code>
 
     <dd><p>
     The input source we are currently reading from, and a buffer
@@ -1816,23 +1821,45 @@ manipulating the text matched by a rule:
 
 <dl>
 
-<dt id="yy_less_text"><code>void yy_less_text(yy_lexer_t *yy_lexer, int new_yy_leng);</code>
-
-    <dd><p>
-    Put a suffix of the matched text back into the read buffer so it
-    will be scanned next.  This function can only be called when <a
-    href="#yy_text"><code>yy_text</code></a> could be accessed.
-    <code>new_yy_leng</code> must be in <code>[0,yy_leng]</code>, and it
-    determines the new value of <a
-    href="#yy_leng"><code>yy_leng</code></a>. The amount of text put
-    back is the difference between the old and new lengths.
-
 <dt id="yy_echo"><code>YY_ECHO</code>
 
     <dd><p>Copy
     <a href="#yy_text"><code>yy_text</code></a>
     to the scanner's output
     (<a href="#yy_output_stream"><code>yy_output_stream</code></a>).
+
+<dt id="yy_less_text"><code>void yy_less_text(yy_lexer_t *yy_lexer, int n);</code><br>
+    <code id="YY_LESS_TEXT-macro">#define YY_LESS_TEXT(n) yy_less_text(yy_lexer, n)</code>
+
+    <dd><p>
+    Return all but the first <code>n</code> characters of the current
+    token back to the input stream, where they will be rescanned when
+    the scanner looks for the next match.
+    <a href="#yy_text"><code>yy_text</code></a> and
+    <a href="#yy_leng"><code>yy_leng</code></a>
+    are adjusted appropriately (e.g.,
+    <code>yy_leng</code> will now be equal to <code>n</code>). For
+    example, on the input "foobar" the
+    <a href="test/yyless-foobar.lex">following</a> will write out
+    "foobarbar":
+
+    <pre><!-- BEGIN example: "yyless-foobar.lex" fragment=true indent=8 --><code>
+        %%
+        foobar    YY_ECHO; YY_LESS_TEXT(3);
+        [a-z]+    YY_ECHO;
+    </code><!-- END example --></pre>
+
+    <p>An argument of 0 to <code>YY_LESS_TEXT</code> will cause the entire current
+    input string to be scanned again. Unless you've changed how the scanner
+    will subsequently process its input (using <code>YY_SET_START_CONDITION</code>, for
+    example), this will result in an endless loop.
+
+    <p>This function can only be called when <a
+    href="#yy_text"><code>yy_text</code></a> could be accessed.
+
+    <p>Outside of rule actions, the <code>YY_LESS_TEXT</code>
+    macro is not available.  Instead, you can call the
+    <a href="#yy_less_text"><code>yy_less_text</code></a> function.
 
 <dt id="YY_MORE_TEXT-macro"><code>YY_MORE_TEXT()</code>
 
@@ -1859,35 +1886,6 @@ manipulating the text matched by a rule:
     <p><code>%option yymore</code> must be set to use this macro.  That
     option entails
     a minor performance penalty in the scanner's matching speed.
-
-<dt id="YY_LESS_TEXT-macro"><code>YY_LESS_TEXT(n)</code>
-
-    <dd><p>
-    Return all but the first <code>n</code> characters of the current
-    token back to the input stream, where they will be rescanned when
-    the scanner looks for the next match.
-    <a href="#yy_text"><code>yy_text</code></a> and
-    <a href="#yy_leng"><code>yy_leng</code></a>
-    are adjusted appropriately (e.g.,
-    <code>yy_leng</code> will now be equal to <code>n</code>). For
-    example, on the input "foobar" the
-    <a href="test/yyless-foobar.lex">following</a> will write out
-    "foobarbar":
-
-    <pre><!-- BEGIN example: "yyless-foobar.lex" fragment=true indent=8 --><code>
-        %%
-        foobar    YY_ECHO; YY_LESS_TEXT(3);
-        [a-z]+    YY_ECHO;
-    </code><!-- END example --></pre>
-
-    <p>An argument of 0 to <code>YY_LESS_TEXT</code> will cause the entire current
-    input string to be scanned again. Unless you've changed how the scanner
-    will subsequently process its input (using <code>YY_SET_START_CONDITION</code>, for
-    example), this will result in an endless loop.
-
-    <p>Outside of rule actions, the <code>YY_LESS_TEXT</code>
-    macro is not available.  Instead, you can call the
-    <a href="#yy_less_text"><code>yy_less_text</code></a> function.
 
 </dl>
 
@@ -1997,372 +1995,7 @@ to out of <code>yy_lex</code>:
 </dl>
 
 
-<h2 id="pre-defined-event-handlers">3.7. Pre-defined Event Handlers</h2>
-
-<p>These functions are the pre-defined handlers for the function
-pointers in <code>yy_lexer_t</code>:
-
-<dl>
-
-<dt id="yy_wrap_return_1"><code>int yy_wrap_return_1(yy_lexer_t *yy_lexer);</code>
-
-    <dd><p>
-    Return 1, meaning no more files.
-
-<dt id="yy_error_print_and_exit">
-    <code>void yy_error_print_and_exit(yy_lexer_t const *yy_lexer, yy_error_code_t code, char const *detail);</code>
-
-    <dd><p>
-    Prints a message to standard error and exits with a non-zero exit code.
-
-</dl>
-
-
-<h2 id="error-handling">3.8. Error Handling</h2>
-
-<p>These functions relate to error handling and diagnostics:
-
-<dl>
-
-<dt id="yy_get_error">
-    <code>yy_error_code_t yy_get_error(yy_lexer_t *yy_lexer);</code>
-
-    <dd><p>
-    Return the code of the error the scanner encountered, or
-    <code>yy_err_no_error</code> if none has
-    been.  This can be used in situations where <a
-    href="#yy_error_function"><code>yy_error_function</code></a> returns
-    in order to signal to the client code that it must stop calling
-    scanner functions.
-
-<dt id="yy_error_string">
-    <code>char const *yy_error_string(yy_error_code_t code);</code>
-
-    <dd><p>
-    Return an English string describing the given error
-    <code>code</code> as a pointer to statically-allocated memory.
-
-<dt id="yy_check_for_memory_leaks"><code>void yy_check_for_memory_leaks(void);</code>
-
-    <dd><p>
-    Fail an assertion if there are any objects allocated, across all
-    scanner instances, that have not been freed.  This can be called
-    after destroying all instances to check for memory leaks.
-
-</dl>
-
-
-<h2 id="convenience-macros">3.9. Convenience Macros</h2>
-
-<p>Within section 2 actions, several convenience macros provide access
-to associated fields without the need for an explicit object:
-
-<pre><code>
-    <span id="YY_TEXT-macro">#define YY_TEXT           (yy_lexer-&gt;yy_text)</span>
-    <span id="YY_LENG-macro">#define YY_LENG           (yy_lexer-&gt;yy_leng)</span>
-    <span id="YY_LINENO-macro">#define YY_LINENO         (yy_lexer-&gt;yy_lineno)</span>
-    #define YY_CURRENT_BUFFER (yy_lexer-&gt;yy_current_buffer)
-    <span id="YY_OUTPUT_STREAM-macro">#define YY_OUTPUT_STREAM  (yy_lexer-&gt;yy_output_stream)</span>
-</code></pre>
-
-<p>Additionally, some macros provide access to various functions without
-the need to explicitly pass a <a href="#yy_lexer_t"><code>yy_lexer_t</code></a>
-pointer:
-
-<pre><code>
-    <span id="YY_SET_START_CONDITION-macro">#define YY_SET_START_CONDITION(s) yy_set_start_condition(yy_lexer, s)</span>
-    <span id="YY_GET_START_CONDITION-macro">#define YY_GET_START_CONDITION(s) yy_get_start_condition(yy_lexer, s)</span>
-</code></pre>
-
-
-<h2 id="manipulating-the-input-stream">3.10. Manipulating the Input Stream</h2>
-
-<p>These macros can be used within an action to manipulate the
-input stream:
-
-<ul>
-
-<li id="YY_UNREAD_CHARACTER-macro"><p id="yy_unread_character"><code>YY_UNREAD_CHARACTER(c)</code>
-    puts the character <code>c</code> back onto the input stream. It
-    will be the next character scanned. The
-    <a href="test/unread-character-parenthesized.lex">following action</a> will take
-    the current token and cause it to be rescanned enclosed in
-    parentheses.
-
-    <pre><!-- BEGIN example: "unread-character-parenthesized.lex" fragment=true indent=0 --><code>
-    {
-      int i;
-      /* Copy YY_TEXT because YY_UNREAD_CHARACTER() trashes YY_TEXT */
-      char *yycopy = strdup(YY_TEXT);
-      YY_UNREAD_CHARACTER(')');
-      for (i = YY_LENG - 1; i &gt;= 0; --i) {
-        YY_UNREAD_CHARACTER(yycopy[i]);
-      }
-      YY_UNREAD_CHARACTER('(');
-      free(yycopy);
-    }
-    </code><!-- END example --></pre>
-
-    <p>Note that since each <code>YY_UNREAD_CHARACTER()</code> puts the given character
-    back at the <em>beginning</em> of the input stream, pushing back strings
-    must be done back-to-front.
-
-    <p>Calling <code>YY_UNREAD_CHARACTER()</code> invalidates
-    <code>YY_TEXT</code> and <code>YY_LENG</code>.  Any use of these
-    variables after unreading results in undefined behavior.
-    If you need the value of <a href="#YY_TEXT-macro"><code>YY_TEXT</code></a>
-    after a call to <code>YY_UNREAD_CHARACTER()</code> (as in the above example),
-    you must first copy it elsewhere.
-
-    <p>Finally, note that you cannot put back <code>EOF</code> to attempt
-    to mark the input stream with an end-of-file.  The argument
-    <code>c</code> must be in [0,255].
-
-    <p>Use of this macro requires
-    <code>%option yy_unread_character</code>.
-
-    <p>Outside of rule actions, the <code>YY_UNREAD_CHARACTER</code>
-    macro is not available.  Instead, you can call the
-    <code>void yy_unread_character(yy_lexer_t *lexer, int c)</code> function.
-
-<li><p id="yy_read_character"><code>YY_READ_CHARACTER()</code>
-    reads the next character from the input.  Once a character is read in
-    this way, it is considered "consumed", and will not be subsequently
-    matched by scanner rules.  For example, the
-    <a href="test/read-character-c-comments.lex">following</a> is one way to eat up C comments:
-
-    <pre><!-- BEGIN example: "read-character-c-comments.lex" fragment=true indent=8 --><code>
-        %%
-        "/*"      {
-                    int c;
-                    for (;;) {
-                      while ( (c = YY_READ_CHARACTER()) != '*' &amp;&amp; c != EOF )
-                        {}    /* eat up text of comment */
-
-                      if (c == '*') {
-                        while ( (c = YY_READ_CHARACTER()) == '*' )
-                          {}
-                        if (c == '/') {
-                          break;    /* found the end */
-                        }
-                      }
-
-                      if (c == EOF) {
-                        error("EOF in comment");
-                        break;
-                      }
-                    }
-                  }
-    </code><!-- END example --></pre>
-
-    <p>Use of this macro requires
-    <code>%option yy_read_character</code>.
-
-    <p>Outside of rule actions, the <code>YY_READ_CHARACTER</code>
-    macro is not available.  Instead, you can call the
-    <code>int yy_read_character(yy_lexer_t *lexer)</code> function.
-
-<li><p><code>YY_FLUSH_CURRENT_BUFFER</code>
-    flushes the scanner's internal buffer so that the next time the
-    scanner attempts to match a token, it will first refill the buffer
-    using
-    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>
-    This action is a special case of the more general
-    <code>yy_flush_buffer()</code> function, described in
-    <a href="#multiple-input-buffers">Multiple Input Buffers</a>.
-
-</ul>
-
-
-<h2 id="miscellaneous-macros">3.11. Miscellaneous Macros</h2>
-
-<p>TODO: The material in this section should be distributed to more
-sensible locations.  Not everything here is a macro.
-
-<dl>
-
-<dt><code>yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive)</code>
-
-    <dd>
-    <p>The function <code id="yy_set_interactive">yy_set_interactive</code>
-    can be used to control whether the current buffer is considered
-    <em>interactive</em>. An interactive buffer is processed much more
-    slowly (around 10x) due to reading one character at a time, but must be
-    used when the scanner's input source is indeed
-    interactive to avoid problems due to waiting to fill buffers. A non-zero argument
-    marks the buffer as interactive, a zero value as
-    non-interactive.  This function should only be used when the scanner is
-    built with the <a href="#interactive-option"><code>-I</code></a> flag
-    because otherwise lazy action evaluation due to the default <a
-    href="#batch-option"><code>-B</code></a> option will cause poor
-    interactive performance even when reading one character at a time.
-
-    <p>
-    <code>yy_set_interactive()</code> must be invoked
-    prior to beginning to scan the buffer that is (or is not) to be considered
-    interactive, as demonstrated by
-    <a href="test/c-int-interactive-set-int-isatty.lex"><code>test/c-int-interactive-set-int-isatty.lex</code></a>:
-
-<pre><!-- BEGIN example: "c-int-interactive-set-int-isatty.lex" fragment=true indent=2 --><code>
-    yy_restart(&amp;lexer, stdin);
-    yy_set_interactive(&amp;lexer, isatty(fileno(stdin)) &gt; 0);
-    while (yy_lex(&amp;lexer))
-      {}
-</code><!-- END example --></pre>
-
-<dt><code>yy_set_bol(yy_lexer_t *yy_lexer, int at_bol)</code>
-
-    <dd>
-    <p>The function <code>yy_set_bol</code> can be used to control
-    whether the current buffer's scanning context for the next token match
-    is done as though at the beginning of a line. A non-zero macro argument
-    makes rules anchored with
-    <code>^</code> active, while a zero argument makes <code>^</code> rules inactive.
-
-<dt id="YY_GET_BOL-macro"><code>YY_GET_BOL()</code>
-
-    <dd>
-    <p>The macro <code>YY_GET_BOL()</code> returns true if the next token
-    scanned from the current buffer will have <code>^</code> rules active, false
-    otherwise.
-
-    <p>See <a href="test/set-bol.lex"><code>test/set-bol.lex</code></a>
-    for an example with <code>yy_set_bol</code> and <code>YY_GET_BOL</code>.
-
-</dl>
-
-
-<h2 id="configurable-parameters">3.12. Configurable Parameters</h2>
-
-<p>These parameters may be set by using a <code>#define</code> in
-a section 1 <code>%{}</code> declaration block to set the value.
-
-<dl>
-
-<dt id="YY_MAX_READ_SIZE"><code>YY_MAX_READ_SIZE</code>
-
-    <dd><p>The maximum number of bytes that the scanner will pass as the
-    <code>size</code> argument to
-    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
-    On some platforms, the speed of reading can be improved by using
-    "round" numbers.
-
-    <p>The default value is 8192.
-
-<dt id="YY_DEFAULT_BUF_ALLOC_SIZE"><code>YY_DEFAULT_BUF_ALLOC_SIZE</code>
-
-    <dd><p>The default size of the read buffer, i.e., the size used
-    when the scanner creates its own buffer (which it usually does)
-    or <a href="#yy_create_buffer"><code>yy_create_buffer</code></a>
-    is passed a 0 <code>size</code> argument.
-
-    <p>This should be larger than <code>YY_MAX_READ_SIZE</code> for the
-    latter to have an effect because, when reading more data, there is
-    usually already some portion of a token in the buffer, and we will
-    not read more data than is available in the buffer.
-
-    <p>The default value is 16384.
-
-    <p>See <a href="test/large-read-buffer.lex"><code>test/large-read-buffer.lex</code></a>
-    for an example of overriding this value along with
-    <code>YY_MAX_READ_SIZE</code>.
-
-</dl>
-
-
-<h2 id="setting-the-start-condition">3.13. Setting the Start Condition</h2>
-
-<p id="start-condition-functions">These functions are available for manipulating the current
-<a href="#start-conditions">start condition</a>:
-
-<dl>
-
-<dt id="yy_set_start_condition"><code>void yy_set_start_condition(yy_lexer_t *yy_lexer, int cond);</code>
-
-    <dd><p>
-    Set the start condition of <code>yy_lexer</code> to <code>cond</code>.
-
-<dt id="yy_get_start_condition"><code>int yy_get_start_condition(yy_lexer_t const *yy_lexer);</code>
-
-    <dd><p>
-    Get the current start condition.
-
-</dl>
-
-<p>Additionally, the functions
-<a href="#yy_push_start_condition"><code>yy_push_start_condition</code></a>,
-<a href="#yy_pop_start_condition"><code>yy_pop_start_condition</code></a>, and
-<a href="#yy_top_start_condition"><code>yy_top_start_condition</code></a> are
-available to manipulate the stack of start conditions, as  documented under
-<a href="#start-conditions">Start Conditions</a>.
-
-
-<h2 id="start-condition-stack">3.14. Start Condition Stack</h2>
-
-<p>If <a href="#option-stack"><code>%option stack</code></a> is set,
-there is a stack of start
-conditions that allows the scanner to enter a new condition while remembering
-where it came from.  This is useful when there is one language embedded
-inside another and they require different lexing rules.  These routines
-are available for manipulating the stack of start conditions:
-
-<dl>
-
-<dt id="yy_push_start_condition"><code>void yy_push_start_condition(yy_lexer_t *yy_lexer, int new_cond);</code>
-
-    <dd><p>Push the current start condition onto the top of the start
-    condition stack and switch to <code>new_cond</code> as though you had
-    used
-    <a href="#yy_set_start_condition"><code>yy_set_start_condition(yy_lexer, new_cond)</code></a>.
-
-<dt id="yy_pop_start_condition"><code>void yy_pop_start_condition(yy_lexer_t *yy_lexer);</code>
-
-    <dd><p>Pop the top of the stack and switch to it via
-    <code>yy_set_start_condition</code>.
-
-<dt id="yy_top_start_condition"><code>int yy_top_start_condition(yy_lexer_t const *yy_lexer);</code>
-
-    <dd><p>Return the top of the stack without altering the stack's contents.
-
-<dt id="yy_condition_stack_is_empty"><code>int yy_condition_stack_is_empty(yy_lexer_t const *yy_lexer);</code>
-
-    <dd><p>Return true if the stack is empty.
-
-</dl>
-
-<p>These functions have convenience aliases for which the lexer object
-is implicit, for use in actions in section 2:
-
-<pre><code>
-    #define YY_PUSH_START_CONDITION(cond) yy_push_start_condition(yy_lexer, cond)
-    #define YY_POP_START_CONDITION()      yy_pop_start_condition(yy_lexer)
-    #define YY_TOP_START_CONDITION()      yy_top_start_condition(yy_lexer)
-    #define YY_CONDITION_STACK_IS_EMPTY() yy_condition_stack_is_empty(yy_lexer)
-</code></pre>
-
-<p>The start condition stack grows dynamically and so has no built-in
-size limitation. If memory is exhausted,
-<a href="#yy_error_function"><code>yy_error_function</code></a> is called.
-
-<p><a href="test/discard-ml-comments.lex">Here</a> is an example that
-demonstrates the start condition stack, as well as start condition
-scopes, by using them to keep track of nested comments in ML:
-
-<pre><!-- BEGIN example: "discard-ml-comments.lex" fragment=true indent=4 --><code>
-    %option stack
-    %x comment foo
-    %%
-    &lt;*&gt;"(*"                 YY_PUSH_START_CONDITION(comment);
-    &lt;comment&gt;{
-      [^*(]+                /* eat anything that's not a '*' or '(' */
-      "*"+/[^)]             /* eat '*'s not followed by ')' */
-      "("/[^*]              /* eat '(' not followed by '*' */
-      "*"+")"               YY_POP_START_CONDITION();
-    }
-</code><!-- END example --></pre>
-
-
-<h2 id="multiple-input-buffers">3.15. Multiple Input Buffers</h2>
+<h2 id="multiple-input-buffers">3.7. Multiple Input Buffers</h2>
 
 <p>Some scanners (such as those which support "include" files) require
 reading from several input streams. As <code>smflex</code> scanners do a
@@ -2452,6 +2085,15 @@ particular source, call:
 <p>After calling this function, the next time the
 scanner attempts to read data from the buffer, it will first fill
 the buffer anew using <code>yy_read_input_function</code>.
+
+<p><code>YY_FLUSH_CURRENT_BUFFER</code>
+flushes the scanner's internal buffer so that the next time the
+scanner attempts to match a token, it will first refill the buffer
+using
+<a href="#yy_read_input_function"><code>yy_read_input_function</code></a>
+This action is a special case of the more general
+<code>yy_flush_buffer()</code> function, described in
+<a href="#multiple-input-buffers">Multiple Input Buffers</a>.
 
 <p>Finally, the <code>YY_CURRENT_BUFFER</code> macro returns a
 <code>yy_buffer_state_t*</code> pointer to the current buffer.
@@ -2569,6 +2211,9 @@ explained in <a href="#end-of-file-pattern">End-of-File Pattern</a>):
             }
 </code><!-- END example --></pre>
 
+
+<h2 id="scanning-in-memory-data">3.8. Scanning In-memory Data</h2>
+
 <p>Three routines are available for setting up input buffers for
 scanning in-memory strings instead of files. All of them create a
 new input buffer for scanning the string, and return a corresponding
@@ -2623,7 +2268,283 @@ copy by using:
 for an example demonstrating each of these functions.
 
 
-<h2 id="yy_error_code_t">3.16. The yy_error_code_t Enumeration</h2>
+<h2 id="start-condition-functions">3.9. Start Condition Functions</h2>
+
+<p>These functions are available for manipulating the current
+<a href="#start-conditions">start condition</a>:
+
+<dl>
+
+<dt id="yy_set_start_condition"><code>void yy_set_start_condition(yy_lexer_t *yy_lexer, int cond);</code><br>
+    <code id="YY_SET_START_CONDITION-macro">#define YY_SET_START_CONDITION(cond) yy_set_start_condition(yy_lexer, cond)</code>
+
+    <dd><p>
+    Set the start condition of <code>yy_lexer</code> to <code>cond</code>.
+
+<dt id="yy_get_start_condition"><code>int yy_get_start_condition(yy_lexer_t const *yy_lexer);</code><br>
+    <code id="YY_GET_START_CONDITION-macro">#define YY_GET_START_CONDITION(s) yy_get_start_condition(yy_lexer, s)</code>
+
+    <dd><p>
+    Get the current start condition.
+
+</dl>
+
+
+<p>If <a href="#option-stack"><code>%option stack</code></a> is set,
+there is a stack of start
+conditions that allows the scanner to enter a new condition while remembering
+where it came from.  This is useful when there is one language embedded
+inside another and they require different lexing rules.  These routines
+are available for manipulating the stack of start conditions:
+
+<dl>
+
+<dt id="yy_push_start_condition"><code>void yy_push_start_condition(yy_lexer_t *yy_lexer, int cond);</code><br>
+    <code id="YY_PUSH_START_CONDITION-macro">#define YY_PUSH_START_CONDITION(cond) yy_push_start_condition(yy_lexer, cond)</code>
+
+    <dd><p>Push the current start condition onto the top of the start
+    condition stack and switch to <code>cond</code> as though you had
+    used
+    <a href="#yy_set_start_condition"><code>yy_set_start_condition(yy_lexer, cond)</code></a>.
+
+<dt id="yy_pop_start_condition"><code>void yy_pop_start_condition(yy_lexer_t *yy_lexer);</code><br>
+    <code id="YY_POP_START_CONDITION-macro">#define YY_POP_START_CONDITION() yy_pop_start_condition(yy_lexer)</code>
+
+    <dd><p>Pop the top of the stack and switch to it via
+    <code>yy_set_start_condition</code>.
+
+<dt id="yy_top_start_condition"><code>int yy_top_start_condition(yy_lexer_t const *yy_lexer);</code><br>
+    <code id="YY_TOP_START_CONDITION-macro">#define YY_TOP_START_CONDITION() yy_top_start_condition(yy_lexer)</code>
+
+    <dd><p>Return the top of the stack without altering the stack's contents.
+
+<dt id="yy_condition_stack_is_empty"><code>int yy_condition_stack_is_empty(yy_lexer_t const *yy_lexer);</code><br>
+    <code id="YY_CONDITION_STACK_IS_EMPTY">#define YY_CONDITION_STACK_IS_EMPTY() yy_condition_stack_is_empty(yy_lexer)</code>
+
+    <dd><p>Return true if the stack is empty.
+
+</dl>
+
+<p>The start condition stack grows dynamically and so has no built-in
+size limitation. If memory is exhausted,
+<a href="#yy_error_function"><code>yy_error_function</code></a> is called.
+
+<p><a href="test/discard-ml-comments.lex">Here</a> is an example that
+demonstrates the start condition stack, as well as start condition
+scopes, by using them to keep track of nested comments in ML:
+
+<pre><!-- BEGIN example: "discard-ml-comments.lex" fragment=true indent=4 --><code>
+    %option stack
+    %x comment foo
+    %%
+    &lt;*&gt;"(*"                 YY_PUSH_START_CONDITION(comment);
+    &lt;comment&gt;{
+      [^*(]+                /* eat anything that's not a '*' or '(' */
+      "*"+/[^)]             /* eat '*'s not followed by ')' */
+      "("/[^*]              /* eat '(' not followed by '*' */
+      "*"+")"               YY_POP_START_CONDITION();
+    }
+</code><!-- END example --></pre>
+
+
+<h2 id="interacting-with-an-input-stream">3.10. Interacting With an Input Stream</h2>
+
+<p>These macros can be used within an action to manipulate the
+input stream:
+
+<dl>
+
+<dt id="YY_UNREAD_CHARACTER-macro"><p id="yy_unread_character"><code>YY_UNREAD_CHARACTER(c)</code>
+
+    <dd><p>
+    Put the character <code>c</code> back onto the input stream. It
+    will be the next character scanned. The
+    <a href="test/unread-character-parenthesized.lex">following action</a> will take
+    the current token and cause it to be rescanned enclosed in
+    parentheses.
+
+    <pre><!-- BEGIN example: "unread-character-parenthesized.lex" fragment=true indent=0 --><code>
+    {
+      int i;
+      /* Copy YY_TEXT because YY_UNREAD_CHARACTER() trashes YY_TEXT */
+      char *yycopy = strdup(YY_TEXT);
+      YY_UNREAD_CHARACTER(')');
+      for (i = YY_LENG - 1; i &gt;= 0; --i) {
+        YY_UNREAD_CHARACTER(yycopy[i]);
+      }
+      YY_UNREAD_CHARACTER('(');
+      free(yycopy);
+    }
+    </code><!-- END example --></pre>
+
+    <p>Note that since each <code>YY_UNREAD_CHARACTER()</code> puts the given character
+    back at the <em>beginning</em> of the input stream, pushing back strings
+    must be done back-to-front.
+
+    <p>Calling <code>YY_UNREAD_CHARACTER()</code> invalidates
+    <code>YY_TEXT</code> and <code>YY_LENG</code>.  Any use of these
+    variables after unreading results in undefined behavior.
+    If you need the value of <a href="#YY_TEXT-macro"><code>YY_TEXT</code></a>
+    after a call to <code>YY_UNREAD_CHARACTER()</code> (as in the above example),
+    you must first copy it elsewhere.
+
+    <p>Finally, note that you cannot put back <code>EOF</code> to attempt
+    to mark the input stream with an end-of-file.  The argument
+    <code>c</code> must be in [0,255].
+
+    <p>Use of this macro requires
+    <code>%option yy_unread_character</code>.
+
+    <p>Outside of rule actions, the <code>YY_UNREAD_CHARACTER</code>
+    macro is not available.  Instead, you can call the
+    <code>void yy_unread_character(yy_lexer_t *lexer, int c)</code> function.
+
+<dt id="yy_read_character"><code>YY_READ_CHARACTER()</code>
+
+    <dd><p>
+    Read the next character from the input.  Once a character is read in
+    this way, it is considered "consumed", and will not be subsequently
+    matched by scanner rules.  For example, the
+    <a href="test/read-character-c-comments.lex">following</a> is one way to eat up C comments:
+
+    <pre><!-- BEGIN example: "read-character-c-comments.lex" fragment=true indent=8 --><code>
+        %%
+        "/*"      {
+                    int c;
+                    for (;;) {
+                      while ( (c = YY_READ_CHARACTER()) != '*' &amp;&amp; c != EOF )
+                        {}    /* eat up text of comment */
+
+                      if (c == '*') {
+                        while ( (c = YY_READ_CHARACTER()) == '*' )
+                          {}
+                        if (c == '/') {
+                          break;    /* found the end */
+                        }
+                      }
+
+                      if (c == EOF) {
+                        error("EOF in comment");
+                        break;
+                      }
+                    }
+                  }
+    </code><!-- END example --></pre>
+
+    <p>Use of this macro requires
+    <code>%option yy_read_character</code>.
+
+    <p>Outside of rule actions, the <code>YY_READ_CHARACTER</code>
+    macro is not available.  Instead, you can call the
+    <code>int yy_read_character(yy_lexer_t *lexer)</code> function.
+
+<dt id="yy_set_interactive"><code>yy_set_interactive(yy_lexer_t *yy_lexer, int is_interactive)</code>
+
+    <dd>
+    <p>The function <code>yy_set_interactive</code>
+    can be used to control whether the current buffer is considered
+    <em>interactive</em>. An interactive buffer is processed much more
+    slowly (around 10x) due to reading one character at a time, but must be
+    used when the scanner's input source is indeed
+    interactive to avoid problems due to waiting to fill buffers. A non-zero argument
+    marks the buffer as interactive, a zero value as
+    non-interactive.  This function should only be used when the scanner is
+    built with the <a href="#interactive-option"><code>-I</code></a> flag
+    because otherwise lazy action evaluation due to the default <a
+    href="#batch-option"><code>-B</code></a> option will cause poor
+    interactive performance even when reading one character at a time.
+
+    <p>
+    <code>yy_set_interactive()</code> must be invoked
+    prior to beginning to scan the buffer that is (or is not) to be considered
+    interactive, as demonstrated by
+    <a href="test/c-int-interactive-set-int-isatty.lex"><code>test/c-int-interactive-set-int-isatty.lex</code></a>:
+
+    <pre><!-- BEGIN example: "c-int-interactive-set-int-isatty.lex" fragment=true indent=6 --><code>
+        yy_restart(&amp;lexer, stdin);
+        yy_set_interactive(&amp;lexer, isatty(fileno(stdin)) &gt; 0);
+        while (yy_lex(&amp;lexer))
+          {}
+    </code><!-- END example --></pre>
+
+<dt><code>yy_set_bol(yy_lexer_t *yy_lexer, int at_bol)</code>
+
+    <dd>
+    <p>The function <code>yy_set_bol</code> can be used to control
+    whether the current buffer's scanning context for the next token match
+    is done as though at the beginning of a line. A non-zero macro argument
+    makes rules anchored with
+    <code>^</code> active, while a zero argument makes <code>^</code> rules inactive.
+
+<dt id="YY_GET_BOL-macro"><code>YY_GET_BOL()</code>
+
+    <dd>
+    <p>The macro <code>YY_GET_BOL()</code> returns true if the next token
+    scanned from the current buffer will have <code>^</code> rules active, false
+    otherwise.
+
+    <p>See <a href="test/set-bol.lex"><code>test/set-bol.lex</code></a>
+    for an example with <code>yy_set_bol</code> and <code>YY_GET_BOL</code>.
+
+</dl>
+
+
+<h2 id="available-methods-for-function-pointers">3.11. Available Methods for Function Pointers</h2>
+
+<p>These functions are the pre-defined handlers for the function
+pointers in <code>yy_lexer_t</code>:
+
+<dl>
+
+<dt id="yy_wrap_return_1"><code>int yy_wrap_return_1(yy_lexer_t *yy_lexer);</code>
+
+    <dd><p>
+    Return 1, meaning no more files.
+
+<dt id="yy_error_print_and_exit">
+    <code>void yy_error_print_and_exit(yy_lexer_t const *yy_lexer, yy_error_code_t code, char const *detail);</code>
+
+    <dd><p>
+    Prints a message to standard error and exits with a non-zero exit code.
+
+</dl>
+
+
+<h2 id="error-handling-and-diagnostics">3.12. Error Handling and Diagnostics</h2>
+
+<p>These functions relate to error handling and diagnostics:
+
+<dl>
+
+<dt id="yy_get_error">
+    <code>yy_error_code_t yy_get_error(yy_lexer_t *yy_lexer);</code>
+
+    <dd><p>
+    Return the code of the error the scanner encountered, or
+    <code>yy_err_no_error</code> if none has
+    been.  This can be used in situations where <a
+    href="#yy_error_function"><code>yy_error_function</code></a> returns
+    in order to signal to the client code that it must stop calling
+    scanner functions.
+
+<dt id="yy_error_string">
+    <code>char const *yy_error_string(yy_error_code_t code);</code>
+
+    <dd><p>
+    Return an English string describing the given error
+    <code>code</code> as a pointer to statically-allocated memory.
+
+<dt id="yy_check_for_memory_leaks"><code>void yy_check_for_memory_leaks(void);</code>
+
+    <dd><p>
+    Fail an assertion if there are any objects allocated, across all
+    scanner instances, that have not been freed.  This can be called
+    after destroying all instances to check for memory leaks.
+
+</dl>
+
+
+<h3 id="yy_error_code_t">3.12.1. The yy_error_code_t Enumeration</h3>
 
 <p>These are the error code enumerators of type
 <code>yy_error_code_t</code> that can be reported to
@@ -2700,7 +2621,45 @@ while the generated scanner is running:
 </dl>
 
 
-<h2 id="interfacing-with-yacc">3.17. Interfacing with YACC</h2>
+<h2 id="configurable-parameters">3.13. Configurable Parameters</h2>
+
+<p>These parameters may be set with a <code>#define</code> in
+section 1 in a code block (<code>%{...%}</code>):
+
+<dl>
+
+<dt id="YY_MAX_READ_SIZE"><code>YY_MAX_READ_SIZE</code>
+
+    <dd><p>The maximum number of bytes that the scanner will pass as the
+    <code>size</code> argument to
+    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
+    On some platforms, the speed of reading can be improved by using
+    "round" numbers.
+
+    <p>The default value is 8192.
+
+<dt id="YY_DEFAULT_BUF_ALLOC_SIZE"><code>YY_DEFAULT_BUF_ALLOC_SIZE</code>
+
+    <dd><p>The default size of the read buffer, i.e., the size used
+    when the scanner creates its own buffer (which it usually does)
+    or <a href="#yy_create_buffer"><code>yy_create_buffer</code></a>
+    is passed a 0 <code>size</code> argument.
+
+    <p>This should be larger than <code>YY_MAX_READ_SIZE</code> for the
+    latter to have an effect because, when reading more data, there is
+    usually already some portion of a token in the buffer, and we will
+    not read more data than is available in the buffer.
+
+    <p>The default value is 16384.
+
+    <p>See <a href="test/large-read-buffer.lex"><code>test/large-read-buffer.lex</code></a>
+    for an example of overriding this value along with
+    <code>YY_MAX_READ_SIZE</code>.
+
+</dl>
+
+
+<h2 id="interfacing-with-yacc">3.14. Interfacing with YACC</h2>
 
 <p>One of the main uses of <code>smflex</code> is as a companion to
 the <code>yacc</code> parser-generator. <code>yacc</code> parsers expect
