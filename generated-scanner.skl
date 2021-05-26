@@ -1050,16 +1050,18 @@ STATIC_IF_CPP void yy_construct(yy_lexer_t *yy_lexer)
   yy_lexer->yy_text = NULL;
   yy_lexer->yy_leng = 0;
 
-  yy_lexer->yy_input_stream = (yy_input_stream_t*)stdin;
-  yy_lexer->yy_output_stream = (yy_output_stream_t*)stdout;
-
 %if cpp_interface
   /* yyFlexLexer constructor will set these. */
+  yy_lexer->yy_input_stream          = NULL;
+  yy_lexer->yy_output_stream         = NULL;
   yy_lexer->yy_read_input_function   = NULL;
   yy_lexer->yy_write_output_function = NULL;
   yy_lexer->yy_wrap_function         = NULL;
   yy_lexer->yy_error_function        = NULL;
 %else
+  yy_lexer->yy_input_stream = (yy_input_stream_t*)stdin;
+  yy_lexer->yy_output_stream = (yy_output_stream_t*)stdout;
+
 %if use_read
   yy_lexer->yy_read_input_function   = &yy_read_input_with_read;
 %else
@@ -1068,7 +1070,7 @@ STATIC_IF_CPP void yy_construct(yy_lexer_t *yy_lexer)
   yy_lexer->yy_write_output_function = &yy_write_output_with_fwrite;
   yy_lexer->yy_wrap_function         = &yy_wrap_return_1;
   yy_lexer->yy_error_function        = &yy_error_print_and_exit;
-%endif
+%endif # !cpp_interface
 
 %if option_yylineno
   yy_lexer->yy_lineno = 1;
@@ -2244,8 +2246,13 @@ static void yy_flex_free(void *ptr)
 STATIC_IF_CPP void yy_check_for_memory_leaks()
 {
   if (yy_num_allocated_objects != 0) {
+%if !cpp_interface
     fprintf(stderr, "yy_check_for_memory_leaks: leaked %ld objects\n",
             yy_num_allocated_objects);
+%else
+    std::cerr << "yy_check_for_memory_leaks: leaked "
+              << yy_num_allocated_objects << " objects\n";
+%endif
     exit(4);
   }
 }
