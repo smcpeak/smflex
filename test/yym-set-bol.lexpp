@@ -5,6 +5,10 @@
 %option c++
 %option main
 
+%{
+#include <stdio.h>                     /* printf */
+%}
+
 %%
 set_bol      YY_ECHO; yym_set_bol(1);
 clear_bol\n  YY_ECHO; yym_set_bol(0);

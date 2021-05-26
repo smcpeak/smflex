@@ -7,7 +7,7 @@
 
 %%
 
-username    printf("USERNAME [x=%d,y=%d]", x, y);
+username    std::cout << "USERNAME [x=" << x << ",y=" << y << "]";
 
 %%
 

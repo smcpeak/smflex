@@ -8,7 +8,7 @@
 
 %%
 
-username    printf("USERNAME");
+username    std::cout << "USERNAME";
 
 %%
 

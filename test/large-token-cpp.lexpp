@@ -12,7 +12,7 @@
 
 %%
 
-"abcdefghij"+       printf("saw %d letters in a row\n", YY_LENG);
+"abcdefghij"+       std::cout << "saw " << YY_LENG << " letters in a row\n";
 .|\n                /* nothing */
 
 %%

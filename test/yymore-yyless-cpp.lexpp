@@ -7,6 +7,8 @@
 %option yymore
 
 %{
+#include <stdio.h>                     /* printf */
+
 int lessArg = 6;
 %}
 

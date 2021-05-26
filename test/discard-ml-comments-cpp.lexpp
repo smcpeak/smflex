@@ -23,13 +23,13 @@ beginfoo                YY_SET_START_CONDITION(foo); YY_ECHO;
 
   /* This rule lets me query current start condition. */
 <INITIAL,foo>state      {
-                          printf("[cond %d]", YY_GET_START_CONDITION());
+                          std::cout << "[cond " << YY_GET_START_CONDITION() << "]";
                         }
 
   /* This lets me query 'yy_top_start_condition'.  It requires that the stack not
    * be empty, so is only active inside comments. */
 <comment>"(yy_top_start_condition)"   {
-                          printf("[top cond %d]", yym_top_start_condition());
+                          std::cout << "[top cond " << yym_top_start_condition() << "]";
                         }
 
   /* EOF */

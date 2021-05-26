@@ -11,8 +11,8 @@
 %}
 
 %%
-username           printf("USERNAME");
-exit               printf("exiting...\n"); exit(0);
+username           std::cout << "USERNAME";
+exit               std::cout << "exiting...\n"; exit(0);
 
 %%
 /* EOF */

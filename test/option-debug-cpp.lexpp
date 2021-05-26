@@ -7,9 +7,9 @@
 %option c++
 %%
 
-one              printf("ONE");
-two              printf("TWO");
-three            printf("THREE");
-get_debug        printf("[debug is %d]", yym_flex_debug());
+one              std::cout << "ONE";
+two              std::cout << "TWO";
+three            std::cout << "THREE";
+get_debug        std::cout << "[debug is " << yym_flex_debug() << "]";
 "set_debug(0)"   yym_set_flex_debug(0);
 "set_debug(1)"   yym_set_flex_debug(1);
