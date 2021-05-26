@@ -2716,20 +2716,23 @@ if one of the tokens is "TOK_NUMBER", part of the scanner might look like:
 
 <p><code>smflex</code> provides two different ways to generate scanners
 for use with C++. The first way is to simply compile a scanner that
-uses the C API using a C++ compiler instead of a C compiler.  You can
+uses the <a href="#c-api">C API</a> using a C++ compiler instead of a C compiler.  You can
 then use C++ code in your rule actions instead of C code.
 
 <p>Alternatively, you can use <code>smflex</code> to generate a
-scanner with a C++ API by using the <code>-+</code> option (or,
-equivalently, <code>%option c++</code>).  That is what the
-remainder of this section describes.
+scanner with a C++ API by using
+<a href="#option-cpp"><code>%option c++</code></a>.  That is what the
+remainder of this section describes.  But take note: the C++ API is
+mostly just a thin wrapper on top of the C API, and the documentation
+here only explains what is different.  If you are just starting out
+with <code>smflex</code>, you should first familiarize yourself with
+the C API before moving on to the C++ API.
 
 <p>The header file defines a class, by default called
 <code>yyFlexLexer</code>, that acts as a wrapper around
 <a href="#yy_lexer_t"><code>yy_lexer_t</code></a>.
 The name of the scanner class can be changed with
-the <a href="#prefix-option"><code>-P</code></a> command line option or
-the <code>%option prefix</code> input file option: a specified prefix
+<a href="#option-prefix"><code>%option prefix</code></a>: a specified prefix
 of <code>foo</code> generates a class called <code>fooFlexLexer</code>.
 
 <p>The generated scanner file implements the methods of the scanner class, the most
@@ -2738,11 +2741,14 @@ rule actions and, if the actions return token codes, returns those
 codes one at a time.
 
 <p>
-If you specify <code>%option yyclass="DerivedClass"</code>, then the
+If you specify
+<a href="#option-yyclass"><code>%option yyclass="DerivedClass"</code></a>,
+then the
 <code>yym_lex()</code> method is emitted as a member of
 <code>DerivedClass</code>.  You then define <code>DerivedClass</code>
-and have it inherit <code>yyFlexLexer</code>.  This way, the rule
-actions you write can access all of its members.
+and have it inherit <code>yyFlexLexer</code>; your class must declare
+the <code>yym_lex</code> method, but <code>smflex</code> will define
+it.  This way, the rule actions you write can access all of its members.
 
 <p>The following <code>yyFlexLexer</code> methods manage the process of
 running the scanner over input:
@@ -2751,116 +2757,111 @@ running the scanner over input:
 
 <dt><code>yyFlexLexer(istream *arg_yyin = NULL, ostream *arg_yyout = NULL)</code>
 
-<dd><p>constructs a <code>yyFlexLexer</code> object using the given
-    streams for input and output. If not specified, the streams default to
+    <dd><p>Constructs <code>yyFlexLexer</code> object using the given
+    streams for input and output.  If not specified, the streams default to
     <code>cin</code> and <code>cout</code>, respectively.
 
 <dt><code>int yym_lex()</code>
 
-<dd><p>performs the same role as <a href="#yy_lex"><code>yy_lex</code></a>
+    <dd><p>Performs the same role as <a href="#yy_lex"><code>yy_lex</code></a>
     does for C API
     scanners: it scans the input stream, consuming tokens, until a rule's
     action returns a value.
 
+<dt><code>yy_input_stream_t *yym_input_stream() const;</code><br>
+    <code>yy_output_stream_t *yym_output_stream() const;</code><br>
+    <code>int yym_lineno() const;</code><br>
+    <code>bool yym_flex_debug() const;</code><br>
+    <code>char const *yym_text() const;</code><br>
+    <code>int yym_leng() const;</code><br>
+    <code>yy_buffer_state_t *yym_current_buffer() const;</code><br>
+
+    <dd><p>These provide read access to the corresponding members of
+    <a href="#yy_lexer_t"><code>yy_lexer_t</code></a>.
+
+    <p>One thing to note is that the C++ API uses <code>bool</code> to
+    represent boolean quantities while the C API uses <code>int</code>.
+
+<dt><code>void yym_set_output_stream(yy_output_stream_t *new_out)</code><br>
+    <code>void yym_set_lineno(int new_lineno)</code><br>
+    <code>void yym_set_flex_debug(bool flag)</code><br>
+
+    <dd><p>These provide write access to the corresponding members of
+    <a href="#yy_lexer_t"><code>yy_lexer_t</code></a>.
+
+<dt><code>void yym_restart(yy_input_stream_t *input_file);</code>
+
+    <dd><p>Like <a href="#yy_restart"><code>yy_restart</code></a>.
+
+<dt><code>void yym_less_text(int new_yy_leng);</code>
+
+    <dd><p>Like <a href="#yy_less_text"><code>yy_less_text</code></a>.
+
+<dt><code id="yym_create_buffer">yy_buffer_state_t *yym_create_buffer(yy_input_stream_t *file, int size=0);</code><br>
+    <code>void yym_switch_to_buffer(yy_buffer_state_t *new_buffer);</code><br>
+    <code>void yym_delete_buffer(yy_buffer_state_t *b);</code><br>
+    <code>void yym_flush_buffer(yy_buffer_state_t *b);</code><br>
+
+    <dd><p>These work like their
+    <a href="#multiple-input-buffers">C API counterparts</a>
+    except that <code>yy_input_stream_t</code> is
+    a typedef for <code>std::istream</code> rather
+    than <code>FILE*</code>.
+
+<dt><code>yy_buffer_state_t *yym_scan_string(const char *yy_str);</code><br>
+    <code>yy_buffer_state_t *yym_scan_bytes(const char *bytes, int len);</code><br>
+    <code>yy_buffer_state_t *yym_scan_buffer(char *base, int size);</code><br>
+
+    <dd><p>These work like their
+    <a href="#scanning-in-memory-data">C API counterparts</a>.
+
+
+<dt><code>void yym_set_start_condition(int cond);</code><br>
+    <code>int yym_get_start_condition() const;</code><br>
+    <code>void yym_push_start_condition(int new_cond);</code><br>
+    <code>void yym_pop_start_condition();</code><br>
+    <code>int yym_top_start_condition() const;</code><br>
+    <code>bool yym_condition_stack_is_empty() const;</code><br>
+
+    <dd><p>These work like their
+    <a href="#start-condition-functions">C API counterparts</a>.
+    (<a href="test/discard-ml-comments-cpp.lexpp">Example.</a>)
+
+<dt><code>int yym_read_character();</code><br>
+    <code>void yym_unread_character(int c);</code><br>
+    <code>void yym_set_interactive(bool is_interactive);</code><br>
+    <code>bool yym_get_bol() const;</code><br>
+    <code>void yym_set_bol(bool at_bol);</code><br>
+
+    <dd><p>These work like their
+    <a href="#interacting-with-an-input-stream">C API counterparts</a>.
+    (<a href="test/yym-read-character.lexpp">Example.</a>)
+
+<dt><code id="yym_get_error"><a href="#yy_error_code_t">yy_error_code_t</a> yym_get_error() const;</code><br>
+    <code id="yym_error_string">static char const *yym_error_string(yy_error_code_t code);</code><br>
+    <code>static void yym_check_for_memory_leaks()</code><br>
+
+    <dd><p>These work like their
+    <a href="#error-handling-and-diagnostics">C API counterparts</a>.
+
+<dt><code>virtual int yym_read_input(void *dest, int size);</code>
+
+    <dd><p>This works like
+    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
+
+<dt id="yym_write_output"><code>virtual int yym_write_output(void const *dest, int size);</code>
+
+    <dd><p>Like
+    <a href="#yy_write_output_function"><code>yy_write_output_function</code></a>.
+
 <dt><code>virtual int yym_wrap()</code>
 
-<dd><p>This behaves like
+    <dd><p>This behaves like
     <a href="#yy_wrap_function"><code>yy_wrap_function</code></a>.
 
     <p>The default definition returns 1.  You have the option to
     override it in a derived class (whether or not you are using
-    <code>%option yyclass</code>).
-
-<dt><code>yym_switch_to_buffer()</code>,
-    <code id="yym_create_buffer">yym_create_buffer()</code>,
-    <code>yym_flush_buffer()</code>,
-    <code>yym_delete_buffer()</code>, and
-    <code>yym_restart()</code>
-
-<dd><p>These work like their C-interface counterparts except that the
-    data sources and sinks are <code>i/ostream</code> pointers rather
-    than <code>FILE*</code>.
-
-<dt><code>yym_read_character()</code> and
-    <code>yym_unread_character()</code>
-
-<dd><p>These also work like their C-interface counterparts.
-    (<a href="test/yym-read-character.lexpp">Example.</a>)
-
-<dt><code>yym_set_start_condition()</code>,
-    <code>yym_get_start_condition()</code>,
-    <code>yym_push_start_condition()</code>,
-    <code>yym_pop_start_condition()</code>,
-    <code>yym_top_start_condition()</code>, and
-    <code>yym_condition_stack_is_empty()</code>
-
-<dd><p>Same as the C interface.
-    (<a href="test/discard-ml-comments-cpp.lexpp">Example.</a>)
-
-<dt><code>yym_set_interactive</code>
-
-    <dd><p>Same as <a href="#yy_set_interactive"><code>yy_set_interactive</code></a>.
-
-<dt><code>yym_less_text</code>
-
-    <dd><p>Same as <a href="#yy_less_text"><code>yy_less_text</code></a>.
-
-</dl>
-
-<p>When <code>yym_lex()</code> returns a non-zero value, these methods
-can be used to inspect the token:
-
-<dl>
-
-<dt><code>char const *yym_text()</code>
-
-    <dd><p>Return the text of the most recently matched token, the equivalent
-    of <a href="#yy_text"><code>yy_text</code></a>.
-
-<dt><code>int yym_leng()</code>
-
-    <dd><p>Return the length of the most recently matched token, the equivalent
-    of <a href="#yy_leng"><code>yy_leng</code></a>.
-
-<dt><code>int yym_lineno() const</code>
-
-    <dd><p>Return the current input line number, like
-    <a href="#yy_lineno"><code>yy_lineno</code></a>.
-
-</dl>
-
-<p>A few methods are available as analogues for directly setting
-members of <code>yy_lexer_t</code>:
-
-<dl>
-
-<dt><code>void yym_set_output_stream(yy_output_stream_t *new_out)</code>
-
-    <dd><p>Like setting
-    <a href="#yy_output_stream"><code>yy_output_stream</code></a>.
-
-<dt><code>void yym_set_lineno(int new_lineno)</code>
-
-    <dd><p>Like setting
-    <a href="#yy_lineno"><code>yy_lineno</code></a>.
-    See <a href="test/input-buffers-lineno-cpp.lexpp"><code>test/input-buffers-lineno-cpp.lexpp</code></a>
-    for an example.
-
-</dl>
-
-<p>These methods and class support error reporting and recovery:
-
-<dl>
-
-<dt id="yym_get_error"><code><a href="#yy_error_code_t">yy_error_code_t</a> yym_get_error() const;</code>
-
-    <dd><p>Same as
-    <a href="#yy_get_error"><code>yy_get_error</code></a>.
-
-<dt id="yym_error_string"><code>static char const *yym_error_string(yy_error_code_t code);</code>
-
-    <dd><p>Same as
-    <a href="#yy_error_string"><code>yy_error_string</code></a>.
+    <a href="#option-yyclass"><code>%option yyclass</code></a>).
 
 <dt id="yym_error"><code>virtual void yym_error(yy_error_code_t code, char const *detail) const;</code>
 
@@ -2881,45 +2882,6 @@ members of <code>yy_lexer_t</code>:
         <dd><p>The <code>detail</code> parameter.
 
     </dl>
-
-</dl>
-
-<p>These methods support scanner debugging:
-
-<dl>
-
-<dt><code>void yym_set_flex_debug(bool flag)</code>
-
-    <dd><p>sets the debugging flag for the scanner, equivalent to assigning to
-    <code>yy_flex_debug</code>. Note that you must build the scanner using
-    <a href="#debug-option"><code>%option debug</code></a> to include
-    debugging information in it.
-
-<dt><code>bool yym_flex_debug() const</code>
-
-    <dd><p>returns the current setting of the debugging flag.
-
-<dt><code>static void yym_check_for_memory_leaks()</code>
-
-    <dd><p>Same as
-    <a href="#yy_check_for_memory_leaks"><code>yy_check_for_memory_leaks</code></a>.
-
-</dl>
-
-<p>These methods, which can be overridden in a derived class, are used
-by the scanner engine to read input and write output:
-
-<dl>
-
-<dt><code>virtual int yym_read_input(void *dest, int size);</code>
-
-    <dd><p>This works like
-    <a href="#yy_read_input_function"><code>yy_read_input_function</code></a>.
-
-<dt id="yym_write_output"><code>virtual int yym_write_output(void const *dest, int size);</code>
-
-    <dd><p>Like
-    <a href="#yy_write_output_function"><code>yy_write_output_function</code></a>.
 
 </dl>
 
@@ -2996,14 +2958,10 @@ of a simple C++ scanner:
 </code><!-- END example --></pre>
 
 <p>If you want to create multiple (different) lexer classes, use
-the <code>-P</code> flag (or <code>%option prefix</code>) to rename
+<a href="#option-prefix"><code>%option prefix</code></a> to rename
 each <code>yyFlexLexer</code> to some other <code>xxFlexLexer</code>. You
 then can freely include the generated header files in your other sources
 without conflicts.
-
-<p><strong>Recommendation</strong>: Use <code>%option prefix</code> in
-every scanner definition from the start to save the hassle of renaming
-things later.
 
 
 <!-- ======================================================= -->
@@ -3414,9 +3372,10 @@ default is indicated it means it defaults to off.
     <code>-ohello.lex.c</code> to generate <code>hello.lex.c</code>
     and <code>hello.lex.h</code>.
 
-<dt id="prefix-option"><code>-Pprefix</code>
+<dt id="option-prefix"><code>-Pprefix</code><br>
+    <code>%option prefix="prefix"</code>
 
-<dd><p>Change the default <code>yy</code> prefix used by <code>smflex</code>
+    <dd><p>Change the default <code>yy</code> prefix used by <code>smflex</code>
     for all globally-visible variable and function names to instead be
     <code>prefix</code>. For example, <code>-Pfoo</code> changes the name
     of <code>yy_lex</code> to <code>foo_lex</code>. It also changes
@@ -3543,9 +3502,10 @@ number are equivalent to <code>smflex</code> flags or their negation:
 
     <dd><p>Sets the name of the output files; equivalent to <code>-oABC</code>.
 
-<dt id="option-prefix"><code>%option prefix="XYZ"</code>
+<dt><code>%option prefix="XYZ"</code>
 
-    <dd><p>Sets the prefix; equivalent to <code>-PXYZ</code>.
+    <dd><p>Sets the prefix; equivalent to
+    <a href="#option-prefix"><code>-PXYZ</code></a>.
 
 <dt id="option-yy-lex-name"><code>%option yy_lex_name="foo"</code>
 
