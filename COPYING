@@ -1,3 +1,14 @@
+Portions copyright 2021 Scott McPeak.  My contributions are licensed
+under the 2-Clause BSD License:
+
+  https://opensource.org/licenses/BSD-2-Clause
+
+The text below is what is included in the flex-2.5.4 distribution
+(September 1996).  It contains the 3rd "advertising" clause.  However,
+in commit 976a9a1645 (June 1997), Vern Paxson removed that clause, so
+I think it would be safe to do that as well here, but I have not yet.
+
+--------------------- BEGIN: flex-2.5.4 license -----------------------
 Flex carries the copyright used for BSD software, slightly modified
 because it originated at the Lawrence Berkeley (not Livermore!) Laboratory,
 which operates under a contract with the Department of Energy:
@@ -36,6 +47,7 @@ authors') name".
 Note that the "flex.skl" scanner skeleton carries no copyright notice.
 You are free to do whatever you please with scanners generated using flex;
 for them, you are not even bound by the above copyright.
+----------------------- END: flex-2.5.4 license -----------------------
 
 Addendum by Scott McPeak: I have renamed "flex.skl" to
 "generated-scanner.skl".  The latter continues to be unencumbered by
