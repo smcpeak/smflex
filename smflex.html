@@ -4761,6 +4761,9 @@ to be of continued value.
 
 <ul>
 
+<li><p><code>smflex</code> requires that the scanner definition file
+    begin with the <a href="#smflex-directive">%smflex directive</a>.
+
 <li><p><code>flex-2.5.4</code> uses <code>-CF</code> and
     <code>%option fast</code> to mean to use Jacobson tables.
     In <code>smflex</code>, they has been renamed to <code>-CJ</code>
@@ -6054,7 +6057,9 @@ I have also found and fixed a few pre-existing bugs:
     memory leak because the stack was never freed.  However, this
     arguably only affected the C++ API because, in that version, the C
     API only allowed one scanner instance.  Commit
-    <code>e689b34d32</code> contains the fix.
+    <code>e689b34d32</code> contains the fix.  This was also fixed
+    independently in mainline <code>flex</code> in commit
+    <code>79b29cceae</code> (June 1997).
 
 <li><p>
     <code>flex-2.5.4</code> has some memory leaks in error cases.
