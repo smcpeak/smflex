@@ -73,19 +73,23 @@ out/outfile-specified.yy.c: outfile.lex $(SMFLEX)
 # Compilation flags to add for memory tests.
 MEM_TEST_FLAGS := -DYY_ENABLE_DEBUG_LOG_CALL -DYY_ENABLE_DEBUG_LOG_MEM -DYY_ALLOCATOR_FAILURE_INJECTION
 
+# Flags to get fileno.
+FILENO_FLAGS := -D_POSIX_C_SOURCE=200809L
+
 # Extra compilation flags to add for certain tests.
 CFLAGS_FOR_c_int_batch                      := -DYY_ENABLE_DEBUG_LOG_CALL
 CFLAGS_FOR_c_int_default                    := -DYY_ENABLE_DEBUG_LOG_CALL
 CFLAGS_FOR_c_int_interactive                := -DYY_ENABLE_DEBUG_LOG_CALL
 CFLAGS_FOR_c_int_interactive_set_int_0      := -DYY_ENABLE_DEBUG_LOG_CALL
-CFLAGS_FOR_c_int_interactive_set_int_isatty := -DYY_ENABLE_DEBUG_LOG_CALL
+CFLAGS_FOR_c_int_interactive_set_int_isatty := -DYY_ENABLE_DEBUG_LOG_CALL $(FILENO_FLAGS)
 CFLAGS_FOR_c_int_set_int_0                  := -DYY_ENABLE_DEBUG_LOG_CALL
 CFLAGS_FOR_c_int_set_int_1                  := -DYY_ENABLE_DEBUG_LOG_CALL
-CFLAGS_FOR_c_int_set_int_isatty             := -DYY_ENABLE_DEBUG_LOG_CALL
+CFLAGS_FOR_c_int_set_int_isatty             := -DYY_ENABLE_DEBUG_LOG_CALL $(FILENO_FLAGS)
 CFLAGS_FOR_large_read_buffer := $(MEM_TEST_FLAGS)
 CFLAGS_FOR_large_token       := $(MEM_TEST_FLAGS)
 CFLAGS_FOR_scan_string_only  := $(MEM_TEST_FLAGS)
 CFLAGS_FOR_two_buffers       := $(MEM_TEST_FLAGS)
+CFLAGS_FOR_username_read     := $(FILENO_FLAGS)
 
 CXXFLAGS_FOR_cpp_int_batch       := -DYY_ENABLE_DEBUG_LOG_CALL
 CXXFLAGS_FOR_cpp_int_default     := -DYY_ENABLE_DEBUG_LOG_CALL
