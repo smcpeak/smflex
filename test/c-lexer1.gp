@@ -20,8 +20,8 @@ set ylabel 'Time (ms)' font ",16"
 set title 'c-lexer1.lex, -Cf and -CJ only, median of 5 runs, 1000 scans' font ",20"
 
 # Axis ranges
-set xrange [0:180000]
-set yrange [1750:2200]
+set xrange [0:185000]
+set yrange [1800:2250]
 
 # Adjust edge margins since otherwise the text gets slightly cut off.
 set bmargin 4

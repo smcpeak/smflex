@@ -489,7 +489,7 @@ NUM_RUNS := 5
 # Within the test program, how many times should it scan its input?
 # More scans takes more time but gives a higher signal to noise ratio
 # and discounts startup overhead.
-NUM_SCANS := 100
+NUM_SCANS := 1000
 
 # How to run a program and measure its execution time.
 #
@@ -504,8 +504,9 @@ FLEX254 := ../../flex-2.5.4/flex
 FLEX264 := /usr/bin/flex
 
 # Compilation flags for use when making performance test programs.
-PERF_CFLAGS := -O2 -Wall -Werror -Wno-unused-function -DHAS_POSIX -std=c89
-PERF_CXXFLAGS := -O2 -Wall -Werror -Wno-unused-function -DHAS_POSIX -std=c++98
+PERF_CPPFLAGS := -DHAS_POSIX -DNDEBUG
+PERF_CFLAGS := -O2 -Wall -Werror -Wno-unused-function $(PERF_CPPFLAGS) -std=c89
+PERF_CXXFLAGS := -O2 -Wall -Werror -Wno-unused-function $(PERF_CPPFLAGS) -std=c++98
 
 
 # 'readfile' program for baseline.
