@@ -792,7 +792,11 @@ void warn(char str[])
  */
 void format_pinpoint_message(char const *msg, char const *arg)
 {
-  char errmsg[MAXLINE];
+  /* Extra 30 for "undeclared start condition %s" at caller, in order to
+   * silence a GCC warning.  The extra space is not really needed--or
+   * rather, if huge names are used in the scanner definition, this is
+   * far from the only buffer that will overflow. */
+  char errmsg[MAXLINE+30];
 
   (void) sprintf(errmsg, msg, arg);
   pinpoint_message(errmsg);
@@ -809,7 +813,8 @@ void pinpoint_message(char str[])
 /* line_warning - report a warning at a given line, unless -w was given */
 void line_warning(char str[], int line)
 {
-  char warning[MAXLINE];
+  /* Extra 10 for "warning, %s". */
+  char warning[MAXLINE+10];
 
   if (!nowarn) {
     sprintf(warning, "warning, %s", str);
