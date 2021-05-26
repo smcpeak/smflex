@@ -245,9 +245,9 @@ dist2:
 	rm -f $(DIST_NAME).tar $(DIST_NAME).tar.gz
 	mkdir $(DIST_NAME)
 	tar cf - $(DISTFILES) | (cd $(DIST_NAME) && tar xfB -)
-	rm -r $(DIST_NAME)/test/out
-	rm -r $(DIST_NAME)/test/operf
-	rm -r $(DIST_NAME)/test/include-flex-*
+	rm -rf $(DIST_NAME)/test/out
+	rm -rf $(DIST_NAME)/test/operf
+	rm -rf $(DIST_NAME)/test/include-flex-*
 	rm $(DIST_NAME)/test/.gitignore
 	tar chf $(DIST_NAME).tar $(DIST_NAME)
 	gzip <$(DIST_NAME).tar >$(DIST_NAME).tar.gz
