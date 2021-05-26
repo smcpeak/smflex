@@ -7,6 +7,8 @@
 /* This file is meant to be compiled either as C or C++ code.  It
  * provides the option to test the C++ library when compiled as C++. */
 
+#define _POSIX_C_SOURCE 200809L        /* fileno */
+
 #include <stddef.h>                    /* size_t, ssize_t */
 #include <stdio.h>                     /* FILE, fread, fileno */
 #include <stdlib.h>                    /* malloc, free, exit */
