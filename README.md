@@ -46,7 +46,7 @@ Notable **non-goals** include:
 * Compatibility with AT&T or POSIX `lex`.
 
 * 100% compatibility with any version of `flex`.  See the section
-  [Incompatibilities with Flex](smflex.html#incompatibilities-with-flex)
+  [Incompatibilities with Flex](https://htmlpreview.github.io/?https://github.com/smcpeak/smflex/blob/smflex/smflex.html#incompatibilities-with-flex)
   in the manual for guidance on what will need to be changed.
 
 # Build and Install
@@ -90,7 +90,7 @@ $ gcc -o smflex *.c
 
 # Usage
 
-See the manual at [smflex.html](smflex.html).  It contains all of the
+See the manual at [smflex.html](https://htmlpreview.github.io/?https://github.com/smcpeak/smflex/blob/smflex/smflex.html).  It contains all of the
 relevant material from the <code>flex-2.5.4</code> manual, but that
 material has been completely reorganized, and augmented by descriptions
 of new features in <code>smflex</code>.
@@ -158,7 +158,7 @@ new name, that can be clearly communicated.
 # Change history
 
 The best summary of what has changed is in the
-[Incompatibilities with Flex](smflex.html#incompatibilities-with-flex)
+[Incompatibilities with Flex](https://htmlpreview.github.io/?https://github.com/smcpeak/smflex/blob/smflex/smflex.html#incompatibilities-with-flex)
 section of the manual.
 
 There is also the old [NEWS](NEWS) file, but I have not made any changes
