@@ -6,4 +6,5 @@ config.mk
 config.status
 personal.mk
 obj
+rel
 smflex
