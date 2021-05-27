@@ -615,6 +615,12 @@ static void yy_call_error_function(yy_lexer_t const *yy_lexer,
   yy_lexer->yy_error_function(yy_lexer, code, detail);
 }
 
+/* Report the error 'yy_err_no_rule_matches'.  This macro is defined as
+ * a convenience for code generation since the name of the error code
+ * depends on the prefix. */
+#define YY_ERROR_NO_RULE_MATCHES() \
+  YY_ERROR(yy_err_no_rule_matches, NULL /*detail*/)
+
 
 /* Code executed at the beginning of each rule, after yy_text and yy_leng
  * have been set up.

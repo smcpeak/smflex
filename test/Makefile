@@ -67,10 +67,10 @@ PYTHON3 := python3
 
 # Run smflex on one file.
 .PRECIOUS: out/%.yy.c
-out/%.yy.c: %.lex $(SMFLEX)
+out/%.yy.c out/%.yy.h: %.lex $(SMFLEX)
 	@mkdir -p out
-	$(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -o$@ $<
-	$(PYTHON3) ./check-line-directives.py $@
+	$(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -oout/$*.yy.c $<
+	$(PYTHON3) ./check-line-directives.py out/$*.yy.c
 
 # Run smflex on outfile.lex, avoiding use of -o option.
 out/outfile-specified.yy.c: outfile.lex $(SMFLEX)
@@ -165,6 +165,16 @@ out/username.exe: out/main-for-username.o
 # Use C++ linking for *.oo files.
 out/%.exe: out/%.yy.oo
 	$(CXX) -o$@ $(CXXFLAGS) $^
+
+# Prefix test executable.
+PREFIX_MODULES :=
+PREFIX_MODULES += out/prefix1-c.yy.c
+PREFIX_MODULES += out/prefix2-c.yy.c
+PREFIX_MODULES += out/prefix3-cpp.yy.cc
+PREFIX_MODULES += out/prefix4-cpp.yy.cc
+out/prefix-main.exe: prefix-main.cc $(PREFIX_MODULES)
+	$(CXX) -o$@ $(CXXFLAGS) $^
+
 
 # Run one test, producing an "ok" file to mark success.
 #
@@ -295,6 +305,7 @@ all-df: out/noyylineno.ok
 all-df: out/option-debug.ok
 all-df: out/option-debug-cpp.ok
 all-df: out/outfile-specified.ok
+all-df: out/prefix-main.ok
 all-df: out/read-character-c-comments.ok
 all-df: out/read-unread-character.ok
 all-d : out/reject-abcd.ok

@@ -103,7 +103,7 @@ goal            :  sect1 sect1end sect2 initforrule
 
                           add_action(yy_output_file_line_directive);
                           if (option_suppress_default_rule) {
-                            add_action("  YY_ERROR(yy_err_no_rule_matches, NULL /*detail*/);\n"
+                            add_action("  YY_ERROR_NO_RULE_MATCHES();\n"
                                        "  return 0;\n");
                           }
                           else {
