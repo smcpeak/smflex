@@ -203,6 +203,7 @@ DISTFILES += config.mk.in
 DISTFILES += configure
 DISTFILES += configure.in
 DISTFILES += dfa.h
+DISTFILES += dist-build-test.sh
 DISTFILES += ecs.h
 DISTFILES += eval-skel-expr.h
 DISTFILES += encode.sh
