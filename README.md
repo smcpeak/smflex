@@ -11,6 +11,10 @@ The goals for this project are:
 * Generate a scanner API that uses regular, consistent,
   forward-compatible names.  (This has required renaming many things.)
 
+* Make the C API re-entrant, meaning its state is encapsulated in an
+  object of which there can be multiple instances, each used
+  independently of the others.
+
 * Have the C++ API be a thin wrapper around the C API instead of
   something completely separate.
 
