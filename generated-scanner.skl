@@ -657,53 +657,53 @@ int yyFlexLexer::yym_lex(yy_lex_parameters)
   char *yy_cp, *yy_bp;
   int yy_act;
 
-      /* Prepare convenience aliases for important data.
-       * These aliases can only be used directly within actions, not
-       * in other functions, even those defined in sections 1 or 3. */
-#     define YY_TEXT (yy_lexer->yy_text)
-#     define YY_LENG (yy_lexer->yy_leng)
-#     define YY_GET_BOL() (yy_get_bol(yy_lexer))
+  /* Prepare convenience aliases for important data.
+   * These aliases can only be used directly within actions, not
+   * in other functions, even those defined in sections 1 or 3. */
+# define YY_TEXT (yy_lexer->yy_text)
+# define YY_LENG (yy_lexer->yy_leng)
+# define YY_GET_BOL() (yy_get_bol(yy_lexer))
 %if option_yy_read_character
-#     define YY_READ_CHARACTER() (yy_read_character(yy_lexer))
+# define YY_READ_CHARACTER() (yy_read_character(yy_lexer))
 %endif
 %if option_yy_unread_character
-#     define YY_UNREAD_CHARACTER(c) yy_unread_character(yy_lexer, c)
+# define YY_UNREAD_CHARACTER(c) yy_unread_character(yy_lexer, c)
 %endif
-#     define YY_INPUT_STREAM (yy_lexer->yy_input_stream)
-#     define YY_OUTPUT_STREAM (yy_lexer->yy_output_stream)
+# define YY_INPUT_STREAM (yy_lexer->yy_input_stream)
+# define YY_OUTPUT_STREAM (yy_lexer->yy_output_stream)
 %if option_yylineno
-#     define YY_LINENO (yy_lexer->yy_lineno)
+# define YY_LINENO (yy_lexer->yy_lineno)
 %endif
-#     define YY_PUSH_START_CONDITION(cond) yy_push_start_condition(yy_lexer, cond)
-#     define YY_POP_START_CONDITION() yy_pop_start_condition(yy_lexer)
-#     define YY_TOP_START_CONDITION() yy_top_start_condition(yy_lexer)
-#     define YY_CONDITION_STACK_IS_EMPTY() yy_condition_stack_is_empty(yy_lexer)
+# define YY_PUSH_START_CONDITION(cond) yy_push_start_condition(yy_lexer, cond)
+# define YY_POP_START_CONDITION() yy_pop_start_condition(yy_lexer)
+# define YY_TOP_START_CONDITION() yy_top_start_condition(yy_lexer)
+# define YY_CONDITION_STACK_IS_EMPTY() yy_condition_stack_is_empty(yy_lexer)
 
 %if option_flex_compat
-      /* flex compatibility aliases. */
-#     define ECHO YY_ECHO
-#     define yyless(n) YY_LESS_TEXT(n)
+  /* flex compatibility aliases. */
+# define ECHO YY_ECHO
+# define yyless(n) YY_LESS_TEXT(n)
 %if option_yymore
-#     define yymore() YY_MORE_TEXT()
+# define yymore() YY_MORE_TEXT()
 %endif
 %if option_reject
-#     define REJECT YY_REJECT
+# define REJECT YY_REJECT
 %endif
-#     define BEGIN(s) YY_SET_START_CONDITION(s)
-#     define YY_START YY_GET_START_CONDITION()
-#     define YY_AT_BOL() YY_GET_BOL()
-#     define yyterminate() YY_TERMINATE()
-#     define yytext YY_TEXT
-#     define yyleng YY_LENG
-#     define yyin YY_INPUT_STREAM
-#     define yyout YY_OUTPUT_STREAM
-#     define yylineno YY_LINENO
+# define BEGIN(s) YY_SET_START_CONDITION(s)
+# define YY_START YY_GET_START_CONDITION()
+# define YY_AT_BOL() YY_GET_BOL()
+# define yyterminate() YY_TERMINATE()
+# define yytext YY_TEXT
+# define yyleng YY_LENG
+# define yyin YY_INPUT_STREAM
+# define yyout YY_OUTPUT_STREAM
+# define yylineno YY_LINENO
 %if option_yy_read_character
-#     define input() YY_READ_CHARACTER()
-#     define yyinput() YY_READ_CHARACTER()
+# define input() YY_READ_CHARACTER()
+# define yyinput() YY_READ_CHARACTER()
 %endif
 %if option_yy_unread_character
-#     define unput(c) YY_UNREAD_CHARACTER(c)
+# define unput(c) YY_UNREAD_CHARACTER(c)
 %endif
 %endif # option_flex_compat
 

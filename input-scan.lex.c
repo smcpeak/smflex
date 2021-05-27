@@ -1306,20 +1306,20 @@ int input_scan_lex(input_scan_lexer_t * const yy_lexer  )
   char *yy_cp, *yy_bp;
   int yy_act;
 
-      /* Prepare convenience aliases for important data.
-       * These aliases can only be used directly within actions, not
-       * in other functions, even those defined in sections 1 or 3. */
-#     define YY_TEXT (yy_lexer->yy_text)
-#     define YY_LENG (yy_lexer->yy_leng)
-#     define YY_GET_BOL() (input_scan_get_bol(yy_lexer))
-#     define YY_READ_CHARACTER() (input_scan_read_character(yy_lexer))
-#     define YY_UNREAD_CHARACTER(c) input_scan_unread_character(yy_lexer, c)
-#     define YY_INPUT_STREAM (yy_lexer->yy_input_stream)
-#     define YY_OUTPUT_STREAM (yy_lexer->yy_output_stream)
-#     define YY_PUSH_START_CONDITION(cond) yy_push_start_condition(yy_lexer, cond)
-#     define YY_POP_START_CONDITION() yy_pop_start_condition(yy_lexer)
-#     define YY_TOP_START_CONDITION() yy_top_start_condition(yy_lexer)
-#     define YY_CONDITION_STACK_IS_EMPTY() yy_condition_stack_is_empty(yy_lexer)
+  /* Prepare convenience aliases for important data.
+   * These aliases can only be used directly within actions, not
+   * in other functions, even those defined in sections 1 or 3. */
+# define YY_TEXT (yy_lexer->yy_text)
+# define YY_LENG (yy_lexer->yy_leng)
+# define YY_GET_BOL() (input_scan_get_bol(yy_lexer))
+# define YY_READ_CHARACTER() (input_scan_read_character(yy_lexer))
+# define YY_UNREAD_CHARACTER(c) input_scan_unread_character(yy_lexer, c)
+# define YY_INPUT_STREAM (yy_lexer->yy_input_stream)
+# define YY_OUTPUT_STREAM (yy_lexer->yy_output_stream)
+# define YY_PUSH_START_CONDITION(cond) yy_push_start_condition(yy_lexer, cond)
+# define YY_POP_START_CONDITION() yy_pop_start_condition(yy_lexer)
+# define YY_TOP_START_CONDITION() yy_top_start_condition(yy_lexer)
+# define YY_CONDITION_STACK_IS_EMPTY() yy_condition_stack_is_empty(yy_lexer)
 
 
 #line 105 "input-scan.lex"
