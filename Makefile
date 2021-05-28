@@ -170,6 +170,14 @@ bigcheck:
 	rm -f input-scan.lex.c ; $(MAKE) bigcheck1
 	@echo "All checks successful"
 
+# Exercise the ability to build in a single line, as advertised in
+# README.md.
+.PHONY: one-line-compile
+one-line-compile:
+	$(CC) -o smflex.oneline.exe *.c
+	./smflex.oneline.exe --version
+	rm smflex.oneline.exe
+
 # Install to the chosen --prefix.
 install: $(SMFLEX) installdirs
 	$(INSTALL_PROGRAM) $(SMFLEX) $(bindir)/$(SMFLEX)

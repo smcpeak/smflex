@@ -12,6 +12,7 @@ make check
 make install
 make -C test check
 make bigcheck
+make one-line-compile
 
 set +x
 echo "dist-build-test.sh: Success"
