@@ -1,1 +1,1 @@
-invalid-missing-smflex.lex:4: The "%smflex 100" directive is required and must come before anything other than blank lines or un-indented comments.
+invalid-missing-smflex.lex:4: The "%smflex 101" directive is required and must come before anything other than blank lines or un-indented comments.

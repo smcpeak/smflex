@@ -18,7 +18,7 @@
  * - Patch version is bumped for every release that does not introduce
  *   any input format incompatibilities.
  */
-#define SMFLEX_VERSION "1.0.0"
+#define SMFLEX_VERSION "1.0.1"
 
 /* Smallest value for %smflex accepted.  This will depend on the extent
  * to which backward compatibility measures are employed.  In principle,
@@ -28,4 +28,4 @@
 
 /* Largest value for %smflex accepted.  This should be the major
  * version times 100 plus the minor version. */
-#define MAXIMUM_SMFLEX_INPUT_VERSION 100
+#define MAXIMUM_SMFLEX_INPUT_VERSION 101
