@@ -1,20 +1,33 @@
 /* yy-lex-params-cpp.lex */
 /* Exercise %option yy_lex_parameters and %option c++. */
 
-%smflex 100
+%smflex 101
 %option c++
-%option yy_lex_parameters="int x, int y"
+%option yy_lex_parameters="int x, int y, ExtraLexState &extraState"
+
+%header{
+#include "extra-lex-state.h"           /* ExtraLexState */
+%}
 
 %%
 
-username    std::cout << "USERNAME [x=" << x << ",y=" << y << "]";
+username    {
+              std::cout << "USERNAME [x=" << x << ",y=" << y
+                        << ",field1=" << extraState.field1
+                        << ",field2=" << extraState.field2
+                        << "]";
+            }
 
 %%
 
 int main()
 {
+  ExtraLexState extraState;
+  extraState.field1 = 5;
+  extraState.field2 = 6;
+
   yyFlexLexer lexer;
-  while (lexer.yym_lex(3, 4))
+  while (lexer.yym_lex(3, 4, extraState))
     {}
   return 0;
 }

@@ -2,7 +2,8 @@
 /* Define SMFLEX_VERSION. */
 
 /* Note: The version number also appears at the top of
- * generated-scanner.skl. */
+ * generated-scanner.skl and in smflex.html (both at the top, and in a
+ * number of examples).  Those places need to be updated when this is. */
 
 /* Version numbering scheme:
  *
@@ -18,7 +19,7 @@
  * - Patch version is bumped for every release that does not introduce
  *   any input format incompatibilities.
  */
-#define SMFLEX_VERSION "1.0.1"
+#define SMFLEX_VERSION "1.1.0"
 
 /* Smallest value for %smflex accepted.  This will depend on the extent
  * to which backward compatibility measures are employed.  In principle,

@@ -1,6 +1,6 @@
 /* count-lines-chars.lex */
 /* BEGIN: example fragment */
-%smflex 100
+%smflex 101
         int num_lines = 0, num_chars = 0;
 %%
 \n      ++num_lines; ++num_chars;

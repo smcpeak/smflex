@@ -7,6 +7,7 @@
 
 #include "flexchar.h"                  /* Char */
 #include "flexdef.h"                   /* MAXLINE, ONE_STACK_SIZE, etc. */
+#include "growstring.h"                /* growstring_t */
 
 #include <stdio.h>                     /* FILE */
 
@@ -94,7 +95,8 @@ extern int option_flex_compat;
  * dataline - number of contiguous lines of data in current data
  *      statement.  Used to generate readable -f output
  * linenum - current input line number
- * out_linenum - current output line number
+ * out_linenum - current output line number; this is used for both the
+ *      header file and implementation file
  * scanner_skl_ind - index into "scanner_skl_contents" array
  * backing_up_file - file to summarize backing-up states to
  * infilename - name of input file
@@ -153,6 +155,13 @@ extern FILE *scanner_c_file;
 
 /* If true, use platform-native line endings; otherwise LF only. */
 extern int write_native_line_endings;
+
+/* If non-zero, the source file line number of the first line in the
+ * "%header{" block. */
+extern int header_code_block_start_line;
+
+/* Text inside the "%header{...%}" section, if any. */
+extern growstring_t header_code_block;
 
 
 /* Variables for stack of states having only one out-transition:

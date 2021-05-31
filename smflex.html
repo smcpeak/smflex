@@ -200,7 +200,7 @@
 <body>
 <header id="title-block-header">
   <h1 class="title">SMFLEX</h1>
-  <p>Version 1.0.0
+  <p>Version 1.1.0
 </header>
 
 
@@ -224,6 +224,9 @@
   <ul>
     <li><a class="toc" href="#smflex-directive">2.1. The %smflex directive</a>
     <li><a class="toc" href="#verbatim-code">2.2. Verbatim Code</a>
+    <ul>
+      <li><a class="toc" href="#header-directive">2.2.1. %header Directive</a>
+    </ul>
     <li><a class="toc" href="#comments">2.3. Comments</a>
     <li><a class="toc" href="#patterns">2.4. Patterns</a>
     <ul>
@@ -326,13 +329,13 @@ with the user's login name:
     /* username-getenv.lex */
     /* First example. */
 
-    %smflex 100
+    %smflex 101
     %option main
     %%
     username    printf("%s", getenv("USER"));
 </code><!-- END example --></pre>
 
-<p>The line <code>%smflex 100</code> specifies the input format and its
+<p>The line <code>%smflex 101</code> specifies the input format and its
 version number.  It must appear, on a line by itself, before anything
 else, other than blank lines or comments.
 See <a href="#smflex-directive"><code>%smflex</code> directive</a> for
@@ -359,7 +362,7 @@ input file to its output with each occurrence of "username" expanded.
 <p>Here's another simple <a href="test/count-lines-chars.lex">example</a>:
 
 <pre><!-- BEGIN example: "count-lines-chars.lex" fragment=true indent=4 --><code>
-    %smflex 100
+    %smflex 101
             int num_lines = 0, num_chars = 0;
     %%
     \n      ++num_lines; ++num_chars;
@@ -392,7 +395,7 @@ other than a newline (indicated by the "." regular expression).
 <pre><!-- BEGIN example: "toy-pascal.lex" fragment=true indent=4 --><code>
     /* scanner for a toy Pascal-like language */
 
-    %smflex 100
+    %smflex 101
     %{
     #include &lt;math.h&gt;            /* atof */
     #include &lt;stdlib.h&gt;          /* atoi */
@@ -527,11 +530,11 @@ the same line.
 like:
 
 <pre><code>
-  %smflex 100
+  %smflex 101
 </code></pre>
 
 <p>
-This specifies the version number of the <em>input</em> language.
+This specifies the version number of the <em>input language</em>.
 Generally, <code>smflex-X.Y.Z</code> knows how to read input
 version X*100+Y and some earlier than that.
 
@@ -575,6 +578,21 @@ the rule.
 which call or are called by the scanner. The presence of this section
 is optional; if it is missing, the second <code>%%</code> in the input
 file may be skipped, too.
+
+
+<h3 id="header-directive">2.2.1. %header Directive</h3>
+
+<p>
+In section 1, any text enclosed in
+"<code>%header{</code>...<code>%}</code>" will be copied verbatim into
+the generated header file.  This is particularly useful with
+<a href="#option-yy-lex-parameters"><code>%option yy_lex_parameters</code></a>
+if one of the parameters has a type that requires some other file to be
+<code>#include</code>d to get its declaration.
+
+<p>
+This directive was introduced in <code>smflex-1.1.0</code> and therefore
+requires <a href="#smflex-directive"><code>%smflex 101</code></a> or later.
 
 
 <h2 id="comments">2.3. Comments</h2>
@@ -1101,7 +1119,7 @@ whenever <code>yy_lex()</code> is called and the global variable
 <code>enter_special</code> is true:
 
 <pre><!-- BEGIN example: "yy-set-start-state-special.lex" fragment=true indent=4 --><code>
-    %smflex 100
+    %smflex 101
                     int enter_special;
 
     %x SPECIAL
@@ -2890,7 +2908,7 @@ of a simple C++ scanner:
 <pre><!-- BEGIN example: "cpp-manual-example.lexpp" indent=4 --><code>
     // An example of using the smflex C++ scanner class.
 
-    %smflex 100
+    %smflex 101
     %option c++
     %option prefix="Example"
     %option yy_read_character
@@ -3535,6 +3553,12 @@ number are equivalent to <code>smflex</code> flags or their negation:
     <code>PARAMS</code> must not begin with a comma;
     <code>smflex</code> will insert the comma separating the
     existing parameter (if any) from the new ones where needed.
+
+    <p>
+    If one of the parameters has a type that requires a preceding
+    declaration, use the
+    <a href="#header-directive"><code>%header{...%}</code></a> directive
+    to arrange for its presence in the generated header file.
 
 <dt id="option-yyclass"><code>%option yyclass="foo"</code>
 

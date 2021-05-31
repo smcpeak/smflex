@@ -120,6 +120,10 @@ FILE *scanner_c_file = NULL;
 
 int write_native_line_endings;
 
+int header_code_block_start_line = 0;
+
+growstring_t header_code_block = GROWSTRING_EMPTY_INIT;
+
 int onestate[ONE_STACK_SIZE], onesym[ONE_STACK_SIZE];
 int onenext[ONE_STACK_SIZE], onedef[ONE_STACK_SIZE], onesp;
 

@@ -84,6 +84,7 @@
 %x SECT2 SECT2PROLOG SECT3 CODEBLOCK PICKUPDEF SC CARETISBOL NUM QUOTE
 %x FIRSTCCL CCL ACTION RECOVER COMMENT ACTION_STRING
 %x OPTION LINEDIR
+%x HEADER_BLOCK
 
 WS              [[:blank:]]+
 OPTWS           [[:blank:]]*
@@ -115,6 +116,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
   Char nmdef[MAXLINE], myesc();
 %}
 
+  /* INIITIAL handles top-level forms in section 1. */
 <INITIAL>{
         ^{WS}           {
                           check_smflex_version_specified();
@@ -163,6 +165,22 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
                           line_directive_out_src();
                           indented_code = false;
                           yy_push_start_condition(yy_lexer, CODEBLOCK);
+                        }
+
+        ^"%header{".*{NL}   {
+                          if (!all_whitespace(YY_TEXT+8)) {
+                            synerr(_("\"%header{\" must appear on a line by itself."));
+                          }
+                          check_smflex_version_specified();
+                          if (smflex_input_version < 101) {
+                            synerr(_("\"%header{\" directive requires %smflex 101 or later."));
+                          }
+                          if (header_code_block_start_line != 0) {
+                            synerr(_("Cannot have more than one \"%header{\" block."));
+                          }
+                          ++ linenum;
+                          header_code_block_start_line = linenum;
+                          yy_push_start_condition(yy_lexer, HEADER_BLOCK);
                         }
 
         {WS}            /* discard */
@@ -273,6 +291,29 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
 
         <<EOF>>         {
                           synerr(_("Unclosed \"%{\" block."));
+                          YY_TERMINATE();
+                        }
+}
+
+  /* HEADER_BLOCK handles %header{...%} in section 1. */
+<HEADER_BLOCK>{
+        ^"%}".*{NL}     {
+                          if (!all_whitespace(YY_TEXT+2)) {
+                            synerr(_("\"%}\" must appear on a line by itself."));
+                          }
+                          ++linenum;
+                          yy_pop_start_condition(yy_lexer);
+                        }
+
+        .*              growstring_append_c_str(&header_code_block, YY_TEXT);
+
+        {NL}            {
+                          ++linenum;
+                          growstring_append_c_str(&header_code_block, YY_TEXT);
+                        }
+
+        <<EOF>>         {
+                          synerr(_("Unclosed \"%header{\" block."));
                           YY_TERMINATE();
                         }
 }

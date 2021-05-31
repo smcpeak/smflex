@@ -47,7 +47,7 @@ const char *scanner_skl_contents[] = {
   "",
   "/* Version of smflex used to generate this scanner. */",
   "#define YY_SMFLEX_MAJOR_VERSION 1",
-  "#define YY_SMFLEX_MINOR_VERSION 0",
+  "#define YY_SMFLEX_MINOR_VERSION 1",
   "",
   "",
   "/* Returned value from yy_lex() upon end-of-file.  This macro is used",

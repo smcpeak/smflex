@@ -71,6 +71,7 @@ out/%.yy.c out/%.yy.h: %.lex $(SMFLEX)
 	@mkdir -p out
 	$(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -oout/$*.yy.c $<
 	$(PYTHON3) ./check-line-directives.py out/$*.yy.c
+	$(PYTHON3) ./check-line-directives.py out/$*.yy.h
 
 # Run smflex on outfile.lex, avoiding use of -o option.
 out/outfile-specified.yy.c: outfile.lex $(SMFLEX)
@@ -140,6 +141,7 @@ out/%.yy.cc out/%.yy.h: %.lexpp $(SMFLEX)
 	@mkdir -p out
 	$(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -oout/$*.yy.cc $<
 	$(PYTHON3) ./check-line-directives.py out/$*.yy.cc
+	$(PYTHON3) ./check-line-directives.py out/$*.yy.h
 
 # Compile C++ file in out/.
 .PRECIOUS: out/%.oo
@@ -161,6 +163,10 @@ out/main-for-username.o: out/username.yy.c
 
 # username is special because it uses main-for-username.
 out/username.exe: out/main-for-username.o
+
+# Dependencies on extra headers.
+out/yy-lex-params.yy.o: extra-lex-state.h
+out/yy-lex-params-cpp.yy.oo: extra-lex-state.h
 
 # Use C++ linking for *.oo files.
 out/%.exe: out/%.yy.oo
