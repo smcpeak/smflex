@@ -44,6 +44,12 @@ OBJ = obj
 # runs when specifically requested.)
 .SUFFIXES:
 
+# Delete a target when its recipe fails.
+.DELETE_ON_ERROR:
+
+# Do not delete intermediate files.
+.SECONDARY:
+
 # Rule for compiling one C source file.
 $(OBJ)/%.o: %.c
 	@mkdir -p $(OBJ)
