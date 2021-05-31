@@ -237,7 +237,18 @@ DISTFILES += nfa.h
 DISTFILES += smflex.html
 DISTFILES += sym.h
 DISTFILES += tblcmp.h
-DISTFILES += test
+DISTFILES += test/*.c
+DISTFILES += test/*.cc
+DISTFILES += test/*.expect
+DISTFILES += test/*.gp
+DISTFILES += test/*.h
+DISTFILES += test/*.input*
+DISTFILES += test/*.lex
+DISTFILES += test/*.lexpp
+DISTFILES += test/*.pl
+DISTFILES += test/*.py
+DISTFILES += test/*.sh
+DISTFILES += test/Makefile
 DISTFILES += version.h
 DISTFILES += yylex.h
 
@@ -246,7 +257,7 @@ VERSION_NUMBER = $(shell grep '#define SMFLEX_VERSION' version.h | \
                          sed -e 's/[^"]*"//' -e 's/"//')
 
 # Create a source tarball for distribution.
-dist: $(SMFLEX) $(DISTFILES) input-parse.y.c input-parse.y.h
+dist: all
 	$(MAKE) DIST_NAME=smflex-$(VERSION_NUMBER) dist2
 
 # Do the main work of making the tarball, given $(DIST_NAME).  Also
@@ -255,16 +266,11 @@ dist2:
 	rm -rf $(DIST_NAME)
 	rm -f $(DIST_NAME).tar $(DIST_NAME).tar.gz
 	mkdir $(DIST_NAME)
-	tar cf - $(DISTFILES) | (cd $(DIST_NAME) && tar xfB -)
-	rm -rf $(DIST_NAME)/test/out
-	rm -rf $(DIST_NAME)/test/operf
-	rm -rf $(DIST_NAME)/test/include-flex-*
-	rm $(DIST_NAME)/test/.gitignore
-	tar chf $(DIST_NAME).tar $(DIST_NAME)
-	gzip <$(DIST_NAME).tar >$(DIST_NAME).tar.gz
-	rm $(DIST_NAME).tar
+	cp --parents --recursive --target-directory=$(DIST_NAME) $(DISTFILES)
+	tar cfz $(DIST_NAME).tar.gz $(DIST_NAME)
 ifeq ($(TEST_DIST),1)
 	find $(DIST_NAME) -type f > distro-files.txt
+	find $(DIST_NAME) -type f -executable > executable-files.txt
 	@# Build the distribution the way a user would.
 	cd $(DIST_NAME) && \
 	  ./configure --prefix=$$(pwd)/opt && \
@@ -276,17 +282,18 @@ ifeq ($(THOROUGH_TEST_DIST),1)
 	  make -C test && \
 	  make bigcheck
 endif
-	@echo "--------- BEGIN: Distribution files ---------"
+	@echo "--------- Distribution files ---------"
 	@cat distro-files.txt
-	@echo "---------- END: Distribution files ----------"
-	@echo "--------- BEGIN: Installation files ---------"
+	@echo "--------- Executable files ---------"
+	@cat executable-files.txt
+	@echo "--------- Installation files ---------"
 	@cd $(DIST_NAME)/opt && find . -type f
-	@echo "---------- END: Installation files ----------"
 	rm distro-files.txt
+	rm executable-files.txt
 endif
+	rm -rf $(DIST_NAME)
 ifeq ($(CLEAN_DIST),1)
 	@# Remove the distribution after test passes.
-	rm -rf $(DIST_NAME)
 	rm $(DIST_NAME).tar.gz
 endif
 
