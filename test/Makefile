@@ -136,10 +136,10 @@ out/%.o: %.c
 
 # Run smflex on one file that generates a C++-interface scanner.
 .PRECIOUS: out/%.yy.cc
-out/%.yy.cc: %.lexpp $(SMFLEX)
+out/%.yy.cc out/%.yy.h: %.lexpp $(SMFLEX)
 	@mkdir -p out
-	$(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -o$@ $<
-	$(PYTHON3) ./check-line-directives.py $@
+	$(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -oout/$*.yy.cc $<
+	$(PYTHON3) ./check-line-directives.py out/$*.yy.cc
 
 # Compile C++ file in out/.
 .PRECIOUS: out/%.oo
