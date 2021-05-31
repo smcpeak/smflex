@@ -18,6 +18,12 @@ check: all
 # Remove built-in implicit rules.
 .SUFFIXES:
 
+# Delete a target when its recipe fails.
+.DELETE_ON_ERROR:
+
+# Do not delete intermediate files.
+.SECONDARY:
+
 # Pull in definitions from main build.
 include ../config.mk
 -include ../personal.mk
@@ -66,7 +72,6 @@ PYTHON3 := python3
 
 
 # Run smflex on one file.
-.PRECIOUS: out/%.yy.c
 out/%.yy.c out/%.yy.h: %.lex $(SMFLEX)
 	@mkdir -p out
 	$(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -oout/$*.yy.c $<
@@ -121,12 +126,10 @@ GET_CXXFLAGS = $(CXXFLAGS_FOR_$(subst -,_,$(subst .,_,$(1:.yy=))))
 # If the file name contains "c-int-", then add -DYY_ENABLE_DEBUG_LOG_CALL
 # to the compilation line to enable relevant diagnostic prinouts.
 #
-.PRECIOUS: out/%.o
 out/%.o: out/%.c
 	$(CC) -o$@ -c $(CFLAGS) $(CPPFLAGS) $(call GET_CFLAGS,$*) $<
 
 # Compile a C file in out/ as if it were C++.
-.PRECIOUS: out/%.c_as_cc.o
 out/%.c_as_cc.o: out/%.c
 	$(CXX) -o$@ -xc++ -c $(CXXFLAGS) $(CPPFLAGS) $<
 
@@ -136,7 +139,6 @@ out/%.o: %.c
 	$(CC) -o$@ -c $(CFLAGS) $<
 
 # Run smflex on one file that generates a C++-interface scanner.
-.PRECIOUS: out/%.yy.cc
 out/%.yy.cc out/%.yy.h: %.lexpp $(SMFLEX)
 	@mkdir -p out
 	$(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -oout/$*.yy.cc $<
@@ -144,17 +146,14 @@ out/%.yy.cc out/%.yy.h: %.lexpp $(SMFLEX)
 	$(PYTHON3) ./check-line-directives.py out/$*.yy.h
 
 # Compile C++ file in out/.
-.PRECIOUS: out/%.oo
 out/%.oo: out/%.cc
 	$(CXX) -o$@ -c $(CXXFLAGS) $(CPPFLAGS) $(call GET_CXXFLAGS,$*) $<
 
 # Link C object files in out/ to make an executable.
-.PRECIOUS: out/%.exe
 out/%.exe: out/%.yy.o
 	$(CC) -o$@ $(CFLAGS) $^
 
 # Link C-compiled-as-C++ object file.
-.PRECIOUS: out/%.c_as_cc.exe
 out/%.c_as_cc.exe: out/%.yy.c_as_cc.o
 	$(CXX) -o$@ $(CXXFLAGS) $^
 
@@ -219,12 +218,10 @@ endif
 
 # If 'make' thinks it needs an expect file, just make an empty one so
 # the test can proceed and then complain.
-.PRECIOUS: %.expect
 %.expect:
 	touch $@
 
 # Same for an input file.
-.PRECIOUS: %.input
 %.input:
 	touch $@
 
@@ -391,7 +388,6 @@ out/c-prefix-validated.ok: out/c-prefix.ok
 	touch $@
 
 # Run $(SMFLEX) on an input that should provoke a syntax error.
-.PRECIOUS: out/%.bad
 out/%.bad: %.lex %.expect $(SMFLEX)
 	@mkdir -p out
 	if $(SMFLEX) $(SMFLEX_OPTS) $($(TEST_CONFIG)_OPS) -oout/$*.lex.c $< >out/$*.actual 2>&1; then \
@@ -686,7 +682,6 @@ endif
 #
 # At least for now, I'm not making this depend on $(SMFLEX) because
 # I won't want to have to redo everything after each change.
-.PRECIOUS: $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%.exe
 $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%.exe: $(LEXER_NAME).lex
 	@mkdir -p $(OPERF)
 ifeq ($(INTERFACE),c)
@@ -699,7 +694,6 @@ endif
 
 
 # Rule to run an executable and measure its size and speed.
-.PRECIOUS: $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%-$(NUM_RUNS)-$(NUM_SCANS).log
 $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%-$(NUM_RUNS)-$(NUM_SCANS).log: $(OPERF)/$(VARIANT)-$(LEXER_NAME)-$(INTERFACE)-%.exe $(OPERF)/corpus.c
 	size $< > $@
 	$(MEASURE_TIME) $< $(OPERF)/corpus.c $(NUM_SCANS) >> $@
