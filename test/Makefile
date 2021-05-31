@@ -451,14 +451,18 @@ out/cmderr-outfile-ext.bad: cmderr-outfile-ext.expect $(SMFLEX)
 .PHONY: all-cmderr
 all: all-cmderr
 
-# Unit test program.
-out/test-eval-skel-expr.exe: test-eval-skel-expr.c ../eval-skel-expr.h ../eval-skel-expr.c
-	$(CC) -o$@ $(CFLAGS) -I.. test-eval-skel-expr.c ../eval-skel-expr.c
 
-all: out/test-eval-skel-expr.ok
-out/test-eval-skel-expr.ok: out/test-eval-skel-expr.exe
-	out/test-eval-skel-expr.exe
+# Unit test program.
+out/test-%.exe: test-%.c ../%.h ../%.c
+	$(CC) -o$@ $(CFLAGS) -I.. test-$*.c ../$*.c
+
+out/test-%.unit.ok: out/test-%.exe
+	out/test-$*.exe
 	touch $@
+
+all: out/test-eval-skel-expr.unit.ok
+all: out/test-growstring.unit.ok
+
 
 # v.Nu does not validate links, so I wrote a little smflex program
 # to do it.  Use it to check the manual.
