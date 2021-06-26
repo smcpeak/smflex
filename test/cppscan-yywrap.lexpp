@@ -20,7 +20,7 @@ username           cout << "USERNAME";
 
 class DerivedLexer : public yyFlexLexer {
 public:
-  virtual int yym_wrap() /*override*/;
+  virtual int yym_wrap() YY_OVERRIDE;
 };
 
 /* Non-NULL once we have read the second input. */

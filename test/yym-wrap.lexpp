@@ -22,7 +22,7 @@ static int readSecondFile = 0;
 /* Define a derived class without having said "%option yyclass". */
 class MyLexer : public yyFlexLexer {
 public:
-  virtual int yym_wrap() /*override*/;
+  virtual int yym_wrap() YY_OVERRIDE;
 };
 
 

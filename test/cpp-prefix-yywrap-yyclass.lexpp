@@ -19,7 +19,7 @@ using std::istream;
 class MyClass : public MyLexerFlexLexer {
 public:
   int yym_lex();
-  virtual int yym_wrap() /*override*/;
+  virtual int yym_wrap() YY_OVERRIDE;
 };
 %}
 

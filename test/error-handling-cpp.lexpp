@@ -33,7 +33,7 @@ unread        {
 
 class InputFailLexer : public yyFlexLexer {
 public:
-  virtual int yym_read_input(void *dest, int size)
+  virtual int yym_read_input(void *dest, int size) YY_OVERRIDE
   {
     return -1;
   }
@@ -49,7 +49,7 @@ public:      /* methods */
     : remaining_xs(r)
   {}
 
-  virtual int yym_read_input(void *dest, int size)
+  virtual int yym_read_input(void *dest, int size) YY_OVERRIDE
   {
     if (remaining_xs <= 0) {
       return 0;
@@ -78,7 +78,7 @@ public:      /* methods */
   {}
 
   /* Generate 'fixed_string'. */
-  virtual int yym_read_input(void *dest, int size)
+  virtual int yym_read_input(void *dest, int size) YY_OVERRIDE
   {
     int len = strlen(fixed_string);
     int remain = len - fixed_string_index;

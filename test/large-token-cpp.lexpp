@@ -31,7 +31,7 @@ public:      /* methods */
       supplied_length(0)
   {}
 
-  virtual int yym_read_input(void *dest, int size)
+  virtual int yym_read_input(void *dest, int size) YY_OVERRIDE
   {
     char *buf = (char*)dest;
     int i;
