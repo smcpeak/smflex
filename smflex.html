@@ -2980,6 +2980,13 @@ each <code>yyFlexLexer</code> to some other <code>xxFlexLexer</code>. You
 then can freely include the generated header files in your other sources
 without conflicts.
 
+<p>The generated header file defines (if not already defined) a macro
+called <code>YY_OVERRIDE</code>.  This is meant to be used like the
+<a href="https://en.cppreference.com/w/cpp/language/override"><code>override</code> specifier</a>.
+For maximum compatibility, it expands to nothing when compiling with a
+C++98 compiler.  It is used by the generated class declarations, and may
+be used in user code too.
+
 
 <!-- ======================================================= -->
 <h1 id="options">5. Options</h1>
