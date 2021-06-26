@@ -45,7 +45,10 @@ CXX := g++
 CFLAGS := -g -Wall -I. $(CSTD) $(PEDANTIC) $(WERROR)
 
 # C++ compilation options.
-CXXFLAGS := -g -Wall -I. $(CXXSTD) $(PEDANTIC) $(WERROR)
+#
+# CXXWARNINGS can be set in personal.mk to enable warnings that are
+# specific to C++, principally -Wsuggest-override.
+CXXFLAGS := -g -Wall -I. $(CXXSTD) $(PEDANTIC) $(WERROR) $(CXXWARNINGS)
 
 # smflex executable.
 SMFLEX := ../smflex
