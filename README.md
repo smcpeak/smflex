@@ -161,13 +161,11 @@ new name, that can be clearly communicated.
 
 # Change history
 
-The best summary of what has changed is in the
+The best summary of what is different in `smflex` versus `flex-2.5.4` is in the
 [Incompatibilities with Flex](https://htmlpreview.github.io/?https://github.com/smcpeak/smflex/blob/smflex/smflex.html#incompatibilities-with-flex)
 section of the manual.
 
-There is also the old [NEWS](NEWS) file, but I have not made any changes
-to that file so it only covers work leading up to
-`flex-2.5.4`.
+See [CHANGELOG.md](CHANGELOG.md) for subsequent changes in `smflex`.
 
 # License
 
