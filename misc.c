@@ -790,7 +790,10 @@ char *readable_form(int c)
 {
   static char rform[10];
 
-  if ((c >= 0 && c < 32) || c >= 127) {
+  /* The upper bound of 255 is here primarily to silence a GCC warning
+     about potentially overrunning 'rform' in the 'sprintf' call. */
+  if ((c >= 0 && c < 32) ||
+      (c >= 127 && c <= 255)) {
     switch (c) {
       case '\b':
         return "\\b";
