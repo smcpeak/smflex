@@ -146,6 +146,7 @@ ifeq ($(MAINTAINER_MODE),1)
 endif
 	@echo "Check successful, using COMPRESSION=\"$(COMPRESSION)\"".
 	@echo "Run \"make -C test check\" and \"make bigcheck\" for more thorough checking."
+	@echo "The former takes around 5 minutes and the latter 1.5 minutes."
 
 # One step of 'bigcheck'.  COMPRESSION should be set.
 #
