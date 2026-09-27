@@ -113,7 +113,7 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
   static int doing_start_conditions = false;
 
   int i;
-  Char nmdef[MAXLINE], myesc();
+  Char nmdef[MAXLINE];
 %}
 
   /* INIITIAL handles top-level forms in section 1. */
@@ -598,7 +598,6 @@ CCL_EXPR        ("[:"[[:alpha:]]+":]")
 
         "{"{NAME}"}"    {
                           Char *nmdefptr;
-                          Char *ndlookup();
 
                           strcpy(nmstr, YY_TEXT + 1);
                           nmstr[YY_LENG - 2] = '\0'; /* chop trailing brace */

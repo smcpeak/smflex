@@ -91,8 +91,6 @@ void cclinstal(Char ccltxt[], int cclnum)
   /* We don't bother checking the return status because we are not
    * called unless the symbol is new.
    */
-  Char *copy_unsigned_string();
-
   (void) addsym((char *) copy_unsigned_string(ccltxt),
                 (char *) 0, cclnum, ccltab, CCL_HASH_SIZE);
 }
@@ -148,9 +146,6 @@ int hashfunct(char str[], int hash_size)
 /* ndinstal - install a name definition */
 void ndinstal(char name[], Char definition[])
 {
-  char *copy_string();
-  Char *copy_unsigned_string();
-
   if (addsym(copy_string(name),
              (char *) copy_unsigned_string(definition), 0,
              ndtbl, NAME_TABLE_HASH_SIZE))
@@ -190,8 +185,6 @@ void scextend()
  */
 void scinstal(char str[], int xcluflg)
 {
-  char *copy_string();
-
   /* Generate start condition definition, for use in
    * 'YY_SET_START_CONDITION', etc. */
   action_define(str, lastsc);
